@@ -12,6 +12,8 @@ import Homepage from "./pages/Home";
 import PortfolioShowcase from "./pages/Portfolio";
 // import InsightsKnowledgeLeadership from './pages/insights-knowledge-leadership';
 import JoinUsPage from "pages/join-us";
+import AdminLogin from "./pages/Admin/AdminLogin";
+import AdminApp from "./pages/Admin";
 
 const Routes = () => {
   return (
@@ -19,21 +21,21 @@ const Routes = () => {
       <ErrorBoundary>
         <ScrollToTop />
         <RouterRoutes>
-          {/* Define your route here */}
+          {/* Public routes */}
           <Route path="/" element={<Homepage />} />
+          <Route path="/home" element={<Homepage />} />
           <Route path="/contact" element={<ContactMultiChannelConnection />} />
           <Route path="/about" element={<AboutInnovationStoryVision />} />
-          <Route
-            path="/partnership"
-            element={<PartnershipCollaborationGateway />}
-          />
-          <Route path="/service" element={<ServicesPage />} />
-          <Route path="/home" element={<Homepage />} />
-          <Route path="/portfolio" element={<PortfolioShowcase />} />
-          {/* <Route path="/insights-knowledge-leadership" element={<InsightsKnowledgeLeadership />} /> */}
-          <Route path="*" element={<NotFound />} />
-          <Route path="/join-us" element={<JoinUsPage />} />
           <Route path="/about/teamspotlight1" element={<TeamSpotlight1 />} />
+          <Route path="/partnership" element={<PartnershipCollaborationGateway />} />
+          <Route path="/service" element={<ServicesPage />} />
+          <Route path="/portfolio" element={<PortfolioShowcase />} />
+          <Route path="/join-us" element={<JoinUsPage />} />
+          {/* Admin CMS */}
+          <Route path="/admin/login" element={<AdminLogin />} />
+          <Route path="/admin/*" element={<AdminApp />} />
+          {/* Fallback */}
+          <Route path="*" element={<NotFound />} />
         </RouterRoutes>
       </ErrorBoundary>
     </BrowserRouter>

@@ -2,11 +2,13 @@ import React, { useState } from "react";
 import Icon from "../../../components/AppIcon";
 import Button from "../../../components/ui/Button";
 import PlanInquiryModal from "./PlanInquiryModal";
+import { usePricingPlans } from "../../../hooks/useContent";
 
 const PricingFramework = () => {
-  const [selectedPlan, setSelectedPlan] = useState("professional");
+  const [selectedPlan, setSelectedPlan] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [planInfo, setPlanInfo] = useState(null);
+  const { data: cmsPricing } = usePricingPlans();
 
   const handleStart = (plan) => {
     setPlanInfo(plan);
@@ -18,65 +20,23 @@ const PricingFramework = () => {
     setPlanInfo(null);
   };
 
-  const pricingPlans = [
-    {
-      id: "starter",
-      name: "Pack Startup",
-      price: " 700 $",
-      period: "À partir de",
-      description:
-        "Parfait pour les petites entreprises et startups cherchant à établir leur présence numérique.",
-      features: [
-        "Site web ou application mobile de base",
-        "Jusqu'à 5 pages/écrans",
-        "Design responsive",
-        "Optimisation SEO de base",
-        "3 mois de support",
-      ],
-      popular: false,
-      color: "gray",
-    },
-    {
-      id: "professional",
-      name: "Suite Professionnelle",
-      price: "3 500 $",
-      period: "À partir de",
-      description:
-        "Solution complète pour les entreprises en croissance avec des fonctionnalités avancées et des intégrations.",
-      features: [
-        "Application web/mobile personnalisée",
-        "Fonctionnalités avancées",
-        "Intégration de base de données",
-        "Développement d'API",
-        "Mise en œuvre de la sécurité",
-        "6 mois de support",
-        "Formation incluse",
-        "Optimisation des performances",
-      ],
-      popular: true,
-      color: "primary",
-    },
-    {
-      id: "enterprise",
-      name: "Solution Entreprise",
-      price: "Sur devis",
-      period: "Sur mesure",
-      description:
-        "Solutions sur mesure pour les grandes organisations avec des exigences complexes et des besoins d'évolutivité.",
-      features: [
-        "Développement de système à grande échelle",
-        "Multiples intégrations",
-        "Fonctionnalités de sécurité avancées",
-        "Architecture évolutive",
-        "Chef de projet dédié",
-        "12 mois de support",
-        "Programme de formation du personnel",
-        "Maintenance continue",
-      ],
-      popular: false,
-      color: "accent",
-    },
-  ];
+  const pricingPlans = cmsPricing && cmsPricing.length > 0
+    ? cmsPricing.map((p) => ({
+        id: p.id,
+        name: p.name,
+        price: p.price,
+        period: p.price_note || "À partir de",
+        description: "",
+        features: Array.isArray(p.features) ? p.features : [],
+        popular: p.is_popular,
+        color: p.is_popular ? "primary" : "gray",
+        cta_text: p.cta_text,
+      }))
+    : [
+      { id: "starter", name: "Pack Startup", price: "700 $", period: "À partir de", description: "Pour les startups et PME.", features: ["Site web vitrine (5 pages)", "Design responsive", "SEO de base", "1 mois de support"], popular: false, color: "gray" },
+      { id: "professional", name: "Suite Professionnelle", price: "3 500 $", period: "À partir de", description: "Solution complète pour les entreprises en croissance.", features: ["Application web/mobile complète", "Base de données", "API REST", "Authentification", "3 mois de support"], popular: true, color: "primary" },
+      { id: "enterprise", name: "Solution Entreprise", price: "Sur devis", period: "Sur mesure", description: "Sur mesure pour les grandes organisations.", features: ["Architecture sur mesure", "Intégrations illimitées", "SLA 99.9%", "Support 24/7", "Chef de projet dédié"], popular: false, color: "accent" },
+    ];
 
   const additionalServices = [
     {

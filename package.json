@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@dhiwise/component-tagger": "^1.0.10",
+    "@dhiwise/component-tagger": "^1.0.1",
     "@emailjs/browser": "^4.4.1",
     "@radix-ui/react-slot": "^1.2.3",
     "@reduxjs/toolkit": "^2.6.1",

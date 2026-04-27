@@ -1,0 +1,25 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+
+# Environment variables (ne jamais committer les clés)
+.env
+.env.local
+.env.*.local
+
+# Supabase local (contient les clés locales)
+supabase/.temp/
+
+# Editor
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*

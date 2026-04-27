@@ -1,0 +1,35 @@
+import React from "react";
+import { Routes, Route } from "react-router-dom";
+import AdminGuard from "./components/AdminGuard";
+import AdminLayout from "./components/AdminLayout";
+import AdminDashboard from "./AdminDashboard";
+import HeroAdmin from "./sections/HeroAdmin";
+import ServicesAdmin from "./sections/ServicesAdmin";
+import PortfolioAdmin from "./sections/PortfolioAdmin";
+import TeamAdmin from "./sections/TeamAdmin";
+import PricingAdmin from "./sections/PricingAdmin";
+import TimelineAdmin from "./sections/TimelineAdmin";
+import MetricsAdmin from "./sections/MetricsAdmin";
+import TestimonialsAdmin from "./sections/TestimonialsAdmin";
+import SettingsAdmin from "./sections/SettingsAdmin";
+
+export default function AdminApp() {
+  return (
+    <AdminGuard>
+      <AdminLayout>
+        <Routes>
+          <Route index element={<AdminDashboard />} />
+          <Route path="hero" element={<HeroAdmin />} />
+          <Route path="services" element={<ServicesAdmin />} />
+          <Route path="portfolio" element={<PortfolioAdmin />} />
+          <Route path="team" element={<TeamAdmin />} />
+          <Route path="pricing" element={<PricingAdmin />} />
+          <Route path="timeline" element={<TimelineAdmin />} />
+          <Route path="metrics" element={<MetricsAdmin />} />
+          <Route path="testimonials" element={<TestimonialsAdmin />} />
+          <Route path="settings" element={<SettingsAdmin />} />
+        </Routes>
+      </AdminLayout>
+    </AdminGuard>
+  );
+}

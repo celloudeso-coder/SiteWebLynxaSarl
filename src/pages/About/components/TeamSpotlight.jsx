@@ -2,89 +2,18 @@ import React from "react";
 import Image from "../../../components/AppImage";
 import Icon from "../../../components/AppIcon";
 import { Link } from "react-router-dom";
+import { useTeamMembers } from "../../../hooks/useContent";
 
+const STATIC_TEAM = [
+  { id: 1, name: "Elhadj Sadou Barry", role: "Responsable du Développement Mobile", image: "/CellouK.png", expertise: ["Full-Stack", "Flutter", "Digital Forensics"], description: "Développeur mobile spécialisé en solutions multiplateformes.", achievements: ["Développeur Web Full-Stack", "Développeur Flutter", "Contributeur Open Source"], social_links: { linkedin: "#", github: "https://github.com/D4wn-Light" } },
+  { id: 2, name: "Mamadou Cellou Kanté", role: "CEO & Co-Fondateur", image: "/Cellou.png", expertise: ["Vision Produit", "Business Dev", "Stratégie Tech"], description: "Pilote la stratégie technique de Lynxa Tech.", achievements: ["Administrateur réseaux et systèmes", "Certifié Analyste Cybersécurité"], social_links: { linkedin: "#", github: "#" } },
+  { id: 3, name: "Aissatou Lamarana Diallo", role: "Responsable Solutions Digitales", image: "/lamarana.png", expertise: ["React", "Node.js", "Cloud"], description: "Pilote la stratégie digitale de Lynxa Tech.", achievements: ["Architecte Solutions AWS", "Expert React", "Contributrice Open Source"], social_links: { linkedin: "#" } },
+  { id: 4, name: "Bandiougou Keita", role: "Responsable Services Réseaux", image: "/keita.jpg", expertise: ["Cisco", "Cybersécurité", "VMware"], description: "Supervise les infrastructures réseau clients.", achievements: ["Administrateur réseaux", "Certifié CCNP"], social_links: { linkedin: "#" } },
+];
 
 const TeamSpotlight = () => {
-  const teamMembers = [
-    {
-      id: 1,
-      name: "Elhadj Sadou Barry",
-      role: "Responsable du Développement Mobilee",
-      image:
-        "https://images.unsplash.com/photo-1494790108755-2616b612b786?w=400&h=400&fit=crop&crop=face",
-      expertise: ["Full-Stack", "Flutter Developer", "Future Digital Forensics Specialist"],
-      description:
-        "Elhadj Sadou Barry est développeur mobile spécialisé en solutions multiplateformes (Flutter). Il supervise le développement et l’optimisation des applications multiplateformes, en mettant l’accent sur la performance, l’ergonomie et l’expérience utilisateur.",
-      achievements: [
-        "Développeur Web Full-Stack",
-        "Développeur Flutter",
-        "Contributeur Open Source"
-      ],
-      social: {
-        linkedin: "#  ",
-        github: "https://github.com/D4wn-Light",
-      },
-    },
-    {
-      id: 2,
-      name: "Mamadou Cellou Kanté",
-      role: "CEO",
-      image:
-        "/CellouK.png",
-      expertise: ["Tests de pénétration", "Audits de sécurité", "Conformité"],
-      description:
-        "Cellou CEO, Son rôle consiste à piloter la stratégie technique de Lynxa Tech, en veillant à l’innovation, à la performance et à la sécurité de nos solutions. Il supervise la conception, le déploiement et l’optimisation des services afin de garantir un haut niveau d’excellence opérationnelle et de satisfaction client.",
-      achievements: [
-        "Administrateur réseaux et systèmes",
-        "Certifié Analyste Cybersecurité",
-        {/* "Auditeur Principal ISO 27001", */ }
-      ],
-      social: {
-        linkedin: "#",
-        github: "#",
-      },
-    },
-    {
-      id: 3,
-      name: "Aissatou lamarana Diallo",
-      role: "Responsable du Développement des Solutions Digitales",
-      image:
-        "/lamarana.png",
-      expertise: ["React", "Node.js", "Architecture Cloud"],
-     
-      description:
-        "Aissatou Lamarana Directrice des Services Digitaux, pilote la stratégie digitale de Lynxa Tech. Elle met son expertise au service de solutions innovantes et adaptées aux besoins opérationnels des entreprises, afin d’optimiser leur productivité et leur agilité numérique.",
-      achievements: [
-        "Architecte Solutions AWS",
-        "Expert React",
-        "Contributrice Open Source",
-      ],
-      social: {
-        linkedin: "#",
-        github: "#",
-      },
-    },
-    {
-      id: 4,
-      name: "Bandiougou Keita",
-      role: "Responsable des Services Réseaux Informatiques",
-      image:
-        "/keita.jpg",
-      expertise: [
-        "Méthodologie Agile",
-        "Leadership d'Équipe",
-      ],
-      description:
-        "Bandiougou supervise la stratégie et planifie la gestion des infrastructures informatiques de nos clients. Il veille à la performance, à la disponibilité et à la sécurité des réseaux, tout en encadrant les équipes techniques et en garantissant l’efficacité opérationnelle du système d’information.",
-      achievements: ["Administrateur réseaux",],
-      social: {
-        linkedin: "#",
-
-      },
-    },
-  ];
-  
-  {/*  experience: "1+ ans", */}
+  const { data: cmsTeam } = useTeamMembers();
+  const teamMembers = cmsTeam && cmsTeam.length > 0 ? cmsTeam : STATIC_TEAM;
 
   return (
     <section className="py-16 bg-white">
@@ -174,19 +103,16 @@ const TeamSpotlight = () => {
 
               {/* Social Links */}
               <div className="flex justify-center space-x-4">
-                <button className="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center hover:bg-primary hover:text-white transition-colors duration-200">
-                  <Icon name="Linkedin" size={16} />
-                </button>
-
-                {member?.id !== 4 && (
-                  <button className="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center hover:bg-primary hover:text-white transition-colors duration-200">
-                    <Icon name="Github" size={16} />
-                  </button>
+                {(member?.social_links?.linkedin || member?.social?.linkedin) && (
+                  <a href={member?.social_links?.linkedin || member?.social?.linkedin} target="_blank" rel="noopener noreferrer" className="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center hover:bg-primary hover:text-white transition-colors duration-200">
+                    <Icon name="Linkedin" size={16} />
+                  </a>
                 )}
-
-                {/*<button className="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center hover:bg-primary hover:text-white transition-colors duration-200">
-                  <Icon name="Twitter" size={16} />
-                </button> */}
+                {(member?.social_links?.github || member?.social?.github) && (
+                  <a href={member?.social_links?.github || member?.social?.github} target="_blank" rel="noopener noreferrer" className="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center hover:bg-primary hover:text-white transition-colors duration-200">
+                    <Icon name="Github" size={16} />
+                  </a>
+                )}
               </div>
             </div>
           ))}
