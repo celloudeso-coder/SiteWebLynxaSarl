@@ -3,7 +3,7 @@ import { getAllHeroSections, saveHeroSection } from "../../../lib/cms";
 import { FormField, TextInput, TextArea } from "../components/FormField";
 import SaveButton from "../components/SaveButton";
 
-const PAGES = ["home", "about", "services", "portfolio", "partnership", "contact"];
+const PAGES = ["home", "about", "services", "portfolio", "partnership", "contact", "join-us"];
 
 export default function HeroAdmin() {
   const [sections, setSections] = useState({});

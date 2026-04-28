@@ -11,6 +11,8 @@ import PricingAdmin from "./sections/PricingAdmin";
 import TimelineAdmin from "./sections/TimelineAdmin";
 import MetricsAdmin from "./sections/MetricsAdmin";
 import TestimonialsAdmin from "./sections/TestimonialsAdmin";
+import PartnershipAdmin from "./sections/PartnershipAdmin";
+import JoinUsAdmin from "./sections/JoinUsAdmin";
 import NewsletterAdmin from "./sections/NewsletterAdmin";
 import SettingsAdmin from "./sections/SettingsAdmin";
 
@@ -28,6 +30,8 @@ export default function AdminApp() {
           <Route path="timeline" element={<TimelineAdmin />} />
           <Route path="metrics" element={<MetricsAdmin />} />
           <Route path="testimonials" element={<TestimonialsAdmin />} />
+          <Route path="partnership" element={<PartnershipAdmin />} />
+          <Route path="join-us" element={<JoinUsAdmin />} />
           <Route path="newsletter" element={<NewsletterAdmin />} />
           <Route path="settings" element={<SettingsAdmin />} />
         </Routes>

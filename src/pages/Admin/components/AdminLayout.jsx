@@ -4,21 +4,23 @@ import { supabase } from "../../../lib/supabase";
 import {
   LayoutDashboard, Globe, Briefcase, FolderOpen,
   Users, DollarSign, Clock, BarChart2, MessageSquare,
-  Settings, LogOut, Menu, X, ChevronRight, Mail
+  Settings, LogOut, Menu, X, ChevronRight, Mail, Handshake, UserPlus
 } from "lucide-react";
 
 const navItems = [
-  { to: "/admin", label: "Dashboard", icon: LayoutDashboard, end: true },
-  { to: "/admin/hero", label: "Hero Sections", icon: Globe },
-  { to: "/admin/services", label: "Services", icon: Briefcase },
-  { to: "/admin/portfolio", label: "Portfolio", icon: FolderOpen },
-  { to: "/admin/team", label: "Équipe", icon: Users },
-  { to: "/admin/pricing", label: "Tarifs", icon: DollarSign },
-  { to: "/admin/timeline", label: "Timeline", icon: Clock },
-  { to: "/admin/metrics", label: "Métriques", icon: BarChart2 },
-  { to: "/admin/testimonials", label: "Témoignages", icon: MessageSquare },
-  { to: "/admin/newsletter", label: "Newsletter", icon: Mail },
-  { to: "/admin/settings", label: "Paramètres", icon: Settings },
+  { to: "/admin",              label: "Dashboard",    icon: LayoutDashboard, end: true },
+  { to: "/admin/hero",         label: "Hero Sections", icon: Globe         },
+  { to: "/admin/services",     label: "Services",      icon: Briefcase     },
+  { to: "/admin/portfolio",    label: "Portfolio",     icon: FolderOpen    },
+  { to: "/admin/team",         label: "Équipe",        icon: Users         },
+  { to: "/admin/pricing",      label: "Tarifs",        icon: DollarSign    },
+  { to: "/admin/timeline",     label: "Timeline",      icon: Clock         },
+  { to: "/admin/metrics",      label: "Métriques",     icon: BarChart2     },
+  { to: "/admin/testimonials", label: "Témoignages",   icon: MessageSquare },
+  { to: "/admin/partnership",  label: "Partenariat",   icon: Handshake     },
+  { to: "/admin/join-us",      label: "Rejoindre",     icon: UserPlus      },
+  { to: "/admin/newsletter",   label: "Newsletter",    icon: Mail          },
+  { to: "/admin/settings",     label: "Paramètres",    icon: Settings      },
 ];
 
 export default function AdminLayout({ children }) {

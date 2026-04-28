@@ -1,131 +1,120 @@
 import React from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import Icon from "../../../components/AppIcon";
-import Button from "../../../components/ui/Button";
+
+const SERVICES = [
+  "Tous",
+  "Mobile Development",
+  "Network Infrastructure",
+  "Web Development",
+  "Cybersecurity",
+];
+
+const INDUSTRIES = [
+  "Tous",
+  "Financial Services",
+  "Healthcare",
+  "Government",
+  "NGO",
+  "Education",
+  "Retail",
+];
 
 const FilterBar = ({
   activeService,
   setActiveService,
   activeIndustry,
   setActiveIndustry,
-  activeScale,
-  setActiveScale,
   searchTerm,
   setSearchTerm,
   onClearFilters,
 }) => {
-  const services = [
-    "Tous",
-    "Développement Mobile",
-    "Infrastructure Réseau",
-    "Développement Web",
-    "Cybersécurité",
-  ];
-  const industries = [
-    "Tous",
-    "Services Financiers",
-    "Santé",
-    "Gouvernement",
-    "ONG",
-    "Éducation",
-    "Commerce de Détail",
-  ];
-  const scales = ["Tous", "Entreprise", "Moyenne", "Petite"];
-
-  const hasActiveFilters =
-    activeService !== "Tous" ||
-    activeIndustry !== "Tous" ||
-    activeScale !== "Tous" ||
-    searchTerm;
+  const hasActive =
+    activeService !== "Tous" || activeIndustry !== "Tous" || searchTerm;
 
   return (
-    <div className="bg-white rounded-xl shadow-soft p-6 mb-8">
-      <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
-        <div className="flex-1">
-          <div className="relative">
-            <Icon
-              name="Search"
-              size={20}
-              className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground"
-            />
-            <input
-              type="text"
-              placeholder="Search projects..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e?.target?.value)}
-              className="w-full pl-10 pr-4 py-3 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors duration-200"
-            />
-          </div>
-        </div>
-
-        <div className="flex flex-col sm:flex-row gap-4">
-          {/* Filtre de Service */}
-          <div className="min-w-48">
-            <label className="block text-sm font-medium text-secondary mb-2">
-              Type de Service
-            </label>
-            <select
-              value={activeService}
-              onChange={(e) => setActiveService(e?.target?.value)}
-              className="w-full px-3 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors duration-200"
-            >
-              {services?.map((service) => (
-                <option key={service} value={service}>
-                  {service}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          {/* Filtre d'Industrie */}
-          <div className="min-w-40">
-            <label className="block text-sm font-medium text-secondary mb-2">
-              Industrie
-            </label>
-            <select
-              value={activeIndustry}
-              onChange={(e) => setActiveIndustry(e?.target?.value)}
-              className="w-full px-3 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors duration-200"
-            >
-              {industries?.map((industry) => (
-                <option key={industry} value={industry}>
-                  {industry}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          {/* Filtre d'Échelle */}
-          <div className="min-w-32">
-            <label className="block text-sm font-medium text-secondary mb-2">
-              Échelle
-            </label>
-            <select
-              value={activeScale}
-              onChange={(e) => setActiveScale(e?.target?.value)}
-              className="w-full px-3 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors duration-200"
-            >
-              {scales?.map((scale) => (
-                <option key={scale} value={scale}>
-                  {scale}
-                </option>
-              ))}
-            </select>
-          </div>
-        </div>
-
-        {hasActiveFilters && (
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={onClearFilters}
-            iconName="X"
-            iconPosition="left"
-            className="shrink-0"
-          >
-            Réinitialiser les Filtres
-          </Button>
-        )}
+    <div className="mb-10 space-y-5">
+      {/* Search */}
+      <div className="relative max-w-lg">
+        <Icon
+          name="Search"
+          size={18}
+          className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground"
+        />
+        <input
+          type="text"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          placeholder="Rechercher un projet…"
+          className="w-full pl-10 pr-4 py-3 border border-border rounded-xl bg-white focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary text-sm transition-all"
+        />
       </div>
+
+      {/* Service tabs */}
+      <div>
+        <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">
+          Service
+        </p>
+        <div className="flex flex-wrap gap-2">
+          {SERVICES.map((s) => (
+            <motion.button
+              key={s}
+              onClick={() => setActiveService(s)}
+              whileHover={{ scale: 1.03 }}
+              whileTap={{ scale: 0.97 }}
+              className={`px-4 py-2 rounded-full text-sm font-medium transition-colors duration-200 border
+                ${
+                  activeService === s
+                    ? "bg-primary text-white border-primary"
+                    : "bg-white text-secondary border-border hover:border-primary/50"
+                }`}
+            >
+              {s}
+            </motion.button>
+          ))}
+        </div>
+      </div>
+
+      {/* Industry tabs */}
+      <div>
+        <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">
+          Industrie
+        </p>
+        <div className="flex flex-wrap gap-2">
+          {INDUSTRIES.map((ind) => (
+            <motion.button
+              key={ind}
+              onClick={() => setActiveIndustry(ind)}
+              whileHover={{ scale: 1.03 }}
+              whileTap={{ scale: 0.97 }}
+              className={`px-4 py-2 rounded-full text-sm font-medium transition-colors duration-200 border
+                ${
+                  activeIndustry === ind
+                    ? "bg-secondary text-white border-secondary"
+                    : "bg-white text-secondary border-border hover:border-secondary/50"
+                }`}
+            >
+              {ind}
+            </motion.button>
+          ))}
+        </div>
+      </div>
+
+      {/* Clear filters */}
+      <AnimatePresence>
+        {hasActive && (
+          <motion.button
+            initial={{ opacity: 0, y: -4 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -4 }}
+            onClick={onClearFilters}
+            className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-secondary transition-colors"
+          >
+            <Icon name="X" size={14} />
+            Réinitialiser les filtres
+          </motion.button>
+        )}
+      </AnimatePresence>
     </div>
   );
 };

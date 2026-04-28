@@ -1,1 +1,1 @@
-ALTER TABLE testimonials ADD COLUMN IF NOT EXISTS result text;
+ALTER TABLE portfolio_projects ADD COLUMN IF NOT EXISTS project_url text;

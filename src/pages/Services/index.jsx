@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { Helmet } from "react-helmet";
+import { motion, AnimatePresence } from "framer-motion";
+import { Link } from "react-router-dom";
 import Header from "../../components/ui/Header";
 import ServiceHero from "./components/ServiceHero";
 import ServiceCard from "./components/ServiceCard";
@@ -8,368 +9,266 @@ import ProcessTimeline from "./components/ProcessTimeline";
 import TechnologyStack from "./components/TechnologyStack";
 import PricingFramework from "./components/PricingFramework";
 import Icon from "../../components/AppIcon";
-import Button from "../../components/ui/Button";
-
-import { Link } from "react-router-dom";
 import { useServices } from "../../hooks/useContent";
-
 import logoIco from "../../../public/LYNXA.ico";
 
-const STATIC_SERVICES = [
-  {
-    id: "mobile-development",
-    title: "Mobile Development",
-    subtitle: "Native & Cross-Platform Solutions",
-    icon: "Smartphone",
-    description:
-      "Create powerful mobile applications that engage users and drive business growth. From fintech solutions to agricultural platforms, we build apps that make a difference in Guinea and beyond.",
-    highlights: [
-      "iOS & Android native development",
-      "Cross-platform solutions with React Native",
-      "Progressive Web Apps (PWA)",
-      "App Store optimization and deployment",
-    ],
-    projectCount: 45,
-    technologies: ["React Native", "Flutter", "Swift", "Kotlin", "Ionic", "Firebase"],
-    metrics: [
-      { label: "Average App Rating", value: "4.8/5" },
-      { label: "Download Success Rate", value: "98%" },
-      { label: "User Retention", value: "85%" },
-      { label: "Performance Score", value: "95/100" },
-    ],
-    projects: [
-      { name: "GuineaPay Mobile", description: "Digital payment solution for local businesses with 50K+ active users", industry: "Fintech" },
-      { name: "AgriConnect", description: "Agricultural marketplace connecting farmers with buyers across West Africa", industry: "Agriculture" },
-      { name: "EduGuinea", description: "Educational platform providing remote learning for 10K+ students", industry: "Education" },
-    ],
-  },
-  {
-    id: "network-infrastructure",
-    title: "Network Infrastructure",
-    subtitle: "Robust & Scalable Network Solutions",
-    icon: "Wifi",
-    description:
-      "Design and implement secure, scalable network infrastructure tailored for West African connectivity challenges. From small offices to enterprise-level deployments.",
-    highlights: [
-      "Network design and implementation",
-      "Security infrastructure setup",
-      "Performance optimization",
-      "Ongoing monitoring and maintenance",
-    ],
-    projectCount: 32,
-    technologies: ["Cisco", "Ubiquiti", "pfSense", "VMware", "Linux"],
-    metrics: [
-      { label: "Network Uptime", value: "99.8%" },
-      { label: "Security Incidents", value: "0" },
-      { label: "Performance Improvement", value: "300%" },
-      { label: "Client Satisfaction", value: "100%" },
-    ],
-    projects: [
-      { name: "Ministry of Health Network", description: "Nationwide network infrastructure connecting 50+ health facilities", industry: "Healthcare" },
-      { name: "Banking Sector Security", description: "Advanced cybersecurity implementation for major financial institution", industry: "Banking" },
-      { name: "Educational Network", description: "Campus-wide network for University of Conakry with 5000+ users", industry: "Education" },
-    ],
-  },
-  {
-    id: "web-development",
-    title: "Web Development",
-    subtitle: "Modern & Responsive Web Solutions",
-    icon: "Globe",
-    description:
-      "Build stunning, high-performance websites and web applications that deliver exceptional user experiences and drive business results for organizations across Guinea.",
-    highlights: [
-      "Responsive web design",
-      "E-commerce platforms",
-      "Content management systems",
-      "SEO optimization and analytics",
-    ],
-    projectCount: 78,
-    technologies: ["React", "Vue.js", "Node.js", "PHP", "WordPress", "Shopify"],
-    metrics: [
-      { label: "Page Load Speed", value: "< 2s" },
-      { label: "SEO Score", value: "95/100" },
-      { label: "Conversion Rate", value: "+250%" },
-      { label: "Mobile Optimization", value: "100%" },
-    ],
-    projects: [
-      { name: "Guinea Tourism Portal", description: "Official tourism website showcasing Guinea's attractions with booking system", industry: "Tourism" },
-      { name: "NGO Impact Platform", description: "Comprehensive platform for tracking and reporting development projects", industry: "Non-Profit" },
-      { name: "E-Commerce Marketplace", description: "Multi-vendor platform connecting local artisans with global customers", industry: "E-Commerce" },
-    ],
-  },
-];
+// ── Skeleton while CMS loads ─────────────────────────────────────────────────
+const SkeletonTab = () => (
+  <div className="h-12 w-40 bg-gray-200 rounded-2xl animate-pulse" />
+);
+
+const SkeletonDetail = () => (
+  <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden animate-pulse">
+    <div className="h-40 bg-gray-200" />
+    <div className="p-8 space-y-4">
+      <div className="h-4 bg-gray-100 rounded-full w-3/4" />
+      <div className="h-4 bg-gray-100 rounded-full w-1/2" />
+      <div className="grid grid-cols-2 gap-3 mt-6">
+        {[...Array(4)].map((_, i) => <div key={i} className="h-20 bg-gray-100 rounded-xl" />)}
+      </div>
+    </div>
+  </div>
+);
+
+// ── Normalize CMS row ─────────────────────────────────────────────────────────
+function normalize(s) {
+  return {
+    id:           s.id,
+    title:        s.title,
+    subtitle:     s.subtitle,
+    icon:         s.icon,
+    description:  s.description,
+    highlights:   Array.isArray(s.highlights)   ? s.highlights   : [],
+    technologies: Array.isArray(s.technologies) ? s.technologies : [],
+    metrics:      Array.isArray(s.metrics)      ? s.metrics.filter((m) => m?.label || m?.value) : [],
+    projects:     Array.isArray(s.projects)     ? s.projects     : [],
+    projectCount: s.project_count ?? 0,
+  };
+}
 
 const ServicesPage = () => {
-  const [activeService, setActiveService] = useState(0);
-  const [isVisible, setIsVisible] = useState({});
-  const { data: cmsServices } = useServices();
+  const [activeIndex, setActiveIndex] = useState(0);
+  const { data: cmsServices, loading } = useServices();
 
-  const services =
-    cmsServices && cmsServices.length > 0
-      ? cmsServices.map((s) => ({
-          id: s.slug || s.id,
-          title: s.title,
-          subtitle: s.subtitle,
-          icon: s.icon,
-          description: s.description,
-          highlights: Array.isArray(s.highlights) ? s.highlights : [],
-          projectCount: s.project_count ?? 0,
-          technologies: Array.isArray(s.technologies) ? s.technologies : [],
-          metrics: Array.isArray(s.metrics) ? s.metrics : [],
-          projects: Array.isArray(s.projects) ? s.projects : [],
-        }))
-      : STATIC_SERVICES;
+  const services = Array.isArray(cmsServices) ? cmsServices.map(normalize) : [];
 
   useEffect(() => {
-    const observerOptions = {
-      threshold: 0.1,
-      rootMargin: "0px 0px -50px 0px",
-    };
-
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          setIsVisible((prev) => ({
-            ...prev,
-            [entry.target.id]: true,
-          }));
-        }
-      });
-    }, observerOptions);
-
-    const elements = document.querySelectorAll("[data-reveal]");
-    elements?.forEach((el) => observer?.observe(el));
-
-    return () => observer?.disconnect();
+    document.title = "Services | Lynxa Tech Guinea";
   }, []);
 
-  const handleServiceActivate = (index) => {
-    setActiveService(index);
-  };
-
   return (
-    <>
-      <Helmet>
-        <title>Services - Solution Universe | Lynxa Tech Guinea</title>
-        <meta
-          name="description"
-          content="Explore Lynxa Tech's comprehensive technology solutions: Mobile Development, Network Infrastructure, Web Development, and Cybersecurity services for African businesses with global ambitions."
-        />
-        <meta
-          name="keywords"
-          content="mobile development, network infrastructure, web development, cybersecurity, Guinea, West Africa, technology solutions"
-        />
-        <meta
-          property="og:title"
-          content="Services - Solution Universe | Lynxa Tech Guinea"
-        />
-        <meta
-          property="og:description"
-          content="Four distinct service galaxies offering cutting-edge technology solutions for businesses across Guinea and West Africa."
-        />
-        <meta property="og:type" content="website" />
-        <link rel="canonical" href="/service" />
-      </Helmet>
-      <div className="min-h-screen bg-white">
-        <Header />
+    <div className="min-h-screen bg-white">
+      <Header />
 
-        {/* Hero Section */}
-        <ServiceHero />
+      {/* ── Hero ── */}
+      <ServiceHero />
 
-        {/* Services Overview */}
-        <section className="py-16 bg-white">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div
-              id="services-overview"
-              data-reveal
-              className={`text-center mb-12 reveal-animation ${
-                isVisible?.["services-overview"] ? "revealed" : ""
-              }`}
+      {/* ── Services section ── */}
+      <section id="services" className="py-20 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <motion.div
+            className="text-center mb-12"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+          >
+            <h2 className="text-3xl md:text-4xl font-heading font-bold text-secondary mb-4">
+              Nos Domaines d'Expertise
+            </h2>
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+              Chaque service incarne un savoir-faire solide et une approche orientée résultats,
+              conçus pour transformer votre entreprise.
+            </p>
+          </motion.div>
+
+          {/* Loading */}
+          {loading && (
+            <>
+              <div className="flex flex-wrap gap-3 mb-8">
+                {[...Array(3)].map((_, i) => <SkeletonTab key={i} />)}
+              </div>
+              <SkeletonDetail />
+            </>
+          )}
+
+          {/* Empty state */}
+          {!loading && services.length === 0 && (
+            <motion.div
+              className="text-center py-20"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
             >
-              <h2 className="text-3xl md:text-4xl font-heading font-bold text-secondary mb-4">
-                Deux galaxies de services
-              </h2>
-              <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-                Chaque domaine de service incarne un savoir-faire solide et une
-                approche orientée résultats, conçus pour transformer votre
-                entreprise grâce à des solutions technologiques de pointe.
+              <div className="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6">
+                <Icon name="Layers" size={36} className="text-primary" />
+              </div>
+              <h3 className="text-2xl font-heading font-bold text-secondary mb-3">
+                Services en cours de configuration
+              </h3>
+              <p className="text-muted-foreground max-w-md mx-auto mb-8">
+                Les détails de nos services arrivent bientôt. Contactez-nous pour
+                discuter de vos besoins dès maintenant.
               </p>
-            </div>
-
-            {/* Service Cards Grid
-            <div className="grid lg:grid-cols-2 gap-8 mb-16">
-              {services?.map((service, index) => (
-                <div
-                  key={service?.id}
-                  data-reveal
-                  className={`reveal-animation 
-                    `}
-                  style={{ animationDelay: `${index * 200}ms` }}
+              <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                <Link
+                  to="/contact"
+                  className="inline-flex items-center gap-2 bg-primary hover:bg-primary/90 text-white font-semibold px-6 py-3 rounded-xl transition-all duration-200 glow-orange"
                 >
+                  <Icon name="MessageCircle" size={18} />
+                  Nous contacter
+                </Link>
+                <Link
+                  to="/admin/services"
+                  className="inline-flex items-center gap-2 border border-border text-secondary hover:border-primary hover:text-primary font-semibold px-6 py-3 rounded-xl transition-all duration-200 text-sm"
+                >
+                  <Icon name="Settings" size={16} />
+                  Gérer les services
+                </Link>
+              </div>
+            </motion.div>
+          )}
+
+          {/* Services loaded */}
+          {!loading && services.length > 0 && (
+            <>
+              {/* Tab selector */}
+              <div className="flex flex-wrap gap-3 mb-8">
+                {services.map((service, i) => (
                   <ServiceCard
+                    key={service.id}
                     service={service}
-                    isActive={activeService === index}
-                    onActivate={() => handleServiceActivate(index)}
+                    isActive={activeIndex === i}
+                    onActivate={() => setActiveIndex(i)}
+                    index={i}
                   />
-                </div>
-              ))}
-            </div> */}
-
-            {/* Active Service Details */}
-            <div
-              id="service-details"
-              data-reveal
-              className={`reveal-animation ${
-                isVisible?.["service-details"] ? "revealed" : ""
-              }`}
-            >
-              <ServiceDetails service={services?.[activeService]} />
-            </div>
-          </div>
-        </section>
-
-        {/* Process ServiceCard 
-        <ServiceCard /> */}
-
-        {/* Process Timeline */}
-        <ProcessTimeline />
-
-        {/* Technology Stack */}
-        <TechnologyStack />
-
-        {/* Pricing Framework */}
-        <PricingFramework />
-
-        {/* Call to Action */}
-        <section className="py-16 bg-gradient-to-br from-secondary to-primary text-white">
-          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <div
-              id="cta-section"
-              data-reveal
-              className={`reveal-animation ${
-                isVisible?.["cta-section"] ? "revealed" : ""
-              }`}
-            >
-              <h2 className="text-3xl md:text-4xl font-heading font-bold mb-6">
-                Prêt à transformer votre entreprise ?
-              </h2>
-              <p className="text-xl text-gray-300 mb-8 max-w-2xl mx-auto">
-                Discutons de la manière dont notre expertise peut vous aider à
-                atteindre vos objectifs technologiques et à stimuler la
-                croissance de votre entreprise en Guinée et au-delà.
-              </p>
-
-              <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-                <Link to="/contact">
-                  <Button
-                    variant="outline"
-                    size="lg"
-                    iconName="Calendar"
-                    iconPosition="left"
-                    className="border-white/30 text-white hover:bg-white/10"
-                  >
-                    Planifier une consultation
-                  </Button>
-                </Link>
-                <Link to="/contact">
-                  <Button
-                    variant="default"
-                    size="lg"
-                    iconName="MessageCircle"
-                    iconPosition="left"
-                    className="bg-white text-secondary hover:bg-gray-100 glow-orange"
-                  >
-                    Obtenir un devis de projet
-                  </Button>
-                </Link>
+                ))}
               </div>
 
-              <div className="mt-8 flex items-center justify-center space-x-8 text-sm text-gray-300">
-                <div className="flex items-center space-x-2">
-                  <Icon name="CheckCircle" size={16} color="#10B981" />
-                  <span>Consultation gratuite</span>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <Icon name="Clock" size={16} color="#FFA500" />
-                  <span>Délai de réponse de 24 heures</span>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <Icon name="Shield" size={16} color="#3B82F6" />
-                  <span>
-                    Protection NDA{" "}
-                    {/*non-divulgation (Non-Disclosure Agreement)*/}
-                  </span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
+              {/* Detail panel */}
+              <AnimatePresence mode="wait">
+                <ServiceDetails
+                  key={services[activeIndex]?.id}
+                  service={services[activeIndex]}
+                />
+              </AnimatePresence>
+            </>
+          )}
+        </div>
+      </section>
 
-        {/* Footer */}
-        <footer className="bg-secondary text-white py-12">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="grid md:grid-cols-4 gap-8">
-              <div className="md:col-span-2">
-                <div className="flex items-center space-x-3 mb-4">
-                  <div className="w-10 h-10 bg-black from-primary to-accent rounded-lg flex items-center justify-center">
+      {/* ── Process Timeline ── */}
+      <ProcessTimeline />
 
-                  <img
-                    src={logoIco}
-                    alt="Lynxa Tech logo"
-                    className="w-8 h-8 object-cover rounded-lg"
-                  />
+      {/* ── Technology Stack ── */}
+      <TechnologyStack />
 
-                  </div>
-                  <div>
-                    <h3 className="text-xl font-heading font-bold">
-                      Lynxa Tech
-                    </h3>
-                    <p className="text-sm text-gray-400">Guinea</p>
-                  </div>
-                </div>
-                <p className="text-gray-300 mb-4 max-w-md">
-                  Construire l’avenir de la technologie en Guinée avec des
-                  solutions innovantes, compétitives à l’échelle mondiale et au
-                  service des communautés locales.
-                </p>
-                <div className="flex space-x-4">
-                  <Icon name="Mail" size={20} color="#6B7280" />
-                  <Icon name="Phone" size={20} color="#6B7280" />
-                  <Icon name="MapPin" size={20} color="#6B7280" />
-                </div>
-              </div>
+      {/* ── Pricing ── */}
+      <PricingFramework />
 
-              <div>
-                <h4 className="font-semibold mb-4">Services</h4>
-                <ul className="space-y-2 text-sm text-gray-300">
-                  <li>Développement mobile</li>
-                  <li>Infrastructures réseaux</li>
-                  <li>Développement Web</li>
-                  <li>Cybersécurité</li>
-                </ul>
-              </div>
+      {/* ── CTA ── */}
+      <section className="py-20 bg-gradient-to-br from-secondary to-primary/80 text-white">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <motion.div
+            initial={{ opacity: 0, y: 24 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+          >
+            <h2 className="text-3xl md:text-4xl font-heading font-bold mb-6">
+              Prêt à transformer votre entreprise ?
+            </h2>
+            <p className="text-xl text-white/80 mb-8 max-w-2xl mx-auto">
+              Discutons de la manière dont notre expertise peut vous aider à atteindre
+              vos objectifs technologiques en Guinée et au-delà.
+            </p>
 
-              <div>
-                <h4 className="font-semibold mb-4">Lynxa</h4>
-                <ul className="space-y-2 text-sm text-gray-300">
-                  <li>À propos de nous</li>
-                  <li>Portfolio</li>
-                  <li>Partenariats</li>
-                  <li>Contact</li>
-                </ul>
-              </div>
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-10">
+              <Link to="/contact">
+                <motion.span
+                  whileHover={{ scale: 1.03 }}
+                  className="inline-flex items-center gap-2 bg-white text-secondary hover:bg-white/90 font-semibold px-7 py-3 rounded-xl transition-all duration-200 glow-orange"
+                >
+                  <Icon name="MessageCircle" size={18} />
+                  Obtenir un devis
+                </motion.span>
+              </Link>
+              <Link to="/contact">
+                <motion.span
+                  whileHover={{ scale: 1.03 }}
+                  className="inline-flex items-center gap-2 border border-white/30 text-white hover:bg-white/10 font-semibold px-7 py-3 rounded-xl transition-all duration-200"
+                >
+                  <Icon name="Calendar" size={18} />
+                  Planifier une consultation
+                </motion.span>
+              </Link>
             </div>
 
-            <div className="border-t border-gray-700 mt-8 pt-8 text-center text-sm text-gray-400">
-              <p>
-                &copy; {new Date()?.getFullYear()} Lynxa Tech Guinea. All rights
-                reserved.
+            <div className="flex flex-wrap items-center justify-center gap-8 text-sm text-white/60">
+              <div className="flex items-center gap-2">
+                <Icon name="CheckCircle" size={16} color="#10B981" />
+                <span>Consultation gratuite</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Icon name="Clock" size={16} color="#FFA500" />
+                <span>Réponse sous 24h</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Icon name="Shield" size={16} color="#3B82F6" />
+                <span>Protection NDA</span>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* ── Footer ── */}
+      <footer className="bg-secondary text-white py-12">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid md:grid-cols-4 gap-8">
+            <div className="md:col-span-2">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-10 h-10 bg-black rounded-lg flex items-center justify-center overflow-hidden">
+                  <img src={logoIco} alt="Lynxa Tech" className="w-8 h-8 object-cover rounded-lg" />
+                </div>
+                <div>
+                  <h3 className="text-xl font-heading font-bold">Lynxa Tech</h3>
+                  <p className="text-sm text-gray-400">Guinea</p>
+                </div>
+              </div>
+              <p className="text-gray-300 mb-4 max-w-md text-sm leading-relaxed">
+                Construire l'avenir de la technologie en Guinée avec des solutions innovantes,
+                compétitives à l'échelle mondiale et au service des communautés locales.
               </p>
             </div>
+
+            <div>
+              <h4 className="font-semibold mb-4">Services</h4>
+              <ul className="space-y-2 text-sm text-gray-300">
+                <li>Développement Mobile</li>
+                <li>Infrastructures Réseau</li>
+                <li>Développement Web</li>
+                <li>Cybersécurité</li>
+              </ul>
+            </div>
+
+            <div>
+              <h4 className="font-semibold mb-4">Lynxa</h4>
+              <ul className="space-y-2 text-sm text-gray-300">
+                <li><Link to="/about" className="hover:text-primary transition-colors">À propos</Link></li>
+                <li><Link to="/portfolio" className="hover:text-primary transition-colors">Portfolio</Link></li>
+                <li><Link to="/partnership" className="hover:text-primary transition-colors">Partenariats</Link></li>
+                <li><Link to="/contact" className="hover:text-primary transition-colors">Contact</Link></li>
+              </ul>
+            </div>
           </div>
-        </footer>
-      </div>
-    </>
+
+          <div className="border-t border-gray-700 mt-8 pt-8 text-center text-sm text-gray-400">
+            <p>&copy; {new Date().getFullYear()} Lynxa Tech Guinea. Tous droits réservés.</p>
+          </div>
+        </div>
+      </footer>
+    </div>
   );
 };
 

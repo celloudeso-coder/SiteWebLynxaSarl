@@ -111,6 +111,7 @@ CREATE TABLE IF NOT EXISTS portfolio_projects (
   testimonial jsonb,
   duration text,
   image_url text,
+  project_url text,
   updated_at timestamptz DEFAULT now()
 );
 
@@ -279,7 +280,71 @@ CREATE POLICY "Écriture admin" ON metrics FOR ALL USING (auth.role() = 'authent
 CREATE POLICY "Écriture admin" ON testimonials FOR ALL USING (auth.role() = 'authenticated');
 
 -- -------------------------------------------------------
--- 11. PARTNERSHIP PATHWAYS (voies de collaboration)
+-- 11. JOB OPENINGS (postes ouverts)
+-- -------------------------------------------------------
+CREATE TABLE IF NOT EXISTS job_openings (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  sort_order integer DEFAULT 0,
+  active boolean DEFAULT true,
+  title text NOT NULL,
+  department text,
+  type text DEFAULT 'Temps plein',
+  location text DEFAULT 'Conakry, Guinée',
+  description text,
+  requirements jsonb DEFAULT '[]',
+  is_urgent boolean DEFAULT false,
+  updated_at timestamptz DEFAULT now()
+);
+
+INSERT INTO job_openings (sort_order, title, department, type, location, description, requirements, is_urgent) VALUES
+  (1, 'Développeur Mobile React Native', 'Développement', 'Temps plein', 'Conakry, Guinée',
+   'Rejoignez notre équipe mobile pour concevoir des applications innovantes pour le marché africain.',
+   '["2+ ans d''expérience React Native", "Connaissance iOS & Android", "API REST & Firebase", "Portfolio de projets"]',
+   true),
+  (2, 'Ingénieur Réseau & Sécurité', 'Infrastructure', 'Temps plein', 'Conakry, Guinée',
+   'Déployez et sécurisez des infrastructures réseau critiques pour nos clients entreprises.',
+   '["Certification CCNA/CCNP appréciée", "Expérience cybersécurité", "pfSense, Cisco, Ubiquiti", "Rigueur et autonomie"]',
+   false),
+  (3, 'Stage Développement Web Frontend', 'Développement', 'Stage', 'Conakry, Guinée',
+   'Intégrez une équipe dynamique et participez à des projets web concrets avec React et Tailwind.',
+   '["Bases HTML/CSS/JavaScript", "Notions de React", "Curiosité & apprentissage rapide", "Disponibilité 3-6 mois"]',
+   false)
+ON CONFLICT DO NOTHING;
+
+ALTER TABLE job_openings ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Lecture publique postes" ON job_openings FOR SELECT USING (active = true);
+CREATE POLICY "Écriture admin postes" ON job_openings FOR ALL USING (auth.role() = 'authenticated');
+
+-- -------------------------------------------------------
+-- 11b. JOB APPLICATIONS (candidatures reçues)
+-- -------------------------------------------------------
+CREATE TABLE IF NOT EXISTS job_applications (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  name text NOT NULL,
+  email text NOT NULL,
+  phone text,
+  address text,
+  gender text,
+  age text,
+  education text,
+  position text,
+  experience text,
+  contract_type text,
+  availability text,
+  cv_url text,
+  letter_url text,
+  motivation text,
+  status text DEFAULT 'pending',
+  admin_notes text,
+  submitted_at timestamptz DEFAULT now()
+);
+
+ALTER TABLE job_applications ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Soumission publique candidature" ON job_applications FOR INSERT WITH CHECK (true);
+CREATE POLICY "Gestion admin candidatures" ON job_applications FOR ALL USING (auth.role() = 'authenticated');
+
+-- -------------------------------------------------------
+-- 12. PARTNERSHIP PATHWAYS (voies de collaboration)
 -- -------------------------------------------------------
 CREATE TABLE IF NOT EXISTS partnership_pathways (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),

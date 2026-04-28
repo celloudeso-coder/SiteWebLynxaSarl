@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
-import emailjs from "@emailjs/browser";
 import Icon from "../../../components/AppIcon";
 import { useSiteSettings } from "../../../hooks/useContent";
 import { subscribeNewsletter } from "../../../lib/cms";
@@ -44,20 +43,11 @@ const SocialConnect = () => {
     if (!email) return;
     setLoading(true);
     try {
-      // Save to Supabase CMS
       await subscribeNewsletter(email);
-      // Also send confirmation email via EmailJS (best-effort)
-      emailjs
-        .send(
-          "service_nru6i81",
-          "template_rn0vj99",
-          { user_email: email },
-          "RE-vtDTXpbEbLN8jl"
-        )
-        .catch(() => {});
       setSubStatus("success");
       setEmail("");
-    } catch {
+    } catch (err) {
+      console.error("Newsletter erreur :", err);
       setSubStatus("error");
     } finally {
       setLoading(false);

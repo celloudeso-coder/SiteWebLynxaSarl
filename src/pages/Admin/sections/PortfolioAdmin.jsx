@@ -4,18 +4,80 @@ import { FormField, TextInput, TextArea, Toggle, JsonArrayEditor } from "../comp
 import SaveButton from "../components/SaveButton";
 import { Plus, Trash2, ChevronDown, ChevronUp } from "lucide-react";
 
+const IMPACT_OPTIONS = ["High", "Medium", "Low"];
+const SCALE_OPTIONS  = ["Enterprise", "Medium", "Small", "National", "International"];
+const SERVICE_OPTIONS = [
+  "Mobile Development", "Network Infrastructure", "Web Development",
+  "Cybersecurity", "Cloud & DevOps", "Data & Analytics",
+];
+
+function MetricsEditor({ value = [], onChange }) {
+  const items = Array.isArray(value) ? value : [];
+
+  function add() {
+    onChange([...items, { label: "", value: "" }]);
+  }
+
+  function update(i, field, val) {
+    const next = [...items];
+    next[i] = { ...next[i], [field]: val };
+    onChange(next);
+  }
+
+  function remove(i) {
+    onChange(items.filter((_, idx) => idx !== i));
+  }
+
+  return (
+    <div className="space-y-2">
+      {items.map((item, i) => (
+        <div key={i} className="flex gap-2">
+          <input
+            type="text"
+            value={item.label || ""}
+            onChange={(e) => update(i, "label", e.target.value)}
+            placeholder="Libellé (ex: Adoption)"
+            className="flex-1 border border-gray-300 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-orange-400"
+          />
+          <input
+            type="text"
+            value={item.value || ""}
+            onChange={(e) => update(i, "value", e.target.value)}
+            placeholder="Valeur (ex: +150%)"
+            className="w-32 border border-gray-300 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-orange-400"
+          />
+          <button
+            type="button"
+            onClick={() => remove(i)}
+            className="text-red-400 hover:text-red-600 text-sm px-2"
+          >
+            ✕
+          </button>
+        </div>
+      ))}
+      <button
+        type="button"
+        onClick={add}
+        className="text-orange-500 hover:text-orange-700 text-sm font-medium"
+      >
+        + Ajouter une métrique
+      </button>
+    </div>
+  );
+}
+
 const emptyProject = {
   sort_order: 0, active: true, title: "", service_type: "", industry: "",
   scale: "", impact: "", description: "", challenge: "", solution: "",
   implementation_steps: [], technologies: [], metrics: [], testimonial: null,
-  duration: "", image_url: "",
+  duration: "", image_url: "", project_url: "",
 };
 
 export default function PortfolioAdmin() {
   const [projects, setProjects] = useState([]);
   const [expanded, setExpanded] = useState(null);
-  const [saving, setSaving] = useState(null);
-  const [saved, setSaved] = useState(null);
+  const [saving, setSaving]     = useState(null);
+  const [saved, setSaved]       = useState(null);
 
   useEffect(() => { load(); }, []);
 
@@ -83,10 +145,12 @@ export default function PortfolioAdmin() {
                 onClick={() => setExpanded(expanded === project.id ? null : project.id)}
                 className="flex-1 flex items-center gap-3 text-left"
               >
-                {expanded === project.id ? <ChevronUp size={16} className="text-gray-400" /> : <ChevronDown size={16} className="text-gray-400" />}
+                {expanded === project.id
+                  ? <ChevronUp size={16} className="text-gray-400" />
+                  : <ChevronDown size={16} className="text-gray-400" />}
                 <div>
                   <p className="font-medium text-gray-900 text-sm">{project.title || "Nouveau projet"}</p>
-                  <p className="text-xs text-gray-500">{project.industry} · {project.duration}</p>
+                  <p className="text-xs text-gray-500">{project.service_type} · {project.industry} · {project.duration}</p>
                 </div>
               </button>
               <Toggle checked={project.active} onChange={(v) => update(project.id, "active", v)} />
@@ -97,24 +161,46 @@ export default function PortfolioAdmin() {
 
             {expanded === project.id && (
               <div className="border-t border-gray-100 px-5 py-5 space-y-5">
+                {/* Basic info */}
                 <div className="grid sm:grid-cols-2 gap-5">
                   <FormField label="Titre">
                     <TextInput value={project.title} onChange={(v) => update(project.id, "title", v)} />
                   </FormField>
                   <FormField label="Type de service">
-                    <TextInput value={project.service_type} onChange={(v) => update(project.id, "service_type", v)} placeholder="Développement Mobile" />
+                    <select
+                      value={project.service_type || ""}
+                      onChange={(e) => update(project.id, "service_type", e.target.value)}
+                      className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-400"
+                    >
+                      <option value="">— Choisir —</option>
+                      {SERVICE_OPTIONS.map((s) => <option key={s}>{s}</option>)}
+                    </select>
                   </FormField>
                   <FormField label="Industrie">
-                    <TextInput value={project.industry} onChange={(v) => update(project.id, "industry", v)} placeholder="Fintech" />
+                    <TextInput value={project.industry} onChange={(v) => update(project.id, "industry", v)} placeholder="Fintech, Santé…" />
                   </FormField>
                   <FormField label="Durée">
                     <TextInput value={project.duration} onChange={(v) => update(project.id, "duration", v)} placeholder="6 mois" />
                   </FormField>
                   <FormField label="Échelle">
-                    <TextInput value={project.scale} onChange={(v) => update(project.id, "scale", v)} placeholder="National" />
+                    <select
+                      value={project.scale || ""}
+                      onChange={(e) => update(project.id, "scale", e.target.value)}
+                      className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-400"
+                    >
+                      <option value="">— Choisir —</option>
+                      {SCALE_OPTIONS.map((s) => <option key={s}>{s}</option>)}
+                    </select>
                   </FormField>
-                  <FormField label="Impact résumé">
-                    <TextInput value={project.impact} onChange={(v) => update(project.id, "impact", v)} placeholder="+50K utilisateurs" />
+                  <FormField label="Impact">
+                    <select
+                      value={project.impact || ""}
+                      onChange={(e) => update(project.id, "impact", e.target.value)}
+                      className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-400"
+                    >
+                      <option value="">— Choisir —</option>
+                      {IMPACT_OPTIONS.map((s) => <option key={s}>{s}</option>)}
+                    </select>
                   </FormField>
                 </div>
 
@@ -141,8 +227,45 @@ export default function PortfolioAdmin() {
                     placeholder="Ajouter une technologie"
                   />
                 </FormField>
-                <FormField label="Image URL">
+
+                {/* Metrics */}
+                <FormField label="Métriques de résultat" hint="Paires libellé / valeur affichées sur la carte et dans le modal.">
+                  <MetricsEditor
+                    value={project.metrics}
+                    onChange={(v) => update(project.id, "metrics", v)}
+                  />
+                </FormField>
+
+                {/* Image */}
+                <FormField label="URL de l'image">
                   <TextInput value={project.image_url} onChange={(v) => update(project.id, "image_url", v)} placeholder="https://…" />
+                  {project.image_url && (
+                    <div className="mt-2 rounded-lg overflow-hidden h-28 w-full max-w-xs border border-gray-200">
+                      <img src={project.image_url} alt="Aperçu" className="w-full h-full object-cover" />
+                    </div>
+                  )}
+                </FormField>
+
+                {/* Project link */}
+                <FormField
+                  label="Lien vers le projet"
+                  hint='URL de la démo, du site live ou de la fiche projet (affiché comme bouton "Voir le projet").'
+                >
+                  <TextInput
+                    value={project.project_url}
+                    onChange={(v) => update(project.id, "project_url", v)}
+                    placeholder="https://monprojet.com"
+                  />
+                  {project.project_url && (
+                    <a
+                      href={project.project_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1.5 text-xs text-orange-500 hover:underline mt-1"
+                    >
+                      Tester le lien →
+                    </a>
+                  )}
                 </FormField>
 
                 {/* Testimonial */}

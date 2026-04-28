@@ -169,6 +169,58 @@ export async function deleteTestimonial(id) {
   return deleteRow("testimonials", id);
 }
 
+// ─── Job Openings ─────────────────────────────────────────────────────────────
+
+export async function getJobOpenings(activeOnly = true) {
+  return fetchTable("job_openings", {
+    filters: activeOnly ? { active: true } : {},
+  });
+}
+
+export async function saveJobOpening(opening) {
+  return upsertRow("job_openings", opening);
+}
+
+export async function deleteJobOpening(id) {
+  return deleteRow("job_openings", id);
+}
+
+// ─── Job Applications ─────────────────────────────────────────────────────────
+
+export async function submitJobApplication(application) {
+  const { data, error } = await supabase
+    .from("job_applications")
+    .insert(application)
+    .select()
+    .single();
+  if (error) throw error;
+  return data;
+}
+
+export async function getJobApplications() {
+  const { data, error } = await supabase
+    .from("job_applications")
+    .select("*")
+    .order("submitted_at", { ascending: false });
+  if (error) throw error;
+  return data || [];
+}
+
+export async function updateApplicationStatus(id, status, notes) {
+  const { data, error } = await supabase
+    .from("job_applications")
+    .update({ status, admin_notes: notes })
+    .eq("id", id)
+    .select()
+    .single();
+  if (error) throw error;
+  return data;
+}
+
+export async function deleteJobApplication(id) {
+  return deleteRow("job_applications", id);
+}
+
 // ─── Partnership Pathways ─────────────────────────────────────────────────────
 
 export async function getPartnershipPathways(activeOnly = true) {

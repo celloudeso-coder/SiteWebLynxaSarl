@@ -68,3 +68,7 @@ export function useSiteSettings() {
 export function usePartnershipPathways() {
   return useAsync(() => cms.getPartnershipPathways(true), []);
 }
+
+export function useJobOpenings() {
+  return useAsync(() => cms.getJobOpenings(true), []);
+}
