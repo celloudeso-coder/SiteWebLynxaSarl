@@ -64,3 +64,7 @@ export function useTestimonials() {
 export function useSiteSettings() {
   return useAsync(() => cms.getSettings(), {});
 }
+
+export function usePartnershipPathways() {
+  return useAsync(() => cms.getPartnershipPathways(true), []);
+}

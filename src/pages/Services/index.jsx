@@ -11,207 +11,114 @@ import Icon from "../../components/AppIcon";
 import Button from "../../components/ui/Button";
 
 import { Link } from "react-router-dom";
+import { useServices } from "../../hooks/useContent";
 
 import logoIco from "../../../public/LYNXA.ico";
 
+const STATIC_SERVICES = [
+  {
+    id: "mobile-development",
+    title: "Mobile Development",
+    subtitle: "Native & Cross-Platform Solutions",
+    icon: "Smartphone",
+    description:
+      "Create powerful mobile applications that engage users and drive business growth. From fintech solutions to agricultural platforms, we build apps that make a difference in Guinea and beyond.",
+    highlights: [
+      "iOS & Android native development",
+      "Cross-platform solutions with React Native",
+      "Progressive Web Apps (PWA)",
+      "App Store optimization and deployment",
+    ],
+    projectCount: 45,
+    technologies: ["React Native", "Flutter", "Swift", "Kotlin", "Ionic", "Firebase"],
+    metrics: [
+      { label: "Average App Rating", value: "4.8/5" },
+      { label: "Download Success Rate", value: "98%" },
+      { label: "User Retention", value: "85%" },
+      { label: "Performance Score", value: "95/100" },
+    ],
+    projects: [
+      { name: "GuineaPay Mobile", description: "Digital payment solution for local businesses with 50K+ active users", industry: "Fintech" },
+      { name: "AgriConnect", description: "Agricultural marketplace connecting farmers with buyers across West Africa", industry: "Agriculture" },
+      { name: "EduGuinea", description: "Educational platform providing remote learning for 10K+ students", industry: "Education" },
+    ],
+  },
+  {
+    id: "network-infrastructure",
+    title: "Network Infrastructure",
+    subtitle: "Robust & Scalable Network Solutions",
+    icon: "Wifi",
+    description:
+      "Design and implement secure, scalable network infrastructure tailored for West African connectivity challenges. From small offices to enterprise-level deployments.",
+    highlights: [
+      "Network design and implementation",
+      "Security infrastructure setup",
+      "Performance optimization",
+      "Ongoing monitoring and maintenance",
+    ],
+    projectCount: 32,
+    technologies: ["Cisco", "Ubiquiti", "pfSense", "VMware", "Linux"],
+    metrics: [
+      { label: "Network Uptime", value: "99.8%" },
+      { label: "Security Incidents", value: "0" },
+      { label: "Performance Improvement", value: "300%" },
+      { label: "Client Satisfaction", value: "100%" },
+    ],
+    projects: [
+      { name: "Ministry of Health Network", description: "Nationwide network infrastructure connecting 50+ health facilities", industry: "Healthcare" },
+      { name: "Banking Sector Security", description: "Advanced cybersecurity implementation for major financial institution", industry: "Banking" },
+      { name: "Educational Network", description: "Campus-wide network for University of Conakry with 5000+ users", industry: "Education" },
+    ],
+  },
+  {
+    id: "web-development",
+    title: "Web Development",
+    subtitle: "Modern & Responsive Web Solutions",
+    icon: "Globe",
+    description:
+      "Build stunning, high-performance websites and web applications that deliver exceptional user experiences and drive business results for organizations across Guinea.",
+    highlights: [
+      "Responsive web design",
+      "E-commerce platforms",
+      "Content management systems",
+      "SEO optimization and analytics",
+    ],
+    projectCount: 78,
+    technologies: ["React", "Vue.js", "Node.js", "PHP", "WordPress", "Shopify"],
+    metrics: [
+      { label: "Page Load Speed", value: "< 2s" },
+      { label: "SEO Score", value: "95/100" },
+      { label: "Conversion Rate", value: "+250%" },
+      { label: "Mobile Optimization", value: "100%" },
+    ],
+    projects: [
+      { name: "Guinea Tourism Portal", description: "Official tourism website showcasing Guinea's attractions with booking system", industry: "Tourism" },
+      { name: "NGO Impact Platform", description: "Comprehensive platform for tracking and reporting development projects", industry: "Non-Profit" },
+      { name: "E-Commerce Marketplace", description: "Multi-vendor platform connecting local artisans with global customers", industry: "E-Commerce" },
+    ],
+  },
+];
 
 const ServicesPage = () => {
   const [activeService, setActiveService] = useState(0);
   const [isVisible, setIsVisible] = useState({});
+  const { data: cmsServices } = useServices();
 
-  const services = [
-    {
-      id: "mobile-development",
-      title: "Mobile Development",
-      subtitle: "Native & Cross-Platform Solutions",
-      icon: "Smartphone",
-      description:
-        "Create powerful mobile applications that engage users and drive business growth. From fintech solutions to agricultural platforms, we build apps that make a difference in Guinea and beyond.",
-      highlights: [
-        "iOS & Android native development",
-        "Cross-platform solutions with React Native",
-        "Progressive Web Apps (PWA)",
-        "App Store optimization and deployment",
-      ],
-      projectCount: 45,
-      technologies: [
-        "React Native",
-        "Flutter",
-        "Swift",
-        "Kotlin",
-        "Ionic",
-        "Firebase",
-      ],
-      metrics: [
-        { label: "Average App Rating", value: "4.8/5" },
-        { label: "Download Success Rate", value: "98%" },
-        { label: "User Retention", value: "85%" },
-        { label: "Performance Score", value: "95/100" },
-      ],
-      projects: [
-        {
-          name: "GuineaPay Mobile",
-          description:
-            "Digital payment solution for local businesses with 50K+ active users",
-          industry: "Fintech",
-        },
-        {
-          name: "AgriConnect",
-          description:
-            "Agricultural marketplace connecting farmers with buyers across West Africa",
-          industry: "Agriculture",
-        },
-        {
-          name: "EduGuinea",
-          description:
-            "Educational platform providing remote learning for 10K+ students",
-          industry: "Education",
-        },
-      ],
-    },
-    {
-      id: "network-infrastructure",
-      title: "Network Infrastructure",
-      subtitle: "Robust & Scalable Network Solutions",
-      icon: "Wifi",
-      description:
-        "Design and implement secure, scalable network infrastructure tailored for West African connectivity challenges. From small offices to enterprise-level deployments.",
-      highlights: [
-        "Network design and implementation",
-        "Security infrastructure setup",
-        "Performance optimization",
-        "Ongoing monitoring and maintenance",
-      ],
-      projectCount: 32,
-      technologies: ["Cisco", "Ubiquiti", "pfSense", "VMware", "Linux"],
-      metrics: [
-        { label: "Network Uptime", value: "99.8%" },
-        { label: "Security Incidents", value: "0" },
-        { label: "Performance Improvement", value: "300%" },
-        { label: "Client Satisfaction", value: "100%" },
-      ],
-      projects: [
-        {
-          name: "Ministry of Health Network",
-          description:
-            "Nationwide network infrastructure connecting 50+ health facilities",
-          industry: "Healthcare",
-        },
-        {
-          name: "Banking Sector Security",
-          description:
-            "Advanced cybersecurity implementation for major financial institution",
-          industry: "Banking",
-        },
-        {
-          name: "Educational Network",
-          description:
-            "Campus-wide network for University of Conakry with 5000+ users",
-          industry: "Education",
-        },
-      ],
-    },
-    {
-      id: "web-development",
-      title: "Web Development",
-      subtitle: "Modern & Responsive Web Solutions",
-      icon: "Globe",
-      description:
-        "Build stunning, high-performance websites and web applications that deliver exceptional user experiences and drive business results for organizations across Guinea.",
-      highlights: [
-        "Responsive web design",
-        "E-commerce platforms",
-        "Content management systems",
-        "SEO optimization and analytics",
-      ],
-      projectCount: 78,
-      technologies: [
-        "React",
-        "Vue.js",
-        "Node.js",
-        "PHP",
-        "WordPress",
-        "Shopify",
-      ],
-      metrics: [
-        { label: "Page Load Speed", value: "< 2s" },
-        { label: "SEO Score", value: "95/100" },
-        { label: "Conversion Rate", value: "+250%" },
-        { label: "Mobile Optimization", value: "100%" },
-      ],
-      projects: [
-        {
-          name: "Guinea Tourism Portal",
-          description:
-            "Official tourism website showcasing Guinea's attractions with booking system",
-          industry: "Tourism",
-        },
-        {
-          name: "NGO Impact Platform",
-          description:
-            "Comprehensive platform for tracking and reporting development projects",
-          industry: "Non-Profit",
-        },
-        {
-          name: "E-Commerce Marketplace",
-          description:
-            "Multi-vendor platform connecting local artisans with global customers",
-          industry: "E-Commerce",
-        },
-      ],
-    },
-    {
-      /* {
-      id: "cybersecurity",
-      title: "Cybersecurity",
-      subtitle: "Advanced Security & Compliance",
-      icon: "Shield",
-      description:
-        "Protect your digital assets with comprehensive cybersecurity solutions. From threat assessment to compliance implementation, we secure your business against evolving cyber threats.",
-      highlights: [
-        "Security audits and assessments",
-        "Compliance implementation",
-        "Threat monitoring and response",
-        "Staff training and awareness",
-      ],
-      projectCount: 28,
-      technologies: [
-        "Splunk",
-        "Wireshark",
-        "Nessus",
-        "Metasploit",
-        "OWASP",
-        "ISO 27001",
-      ],
-      metrics: [
-        { label: "Threats Prevented", value: "10,000+" },
-        { label: "Security Score", value: "98/100" },
-        { label: "Compliance Rate", value: "100%" },
-        { label: "Response Time", value: "< 15min" },
-      ],
-      projects: [
-        {
-          name: "Financial Institution Security",
-          description:
-            "Complete cybersecurity overhaul for major bank with PCI DSS compliance",
-          industry: "Banking",
-        },
-        {
-          name: "Government Data Protection",
-          description:
-            "Secure data management system for sensitive government information",
-          industry: "Government",
-        },
-        {
-          name: "Healthcare Security Audit",
-          description:
-            "HIPAA compliance implementation for private healthcare network",
-          industry: "Healthcare",
-        },
-      ],
-    }, */
-    },
-  ];
+  const services =
+    cmsServices && cmsServices.length > 0
+      ? cmsServices.map((s) => ({
+          id: s.slug || s.id,
+          title: s.title,
+          subtitle: s.subtitle,
+          icon: s.icon,
+          description: s.description,
+          highlights: Array.isArray(s.highlights) ? s.highlights : [],
+          projectCount: s.project_count ?? 0,
+          technologies: Array.isArray(s.technologies) ? s.technologies : [],
+          metrics: Array.isArray(s.metrics) ? s.metrics : [],
+          projects: Array.isArray(s.projects) ? s.projects : [],
+        }))
+      : STATIC_SERVICES;
 
   useEffect(() => {
     const observerOptions = {

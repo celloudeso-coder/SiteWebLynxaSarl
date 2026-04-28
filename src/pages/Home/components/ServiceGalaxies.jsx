@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
+import { motion } from "framer-motion";
 import Icon from "../../../components/AppIcon";
 import Image from "../../../components/AppImage";
 import { useServices } from "../../../hooks/useContent";
@@ -35,7 +36,13 @@ const ServiceGalaxies = () => {
   return (
     <section className="py-20 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-16">
+        <motion.div
+          className="text-center mb-16"
+          initial={{ opacity: 0, y: 24 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+        >
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-heading font-bold text-secondary mb-6">
             Nos Galaxies de{" "}
             <span className="text-gradient-orange">Services</span>
@@ -45,13 +52,18 @@ const ServiceGalaxies = () => {
             dans lesquels nous offrons des solutions technologiques de classe mondiale,
             alliant innovation et compréhension approfondie des besoins du marché africain.
           </p>
-        </div>
+        </motion.div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {services.map((service, i) => (
-            <div
+            <motion.div
               key={service.id || i}
-              className="group relative bg-white rounded-2xl shadow-soft hover:shadow-large transition-all duration-500 overflow-hidden border border-border card-hover"
+              initial={{ opacity: 0, y: 50 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: i * 0.15, ease: "easeOut" }}
+              whileHover={{ y: -6, transition: { duration: 0.25 } }}
+              className="group relative bg-white rounded-2xl shadow-soft hover:shadow-large transition-shadow duration-500 overflow-hidden border border-border"
               onMouseEnter={() => setHoveredService(service.id)}
               onMouseLeave={() => setHoveredService(null)}
             >
@@ -63,9 +75,13 @@ const ServiceGalaxies = () => {
               <div className="relative p-8">
                 <div className="flex items-start justify-between mb-6">
                   <div className="flex items-center space-x-4">
-                    <div className="w-16 h-16 bg-gradient-to-br from-primary to-accent rounded-xl flex items-center justify-center glow-orange group-hover:scale-110 transition-transform duration-300">
+                    <motion.div
+                      className="w-16 h-16 bg-gradient-to-br from-primary to-accent rounded-xl flex items-center justify-center glow-orange"
+                      whileHover={{ scale: 1.1, rotate: 5 }}
+                      transition={{ duration: 0.2 }}
+                    >
                       <Icon name={service.icon || "Briefcase"} size={28} color="white" strokeWidth={2} />
-                    </div>
+                    </motion.div>
                     <div>
                       <h3 className="text-2xl font-heading font-bold text-secondary mb-1">{service.title}</h3>
                       <p className="text-primary font-medium">{service.subtitle}</p>
@@ -78,10 +94,17 @@ const ServiceGalaxies = () => {
                 {service.metrics.length > 0 && (
                   <div className="grid grid-cols-3 gap-4 mb-6">
                     {service.metrics.slice(0, 3).map((m, j) => (
-                      <div key={j} className="text-center">
+                      <motion.div
+                        key={j}
+                        className="text-center"
+                        initial={{ opacity: 0, scale: 0.8 }}
+                        whileInView={{ opacity: 1, scale: 1 }}
+                        viewport={{ once: true }}
+                        transition={{ delay: i * 0.15 + j * 0.08 + 0.3 }}
+                      >
                         <div className="text-lg font-heading font-bold text-secondary">{m.value}</div>
                         <div className="text-xs text-muted-foreground">{m.label}</div>
-                      </div>
+                      </motion.div>
                     ))}
                   </div>
                 )}
@@ -120,11 +143,17 @@ const ServiceGalaxies = () => {
                   <Icon name="ArrowRight" size={16} className="group-hover:translate-x-1 transition-transform duration-200" />
                 </Link>
               </div>
-            </div>
+            </motion.div>
           ))}
         </div>
 
-        <div className="text-center mt-16">
+        <motion.div
+          className="text-center mt-16"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5, delay: 0.3 }}
+        >
           <Link
             to="/service"
             className="inline-flex items-center space-x-3 bg-gradient-to-r from-primary to-accent text-white px-8 py-4 rounded-xl font-medium hover:shadow-large transition-all duration-300 glow-orange"
@@ -133,7 +162,7 @@ const ServiceGalaxies = () => {
             <span>Découvrez tous les services</span>
             <Icon name="ArrowRight" size={20} />
           </Link>
-        </div>
+        </motion.div>
       </div>
     </section>
   );

@@ -4,7 +4,7 @@ import { supabase } from "../../../lib/supabase";
 import {
   LayoutDashboard, Globe, Briefcase, FolderOpen,
   Users, DollarSign, Clock, BarChart2, MessageSquare,
-  Settings, LogOut, Menu, X, ChevronRight
+  Settings, LogOut, Menu, X, ChevronRight, Mail
 } from "lucide-react";
 
 const navItems = [
@@ -17,6 +17,7 @@ const navItems = [
   { to: "/admin/timeline", label: "Timeline", icon: Clock },
   { to: "/admin/metrics", label: "Métriques", icon: BarChart2 },
   { to: "/admin/testimonials", label: "Témoignages", icon: MessageSquare },
+  { to: "/admin/newsletter", label: "Newsletter", icon: Mail },
   { to: "/admin/settings", label: "Paramètres", icon: Settings },
 ];
 

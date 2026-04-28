@@ -6,7 +6,8 @@ import { Plus, Trash2, ChevronDown, ChevronUp } from "lucide-react";
 
 const emptyTestimonial = {
   sort_order: 0, active: true, quote: "", author_name: "",
-  author_position: "", author_company: "", author_image: "", rating: 5, project_ref: "",
+  author_position: "", author_company: "", author_image: "", rating: 5,
+  project_ref: "", result: "",
 };
 
 export default function TestimonialsAdmin() {
@@ -115,6 +116,14 @@ export default function TestimonialsAdmin() {
                       onChange={(e) => update(item.id, "rating", parseInt(e.target.value))}
                       className="w-24 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-400"
                     />
+                  </FormField>
+                </div>
+                <div className="grid sm:grid-cols-2 gap-4">
+                  <FormField label="Type de projet" hint="Ex : Développement Mobile, Infrastructure Réseau…">
+                    <TextInput value={item.project_ref} onChange={(v) => update(item.id, "project_ref", v)} placeholder="Infrastructure Réseau" />
+                  </FormField>
+                  <FormField label="Résultat clé" hint="Ex : +300% d'engagement, 99.9% de disponibilité…">
+                    <TextInput value={item.result} onChange={(v) => update(item.id, "result", v)} placeholder="+300% d'engagement client" />
                   </FormField>
                 </div>
                 <div className="flex justify-end pt-2">

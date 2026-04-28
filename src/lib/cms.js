@@ -169,6 +169,58 @@ export async function deleteTestimonial(id) {
   return deleteRow("testimonials", id);
 }
 
+// ─── Partnership Pathways ─────────────────────────────────────────────────────
+
+export async function getPartnershipPathways(activeOnly = true) {
+  return fetchTable("partnership_pathways", {
+    filters: activeOnly ? { active: true } : {},
+  });
+}
+
+export async function savePartnershipPathway(pathway) {
+  return upsertRow("partnership_pathways", pathway);
+}
+
+export async function deletePartnershipPathway(id) {
+  return deleteRow("partnership_pathways", id);
+}
+
+// ─── Newsletter Subscriptions ─────────────────────────────────────────────────
+
+export async function subscribeNewsletter(email) {
+  const { data, error } = await supabase
+    .from("newsletter_subscriptions")
+    .upsert({ email, active: true }, { onConflict: "email" })
+    .select()
+    .single();
+  if (error) throw error;
+  return data;
+}
+
+export async function getNewsletterSubscriptions() {
+  const { data, error } = await supabase
+    .from("newsletter_subscriptions")
+    .select("*")
+    .order("subscribed_at", { ascending: false });
+  if (error) throw error;
+  return data || [];
+}
+
+export async function deleteNewsletterSubscription(id) {
+  return deleteRow("newsletter_subscriptions", id);
+}
+
+export async function toggleNewsletterSubscription(id, active) {
+  const { data, error } = await supabase
+    .from("newsletter_subscriptions")
+    .update({ active })
+    .eq("id", id)
+    .select()
+    .single();
+  if (error) throw error;
+  return data;
+}
+
 // ─── Media Upload ─────────────────────────────────────────────────────────────
 
 export async function uploadMedia(file, path) {

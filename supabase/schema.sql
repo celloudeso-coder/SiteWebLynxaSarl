@@ -238,6 +238,7 @@ CREATE TABLE IF NOT EXISTS testimonials (
   author_image text,
   rating integer DEFAULT 5,
   project_ref text,
+  result text,
   updated_at timestamptz DEFAULT now()
 );
 
@@ -278,7 +279,72 @@ CREATE POLICY "Écriture admin" ON metrics FOR ALL USING (auth.role() = 'authent
 CREATE POLICY "Écriture admin" ON testimonials FOR ALL USING (auth.role() = 'authenticated');
 
 -- -------------------------------------------------------
--- 11. STORAGE BUCKET pour les médias CMS
+-- 11. PARTNERSHIP PATHWAYS (voies de collaboration)
+-- -------------------------------------------------------
+CREATE TABLE IF NOT EXISTS partnership_pathways (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  sort_order integer DEFAULT 0,
+  active boolean DEFAULT true,
+  title text NOT NULL,
+  description text,
+  icon text DEFAULT 'Handshake',
+  features jsonb DEFAULT '[]',
+  ideal_for text,
+  timeline text,
+  budget text,
+  color text DEFAULT 'primary',
+  updated_at timestamptz DEFAULT now()
+);
+
+INSERT INTO partnership_pathways (sort_order, title, description, icon, features, ideal_for, timeline, budget, color) VALUES
+  (1, 'Partenariat Startup & PME',
+   'Solutions sur mesure pour les entreprises en croissance avec des options de paiement flexibles et une technologie évolutive.',
+   'Rocket',
+   '["Développement MVP", "Plans de paiement flexibles", "Solutions axées sur la croissance", "Support de mentorat"]',
+   'Startups, Petites Entreprises, Entrepreneurs', '2-8 semaines', '700 $ – 3 000 $', 'primary'),
+  (2, 'Solutions Entreprises',
+   'Partenariats technologiques complets pour les grandes organisations avec des besoins complexes.',
+   'Building2',
+   '["Systèmes entreprises personnalisés", "Support prioritaire 24/7", "Chef de projet dédié", "Garanties SLA"]',
+   'Grandes Entreprises, Gouvernement, ONG', '3-12 mois', '3 500 $ – 10 000 $', 'accent'),
+  (3, 'Collaboration Internationale',
+   'Partenariats transfrontaliers avec des organisations mondiales s''étendant sur les marchés africains.',
+   'Globe',
+   '["Adaptation culturelle", "Support multilingue", "Expertise marché local", "Assistance conformité"]',
+   'Entreprises Internationales, ONG Mondiales', '4-16 semaines', '15 000 $ et +', 'primary'),
+  (4, 'Réseau Technologique',
+   'Alliances stratégiques avec d''autres entreprises tech pour une croissance et collaboration mutuelles.',
+   'Network',
+   '["Programmes de revente", "Intégration technologique", "Joint ventures", "Partage de connaissances"]',
+   'Entreprises Tech, Intégrateurs de Systèmes', 'En continu', 'Partage de revenus', 'accent')
+ON CONFLICT DO NOTHING;
+
+ALTER TABLE partnership_pathways ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Lecture publique" ON partnership_pathways FOR SELECT USING (active = true);
+CREATE POLICY "Écriture admin" ON partnership_pathways FOR ALL USING (auth.role() = 'authenticated');
+
+-- -------------------------------------------------------
+-- 12. NEWSLETTER SUBSCRIPTIONS
+-- -------------------------------------------------------
+CREATE TABLE IF NOT EXISTS newsletter_subscriptions (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  email text UNIQUE NOT NULL,
+  active boolean DEFAULT true,
+  subscribed_at timestamptz DEFAULT now()
+);
+
+ALTER TABLE newsletter_subscriptions ENABLE ROW LEVEL SECURITY;
+
+-- Tout le monde peut s'inscrire
+CREATE POLICY "Inscription publique newsletter" ON newsletter_subscriptions
+  FOR INSERT WITH CHECK (true);
+
+-- Lecture et gestion réservées aux admins
+CREATE POLICY "Gestion admin newsletter" ON newsletter_subscriptions
+  FOR ALL USING (auth.role() = 'authenticated');
+
+-- -------------------------------------------------------
+-- 12. STORAGE BUCKET pour les médias CMS
 -- -------------------------------------------------------
 INSERT INTO storage.buckets (id, name, public) VALUES ('cms-media', 'cms-media', true)
 ON CONFLICT (id) DO NOTHING;

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { getTeamMembers, saveTeamMember, deleteTeamMember } from "../../../lib/cms";
-import { FormField, TextInput, TextArea, Toggle, JsonArrayEditor } from "../components/FormField";
+import { FormField, TextInput, TextArea, Toggle, JsonArrayEditor, ImageUpload } from "../components/FormField";
 import SaveButton from "../components/SaveButton";
 import { Plus, Trash2, ChevronDown, ChevronUp } from "lucide-react";
 
@@ -106,8 +106,8 @@ export default function TeamAdmin() {
                     <TextInput value={member.role} onChange={(v) => update(member.id, "role", v)} />
                   </FormField>
                 </div>
-                <FormField label="Photo (URL ou chemin)">
-                  <TextInput value={member.image_url} onChange={(v) => update(member.id, "image_url", v)} placeholder="/photo.png" />
+                <FormField label="Photo">
+                  <ImageUpload value={member.image_url} onChange={(v) => update(member.id, "image_url", v)} folder="team-members" />
                 </FormField>
                 <FormField label="Bio / Description">
                   <TextArea value={member.description} onChange={(v) => update(member.id, "description", v)} rows={3} />

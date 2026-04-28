@@ -9,17 +9,9 @@ import ClientLogos from "./components/ClientLogos";
 import Icon from "../../components/AppIcon";
 import Button from "../../components/ui/Button";
 import { Link } from "react-router-dom";
+import { useProjects } from "../../hooks/useContent";
 
-const PortfolioShowcase = () => {
-  const [selectedProject, setSelectedProject] = useState(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [activeService, setActiveService] = useState("All");
-  const [activeIndustry, setActiveIndustry] = useState("All");
-  const [activeScale, setActiveScale] = useState("All");
-  const [searchTerm, setSearchTerm] = useState("");
-  const [visibleProjects, setVisibleProjects] = useState(6);
-
-  const projects = [
+const STATIC_PROJECTS = [
     {
       id: 1,
       title: "Mobile Banking for Rural Communities",
@@ -275,7 +267,39 @@ const PortfolioShowcase = () => {
           "Vice-recteur aux affaires académiques, Université de Conakry",
       },
     },
-  ];
+];
+
+const PortfolioShowcase = () => {
+  const [selectedProject, setSelectedProject] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [activeService, setActiveService] = useState("All");
+  const [activeIndustry, setActiveIndustry] = useState("All");
+  const [activeScale, setActiveScale] = useState("All");
+  const [searchTerm, setSearchTerm] = useState("");
+  const [visibleProjects, setVisibleProjects] = useState(6);
+  const { data: cmsProjects } = useProjects();
+
+  const projects =
+    cmsProjects && cmsProjects.length > 0
+      ? cmsProjects.map((p) => ({
+          id: p.id,
+          title: p.title,
+          service: p.service_type,
+          industry: p.industry,
+          scale: p.scale,
+          impact: p.impact,
+          description: p.description,
+          image: p.image_url,
+          duration: p.duration,
+          metrics: Array.isArray(p.metrics) ? p.metrics : [],
+          challenge: p.challenge,
+          solution: p.solution,
+          implementation: Array.isArray(p.implementation_steps) ? p.implementation_steps : [],
+          technologies: Array.isArray(p.technologies) ? p.technologies : [],
+          testimonial: p.testimonial,
+        }))
+      : STATIC_PROJECTS;
+
   const filteredProjects = projects?.filter((project) => {
     const matchesService =
       activeService === "All" || project?.service === activeService;

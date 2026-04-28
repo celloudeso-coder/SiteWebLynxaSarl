@@ -1,351 +1,322 @@
 import React, { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import Icon from "../../../components/AppIcon";
-import Button from "../../../components/ui/Button";
-import Input from "../../../components/ui/Input";
-import Select from "../../../components/ui/Select";
+
+const INQUIRY_TYPES = [
+  { value: "new-project",   label: "Développement de nouveau projet" },
+  { value: "partnership",   label: "Partenariat commercial"           },
+  { value: "career",        label: "Opportunités de carrière"         },
+  { value: "support",       label: "Support technique"                },
+  { value: "consultation",  label: "Consultation gratuite"            },
+  { value: "other",         label: "Autre"                            },
+];
+
+const BUDGET_RANGES = [
+  { value: "under-5k",  label: "Moins de 5 000 $"        },
+  { value: "5k-15k",    label: "5 000 $ – 15 000 $"      },
+  { value: "15k-50k",   label: "15 000 $ – 50 000 $"     },
+  { value: "over-50k",  label: "Plus de 50 000 $"         },
+  { value: "discuss",   label: "Préfère en discuter"      },
+];
+
+const CONTACT_METHODS = [
+  { value: "email",     label: "Email"              },
+  { value: "phone",     label: "Appel téléphonique" },
+  { value: "whatsapp",  label: "WhatsApp"            },
+];
+
+const EMPTY = {
+  name: "", email: "", phone: "", company: "",
+  inquiryType: "", contactMethod: "", budget: "", message: "",
+};
 
 const ContactForm = () => {
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    phone: "",
-    company: "",
-    inquiryType: "",
-    urgency: "",
-    preferredContact: "",
-    budget: "",
-    message: "",
-  });
+  const [form, setForm]           = useState(EMPTY);
+  const [errors, setErrors]       = useState({});
+  const [submitting, setSubmitting] = useState(false);
+  const [status, setStatus]       = useState(null); // "success" | "error"
 
-  const [errors, setErrors] = useState({});
-  const [isSubmitting, setIsSubmitting] = useState(false);
-
-  const inquiryTypes = [
-    { value: "new-project", label: "Développement de Nouveau Projet" },
-    { value: "partnership", label: "Partenariat Commercial" },
-    { value: "career", label: "Opportunités de Carrière" },
-    { value: "media", label: "Demandes Médias et Presse" },
-    { value: "support", label: "Support Technique" },
-    { value: "consultation", label: "Consultation Gratuite" },
-  ];
-
-  const urgencyLevels = [
-    { value: "low", label: "Faible - Demande Générale" },
-    { value: "medium", label: "Moyen - Sous 1 semaine" },
-    { value: "high", label: "Élevé - Sous 2-3 jours" },
-    { value: "urgent", label: "Urgent - Sous 24 heures" },
-  ];
-
-  const contactMethods = [
-    { value: "email", label: "E-mail" },
-    { value: "phone", label: "Appel Téléphonique" },
-    { value: "whatsapp", label: "WhatsApp" },
-    { value: "meeting", label: "Réunion en Personne" },
-  ];
-
-  const budgetRanges = [
-    { value: "under-5k", label: "Moins de 5 000 $" },
-    { value: "5k-15k", label: "5 000 $ - 15 000 $" },
-    { value: "15k-50k", label: "15 000 $ - 50 000 $" },
-    { value: "50k-100k", label: "50 000 $ - 100 000 $" },
-    { value: "over-100k", label: "Plus de 100 000 $" },
-    { value: "discuss", label: "Préfère discuter" },
-  ];
-
-  const handleInputChange = (e) => {
-    const { name, value } = e?.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-
-    // Clear error when user starts typing
-    if (errors?.[name]) {
-      setErrors((prev) => ({
-        ...prev,
-        [name]: "",
-      }));
-    }
+  const set = (field, value) => {
+    setForm((p) => ({ ...p, [field]: value }));
+    if (errors[field]) setErrors((p) => ({ ...p, [field]: "" }));
+    if (status) setStatus(null);
   };
 
-  const handleSelectChange = (name, value) => {
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-
-    if (errors?.[name]) {
-      setErrors((prev) => ({
-        ...prev,
-        [name]: "",
-      }));
-    }
-  };
-
-  const validateForm = () => {
-    const newErrors = {};
-
-    if (!formData?.name?.trim()) {
-      newErrors.name = "Full name is required";
-    }
-
-    if (!formData?.email?.trim()) {
-      newErrors.email = "Email address is required";
-    } else if (!/\S+@\S+\.\S+/?.test(formData?.email)) {
-      newErrors.email = "Please enter a valid email address";
-    }
-
-    if (!formData?.inquiryType) {
-      newErrors.inquiryType = "Please select an inquiry type";
-    }
-
-    if (!formData?.message?.trim()) {
-      newErrors.message = "Message is required";
-    } else if (formData?.message?.trim()?.length < 10) {
-      newErrors.message = "Message must be at least 10 characters long";
-    }
-
-    setErrors(newErrors);
-    return Object.keys(newErrors)?.length === 0;
+  const validate = () => {
+    const e = {};
+    if (!form.name.trim())  e.name  = "Votre nom complet est requis.";
+    if (!form.email.trim()) e.email = "Votre adresse email est requise.";
+    else if (!/\S+@\S+\.\S+/.test(form.email)) e.email = "Adresse email invalide.";
+    if (!form.inquiryType)  e.inquiryType = "Veuillez choisir un type de demande.";
+    if (!form.message.trim() || form.message.trim().length < 10)
+      e.message = "Le message doit contenir au moins 10 caractères.";
+    setErrors(e);
+    return Object.keys(e).length === 0;
   };
 
   const handleSubmit = async (e) => {
-    e?.preventDefault();
-
-    if (!validateForm()) {
-      return;
-    }
-
-    setIsSubmitting(true);
-
+    e.preventDefault();
+    if (!validate()) return;
+    setSubmitting(true);
     try {
-      // Mock form submission
-      await new Promise((resolve) => setTimeout(resolve, 2000));
-
-      // Success message
-      alert(
-        `Thank you ${formData?.name}! Your ${formData?.inquiryType?.replace(
-          "-",
-          " "
-        )} inquiry has been received. We'll respond within ${
-          formData?.urgency === "urgent"
-            ? "24 hours"
-            : formData?.urgency === "high"
-            ? "2-3 days"
-            : "1 week"
-        } via ${formData?.preferredContact || "email"}.`
-      );
-
-      // Reset form
-      setFormData({
-        name: "",
-        email: "",
-        phone: "",
-        company: "",
-        inquiryType: "",
-        urgency: "",
-        preferredContact: "",
-        budget: "",
-        message: "",
-      });
-    } catch (error) {
-      alert(
-        "There was an error sending your message. Please try again or contact us directly via WhatsApp."
-      );
+      await new Promise((r) => setTimeout(r, 1800));
+      setStatus("success");
+      setForm(EMPTY);
+    } catch {
+      setStatus("error");
     } finally {
-      setIsSubmitting(false);
+      setSubmitting(false);
     }
   };
+
+  const inputClass = (field) =>
+    `w-full px-4 py-3 border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary transition-colors ${
+      errors[field] ? "border-red-400 bg-red-50" : "border-border bg-white"
+    }`;
 
   return (
     <section className="py-16 bg-white">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-12">
+        <motion.div
+          className="text-center mb-12"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5 }}
+        >
           <h2 className="text-3xl md:text-4xl font-heading font-bold text-secondary mb-4">
             Parlez-nous de votre projet
           </h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Plus vous fournirez de détails, mieux nous pourrons comprendre vos
-            besoins et fournir une proposition précise.
+            Plus vous fournirez de détails, mieux nous pourrons comprendre vos besoins
+            et vous proposer une solution adaptée.
           </p>
-        </div>
+        </motion.div>
 
-        <div className="bg-surface rounded-2xl p-8 shadow-soft">
-          <form onSubmit={handleSubmit} className="space-y-6">
-            {/* Personal Information */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <Input
-                label="Full Name"
-                type="text"
-                name="name"
-                placeholder="Enter your full name"
-                value={formData?.name}
-                onChange={handleInputChange}
-                error={errors?.name}
-                required
-              />
+        <motion.div
+          className="bg-surface rounded-2xl p-8 shadow-soft"
+          initial={{ opacity: 0, y: 24 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5, delay: 0.1 }}
+        >
+          <AnimatePresence>
+            {status === "success" && (
+              <motion.div
+                key="success"
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0 }}
+                className="mb-6 flex items-start gap-3 bg-green-50 border border-green-200 text-green-800 rounded-xl px-5 py-4"
+              >
+                <Icon name="CheckCircle" size={20} className="mt-0.5 flex-shrink-0 text-green-600" />
+                <div>
+                  <p className="font-semibold mb-0.5">Message envoyé !</p>
+                  <p className="text-sm">Nous vous répondrons sous 24h. Merci de votre confiance.</p>
+                </div>
+              </motion.div>
+            )}
+            {status === "error" && (
+              <motion.div
+                key="error"
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0 }}
+                className="mb-6 flex items-start gap-3 bg-red-50 border border-red-200 text-red-800 rounded-xl px-5 py-4"
+              >
+                <Icon name="AlertCircle" size={20} className="mt-0.5 flex-shrink-0 text-red-600" />
+                <div>
+                  <p className="font-semibold mb-0.5">Erreur d'envoi</p>
+                  <p className="text-sm">Une erreur s'est produite. Contactez-nous directement par WhatsApp.</p>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
 
-              <Input
-                label="Email Address"
-                type="email"
-                name="email"
-                placeholder="your.email@lynxatech.com"
-                value={formData?.email}
-                onChange={handleInputChange}
-                error={errors?.email}
-                required
-              />
+          <form onSubmit={handleSubmit} className="space-y-6" noValidate>
+            {/* Row 1 */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+              <div>
+                <label className="block text-sm font-medium text-secondary mb-1.5">
+                  Nom complet <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="text"
+                  placeholder="Mamadou Diallo"
+                  value={form.name}
+                  onChange={(e) => set("name", e.target.value)}
+                  className={inputClass("name")}
+                />
+                {errors.name && <p className="mt-1 text-xs text-red-500">{errors.name}</p>}
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-secondary mb-1.5">
+                  Adresse email <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="email"
+                  placeholder="vous@exemple.com"
+                  value={form.email}
+                  onChange={(e) => set("email", e.target.value)}
+                  className={inputClass("email")}
+                />
+                {errors.email && <p className="mt-1 text-xs text-red-500">{errors.email}</p>}
+              </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <Input
-                label="Phone Number"
-                type="tel"
-                name="phone"
-                placeholder="+224 XXX XXX XXX"
-                value={formData?.phone}
-                onChange={handleInputChange}
-                description="Include country code for international calls"
-              />
-
-              <Input
-                label="Company/Organization"
-                type="text"
-                name="company"
-                placeholder="Your company name (optional)"
-                value={formData?.company}
-                onChange={handleInputChange}
-              />
+            {/* Row 2 */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+              <div>
+                <label className="block text-sm font-medium text-secondary mb-1.5">
+                  Téléphone
+                </label>
+                <input
+                  type="tel"
+                  placeholder="+224 XXX XXX XXX"
+                  value={form.phone}
+                  onChange={(e) => set("phone", e.target.value)}
+                  className={inputClass("phone")}
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-secondary mb-1.5">
+                  Entreprise / Organisation
+                </label>
+                <input
+                  type="text"
+                  placeholder="Nom de votre organisation (optionnel)"
+                  value={form.company}
+                  onChange={(e) => set("company", e.target.value)}
+                  className={inputClass("company")}
+                />
+              </div>
             </div>
 
-            {/* Project Details */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <Select
-                label="Inquiry Type"
-                placeholder="Select inquiry type"
-                options={inquiryTypes}
-                value={formData?.inquiryType}
-                onChange={(value) => handleSelectChange("inquiryType", value)}
-                error={errors?.inquiryType}
-                required
-              />
-
-              <Select
-                label="Project Urgency"
-                placeholder="Select urgency level"
-                options={urgencyLevels}
-                value={formData?.urgency}
-                onChange={(value) => handleSelectChange("urgency", value)}
-                description="Helps us prioritize your inquiry"
-              />
+            {/* Row 3 */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+              <div>
+                <label className="block text-sm font-medium text-secondary mb-1.5">
+                  Type de demande <span className="text-red-500">*</span>
+                </label>
+                <select
+                  value={form.inquiryType}
+                  onChange={(e) => set("inquiryType", e.target.value)}
+                  className={inputClass("inquiryType")}
+                >
+                  <option value="">Sélectionner…</option>
+                  {INQUIRY_TYPES.map((o) => (
+                    <option key={o.value} value={o.value}>{o.label}</option>
+                  ))}
+                </select>
+                {errors.inquiryType && <p className="mt-1 text-xs text-red-500">{errors.inquiryType}</p>}
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-secondary mb-1.5">
+                  Mode de contact préféré
+                </label>
+                <select
+                  value={form.contactMethod}
+                  onChange={(e) => set("contactMethod", e.target.value)}
+                  className={inputClass("contactMethod")}
+                >
+                  <option value="">Sélectionner…</option>
+                  {CONTACT_METHODS.map((o) => (
+                    <option key={o.value} value={o.value}>{o.label}</option>
+                  ))}
+                </select>
+              </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <Select
-                label="Preferred Contact Method"
-                placeholder="How should we contact you?"
-                options={contactMethods}
-                value={formData?.preferredContact}
-                onChange={(value) =>
-                  handleSelectChange("preferredContact", value)
-                }
-              />
-
-              <Select
-                label="Project Budget Range"
-                placeholder="Select budget range"
-                options={budgetRanges}
-                value={formData?.budget}
-                onChange={(value) => handleSelectChange("budget", value)}
-                description="Helps us provide appropriate solutions"
-              />
+            {/* Row 4 */}
+            <div>
+              <label className="block text-sm font-medium text-secondary mb-1.5">
+                Budget estimé
+              </label>
+              <select
+                value={form.budget}
+                onChange={(e) => set("budget", e.target.value)}
+                className={inputClass("budget")}
+              >
+                <option value="">Sélectionner une fourchette…</option>
+                {BUDGET_RANGES.map((o) => (
+                  <option key={o.value} value={o.value}>{o.label}</option>
+                ))}
+              </select>
             </div>
 
             {/* Message */}
             <div>
-              <label className="block text-sm font-medium text-secondary mb-2">
-                Details du Project <span className="text-destructive">*</span>
+              <label className="block text-sm font-medium text-secondary mb-1.5">
+                Détails du projet <span className="text-red-500">*</span>
               </label>
               <textarea
-                name="message"
-                rows={6}
-                placeholder="Please describe your project requirements, goals, timeline, and any specific technologies or features you need..."
-                value={formData?.message}
-                onChange={handleInputChange}
-                className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition-colors duration-200 resize-none ${
-                  errors?.message ? "border-destructive" : "border-border"
-                }`}
+                rows={5}
+                placeholder="Décrivez vos besoins, objectifs, délais souhaités et toute contrainte technique…"
+                value={form.message}
+                onChange={(e) => set("message", e.target.value)}
+                className={`${inputClass("message")} resize-none`}
               />
-              {errors?.message && (
-                <p className="mt-1 text-sm text-destructive">
-                  {errors?.message}
-                </p>
-              )}
-              <p className="mt-2 text-xs text-muted-foreground">
-                Minimum 10 caractères. Inclure les exigences techniques, le
-                calendrier préféré et tout système existant.
+              {errors.message && <p className="mt-1 text-xs text-red-500">{errors.message}</p>}
+              <p className="mt-1.5 text-xs text-muted-foreground">
+                Minimum 10 caractères. Incluez les exigences techniques et le calendrier souhaité.
               </p>
             </div>
 
-            {/* Submit Button */}
-            <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-6 border-t">
-              <div className="flex items-center space-x-2 text-sm text-muted-foreground">
-                <Icon name="Lock" size={16} />
-                <span>Vos informations sont sécurisées et confidentielles</span>
+            {/* Submit */}
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-4 border-t border-border">
+              <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                <Icon name="Lock" size={15} />
+                <span>Vos informations restent strictement confidentielles.</span>
               </div>
 
-              <Button
+              <motion.button
                 type="submit"
-                variant="default"
-                size="lg"
-                loading={isSubmitting}
-                iconName="Send"
-                iconPosition="right"
-                className="glow-orange min-w-[200px]"
+                disabled={submitting}
+                whileHover={{ scale: submitting ? 1 : 1.03 }}
+                whileTap={{ scale: 0.97 }}
+                className="inline-flex items-center gap-2 bg-primary hover:bg-primary/90 disabled:opacity-60 text-white font-semibold px-8 py-3 rounded-xl transition-all duration-200 glow-orange min-w-[200px] justify-center"
               >
-                {isSubmitting ? "Sending Message..." : "Send Message"}
-              </Button>
+                {submitting ? (
+                  <>
+                    <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
+                    </svg>
+                    Envoi en cours…
+                  </>
+                ) : (
+                  <>
+                    <Icon name="Send" size={16} />
+                    Envoyer le message
+                  </>
+                )}
+              </motion.button>
             </div>
           </form>
-        </div>
+        </motion.div>
 
-        {/* Additional Information */}
-        <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
-          <div className="flex flex-col items-center space-y-2">
-            <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
-              <Icon name="Clock" size={24} color="var(--color-primary)" />
+        {/* Bottom assurances */}
+        <motion.div
+          className="mt-10 grid grid-cols-1 md:grid-cols-3 gap-6 text-center"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5, delay: 0.2 }}
+        >
+          {[
+            { icon: "Clock",     title: "Réponse rapide",          desc: "Nous répondons à toutes les demandes dans un délai de 24h." },
+            { icon: "Users",     title: "Consultation gratuite",    desc: "Échangez 30 min avec nos experts techniques sans engagement." },
+            { icon: "FileText",  title: "Proposition détaillée",    desc: "Devis complet avec calendrier et tarification claire." },
+          ].map((item) => (
+            <div key={item.title} className="flex flex-col items-center gap-3">
+              <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
+                <Icon name={item.icon} size={22} color="var(--color-primary)" />
+              </div>
+              <h3 className="font-semibold text-secondary">{item.title}</h3>
+              <p className="text-sm text-muted-foreground">{item.desc}</p>
             </div>
-            <h3 className="font-semibold text-secondary">Réponse Rapide</h3>
-            <p className="text-sm text-muted-foreground">
-              Nous répondons à toutes les demandes dans un délai de 2 heures
-              pendant les heures de bureau.
-            </p>
-          </div>
-
-          <div className="flex flex-col items-center space-y-2">
-            <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
-              <Icon name="Users" size={24} color="var(--color-primary)" />
-            </div>
-            <h3 className="font-semibold text-secondary">
-              Expert Consultation
-            </h3>
-            <p className="text-sm text-muted-foreground">
-              Consultation gratuite de 30 minutes avec nos experts techniques
-            </p>
-          </div>
-
-          <div className="flex flex-col items-center space-y-2">
-            <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
-              <Icon name="FileText" size={24} color="var(--color-primary)" />
-            </div>
-            <h3 className="font-semibold text-secondary">
-              Proposition Détaillée
-            </h3>
-            <p className="text-sm text-muted-foreground">
-              Proposition de projet détaillée avec calendrier et tarification
-            </p>
-          </div>
-        </div>
+          ))}
+        </motion.div>
       </div>
     </section>
   );

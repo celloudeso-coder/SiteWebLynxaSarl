@@ -45,8 +45,7 @@ const ContactMultiChannelConnection = () => {
         <main className="pt-16">
           <ContactHero />
           <QuickConnectCards />
-          {/* <ContactForm /> */}
-          {/* <OfficeLocation /> */}
+          <ContactForm />
           <SocialConnect />
         </main>
 
@@ -77,8 +76,7 @@ const ContactMultiChannelConnection = () => {
                   Innovation sans frontières, solutions sans limites.
                 </p>
                 <div className="text-sm text-white/60">
-                  © {new Date()?.getFullYear()} Lynxa Tech Guinea. All rights
-                  reserved.
+                  © {new Date()?.getFullYear()} Lynxa Tech Guinea. Tous droits réservés.
                 </div>
               </div>
 

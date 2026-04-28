@@ -13,7 +13,11 @@ const STATIC_TEAM = [
 
 const TeamSpotlight = () => {
   const { data: cmsTeam } = useTeamMembers();
-  const teamMembers = cmsTeam && cmsTeam.length > 0 ? cmsTeam : STATIC_TEAM;
+  const allMembers =
+    cmsTeam && cmsTeam.length > 0
+      ? cmsTeam.map((m) => ({ ...m, image: m.image_url }))
+      : STATIC_TEAM;
+  const teamMembers = allMembers.slice(0, 4);
 
   return (
     <section className="py-16 bg-white">

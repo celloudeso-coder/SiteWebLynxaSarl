@@ -1,156 +1,41 @@
 import React from "react";
 import Icon from "../../../components/AppIcon";
 import { Link } from "react-router-dom";
+import { useTimelineEvents } from "../../../hooks/useContent";
+
+const TIMELINE_COLORS = ["bg-primary", "bg-accent", "bg-success", "bg-warning"];
+const TIMELINE_ICONS = ["Rocket", "Smartphone", "Trophy", "Users", "Globe", "Lightbulb"];
+
+const STATIC_EVENTS = [
+  {
+    year: "2025",
+    title: "Fondation & Premiers Pas",
+    description:
+      "Lynxa Tech a été fondée à Conakry avec pour vision de relier l'innovation africaine aux opportunités mondiales. Commencé avec 4 informaticiens passionnés.",
+    icon: "Rocket",
+    achievements: [
+      "Enregistrement de l'entreprise",
+      "Plateformes numériques réalisées",
+      "Équipe initiale de 4",
+    ],
+    color: "bg-primary",
+  },
+];
 
 const CompanyTimeline = () => {
-  const timelineEvents = [
-    {
-      year: "2025",
-      title: "Fondation & Premiers Pas",
-      description:
-        "Lynxa Tech a été fondée à Conakry avec pour vision de relier l'innovation africaine aux opportunités mondiales. Commencé avec 4 informaticiens passionnés.",
-      icon: "Rocket",
-      achievements: [
-        "Enregistrement de l'entreprise",
-        "Plateformes numériques réalisées",
-        "Équipe initiale de 4",
-      ],
-      color: "bg-primary",
-    },
-    {
-      /*{
-      year: "2020",
-      title: "Lancement de la Première Application Mobile",
-      description:
-        "Lancement réussi de notre première application mobile pour une ONG locale, établissant notre réputation pour le développement mobile de qualité.",
-      icon: "Smartphone",
-      achievements: [
-        "5 applications mobiles livrées",
-        "Premier client international",
-        "Équipe portée à 8",
-      ],
-      color: "bg-accent",
-    },
-    {
-      year: "2021",
-      title: "Gains de Clients Majeurs",
-      description:
-        "Partenariats sécurisés avec trois grandes organisations internationales, prouvant notre capacité à fournir des solutions de niveau entreprise.",
-      icon: "Trophy",
-      achievements: [
-        "15+ projets d'entreprise",
-        "Certification ISO 27001",
-        "Équipe portée à 15",
-      ],
-      color: "bg-success",
-    },
-    {
-      year: "2022",
-      title: "Expansion de l'Équipe & Reconnaissance",
-      description:
-        "Doublement de la taille de notre équipe et reconnaissance au Sommet Africain de l'Innovation Technologique pour notre contribution exceptionnelle à l'écosystème tech de Guinée.",
-      icon: "Users",
-      achievements: [
-        "25+ membres dans l'équipe",
-        "Prix de l'industrie",
-        "Spécialisation en cybersécurité",
-      ],
-      color: "bg-warning",
-    },
-    {
-      year: "2023",
-      title: "Reconnaissance Internationale",
-      description:
-        "Mis en avant dans les principales publications tech et établi des partenariats en Afrique de l'Ouest, se positionnant pour une expansion régionale.",
-      icon: "Globe",
-      achievements: [
-        "Base client sur 3 continents",
-        "Partenariats régionaux",
-        "Leadership d'opinion",
-      ],
-      color: "bg-primary",
-    },
-    {
-      year: "2024",
-      title: "Statut de Hub d'Innovation",
-      description:
-        "Devenu le principal hub d'innovation technologique de Guinée, lançant des programmes de mentorat et contribuant à l'écosystème local des startups.",
-      icon: "Lightbulb",
-      achievements: [
-        "100+ développeurs mentorés",
-        "Programmes d'innovation",
-        "Impact communautaire",
-      ],
-      color: "bg-accent",
-    }, */
-    },
-    // }
-    // {/*{
-    //   year: "2020",
-    //   title: "Lancement de la Première Application Mobile",
-    //   description:
-    //     "Lancement réussi de notre première application mobile pour une ONG locale, établissant notre réputation pour le développement mobile de qualité.",
-    //   icon: "Smartphone",
-    //   achievements: [
-    //     "5 applications mobiles livrées",
-    //     "Premier client international",
-    //     "Équipe portée à 8",
-    //   ],
-    //   color: "bg-accent",
-    // },
-    // {
-    //   year: "2021",
-    //   title: "Gains de Clients Majeurs",
-    //   description:
-    //     "Partenariats sécurisés avec trois grandes organisations internationales, prouvant notre capacité à fournir des solutions de niveau entreprise.",
-    //   icon: "Trophy",
-    //   achievements: [
-    //     "15+ projets d'entreprise",
-    //     "Certification ISO 27001",
-    //     "Équipe portée à 15",
-    //   ],
-    //   color: "bg-success",
-    // },
-    // {
-    //   year: "2022",
-    //   title: "Expansion de l'Équipe & Reconnaissance",
-    //   description:
-    //     "Doublement de la taille de notre équipe et reconnaissance au Sommet Africain de l'Innovation Technologique pour notre contribution exceptionnelle à l'écosystème tech de Guinée.",
-    //   icon: "Users",
-    //   achievements: [
-    //     "25+ membres dans l'équipe",
-    //     "Prix de l'industrie",
-    //     "Spécialisation en cybersécurité",
-    //   ],
-    //   color: "bg-warning",
-    // },
-    // {
-    //   year: "2023",
-    //   title: "Reconnaissance Internationale",
-    //   description:
-    //     "Mis en avant dans les principales publications tech et établi des partenariats en Afrique de l'Ouest, se positionnant pour une expansion régionale.",
-    //   icon: "Globe",
-    //   achievements: [
-    //     "Base client sur 3 continents",
-    //     "Partenariats régionaux",
-    //     "Leadership d'opinion",
-    //   ],
-    //   color: "bg-primary",
-    // },
-    // {
-    //   year: "2024",
-    //   title: "Statut de Hub d'Innovation",
-    //   description:
-    //     "Devenu le principal hub d'innovation technologique de Guinée, lançant des programmes de mentorat et contribuant à l'écosystème local des startups.",
-    //   icon: "Lightbulb",
-    //   achievements: [
-    //     "100+ développeurs mentorés",
-    //     "Programmes d'innovation",
-    //     "Impact communautaire",
-    //   ],
-    //   color: "bg-accent",
-    // }, */}
-  ];
+  const { data: cmsEvents } = useTimelineEvents();
+
+  const timelineEvents =
+    cmsEvents && cmsEvents.length > 0
+      ? cmsEvents.map((e, i) => ({
+          year: e.year,
+          title: e.title,
+          description: e.description,
+          achievements: Array.isArray(e.achievements) ? e.achievements : [],
+          icon: TIMELINE_ICONS[i % TIMELINE_ICONS.length],
+          color: TIMELINE_COLORS[i % TIMELINE_COLORS.length],
+        }))
+      : STATIC_EVENTS;
 
   return (
     <section className="py-16 bg-surface">
@@ -160,9 +45,7 @@ const CompanyTimeline = () => {
             Notre parcours d'innovation
           </h2>
           <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
-             Lynxa Tech
-            {/*D’une petite startup au principal hub d’innovation technologique de
-            Guinée */}
+            Lynxa Tech
           </p>
         </div>
 
@@ -210,20 +93,15 @@ const CompanyTimeline = () => {
                     </p>
 
                     <div className="space-y-2">
-                      {/* <h4 className="font-semibold text-secondary text-sm">
-                        Principales réalisations:
-                      </h4> */}
                       <div className="flex flex-wrap gap-2">
-                        {event?.achievements?.map(
-                          (achievement, achievementIndex) => (
-                            <span
-                              key={achievementIndex}
-                              className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-primary/10 text-primary"
-                            >
-                              {achievement}
-                            </span>
-                          )
-                        )}
+                        {event?.achievements?.map((achievement, achievementIndex) => (
+                          <span
+                            key={achievementIndex}
+                            className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-primary/10 text-primary"
+                          >
+                            {achievement}
+                          </span>
+                        ))}
                       </div>
                     </div>
                   </div>
@@ -240,10 +118,10 @@ const CompanyTimeline = () => {
         <div className="text-center mt-12">
           <div className="bg-white rounded-xl p-8 shadow-medium">
             <h3 className="text-2xl font-bold text-secondary mb-4">
-              Prêt(e) à faire partie de notre histoire ?
+              Prêt(e) à faire partie de notre histoire ?
             </h3>
             <p className="text-muted-foreground mb-6 max-w-2xl mx-auto">
-              Rejoignez-nous alors que nous continuons à construire l’avenir de
+              Rejoignez-nous alors que nous continuons à construire l'avenir de
               la technologie en Afrique et au-delà. Que vous soyez client,
               partenaire ou développeur talentueux, il y a une place pour vous
               dans notre aventure.

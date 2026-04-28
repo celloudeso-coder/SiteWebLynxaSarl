@@ -1,65 +1,84 @@
 import React, { useState, useEffect } from "react";
 import Icon from "../../../components/AppIcon";
 import Image from "../../../components/AppImage";
+import { useTestimonials } from "../../../hooks/useContent";
+
+const STATIC_TESTIMONIALS = [
+  {
+    id: 1,
+    name: "Mamadou Diallo",
+    position: "PDG, GuineaTech Solutions",
+    company: "Entreprise Guinéenne Locale",
+    avatar: "https://randomuser.me/api/portraits/men/32.jpg",
+    rating: 5,
+    content: `Lynxa Tech a transformé notre entreprise avec une application mobile qui a augmenté l'engagement client de 300%. Leur compréhension du marché local combinée à des normes de qualité internationales est inégalée en Guinée.`,
+    project: "Développement d'Application Mobile",
+    result: "Augmentation de 300% de l'engagement client",
+    location: "Conakry, Guinée",
+    flag: "🇬🇳",
+  },
+  {
+    id: 2,
+    name: "Sarah Johnson",
+    position: "Directrice de Programme",
+    company: "ONG Internationale",
+    avatar: "https://randomuser.me/api/portraits/women/44.jpg",
+    rating: 5,
+    content: `Travailler avec Lynxa Tech a été exceptionnel. Ils ont déployé une infrastructure réseau complète sur 15 sites en Guinée, garantissant une connectivité fiable pour nos opérations humanitaires. Leur expertise technique et leur compréhension culturelle ont fait la différence.`,
+    project: "Infrastructure Réseau",
+    result: "Disponibilité de 99.9% sur 15 sites",
+    location: "Opérations Internationales",
+    flag: "🌍",
+  },
+  {
+    id: 3,
+    name: "Dr. Alpha Condé",
+    position: "Directeur IT",
+    company: "Université de Conakry",
+    avatar: "https://randomuser.me/api/portraits/men/56.jpg",
+    rating: 5,
+    content: `Les solutions de cybersécurité mises en œuvre par Lynxa Tech ont protégé notre institution contre de multiples menaces. Leur surveillance 24/7 et leurs capacités de réponse rapide nous donnent une tranquillité d'esprit totale.`,
+    project: "Implémentation de Cybersécurité",
+    result: "Aucune violation de sécurité depuis 2 ans",
+    location: "Conakry, Guinée",
+    flag: "🇬🇳",
+  },
+  {
+    id: 4,
+    name: "Marie Camara",
+    position: "Fondatrice",
+    company: "Guinea E-commerce Hub",
+    avatar: "https://randomuser.me/api/portraits/women/28.jpg",
+    rating: 5,
+    content: `Notre plateforme e-commerce construite par Lynxa Tech a généré plus de 50 000 $ de revenus mensuels. Leur expertise en développement web et leur compréhension des systèmes de paiement africains ont été cruciales pour notre succès.`,
+    project: "Plateforme E-commerce",
+    result: "Plus de 50K $ de revenus mensuels",
+    location: "Conakry, Guinée",
+    flag: "🇬🇳",
+  },
+];
 
 const TestimonialCarousel = () => {
   const [currentTestimonial, setCurrentTestimonial] = useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
+  const { data: cmsTestimonials } = useTestimonials();
 
-  const testimonials = [
-    {
-      id: 1,
-      name: "Mamadou Diallo",
-      position: "PDG, GuineaTech Solutions",
-      company: "Entreprise Guinéenne Locale",
-      avatar: "https://randomuser.me/api/portraits/men/32.jpg",
-      rating: 5,
-      content: `Lynxa Tech a transformé notre entreprise avec une application mobile qui a augmenté l'engagement client de 300%. Leur compréhension du marché local combinée à des normes de qualité internationales est inégalée en Guinée.`,
-      project: "Développement d'Application Mobile",
-      result: "Augmentation de 300% de l'engagement client",
-      location: "Conakry, Guinée",
-      flag: "🇬🇳",
-    },
-    {
-      id: 2,
-      name: "Sarah Johnson",
-      position: "Directrice de Programme",
-      company: "ONG Internationale",
-      avatar: "https://randomuser.me/api/portraits/women/44.jpg",
-      rating: 5,
-      content: `Travailler avec Lynxa Tech a été exceptionnel. Ils ont déployé une infrastructure réseau complète sur 15 sites en Guinée, garantissant une connectivité fiable pour nos opérations humanitaires. Leur expertise technique et leur compréhension culturelle ont fait la différence.`,
-      project: "Infrastructure Réseau",
-      result: "Disponibilité de 99.9% sur 15 sites",
-      location: "Opérations Internationales",
-      flag: "🌍",
-    },
-    {
-      id: 3,
-      name: "Dr. Alpha Condé",
-      position: "Directeur IT",
-      company: "Université de Conakry",
-      avatar: "https://randomuser.me/api/portraits/men/56.jpg",
-      rating: 5,
-      content: `Les solutions de cybersécurité mises en œuvre par Lynxa Tech ont protégé notre institution contre de multiples menaces. Leur surveillance 24/7 et leurs capacités de réponse rapide nous donnent une tranquillité d'esprit totale.`,
-      project: "Implémentation de Cybersécurité",
-      result: "Aucune violation de sécurité depuis 2 ans",
-      location: "Conakry, Guinée",
-      flag: "🇬🇳",
-    },
-    {
-      id: 4,
-      name: "Marie Camara",
-      position: "Fondatrice",
-      company: "Guinea E-commerce Hub",
-      avatar: "https://randomuser.me/api/portraits/women/28.jpg",
-      rating: 5,
-      content: `Notre plateforme e-commerce construite par Lynxa Tech a généré plus de 50 000 $ de revenus mensuels. Leur expertise en développement web et leur compréhension des systèmes de paiement africains ont été cruciales pour notre succès.`,
-      project: "Plateforme E-commerce",
-      result: "Plus de 50K $ de revenus mensuels",
-      location: "Conakry, Guinée",
-      flag: "🇬🇳",
-    },
-  ];
+  const testimonials =
+    cmsTestimonials && cmsTestimonials.length > 0
+      ? cmsTestimonials.map((t) => ({
+          id: t.id,
+          name: t.author_name,
+          position: t.author_position,
+          company: t.author_company,
+          avatar: t.author_image,
+          rating: t.rating ?? 5,
+          content: t.quote,
+          project: t.project_ref,
+          result: t.result,
+          location: "",
+          flag: "",
+        }))
+      : STATIC_TESTIMONIALS;
 
   useEffect(() => {
     if (!isAutoPlaying) return;
@@ -136,33 +155,25 @@ const TestimonialCarousel = () => {
               "{currentData?.content}"
             </blockquote>
 
-            {/* Project Details */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-              <div className="bg-surface rounded-xl p-4 text-center">
-                <Icon
-                  name="Briefcase"
-                  size={20}
-                  className="text-primary mx-auto mb-2"
-                />
-                <p className="text-sm text-muted-foreground mb-1">
-                  Project Type
-                </p>
-                <p className="font-medium text-secondary">
-                  {currentData?.project}
-                </p>
+            {/* Project Details — masqués si vides */}
+            {(currentData?.project || currentData?.result) && (
+              <div className={`grid grid-cols-1 ${currentData?.project && currentData?.result ? "md:grid-cols-2" : ""} gap-6 mb-8`}>
+                {currentData?.project && (
+                  <div className="bg-surface rounded-xl p-4 text-center">
+                    <Icon name="Briefcase" size={20} className="text-primary mx-auto mb-2" />
+                    <p className="text-sm text-muted-foreground mb-1">Type de projet</p>
+                    <p className="font-medium text-secondary">{currentData.project}</p>
+                  </div>
+                )}
+                {currentData?.result && (
+                  <div className="bg-surface rounded-xl p-4 text-center">
+                    <Icon name="TrendingUp" size={20} className="text-green-500 mx-auto mb-2" />
+                    <p className="text-sm text-muted-foreground mb-1">Résultat clé</p>
+                    <p className="font-medium text-secondary">{currentData.result}</p>
+                  </div>
+                )}
               </div>
-              <div className="bg-surface rounded-xl p-4 text-center">
-                <Icon
-                  name="TrendingUp"
-                  size={20}
-                  className="text-green-500 mx-auto mb-2"
-                />
-                <p className="text-sm text-muted-foreground mb-1">Key Result</p>
-                <p className="font-medium text-secondary">
-                  {currentData?.result}
-                </p>
-              </div>
-            </div>
+            )}
 
             {/* Author */}
             <div className="flex items-center justify-center space-x-4">
