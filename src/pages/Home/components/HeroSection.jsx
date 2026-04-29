@@ -1,8 +1,8 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { Link } from "react-router-dom";
 import Icon from "../../../components/AppIcon";
 import Image from "../../../components/AppImage";
-import Button from "../../../components/ui/Button";
 import { useHeroSection } from "../../../hooks/useContent";
 
 const BG_IMAGES = [
@@ -17,52 +17,36 @@ const TAGLINES = [
   "Innovation locale, impact global",
 ];
 
-// Deterministic particle positions to avoid re-render jitter
 const PARTICLES = Array.from({ length: 18 }, (_, i) => ({
   left: `${((i * 37 + 11) % 97)}%`,
   top: `${((i * 53 + 7) % 93)}%`,
-  delay: `${(i * 0.3) % 3}s`,
-  duration: `${2 + (i % 3)}s`,
-  size: i % 3 === 0 ? "w-3 h-3" : "w-2 h-2",
-  opacity: i % 4 === 0 ? "opacity-40" : "opacity-60",
+  delay: (i * 0.3) % 3,
+  duration: 2 + (i % 3),
+  size: i % 3 === 0 ? 12 : 8,
 }));
 
 const HeroSection = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [taglineIdx, setTaglineIdx] = useState(0);
-  const [isVisible, setIsVisible] = useState(false);
   const { data: cmsHero } = useHeroSection("home");
 
-  const title = cmsHero?.title ?? "Innovation Sans Frontières";
-  const subtitle = cmsHero?.subtitle ?? "Construire l'Avenir depuis la Guinée";
-  const description =
-    cmsHero?.description ??
-    "Donner aux entreprises de Guinée et d'Afrique de l'Ouest les moyens de réussir grâce à des solutions technologiques de pointe. Des applications mobiles aux services réseaux, nous offrons une innovation de classe mondiale avec une compréhension locale approfondie.";
-  const ctaPrimaryText = cmsHero?.cta_primary_text ?? "Lancez votre projet";
-  const ctaPrimaryLink = cmsHero?.cta_primary_link ?? "/contact";
-  const ctaSecondaryText = cmsHero?.cta_secondary_text ?? "Découvrez notre impact";
-  const ctaSecondaryLink = cmsHero?.cta_secondary_link ?? "/portfolio";
+  const title       = cmsHero?.title            ?? "Innovation Sans Frontières";
+  const subtitle    = cmsHero?.subtitle          ?? "Construire l'Avenir depuis la Guinée";
+  const description = cmsHero?.description       ?? "Donner aux entreprises de Guinée et d'Afrique de l'Ouest les moyens de réussir grâce à des solutions technologiques de pointe. Des applications mobiles aux services réseaux, nous offrons une innovation de classe mondiale avec une compréhension locale approfondie.";
+  const ctaPrimaryText    = cmsHero?.cta_primary_text    ?? "Lancez votre projet";
+  const ctaPrimaryLink    = cmsHero?.cta_primary_link    ?? "/contact";
+  const ctaSecondaryText  = cmsHero?.cta_secondary_text  ?? "Découvrez notre impact";
+  const ctaSecondaryLink  = cmsHero?.cta_secondary_link  ?? "/portfolio";
 
   useEffect(() => {
-    setIsVisible(true);
-
-    const bgInterval = setInterval(() => {
-      setCurrentSlide((prev) => (prev + 1) % BG_IMAGES.length);
-    }, 5000);
-
-    const taglineInterval = setInterval(() => {
-      setTaglineIdx((prev) => (prev + 1) % TAGLINES.length);
-    }, 3000);
-
-    return () => {
-      clearInterval(bgInterval);
-      clearInterval(taglineInterval);
-    };
+    const bgInterval = setInterval(() => setCurrentSlide((p) => (p + 1) % BG_IMAGES.length), 5000);
+    const taglineInterval = setInterval(() => setTaglineIdx((p) => (p + 1) % TAGLINES.length), 3000);
+    return () => { clearInterval(bgInterval); clearInterval(taglineInterval); };
   }, []);
 
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-secondary via-gray-900 to-primary">
-      {/* Background Slideshow */}
+      {/* Background slideshow */}
       <div className="absolute inset-0">
         {BG_IMAGES.map((img, index) => (
           <div
@@ -71,133 +55,152 @@ const HeroSection = () => {
               index === currentSlide ? "opacity-30" : "opacity-0"
             }`}
           >
-            <Image
-              src={img}
-              alt={`Guinea tech landscape ${index + 1}`}
-              className="w-full h-full object-cover"
-            />
+            <Image src={img} alt={`Tech background ${index + 1}`} className="w-full h-full object-cover" />
           </div>
         ))}
       </div>
 
-      {/* Orange Glow Overlay */}
+      {/* Gradient overlay */}
       <div className="absolute inset-0 bg-gradient-to-r from-primary/20 via-transparent to-accent/20" />
 
-      {/* Animated Particles */}
+      {/* Animated particles */}
       <div className="absolute inset-0 pointer-events-none">
         {PARTICLES.map((p, i) => (
-          <div
+          <motion.div
             key={i}
-            className={`absolute ${p.size} bg-primary rounded-full ${p.opacity} animate-pulse`}
-            style={{
-              left: p.left,
-              top: p.top,
-              animationDelay: p.delay,
-              animationDuration: p.duration,
-            }}
+            className="absolute bg-primary rounded-full opacity-50"
+            style={{ left: p.left, top: p.top, width: p.size, height: p.size }}
+            animate={{ scale: [1, 1.4, 1], opacity: [0.3, 0.7, 0.3] }}
+            transition={{ duration: p.duration, delay: p.delay, repeat: Infinity, ease: "easeInOut" }}
           />
         ))}
       </div>
 
       {/* Content */}
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-        <div
-          className={`transform transition-all duration-1000 ${
-            isVisible ? "translate-y-0 opacity-100" : "translate-y-12 opacity-0"
-          }`}
+        {/* Badge */}
+        <motion.div
+          className="flex justify-center mb-8"
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.1 }}
         >
-          {/* Animated Badge */}
-          <div className="flex justify-center mb-8">
-            <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm border border-white/20 text-white px-5 py-2 rounded-full text-sm font-medium animate-pulse">
-              <span className="w-2 h-2 bg-green-400 rounded-full animate-ping inline-block" />
-              🇬🇳 Hub Technologique · Conakry, Guinée
-            </div>
+          <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm border border-white/20 text-white px-5 py-2 rounded-full text-sm font-medium">
+            <span className="w-2 h-2 bg-green-400 rounded-full animate-ping inline-block" />
+            🇬🇳 Hub Technologique · Conakry, Guinée
           </div>
+        </motion.div>
 
-          {/* Main Headline */}
-          <h1 className="text-4xl sm:text-5xl lg:text-7xl font-heading font-bold text-white mb-6">
-            <span className="block text-gradient-orange">{title}</span>
-          </h1>
+        {/* Main headline */}
+        <motion.h1
+          className="text-4xl sm:text-5xl lg:text-7xl font-heading font-bold text-white mb-6"
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.2 }}
+        >
+          <span className="block text-gradient-orange">{title}</span>
+        </motion.h1>
 
-          {/* Subtitle */}
-          <p className="text-xl sm:text-2xl lg:text-3xl text-gray-200 mb-4 font-medium">
-            {subtitle}
-          </p>
+        {/* Subtitle */}
+        <motion.p
+          className="text-xl sm:text-2xl lg:text-3xl text-gray-200 mb-4 font-medium"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.35 }}
+        >
+          {subtitle}
+        </motion.p>
 
-          {/* Rotating Tagline */}
-          <div className="h-8 mb-8 flex items-center justify-center overflow-hidden">
-            <p
+        {/* Rotating tagline */}
+        <motion.div
+          className="h-8 mb-8 flex items-center justify-center overflow-hidden"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.5 }}
+        >
+          <AnimatePresence mode="wait">
+            <motion.p
               key={taglineIdx}
-              className="text-base text-primary font-semibold tracking-wide transition-all duration-500 animate-fadeIn"
-              style={{ animation: "fadeSlideUp 0.5s ease" }}
+              className="text-base text-primary font-semibold tracking-wide"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.4 }}
             >
               {TAGLINES[taglineIdx]}
-            </p>
-          </div>
+            </motion.p>
+          </AnimatePresence>
+        </motion.div>
 
-          {/* Description */}
-          <p className="text-lg text-gray-300 mb-12 max-w-3xl mx-auto leading-relaxed">
-            {description}
-          </p>
+        {/* Description */}
+        <motion.p
+          className="text-lg text-gray-300 mb-12 max-w-3xl mx-auto leading-relaxed"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.5 }}
+        >
+          {description}
+        </motion.p>
 
-          {/* CTA Buttons */}
-          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-16">
-            <Link to={ctaPrimaryLink}>
-              <Button
-                variant="default"
-                size="lg"
-                iconName="Rocket"
-                iconPosition="left"
-                className="glow-orange text-lg px-8 py-4 min-w-[200px]"
-              >
-                {ctaPrimaryText}
-              </Button>
-            </Link>
-            <Link to={ctaSecondaryLink}>
-              <Button
-                variant="outline"
-                size="lg"
-                iconName="TrendingUp"
-                iconPosition="left"
-                className="text-white border-white hover:bg-white hover:text-secondary text-lg px-8 py-4 min-w-[200px]"
-              >
-                {ctaSecondaryText}
-              </Button>
-            </Link>
-          </div>
+        {/* CTA buttons */}
+        <motion.div
+          className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-16"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.65 }}
+        >
+          <Link to={ctaPrimaryLink}>
+            <motion.span
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.97 }}
+              className="inline-flex items-center gap-2 bg-primary hover:bg-primary/90 text-white px-8 py-4 rounded-xl font-semibold text-lg transition-colors duration-300 glow-orange cursor-pointer min-w-[200px] justify-center"
+            >
+              <Icon name="Rocket" size={20} />
+              {ctaPrimaryText}
+            </motion.span>
+          </Link>
+          <Link to={ctaSecondaryLink}>
+            <motion.span
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.97 }}
+              className="inline-flex items-center gap-2 border border-white/40 text-white hover:bg-white/10 px-8 py-4 rounded-xl font-semibold text-lg transition-colors duration-300 cursor-pointer min-w-[200px] justify-center"
+            >
+              <Icon name="TrendingUp" size={20} />
+              {ctaSecondaryText}
+            </motion.span>
+          </Link>
+        </motion.div>
 
-          {/* Scroll Indicator */}
-          <div className="flex flex-col items-center">
-            <p className="text-gray-400 text-sm mb-2">Découvrir</p>
-            <div className="animate-bounce">
-              <Icon name="ChevronDown" size={24} color="white" />
-            </div>
-          </div>
-        </div>
+        {/* Scroll indicator */}
+        <motion.div
+          className="flex flex-col items-center"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 1.2 }}
+        >
+          <p className="text-gray-400 text-sm mb-2">Découvrir</p>
+          <motion.div
+            animate={{ y: [0, 6, 0] }}
+            transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
+          >
+            <Icon name="ChevronDown" size={24} color="white" />
+          </motion.div>
+        </motion.div>
       </div>
 
-      {/* Slide Indicators */}
-      <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 flex space-x-2">
+      {/* Slide indicators */}
+      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex gap-2 z-10">
         {BG_IMAGES.map((_, index) => (
           <button
             key={index}
             onClick={() => setCurrentSlide(index)}
             className={`w-3 h-3 rounded-full transition-all duration-300 ${
-              index === currentSlide
-                ? "bg-primary scale-125"
-                : "bg-white/50 hover:bg-white/75"
+              index === currentSlide ? "bg-primary scale-125" : "bg-white/40 hover:bg-white/60"
             }`}
-            aria-label={`Go to slide ${index + 1}`}
+            aria-label={`Slide ${index + 1}`}
           />
         ))}
       </div>
-
-      <style>{`
-        @keyframes fadeSlideUp {
-          from { opacity: 0; transform: translateY(12px); }
-          to   { opacity: 1; transform: translateY(0); }
-        }
-      `}</style>
     </section>
   );
 };

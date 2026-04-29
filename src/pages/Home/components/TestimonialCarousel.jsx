@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import Icon from "../../../components/AppIcon";
 import Image from "../../../components/AppImage";
 import { useTestimonials } from "../../../hooks/useContent";
@@ -11,9 +12,9 @@ const STATIC_TESTIMONIALS = [
     company: "Entreprise Guinéenne Locale",
     avatar: "https://randomuser.me/api/portraits/men/32.jpg",
     rating: 5,
-    content: `Lynxa Tech a transformé notre entreprise avec une application mobile qui a augmenté l'engagement client de 300%. Leur compréhension du marché local combinée à des normes de qualité internationales est inégalée en Guinée.`,
+    content: "Lynxa Tech a transformé notre entreprise avec une application mobile qui a augmenté l'engagement client de façon significative. Leur compréhension du marché local combinée à des normes de qualité internationales est inégalée en Guinée.",
     project: "Développement d'Application Mobile",
-    result: "Augmentation de 300% de l'engagement client",
+    result: "Engagement client fortement amélioré",
     location: "Conakry, Guinée",
     flag: "🇬🇳",
   },
@@ -24,9 +25,9 @@ const STATIC_TESTIMONIALS = [
     company: "ONG Internationale",
     avatar: "https://randomuser.me/api/portraits/women/44.jpg",
     rating: 5,
-    content: `Travailler avec Lynxa Tech a été exceptionnel. Ils ont déployé une infrastructure réseau complète sur 15 sites en Guinée, garantissant une connectivité fiable pour nos opérations humanitaires. Leur expertise technique et leur compréhension culturelle ont fait la différence.`,
+    content: "Travailler avec Lynxa Tech a été exceptionnel. Ils ont déployé une infrastructure réseau complète garantissant une connectivité fiable pour nos opérations. Leur expertise technique et leur compréhension culturelle ont fait la différence.",
     project: "Infrastructure Réseau",
-    result: "Disponibilité de 99.9% sur 15 sites",
+    result: "Connectivité fiable sur plusieurs sites",
     location: "Opérations Internationales",
     flag: "🌍",
   },
@@ -37,9 +38,9 @@ const STATIC_TESTIMONIALS = [
     company: "Université de Conakry",
     avatar: "https://randomuser.me/api/portraits/men/56.jpg",
     rating: 5,
-    content: `Les solutions de cybersécurité mises en œuvre par Lynxa Tech ont protégé notre institution contre de multiples menaces. Leur surveillance 24/7 et leurs capacités de réponse rapide nous donnent une tranquillité d'esprit totale.`,
+    content: "Les solutions de cybersécurité mises en œuvre par Lynxa Tech ont protégé notre institution contre de multiples menaces. Leur surveillance et leurs capacités de réponse rapide nous donnent une tranquillité d'esprit totale.",
     project: "Implémentation de Cybersécurité",
-    result: "Aucune violation de sécurité depuis 2 ans",
+    result: "Aucune violation de sécurité détectée",
     location: "Conakry, Guinée",
     flag: "🇬🇳",
   },
@@ -50,17 +51,18 @@ const STATIC_TESTIMONIALS = [
     company: "Guinea E-commerce Hub",
     avatar: "https://randomuser.me/api/portraits/women/28.jpg",
     rating: 5,
-    content: `Notre plateforme e-commerce construite par Lynxa Tech a généré plus de 50 000 $ de revenus mensuels. Leur expertise en développement web et leur compréhension des systèmes de paiement africains ont été cruciales pour notre succès.`,
+    content: "Notre plateforme e-commerce construite par Lynxa Tech génère des revenus croissants chaque mois. Leur expertise en développement web et leur compréhension des systèmes de paiement africains ont été cruciales pour notre succès.",
     project: "Plateforme E-commerce",
-    result: "Plus de 50K $ de revenus mensuels",
+    result: "Revenus mensuels en forte croissance",
     location: "Conakry, Guinée",
     flag: "🇬🇳",
   },
 ];
 
 const TestimonialCarousel = () => {
-  const [currentTestimonial, setCurrentTestimonial] = useState(0);
-  const [isAutoPlaying, setIsAutoPlaying] = useState(true);
+  const [current, setCurrent] = useState(0);
+  const [direction, setDirection] = useState(1);
+  const [autoPlay, setAutoPlay] = useState(true);
   const { data: cmsTestimonials } = useTestimonials();
 
   const testimonials =
@@ -80,177 +82,167 @@ const TestimonialCarousel = () => {
         }))
       : STATIC_TESTIMONIALS;
 
+  const total = testimonials.length;
+
   useEffect(() => {
-    if (!isAutoPlaying) return;
-
-    const interval = setInterval(() => {
-      setCurrentTestimonial((prev) => (prev + 1) % testimonials?.length);
+    if (!autoPlay) return;
+    const id = setInterval(() => {
+      setDirection(1);
+      setCurrent((p) => (p + 1) % total);
     }, 6000);
+    return () => clearInterval(id);
+  }, [autoPlay, total]);
 
-    return () => clearInterval(interval);
-  }, [isAutoPlaying, testimonials?.length]);
+  function go(index) {
+    setDirection(index > current ? 1 : -1);
+    setCurrent(index);
+    setAutoPlay(false);
+    setTimeout(() => setAutoPlay(true), 10000);
+  }
+  function next() { go((current + 1) % total); }
+  function prev() { go((current - 1 + total) % total); }
 
-  const goToTestimonial = (index) => {
-    setCurrentTestimonial(index);
-    setIsAutoPlaying(false);
-    setTimeout(() => setIsAutoPlaying(true), 10000);
+  const t = testimonials[current];
+
+  const variants = {
+    enter: (d) => ({ opacity: 0, x: d > 0 ? 60 : -60 }),
+    center: { opacity: 1, x: 0 },
+    exit:   (d) => ({ opacity: 0, x: d > 0 ? -60 : 60 }),
   };
-
-  const nextTestimonial = () => {
-    setCurrentTestimonial((prev) => (prev + 1) % testimonials?.length);
-    setIsAutoPlaying(false);
-    setTimeout(() => setIsAutoPlaying(true), 10000);
-  };
-
-  const prevTestimonial = () => {
-    setCurrentTestimonial(
-      (prev) => (prev - 1 + testimonials?.length) % testimonials?.length
-    );
-    setIsAutoPlaying(false);
-    setTimeout(() => setIsAutoPlaying(true), 10000);
-  };
-
-  const currentData = testimonials?.[currentTestimonial];
 
   return (
-    <section className="py-20 bg-gradient-to-br from-surface to-white">
+    <section className="py-20 bg-gradient-to-br from-gray-50 to-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Section Header */}
-        <div className="text-center mb-16">
+        {/* Header */}
+        <motion.div
+          className="text-center mb-14"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5 }}
+        >
+          <div className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-2 rounded-full text-sm font-medium mb-4">
+            <Icon name="Star" size={16} />
+            <span>Témoignages</span>
+          </div>
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-heading font-bold text-secondary mb-6">
-            Histoires{" "}
-            <span className="text-gradient-orange">Reussite Client</span>
+            Histoires de{" "}
+            <span className="text-gradient-orange">Réussite Client</span>
           </h2>
-          <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-            Écoutez les entreprises de toute la Guinée et les organisations
-            internationales qui ont transformé leurs opérations avec nos
-            solutions technologiques.
+          <p className="text-xl text-gray-500 max-w-3xl mx-auto">
+            Écoutez les entreprises de Guinée et les organisations internationales qui ont transformé leurs opérations avec nos solutions.
           </p>
-        </div>
+        </motion.div>
 
-        {/* Main Testimonial */}
-        <div className="relative max-w-5xl mx-auto">
-          <div className="bg-white rounded-3xl shadow-large p-8 lg:p-12 border border-border">
-            {/* Quote Icon */}
-            <div className="flex justify-center mb-8">
-              <div className="w-16 h-16 bg-gradient-to-br from-primary to-accent rounded-full flex items-center justify-center glow-orange">
-                <Icon name="Quote" size={28} color="white" />
-              </div>
-            </div>
-
-            {/* Rating */}
+        {/* Main card */}
+        <div className="relative max-w-4xl mx-auto">
+          <div className="bg-white rounded-3xl shadow-large p-8 lg:p-12 border border-gray-100 overflow-hidden min-h-[420px] flex flex-col justify-between">
+            {/* Quote icon */}
             <div className="flex justify-center mb-6">
-              {[...Array(currentData?.rating)]?.map((_, i) => (
-                <Icon
-                  key={i}
-                  name="Star"
-                  size={24}
-                  className="text-yellow-400 fill-current"
-                />
-              ))}
-            </div>
-
-            {/* Content */}
-            <blockquote className="text-xl lg:text-2xl text-secondary text-center leading-relaxed mb-8 font-medium">
-              "{currentData?.content}"
-            </blockquote>
-
-            {/* Project Details — masqués si vides */}
-            {(currentData?.project || currentData?.result) && (
-              <div className={`grid grid-cols-1 ${currentData?.project && currentData?.result ? "md:grid-cols-2" : ""} gap-6 mb-8`}>
-                {currentData?.project && (
-                  <div className="bg-surface rounded-xl p-4 text-center">
-                    <Icon name="Briefcase" size={20} className="text-primary mx-auto mb-2" />
-                    <p className="text-sm text-muted-foreground mb-1">Type de projet</p>
-                    <p className="font-medium text-secondary">{currentData.project}</p>
-                  </div>
-                )}
-                {currentData?.result && (
-                  <div className="bg-surface rounded-xl p-4 text-center">
-                    <Icon name="TrendingUp" size={20} className="text-green-500 mx-auto mb-2" />
-                    <p className="text-sm text-muted-foreground mb-1">Résultat clé</p>
-                    <p className="font-medium text-secondary">{currentData.result}</p>
-                  </div>
-                )}
-              </div>
-            )}
-
-            {/* Author */}
-            <div className="flex items-center justify-center space-x-4">
-              <Image
-                src={currentData?.avatar}
-                alt={currentData?.name}
-                className="w-16 h-16 rounded-full object-cover border-2 border-primary"
-              />
-              <div className="text-center">
-                <h4 className="font-heading font-bold text-secondary text-lg">
-                  {currentData?.name}
-                </h4>
-                <p className="text-primary font-medium">
-                  {currentData?.position}
-                </p>
-                <p className="text-sm text-muted-foreground">
-                  {currentData?.company}
-                </p>
-                <p className="text-sm text-muted-foreground flex items-center justify-center space-x-1 mt-1">
-                  <span>{currentData?.flag}</span>
-                  <span>{currentData?.location}</span>
-                </p>
+              <div className="w-14 h-14 bg-gradient-to-br from-primary to-accent rounded-full flex items-center justify-center glow-orange">
+                <Icon name="Quote" size={24} color="white" />
               </div>
             </div>
+
+            <AnimatePresence mode="wait" custom={direction}>
+              <motion.div
+                key={current}
+                custom={direction}
+                variants={variants}
+                initial="enter"
+                animate="center"
+                exit="exit"
+                transition={{ duration: 0.35, ease: "easeInOut" }}
+                className="flex-1"
+              >
+                {/* Stars */}
+                <div className="flex justify-center gap-1 mb-5">
+                  {[...Array(t.rating ?? 5)].map((_, i) => (
+                    <Icon key={i} name="Star" size={20} className="text-yellow-400 fill-current" />
+                  ))}
+                </div>
+
+                {/* Quote */}
+                <blockquote className="text-lg lg:text-xl text-secondary text-center leading-relaxed mb-8 font-medium italic">
+                  "{t.content}"
+                </blockquote>
+
+                {/* Project details */}
+                {(t.project || t.result) && (
+                  <div className={`grid grid-cols-1 ${t.project && t.result ? "md:grid-cols-2" : ""} gap-4 mb-8`}>
+                    {t.project && (
+                      <div className="bg-gray-50 rounded-xl p-4 text-center">
+                        <Icon name="Briefcase" size={18} className="text-primary mx-auto mb-1.5" />
+                        <p className="text-xs text-gray-400 mb-1">Type de projet</p>
+                        <p className="font-semibold text-secondary text-sm">{t.project}</p>
+                      </div>
+                    )}
+                    {t.result && (
+                      <div className="bg-gray-50 rounded-xl p-4 text-center">
+                        <Icon name="TrendingUp" size={18} className="text-emerald-500 mx-auto mb-1.5" />
+                        <p className="text-xs text-gray-400 mb-1">Résultat clé</p>
+                        <p className="font-semibold text-secondary text-sm">{t.result}</p>
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {/* Author */}
+                <div className="flex items-center justify-center gap-4">
+                  <Image
+                    src={t.avatar}
+                    alt={t.name}
+                    className="w-14 h-14 rounded-full object-cover ring-2 ring-primary/30"
+                  />
+                  <div className="text-center">
+                    <h4 className="font-heading font-bold text-secondary">{t.name}</h4>
+                    <p className="text-primary font-medium text-sm">{t.position}</p>
+                    <p className="text-xs text-gray-400">{t.company}</p>
+                    {(t.flag || t.location) && (
+                      <p className="text-xs text-gray-400 mt-0.5">{t.flag} {t.location}</p>
+                    )}
+                  </div>
+                </div>
+              </motion.div>
+            </AnimatePresence>
           </div>
 
-          {/* Navigation Arrows */}
+          {/* Navigation arrows */}
           <button
-            onClick={prevTestimonial}
-            className="absolute left-4 top-1/2 transform -translate-y-1/2 w-12 h-12 bg-white rounded-full shadow-medium hover:shadow-large transition-all duration-300 flex items-center justify-center group border border-border"
-            aria-label="Previous testimonial"
+            onClick={prev}
+            className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-5 w-11 h-11 bg-white rounded-full shadow-medium hover:shadow-large border border-gray-100 flex items-center justify-center group transition-all duration-200"
+            aria-label="Précédent"
           >
-            <Icon
-              name="ChevronLeft"
-              size={20}
-              className="text-secondary group-hover:text-primary transition-colors duration-200"
-            />
+            <Icon name="ChevronLeft" size={18} className="text-secondary group-hover:text-primary transition-colors" />
           </button>
-
           <button
-            onClick={nextTestimonial}
-            className="absolute right-4 top-1/2 transform -translate-y-1/2 w-12 h-12 bg-white rounded-full shadow-medium hover:shadow-large transition-all duration-300 flex items-center justify-center group border border-border"
-            aria-label="Next testimonial"
+            onClick={next}
+            className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-5 w-11 h-11 bg-white rounded-full shadow-medium hover:shadow-large border border-gray-100 flex items-center justify-center group transition-all duration-200"
+            aria-label="Suivant"
           >
-            <Icon
-              name="ChevronRight"
-              size={20}
-              className="text-secondary group-hover:text-primary transition-colors duration-200"
-            />
+            <Icon name="ChevronRight" size={18} className="text-secondary group-hover:text-primary transition-colors" />
           </button>
         </div>
 
-        {/* Testimonial Indicators */}
-        <div className="flex justify-center space-x-3 mt-8">
-          {testimonials?.map((_, index) => (
+        {/* Dot indicators */}
+        <div className="flex justify-center gap-3 mt-8">
+          {testimonials.map((_, index) => (
             <button
               key={index}
-              onClick={() => goToTestimonial(index)}
-              className={`w-3 h-3 rounded-full transition-all duration-300 ${
-                index === currentTestimonial
-                  ? "bg-primary scale-125"
-                  : "bg-gray-300 hover:bg-gray-400"
+              onClick={() => go(index)}
+              className={`h-2.5 rounded-full transition-all duration-300 ${
+                index === current ? "bg-primary w-6" : "bg-gray-300 hover:bg-gray-400 w-2.5"
               }`}
-              aria-label={`Go to testimonial ${index + 1}`}
+              aria-label={`Témoignage ${index + 1}`}
             />
           ))}
         </div>
 
-        {/* Auto-play Indicator */}
-        <div className="flex items-center justify-center mt-6 space-x-2">
-          <div
-            className={`w-2 h-2 rounded-full ${
-              isAutoPlaying ? "bg-green-500 animate-pulse" : "bg-gray-400"
-            }`}
-          ></div>
-          <span className="text-sm text-muted-foreground">
-            {isAutoPlaying ? "Auto-playing" : "Paused"}
+        {/* Auto-play indicator */}
+        <div className="flex items-center justify-center mt-4 gap-2">
+          <div className={`w-2 h-2 rounded-full ${autoPlay ? "bg-green-500 animate-pulse" : "bg-gray-400"}`} />
+          <span className="text-xs text-gray-400">
+            {autoPlay ? "Lecture automatique" : "En pause"}
           </span>
         </div>
       </div>

@@ -1,18 +1,66 @@
 import React from "react";
+import { motion } from "framer-motion";
 import Image from "../../../components/AppImage";
 import Icon from "../../../components/AppIcon";
-import { Link } from "react-router-dom";
 import { useTeamMembers } from "../../../hooks/useContent";
 
 const STATIC_TEAM = [
-  { id: 1, name: "Elhadj Sadou Barry", role: "Responsable du Développement Mobile", image: "/CellouK.png", expertise: ["Full-Stack", "Flutter", "Digital Forensics"], description: "Développeur mobile spécialisé en solutions multiplateformes.", achievements: ["Développeur Web Full-Stack", "Développeur Flutter", "Contributeur Open Source"], social_links: { linkedin: "#", github: "https://github.com/D4wn-Light" } },
-  { id: 2, name: "Mamadou Cellou Kanté", role: "CEO & Co-Fondateur", image: "/Cellou.png", expertise: ["Vision Produit", "Business Dev", "Stratégie Tech"], description: "Pilote la stratégie technique de Lynxa Tech.", achievements: ["Administrateur réseaux et systèmes", "Certifié Analyste Cybersécurité"], social_links: { linkedin: "#", github: "#" } },
-  { id: 3, name: "Aissatou Lamarana Diallo", role: "Responsable Solutions Digitales", image: "/lamarana.png", expertise: ["React", "Node.js", "Cloud"], description: "Pilote la stratégie digitale de Lynxa Tech.", achievements: ["Architecte Solutions AWS", "Expert React", "Contributrice Open Source"], social_links: { linkedin: "#" } },
-  { id: 4, name: "Bandiougou Keita", role: "Responsable Services Réseaux", image: "/keita.jpg", expertise: ["Cisco", "Cybersécurité", "VMware"], description: "Supervise les infrastructures réseau clients.", achievements: ["Administrateur réseaux", "Certifié CCNP"], social_links: { linkedin: "#" } },
+  {
+    id: 1,
+    name: "Elhadj Sadou Barry",
+    role: "Responsable Développement Mobile",
+    image: "/CellouK.png",
+    expertise: ["Full-Stack", "Flutter", "Digital Forensics"],
+    description: "Développeur mobile spécialisé en solutions multiplateformes.",
+    achievements: ["Développeur Web Full-Stack", "Développeur Flutter"],
+    social_links: { linkedin: "#", github: "https://github.com/D4wn-Light" },
+  },
+  {
+    id: 2,
+    name: "Mamadou Cellou Kanté",
+    role: "CEO & Co-Fondateur",
+    image: "/Cellou.png",
+    expertise: ["Vision Produit", "Business Dev", "Stratégie Tech"],
+    description: "Pilote la stratégie technique de Lynxa Tech.",
+    achievements: ["Administrateur réseaux et systèmes", "Certifié Analyste Cybersécurité"],
+    social_links: { linkedin: "https://www.linkedin.com/in/mamadou-cellou-kante", github: "#" },
+  },
+  {
+    id: 3,
+    name: "Aissatou Lamarana Diallo",
+    role: "Responsable Solutions Digitales",
+    image: "/lamarana.png",
+    expertise: ["React", "Node.js", "Cloud"],
+    description: "Pilote la stratégie digitale de Lynxa Tech.",
+    achievements: ["Architecte Solutions AWS", "Expert React"],
+    social_links: { linkedin: "#" },
+  },
+  {
+    id: 4,
+    name: "Bandiougou Keita",
+    role: "Responsable Services Réseaux",
+    image: "/keita.jpg",
+    expertise: ["Cisco", "Cybersécurité", "VMware"],
+    description: "Supervise les infrastructures réseau clients.",
+    achievements: ["Administrateur réseaux", "Certifié CCNP"],
+    social_links: { linkedin: "#" },
+  },
 ];
 
+const SkeletonCard = () => (
+  <div className="bg-gray-50 rounded-2xl p-6 animate-pulse space-y-4">
+    <div className="w-20 h-20 bg-gray-200 rounded-full mx-auto" />
+    <div className="h-4 bg-gray-200 rounded-full w-3/4 mx-auto" />
+    <div className="h-3 bg-gray-100 rounded-full w-1/2 mx-auto" />
+    <div className="flex gap-2 justify-center flex-wrap">
+      <div className="h-5 w-16 bg-gray-100 rounded-full" />
+      <div className="h-5 w-20 bg-gray-100 rounded-full" />
+    </div>
+  </div>
+);
+
 const TeamSpotlight = () => {
-  const { data: cmsTeam } = useTeamMembers();
+  const { data: cmsTeam, loading } = useTeamMembers();
   const allMembers =
     cmsTeam && cmsTeam.length > 0
       ? cmsTeam.map((m) => ({ ...m, image: m.image_url }))
@@ -20,145 +68,107 @@ const TeamSpotlight = () => {
   const teamMembers = allMembers.slice(0, 4);
 
   return (
-    <section className="py-16 bg-white">
+    <section className="py-20 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold text-secondary mb-4">
-            Rencontrez notre équipe d’experts
+        <motion.div
+          className="text-center mb-14"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5 }}
+        >
+          <div className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-2 rounded-full text-sm font-medium mb-4">
+            <Icon name="Users" size={16} />
+            <span>L'équipe</span>
+          </div>
+          <h2 className="text-3xl md:text-4xl font-heading font-bold text-secondary mb-4">
+            Rencontrez notre équipe d'experts
           </h2>
-          <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
-            Des professionnels talentueux de Guinée capables d'offrir des solutions de
-            classe mondiale à des clients dans le monde entier
+          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+            Des professionnels talentueux de Guinée capables d'offrir des solutions de classe mondiale
           </p>
-        </div>
+        </motion.div>
 
-        <div className="grid md:grid-cols-4 lg:grid-cols-4 gap-8">
-          {teamMembers?.map((member) => (
-            <div
-              key={member?.id}
-              className="bg-surface rounded-xl p-6 card-hover"
-            >
-              {/* Profile Image */}
-              <div className="relative mb-6">
-                <div className="w-24 h-24 mx-auto rounded-full overflow-hidden glow-orange">
-                  <Image
-                    src={member?.image}
-                    alt={member?.name}
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-                <div className="absolute -bottom-2 left-1/2 transform -translate-x-1/2">
-                  <div className="bg-primary text-white px-3 py-1 rounded-full text-xs font-medium">
-                    {member?.experience}
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {loading
+            ? [0, 1, 2, 3].map((i) => <SkeletonCard key={i} />)
+            : teamMembers.map((member, index) => (
+                <motion.div
+                  key={member.id}
+                  className="bg-gray-50 rounded-2xl p-6 hover:shadow-medium transition-shadow duration-300"
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.4, delay: index * 0.08 }}
+                  whileHover={{ y: -4 }}
+                >
+                  {/* Avatar */}
+                  <div className="relative mb-5">
+                    <div className="w-20 h-20 mx-auto rounded-full overflow-hidden ring-4 ring-primary/20">
+                      <Image
+                        src={member.image}
+                        alt={member.name}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
                   </div>
-                </div>
-              </div>
 
-              {/* Member Info */}
-              <div className="text-center mb-4">
-                <h3 className="text-xl font-bold text-secondary mb-1">
-                  {member?.name}
-                </h3>
-                <p className="text-primary font-medium mb-3">{member?.role}</p>
-                <p className="text-sm text-muted-foreground leading-relaxed">
-                  {member?.description}
-                </p>
-              </div>
+                  {/* Info */}
+                  <div className="text-center mb-4">
+                    <h3 className="text-base font-heading font-bold text-secondary mb-0.5">{member.name}</h3>
+                    <p className="text-primary font-medium text-xs mb-3">{member.role}</p>
+                    <p className="text-xs text-gray-500 leading-relaxed">{member.description}</p>
+                  </div>
 
-              {/* Expertise Tags */}
-              <div className="mb-4">
-                <h4 className="text-sm font-semibold text-secondary mb-2">
-                  Expertise:
-                </h4>
-                <div className="flex flex-wrap gap-2">
-                  {member?.expertise?.map((skill, index) => (
-                    <span
-                      key={index}
-                      className="px-2 py-1 bg-primary/10 text-primary text-xs rounded-full"
-                    >
-                      {skill}
-                    </span>
-                  ))}
-                </div>
-              </div>
-
-              {/* Achievements */}
-              <div className="mb-6">
-                <h4 className="text-sm font-semibold text-secondary mb-2">
-                  Realisations:
-                </h4>
-                <div className="space-y-1">
-                  {member?.achievements
-                    ?.slice(0, 2)
-                    ?.map((achievement, index) => (
-                      <div key={index} className="flex items-center space-x-2">
-                        <Icon
-                          name="Award"
-                          size={12}
-                          color="var(--color-primary)"
-                        />
-                        <span className="text-xs text-muted-foreground">
-                          {achievement}
+                  {/* Expertise tags */}
+                  <div className="mb-4">
+                    <div className="flex flex-wrap gap-1.5 justify-center">
+                      {member.expertise?.map((skill, i) => (
+                        <span key={i} className="px-2 py-1 bg-primary/10 text-primary text-xs rounded-full">
+                          {skill}
                         </span>
-                      </div>
-                    ))}
-                </div>
-              </div>
+                      ))}
+                    </div>
+                  </div>
 
-              {/* Social Links */}
-              <div className="flex justify-center space-x-4">
-                {(member?.social_links?.linkedin || member?.social?.linkedin) && (
-                  <a href={member?.social_links?.linkedin || member?.social?.linkedin} target="_blank" rel="noopener noreferrer" className="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center hover:bg-primary hover:text-white transition-colors duration-200">
-                    <Icon name="Linkedin" size={16} />
-                  </a>
-                )}
-                {(member?.social_links?.github || member?.social?.github) && (
-                  <a href={member?.social_links?.github || member?.social?.github} target="_blank" rel="noopener noreferrer" className="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center hover:bg-primary hover:text-white transition-colors duration-200">
-                    <Icon name="Github" size={16} />
-                  </a>
-                )}
-              </div>
-            </div>
-          ))}
-          <div>
-            <Link
-              to="/about/teamspotlight1"
-              className="mt-4 px-6 py-2 bg-primary text-white rounded-full hover:bg-primary-dark transition-colors duration-200"
-            >
-              Voir plus
-            </Link>
-          </div>
-       </div>
+                  {/* Achievements */}
+                  {member.achievements?.length > 0 && (
+                    <div className="mb-4 space-y-1">
+                      {member.achievements.slice(0, 2).map((achievement, i) => (
+                        <div key={i} className="flex items-start gap-1.5">
+                          <Icon name="Award" size={11} color="var(--color-primary)" className="mt-0.5 flex-shrink-0" />
+                          <span className="text-xs text-gray-500 leading-snug">{achievement}</span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
 
-
-        {/* Team Stats */}
-        {/*<div className="mt-16 bg-gradient-sunset rounded-2xl p-8 text-white">
-          <div className="text-center mb-8">
-            <h3 className="text-2xl font-bold mb-2">
-              Notre équipe en chiffres
-            </h3>
-            <p className="text-white/80"> Expertises variées, vision unifiée</p>
-          </div>
-
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-            <div className="text-center">
-              <div className="text-3xl font-bold mb-2">4+</div>
-              <div className="text-sm text-white/80"> Membres de l'équipe </div>
-            </div>
-            <div className="text-center">
-              <div className="text-3xl font-bold mb-2">4+</div>
-              <div className="text-sm text-white/80"> Spécialisations </div>
-            </div>
-            <div className="text-center">
-              <div className="text-3xl font-bold mb-2">6+</div>
-              <div className="text-sm text-white/80">Certifications</div>
-            </div>
-            <div className="text-center">
-              <div className="text-3xl font-bold mb-2">5</div>
-              <div className="text-sm text-white/80">Langues</div>
-            </div>
-          </div>
-        </div>*/}
+                  {/* Social links */}
+                  <div className="flex justify-center gap-2 pt-2 border-t border-gray-100">
+                    {(member.social_links?.linkedin || member.social?.linkedin) && (
+                      <a
+                        href={member.social_links?.linkedin || member.social?.linkedin}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-sm hover:bg-primary hover:text-white transition-colors duration-200"
+                      >
+                        <Icon name="Linkedin" size={14} />
+                      </a>
+                    )}
+                    {(member.social_links?.github || member.social?.github) && (
+                      <a
+                        href={member.social_links?.github || member.social?.github}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-sm hover:bg-primary hover:text-white transition-colors duration-200"
+                      >
+                        <Icon name="Github" size={14} />
+                      </a>
+                    )}
+                  </div>
+                </motion.div>
+              ))}
+        </div>
       </div>
     </section>
   );
