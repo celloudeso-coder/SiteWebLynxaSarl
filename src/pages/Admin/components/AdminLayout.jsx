@@ -6,7 +6,7 @@ import {
   Users, DollarSign, Clock, BarChart2, MessageSquare,
   Settings, LogOut, Menu, X, ChevronRight, ChevronDown,
   Mail, Handshake, UserPlus, Home, Info, Layers, BookOpen,
-  Phone, LayoutGrid,
+  Phone, LayoutGrid, Inbox, Sparkles,
 } from "lucide-react";
 
 // ── Nav structure ─────────────────────────────────────────────────────────────
@@ -20,7 +20,8 @@ const NAV_GROUPS = [
       { to: "/admin/services",     label: "Services",      icon: Briefcase     },
       { to: "/admin/portfolio",    label: "Portfolio",     icon: FolderOpen    },
       { to: "/admin/timeline",     label: "Timeline",      icon: Clock         },
-      { to: "/admin/testimonials", label: "Témoignages",   icon: MessageSquare },
+      { to: "/admin/testimonials",  label: "Témoignages",   icon: MessageSquare },
+      { to: "/admin/home-content",  label: "Accueil+",      icon: Sparkles      },
     ],
   },
   {
@@ -53,6 +54,7 @@ const NAV_GROUPS = [
     label: "Administration",
     defaultOpen: false,
     items: [
+      { to: "/admin/messages",   label: "Messages",    icon: Inbox    },
       { to: "/admin/newsletter", label: "Newsletter",  icon: Mail     },
       { to: "/admin/settings",   label: "Paramètres",  icon: Settings },
     ],

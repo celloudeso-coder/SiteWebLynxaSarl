@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Helmet } from "react-helmet";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
@@ -9,51 +9,33 @@ import ServiceGalaxies from "./components/ServiceGalaxies";
 import TestimonialCarousel from "./components/TestimonialCarousel";
 import Icon from "../../components/AppIcon";
 import logoIco from "../../../public/LYNXA.ico";
+import { getHomeEngagements, getHomeWhyItems } from "../../lib/cms";
 
-const COMMITMENTS = [
-  { icon: "Flag",        label: "100 % Guinéen",       sub: "Ancré localement"       },
-  { icon: "Zap",         label: "Réponse en 24h",       sub: "Support ultra-réactif"  },
-  { icon: "Globe",       label: "Standards mondiaux",   sub: "Qualité internationale" },
-  { icon: "ShieldCheck", label: "Sécurité by design",  sub: "Confiance garantie"     },
+const STATIC_COMMITMENTS = [
+  { icon: "Flag",        label: "100 % Guinéen",       sub_label: "Ancré localement"       },
+  { icon: "Zap",         label: "Réponse en 24h",       sub_label: "Support ultra-réactif"  },
+  { icon: "Globe",       label: "Standards mondiaux",   sub_label: "Qualité internationale" },
+  { icon: "ShieldCheck", label: "Sécurité by design",   sub_label: "Confiance garantie"     },
 ];
 
-const WHY_ITEMS = [
-  {
-    icon: "MapPin",
-    title: "Expertise locale",
-    description: "Nous comprenons les défis uniques des marchés africains et concevons des solutions parfaitement adaptées.",
-  },
-  {
-    icon: "Award",
-    title: "Qualité internationale",
-    description: "Nos solutions respectent les standards mondiaux tout en étant calibrées pour les réalités locales.",
-  },
-  {
-    icon: "Users",
-    title: "Équipe pluridisciplinaire",
-    description: "Mobile, réseau, cybersécurité, web — toutes les compétences réunies sous un même toit.",
-  },
-  {
-    icon: "Clock",
-    title: "Réactivité garantie",
-    description: "Consultation gratuite, réponse sous 24h et suivi continu tout au long de votre projet.",
-  },
-  {
-    icon: "Handshake",
-    title: "Partenariat sur le long terme",
-    description: "Nous construisons des relations durables, pas des contrats. Votre succès est notre succès.",
-  },
-  {
-    icon: "Lock",
-    title: "Sécurité by design",
-    description: "La sécurité n'est pas une option : elle est intégrée dès la conception de chaque solution.",
-  },
+const STATIC_WHY = [
+  { icon: "MapPin",    title: "Expertise locale",              description: "Nous comprenons les défis uniques des marchés africains et concevons des solutions parfaitement adaptées." },
+  { icon: "Award",     title: "Qualité internationale",        description: "Nos solutions respectent les standards mondiaux tout en étant calibrées pour les réalités locales." },
+  { icon: "Users",     title: "Équipe pluridisciplinaire",     description: "Mobile, réseau, cybersécurité, web — toutes les compétences réunies sous un même toit." },
+  { icon: "Clock",     title: "Réactivité garantie",           description: "Consultation gratuite, réponse sous 24h et suivi continu tout au long de votre projet." },
+  { icon: "Handshake", title: "Partenariat sur le long terme", description: "Nous construisons des relations durables, pas des contrats. Votre succès est notre succès." },
+  { icon: "Lock",      title: "Sécurité by design",            description: "La sécurité n'est pas une option : elle est intégrée dès la conception de chaque solution." },
 ];
 
 const Homepage = () => {
+  const [commitments, setCommitments] = useState(STATIC_COMMITMENTS);
+  const [whyItems, setWhyItems]       = useState(STATIC_WHY);
+
   useEffect(() => {
     window.scrollTo(0, 0);
     document.title = "Lynxa Tech Guinée - Innovation Sans Frontières";
+    getHomeEngagements().then((d) => { if (d?.length) setCommitments(d); }).catch(() => {});
+    getHomeWhyItems().then((d)    => { if (d?.length) setWhyItems(d);    }).catch(() => {});
   }, []);
 
   return (
@@ -78,9 +60,9 @@ const Homepage = () => {
           <section className="bg-secondary py-10">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
               <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-                {COMMITMENTS.map((c, i) => (
+                {commitments.map((c, i) => (
                   <motion.div
-                    key={i}
+                    key={c.id || i}
                     className="flex flex-col items-center text-center gap-2"
                     initial={{ opacity: 0, y: 20 }}
                     whileInView={{ opacity: 1, y: 0 }}
@@ -91,7 +73,7 @@ const Homepage = () => {
                       <Icon name={c.icon} size={20} color="#FF8C00" />
                     </div>
                     <p className="text-white font-semibold text-sm">{c.label}</p>
-                    <p className="text-gray-400 text-xs">{c.sub}</p>
+                    <p className="text-gray-400 text-xs">{c.sub_label}</p>
                   </motion.div>
                 ))}
               </div>
@@ -127,9 +109,9 @@ const Homepage = () => {
               </motion.div>
 
               <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {WHY_ITEMS.map((item, index) => (
+                {whyItems.map((item, index) => (
                   <motion.div
-                    key={index}
+                    key={item.id || index}
                     className="bg-white rounded-2xl p-6 hover:shadow-medium transition-shadow duration-300"
                     initial={{ opacity: 0, y: 24 }}
                     whileInView={{ opacity: 1, y: 0 }}

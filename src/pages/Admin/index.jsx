@@ -16,6 +16,8 @@ import JoinUsAdmin from "./sections/JoinUsAdmin";
 import NewsletterAdmin from "./sections/NewsletterAdmin";
 import SettingsAdmin from "./sections/SettingsAdmin";
 import PageSectionsAdmin from "./sections/PageSectionsAdmin";
+import MessagesAdmin from "./sections/MessagesAdmin";
+import HomeContentAdmin from "./sections/HomeContentAdmin";
 
 export default function AdminApp() {
   return (
@@ -33,6 +35,8 @@ export default function AdminApp() {
           <Route path="testimonials" element={<TestimonialsAdmin />} />
           <Route path="partnership"  element={<PartnershipAdmin />} />
           <Route path="join-us"      element={<JoinUsAdmin />} />
+          <Route path="home-content"  element={<HomeContentAdmin />} />
+          <Route path="messages"     element={<MessagesAdmin />} />
           <Route path="newsletter"   element={<NewsletterAdmin />} />
           <Route path="settings"     element={<SettingsAdmin />} />
 

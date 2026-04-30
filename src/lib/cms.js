@@ -188,13 +188,10 @@ export async function deleteJobOpening(id) {
 // ─── Job Applications ─────────────────────────────────────────────────────────
 
 export async function submitJobApplication(application) {
-  const { data, error } = await supabase
+  const { error } = await supabase
     .from("job_applications")
-    .insert(application)
-    .select()
-    .single();
+    .insert(application);
   if (error) throw error;
-  return data;
 }
 
 export async function getJobApplications() {
@@ -240,13 +237,11 @@ export async function deletePartnershipPathway(id) {
 // ─── Newsletter Subscriptions ─────────────────────────────────────────────────
 
 export async function subscribeNewsletter(email) {
-  const { data, error } = await supabase
+  const { error } = await supabase
     .from("newsletter_subscriptions")
-    .upsert({ email, active: true }, { onConflict: "email" })
-    .select()
-    .single();
-  if (error) throw error;
-  return data;
+    .insert({ email, active: true });
+  // Ignore unique violation (already subscribed)
+  if (error && error.code !== "23505") throw error;
 }
 
 export async function getNewsletterSubscriptions() {
@@ -271,6 +266,71 @@ export async function toggleNewsletterSubscription(id, active) {
     .single();
   if (error) throw error;
   return data;
+}
+
+// ─── Contact Messages ─────────────────────────────────────────────────────────
+
+export async function submitContactMessage(message) {
+  const { error } = await supabase
+    .from("contact_messages")
+    .insert(message);
+  if (error) throw error;
+}
+
+export async function getContactMessages() {
+  const { data, error } = await supabase
+    .from("contact_messages")
+    .select("*")
+    .order("submitted_at", { ascending: false });
+  if (error) throw error;
+  return data || [];
+}
+
+export async function updateMessageStatus(id, status, admin_notes) {
+  const payload = { status };
+  if (admin_notes !== undefined) payload.admin_notes = admin_notes;
+  const { data, error } = await supabase
+    .from("contact_messages")
+    .update(payload)
+    .eq("id", id)
+    .select()
+    .single();
+  if (error) throw error;
+  return data;
+}
+
+export async function deleteContactMessage(id) {
+  return deleteRow("contact_messages", id);
+}
+
+// ─── Media Upload ─────────────────────────────────────────────────────────────
+
+// ─── Home Engagements (Bande Engagements) ────────────────────────────────────
+
+export async function getHomeEngagements() {
+  return fetchTable("home_engagements", { orderBy: "sort_order" });
+}
+
+export async function saveHomeEngagement(item) {
+  return upsertRow("home_engagements", item);
+}
+
+export async function deleteHomeEngagement(id) {
+  return deleteRow("home_engagements", id);
+}
+
+// ─── Home Why Items (Pourquoi Lynxa ?) ───────────────────────────────────────
+
+export async function getHomeWhyItems() {
+  return fetchTable("home_why_items", { orderBy: "sort_order" });
+}
+
+export async function saveHomeWhyItem(item) {
+  return upsertRow("home_why_items", item);
+}
+
+export async function deleteHomeWhyItem(id) {
+  return deleteRow("home_why_items", id);
 }
 
 // ─── Media Upload ─────────────────────────────────────────────────────────────

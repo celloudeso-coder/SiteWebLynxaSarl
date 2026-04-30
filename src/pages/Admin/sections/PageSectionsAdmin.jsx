@@ -4,7 +4,7 @@ import {
   ArrowRight, ExternalLink, Lock, CheckCircle2,
   Globe, Briefcase, FolderOpen, Users, DollarSign,
   Clock, BarChart2, MessageSquare, Settings, Handshake,
-  Home, Info, Layers, Phone, Mail,
+  Home, Info, Layers, Phone, Mail, Sparkles, Flag,
 } from "lucide-react";
 
 // ── Page configurations ───────────────────────────────────────────────────────
@@ -20,8 +20,8 @@ const PAGE_CONFIGS = {
       { label: "Métriques",          desc: "Compteurs et indicateurs de performance",     icon: BarChart2,     link: "/admin/metrics",      cms: true  },
       { label: "Services",           desc: "Aperçu des services sur la page d'accueil",   icon: Briefcase,     link: "/admin/services",     cms: true  },
       { label: "Témoignages",        desc: "Citations et avis clients",                   icon: MessageSquare, link: "/admin/testimonials", cms: true  },
-      { label: "Pourquoi Lynxa ?",   desc: "Section des avantages — intégrée au code",   icon: Lock,          link: null,                  cms: false },
-      { label: "Bande Engagements",  desc: "4 engagements clés — intégré au code",        icon: Lock,          link: null,                  cms: false },
+      { label: "Pourquoi Lynxa ?",   desc: "6 avantages — éditable via CMS",             icon: Sparkles,      link: "/admin/home-content", cms: true  },
+      { label: "Bande Engagements",  desc: "4 engagements clés — éditable via CMS",       icon: Flag,          link: "/admin/home-content", cms: true  },
     ],
   },
   about: {

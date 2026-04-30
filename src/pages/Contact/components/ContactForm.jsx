@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Icon from "../../../components/AppIcon";
+import { submitContactMessage } from "../../../lib/cms";
 
 const INQUIRY_TYPES = [
   { value: "new-project",   label: "Développement de nouveau projet" },
@@ -12,17 +13,17 @@ const INQUIRY_TYPES = [
 ];
 
 const BUDGET_RANGES = [
-  { value: "under-5k",  label: "Moins de 5 000 $"        },
-  { value: "5k-15k",    label: "5 000 $ – 15 000 $"      },
-  { value: "15k-50k",   label: "15 000 $ – 50 000 $"     },
-  { value: "over-50k",  label: "Plus de 50 000 $"         },
-  { value: "discuss",   label: "Préfère en discuter"      },
+  { value: "under-5k",  label: "Moins de 5 000 $"    },
+  { value: "5k-15k",    label: "5 000 $ – 15 000 $"  },
+  { value: "15k-50k",   label: "15 000 $ – 50 000 $" },
+  { value: "over-50k",  label: "Plus de 50 000 $"     },
+  { value: "discuss",   label: "Préfère en discuter"  },
 ];
 
 const CONTACT_METHODS = [
-  { value: "email",     label: "Email"              },
-  { value: "phone",     label: "Appel téléphonique" },
-  { value: "whatsapp",  label: "WhatsApp"            },
+  { value: "email",    label: "Email"              },
+  { value: "phone",    label: "Appel téléphonique" },
+  { value: "whatsapp", label: "WhatsApp"            },
 ];
 
 const EMPTY = {
@@ -59,7 +60,17 @@ const ContactForm = () => {
     if (!validate()) return;
     setSubmitting(true);
     try {
-      await new Promise((r) => setTimeout(r, 1800));
+      await submitContactMessage({
+        name:           form.name.trim(),
+        email:          form.email.trim(),
+        phone:          form.phone.trim() || null,
+        company:        form.company.trim() || null,
+        inquiry_type:   form.inquiryType  || null,
+        contact_method: form.contactMethod || null,
+        budget:         form.budget        || null,
+        message:        form.message.trim(),
+        status:         "new",
+      });
       setStatus("success");
       setForm(EMPTY);
     } catch {
@@ -167,9 +178,7 @@ const ContactForm = () => {
             {/* Row 2 */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
               <div>
-                <label className="block text-sm font-medium text-secondary mb-1.5">
-                  Téléphone
-                </label>
+                <label className="block text-sm font-medium text-secondary mb-1.5">Téléphone</label>
                 <input
                   type="tel"
                   placeholder="+224 XXX XXX XXX"
@@ -179,9 +188,7 @@ const ContactForm = () => {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-secondary mb-1.5">
-                  Entreprise / Organisation
-                </label>
+                <label className="block text-sm font-medium text-secondary mb-1.5">Entreprise / Organisation</label>
                 <input
                   type="text"
                   placeholder="Nom de votre organisation (optionnel)"
@@ -211,9 +218,7 @@ const ContactForm = () => {
                 {errors.inquiryType && <p className="mt-1 text-xs text-red-500">{errors.inquiryType}</p>}
               </div>
               <div>
-                <label className="block text-sm font-medium text-secondary mb-1.5">
-                  Mode de contact préféré
-                </label>
+                <label className="block text-sm font-medium text-secondary mb-1.5">Mode de contact préféré</label>
                 <select
                   value={form.contactMethod}
                   onChange={(e) => set("contactMethod", e.target.value)}
@@ -229,9 +234,7 @@ const ContactForm = () => {
 
             {/* Row 4 */}
             <div>
-              <label className="block text-sm font-medium text-secondary mb-1.5">
-                Budget estimé
-              </label>
+              <label className="block text-sm font-medium text-secondary mb-1.5">Budget estimé</label>
               <select
                 value={form.budget}
                 onChange={(e) => set("budget", e.target.value)}
@@ -268,7 +271,6 @@ const ContactForm = () => {
                 <Icon name="Lock" size={15} />
                 <span>Vos informations restent strictement confidentielles.</span>
               </div>
-
               <motion.button
                 type="submit"
                 disabled={submitting}
@@ -304,9 +306,9 @@ const ContactForm = () => {
           transition={{ duration: 0.5, delay: 0.2 }}
         >
           {[
-            { icon: "Clock",     title: "Réponse rapide",          desc: "Nous répondons à toutes les demandes dans un délai de 24h." },
-            { icon: "Users",     title: "Consultation gratuite",    desc: "Échangez 30 min avec nos experts techniques sans engagement." },
-            { icon: "FileText",  title: "Proposition détaillée",    desc: "Devis complet avec calendrier et tarification claire." },
+            { icon: "Clock",    title: "Réponse rapide",        desc: "Nous répondons à toutes les demandes dans un délai de 24h."    },
+            { icon: "Users",    title: "Consultation gratuite",  desc: "Échangez 30 min avec nos experts techniques sans engagement."  },
+            { icon: "FileText", title: "Proposition détaillée",  desc: "Devis complet avec calendrier et tarification claire."         },
           ].map((item) => (
             <div key={item.title} className="flex flex-col items-center gap-3">
               <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">

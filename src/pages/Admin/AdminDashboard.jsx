@@ -4,7 +4,7 @@ import {
   Globe, Briefcase, FolderOpen, Users,
   DollarSign, Clock, BarChart2, MessageSquare, Settings,
   ArrowRight, Handshake, UserPlus, Mail,
-  Home, Info, Layers, Phone, LayoutGrid, Lock, CheckCircle2,
+  Home, Info, Layers, Phone, LayoutGrid, Lock, CheckCircle2, Inbox,
 } from "lucide-react";
 
 const CONTENT_SECTIONS = [
@@ -18,12 +18,13 @@ const CONTENT_SECTIONS = [
   { to: "/admin/testimonials", label: "Témoignages",   desc: "Citations et avis clients",             icon: MessageSquare, color: "bg-indigo-50 text-indigo-600"},
   { to: "/admin/partnership",  label: "Partenariat",   desc: "Formulaires partenariat",               icon: Handshake,     color: "bg-rose-50 text-rose-600"    },
   { to: "/admin/join-us",      label: "Rejoindre",     desc: "Candidatures et recrutement",           icon: UserPlus,      color: "bg-cyan-50 text-cyan-600"    },
+  { to: "/admin/messages",     label: "Messages",      desc: "Soumissions du formulaire contact",     icon: Inbox,         color: "bg-sky-50 text-sky-600"      },
   { to: "/admin/newsletter",   label: "Newsletter",    desc: "Abonnements et campagnes",              icon: Mail,          color: "bg-lime-50 text-lime-600"    },
   { to: "/admin/settings",     label: "Paramètres",    desc: "Contact, réseaux sociaux, infos",       icon: Settings,      color: "bg-gray-100 text-gray-600"   },
 ];
 
 const PAGE_SECTIONS = [
-  { to: "/admin/pages/home",        label: "Accueil",     desc: "4 sections éditables",   icon: Home,      color: "bg-blue-500",    cms: 4,  total: 6 },
+  { to: "/admin/pages/home",        label: "Accueil",     desc: "6 sections éditables",   icon: Home,      color: "bg-blue-500",    cms: 6,  total: 6 },
   { to: "/admin/pages/about",       label: "À propos",    desc: "3 sections éditables",   icon: Info,      color: "bg-purple-500",  cms: 3,  total: 7 },
   { to: "/admin/pages/services",    label: "Services",    desc: "3 sections éditables",   icon: Layers,    color: "bg-orange-500",  cms: 3,  total: 5 },
   { to: "/admin/pages/portfolio",   label: "Portfolio",   desc: "2 sections éditables",   icon: FolderOpen,color: "bg-teal-500",    cms: 2,  total: 3 },

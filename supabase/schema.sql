@@ -340,8 +340,8 @@ CREATE TABLE IF NOT EXISTS job_applications (
 );
 
 ALTER TABLE job_applications ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "Soumission publique candidature" ON job_applications FOR INSERT WITH CHECK (true);
-CREATE POLICY "Gestion admin candidatures" ON job_applications FOR ALL USING (auth.role() = 'authenticated');
+CREATE POLICY "public_insert" ON job_applications FOR INSERT TO anon WITH CHECK (true);
+CREATE POLICY "admin_all" ON job_applications FOR ALL TO authenticated USING (true) WITH CHECK (true);
 
 -- -------------------------------------------------------
 -- 12. PARTNERSHIP PATHWAYS (voies de collaboration)
@@ -400,13 +400,10 @@ CREATE TABLE IF NOT EXISTS newsletter_subscriptions (
 
 ALTER TABLE newsletter_subscriptions ENABLE ROW LEVEL SECURITY;
 
--- Tout le monde peut s'inscrire
-CREATE POLICY "Inscription publique newsletter" ON newsletter_subscriptions
-  FOR INSERT WITH CHECK (true);
-
--- Lecture et gestion réservées aux admins
-CREATE POLICY "Gestion admin newsletter" ON newsletter_subscriptions
-  FOR ALL USING (auth.role() = 'authenticated');
+CREATE POLICY "public_insert_upsert" ON newsletter_subscriptions
+  FOR INSERT TO anon WITH CHECK (true);
+CREATE POLICY "admin_all" ON newsletter_subscriptions
+  FOR ALL TO authenticated USING (true) WITH CHECK (true);
 
 -- -------------------------------------------------------
 -- 12. STORAGE BUCKET pour les médias CMS
@@ -417,3 +414,81 @@ ON CONFLICT (id) DO NOTHING;
 CREATE POLICY "Lecture publique médias" ON storage.objects FOR SELECT USING (bucket_id = 'cms-media');
 CREATE POLICY "Upload admin" ON storage.objects FOR INSERT WITH CHECK (bucket_id = 'cms-media' AND auth.role() = 'authenticated');
 CREATE POLICY "Suppression admin" ON storage.objects FOR DELETE USING (bucket_id = 'cms-media' AND auth.role() = 'authenticated');
+
+-- -------------------------------------------------------
+-- 13. CONTACT MESSAGES (soumissions du formulaire contact)
+-- -------------------------------------------------------
+CREATE TABLE IF NOT EXISTS contact_messages (
+  id            uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  name          text NOT NULL,
+  email         text NOT NULL,
+  phone         text,
+  company       text,
+  inquiry_type  text,
+  contact_method text,
+  budget        text,
+  message       text NOT NULL,
+  status        text NOT NULL DEFAULT 'new',   -- new | read | replied | archived
+  admin_notes   text,
+  submitted_at  timestamptz DEFAULT now()
+);
+
+ALTER TABLE contact_messages ENABLE ROW LEVEL SECURITY;
+
+-- Soumission publique (sans RETURNING pour contourner le check SELECT)
+CREATE POLICY "public_insert" ON contact_messages
+  FOR INSERT TO anon WITH CHECK (true);
+
+-- Lecture et gestion réservées aux admins authentifiés
+CREATE POLICY "admin_all" ON contact_messages
+  FOR ALL TO authenticated USING (true) WITH CHECK (true);
+
+-- -------------------------------------------------------
+-- 14. HOME ENGAGEMENTS (Bande Engagements — accueil)
+-- -------------------------------------------------------
+CREATE TABLE IF NOT EXISTS home_engagements (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  sort_order integer DEFAULT 0,
+  active boolean DEFAULT true,
+  icon text NOT NULL DEFAULT 'Star',
+  label text NOT NULL DEFAULT '',
+  sub_label text DEFAULT '',
+  updated_at timestamptz DEFAULT now()
+);
+INSERT INTO home_engagements (sort_order, icon, label, sub_label) VALUES
+  (1, 'Flag',        '100 % Guinéen',     'Ancré localement'),
+  (2, 'Zap',         'Réponse en 24h',     'Support ultra-réactif'),
+  (3, 'Globe',       'Standards mondiaux', 'Qualité internationale'),
+  (4, 'ShieldCheck', 'Sécurité by design', 'Confiance garantie')
+ON CONFLICT DO NOTHING;
+ALTER TABLE home_engagements ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "public_read" ON home_engagements FOR SELECT USING (active = true);
+CREATE POLICY "admin_all"   ON home_engagements FOR ALL TO authenticated USING (true) WITH CHECK (true);
+GRANT SELECT ON home_engagements TO anon;
+GRANT ALL    ON home_engagements TO authenticated;
+
+-- -------------------------------------------------------
+-- 15. HOME WHY ITEMS (Pourquoi Lynxa ? — accueil)
+-- -------------------------------------------------------
+CREATE TABLE IF NOT EXISTS home_why_items (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  sort_order integer DEFAULT 0,
+  active boolean DEFAULT true,
+  icon text NOT NULL DEFAULT 'Star',
+  title text NOT NULL DEFAULT '',
+  description text DEFAULT '',
+  updated_at timestamptz DEFAULT now()
+);
+INSERT INTO home_why_items (sort_order, icon, title, description) VALUES
+  (1, 'MapPin',    'Expertise locale',              'Nous comprenons les défis uniques des marchés africains et concevons des solutions parfaitement adaptées.'),
+  (2, 'Award',     'Qualité internationale',        'Nos solutions respectent les standards mondiaux tout en étant calibrées pour les réalités locales.'),
+  (3, 'Users',     'Équipe pluridisciplinaire',     'Mobile, réseau, cybersécurité, web — toutes les compétences réunies sous un même toit.'),
+  (4, 'Clock',     'Réactivité garantie',           'Consultation gratuite, réponse sous 24h et suivi continu tout au long de votre projet.'),
+  (5, 'Handshake', 'Partenariat sur le long terme', 'Nous construisons des relations durables, pas des contrats. Votre succès est notre succès.'),
+  (6, 'Lock',      'Sécurité by design',            'La sécurité n''est pas une option : elle est intégrée dès la conception de chaque solution.')
+ON CONFLICT DO NOTHING;
+ALTER TABLE home_why_items ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "public_read" ON home_why_items FOR SELECT USING (active = true);
+CREATE POLICY "admin_all"   ON home_why_items FOR ALL TO authenticated USING (true) WITH CHECK (true);
+GRANT SELECT ON home_why_items TO anon;
+GRANT ALL    ON home_why_items TO authenticated;
