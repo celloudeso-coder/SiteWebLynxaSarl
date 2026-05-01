@@ -18,6 +18,13 @@ import SettingsAdmin from "./sections/SettingsAdmin";
 import PageSectionsAdmin from "./sections/PageSectionsAdmin";
 import MessagesAdmin from "./sections/MessagesAdmin";
 import HomeContentAdmin from "./sections/HomeContentAdmin";
+import AboutContentAdmin from "./sections/AboutContentAdmin";
+import ServicesContentAdmin from "./sections/ServicesContentAdmin";
+import PortfolioContentAdmin from "./sections/PortfolioContentAdmin";
+import ContactContentAdmin from "./sections/ContactContentAdmin";
+import PartnershipContentAdmin from "./sections/PartnershipContentAdmin";
+import JoinUsContentAdmin from "./sections/JoinUsContentAdmin";
+import InsightsAdmin from "./sections/InsightsAdmin";
 
 export default function AdminApp() {
   return (
@@ -35,7 +42,14 @@ export default function AdminApp() {
           <Route path="testimonials" element={<TestimonialsAdmin />} />
           <Route path="partnership"  element={<PartnershipAdmin />} />
           <Route path="join-us"      element={<JoinUsAdmin />} />
-          <Route path="home-content"  element={<HomeContentAdmin />} />
+          <Route path="home-content"   element={<HomeContentAdmin />} />
+          <Route path="about-content"    element={<AboutContentAdmin />} />
+          <Route path="services-content"   element={<ServicesContentAdmin />} />
+          <Route path="portfolio-content"    element={<PortfolioContentAdmin />} />
+          <Route path="contact-content"     element={<ContactContentAdmin />} />
+          <Route path="partnership-content" element={<PartnershipContentAdmin />} />
+          <Route path="join-us-content"     element={<JoinUsContentAdmin />} />
+          <Route path="insights-content"    element={<InsightsAdmin />} />
           <Route path="messages"     element={<MessagesAdmin />} />
           <Route path="newsletter"   element={<NewsletterAdmin />} />
           <Route path="settings"     element={<SettingsAdmin />} />
@@ -47,6 +61,8 @@ export default function AdminApp() {
           <Route path="pages/portfolio"   element={<PageSectionsAdmin page="portfolio" />} />
           <Route path="pages/contact"     element={<PageSectionsAdmin page="contact" />} />
           <Route path="pages/partnership" element={<PageSectionsAdmin page="partnership" />} />
+          <Route path="pages/join-us"     element={<PageSectionsAdmin page="join-us" />} />
+          <Route path="pages/insights"    element={<PageSectionsAdmin page="insights" />} />
         </Routes>
       </AdminLayout>
     </AdminGuard>

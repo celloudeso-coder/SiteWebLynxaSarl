@@ -1,12 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Icon from "../../../components/AppIcon";
 import Image from "../../../components/AppImage";
 import Button from "../../../components/ui/Button";
+import { getIndustryReports } from "../../../lib/cms";
 
-const IndustryReportsSection = ({ activeCategory, searchQuery }) => {
-  const [selectedReport, setSelectedReport] = useState(null);
-
-  const industryReports = [
+const STATIC_INDUSTRY_REPORTS = [
     {
       id: 1,
       title:
@@ -135,7 +133,28 @@ const IndustryReportsSection = ({ activeCategory, searchQuery }) => {
         "Centres de Données",
       ],
     },
-  ];
+];
+
+const IndustryReportsSection = ({ activeCategory, searchQuery }) => {
+  const [selectedReport, setSelectedReport] = useState(null);
+  const [industryReports, setIndustryReports] = useState(STATIC_INDUSTRY_REPORTS);
+
+  useEffect(() => {
+    getIndustryReports()
+      .then((data) => {
+        if (data?.length) {
+          setIndustryReports(data.map((r) => ({
+            ...r,
+            publishDate:      r.publish_date      ?? r.publishDate      ?? "",
+            keyInsights:      Array.isArray(r.key_insights)      ? r.key_insights      : (Array.isArray(r.keyInsights)      ? r.keyInsights      : []),
+            executiveSummary: r.executive_summary ?? r.executiveSummary ?? "",
+            sections: Array.isArray(r.sections) ? r.sections : [],
+            tags:     Array.isArray(r.tags)     ? r.tags     : [],
+          })));
+        }
+      })
+      .catch(() => {});
+  }, []);
 
   const filteredReports = industryReports?.filter((report) => {
     const matchesCategory =

@@ -1,7 +1,16 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Icon from "../../../components/AppIcon";
 import Input from "../../../components/ui/Input";
 import Button from "../../../components/ui/Button";
+import { getInsightsCategories } from "../../../lib/cms";
+
+const STATIC_CATEGORIES = [
+  { id: "all",          label: "All Content",            icon: "Grid"       },
+  { id: "cybersecurity",label: "Cybersecurity",          icon: "Shield"     },
+  { id: "mobile",       label: "Mobile Innovation",      icon: "Smartphone" },
+  { id: "network",      label: "Network Solutions",      icon: "Network"    },
+  { id: "ecosystem",    label: "African Tech Ecosystem", icon: "Globe"      },
+];
 
 const ContentFilters = ({
   activeCategory,
@@ -9,13 +18,13 @@ const ContentFilters = ({
   searchQuery,
   setSearchQuery,
 }) => {
-  const categories = [
-    { id: "all", label: "All Content", icon: "Grid" },
-    { id: "cybersecurity", label: "Cybersecurity", icon: "Shield" },
-    { id: "mobile", label: "Mobile Innovation", icon: "Smartphone" },
-    { id: "network", label: "Network Solutions", icon: "Network" },
-    { id: "ecosystem", label: "African Tech Ecosystem", icon: "Globe" },
-  ];
+  const [categories, setCategories] = useState(STATIC_CATEGORIES);
+
+  useEffect(() => {
+    getInsightsCategories()
+      .then((d) => { if (d?.length) setCategories(d); })
+      .catch(() => {});
+  }, []);
 
   return (
     <section className="py-16 bg-gray-50">

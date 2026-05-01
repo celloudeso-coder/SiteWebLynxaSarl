@@ -4,94 +4,41 @@ import Icon from "../../../components/AppIcon";
 import Image from "../../../components/AppImage";
 import { useTestimonials } from "../../../hooks/useContent";
 
-const STATIC_TESTIMONIALS = [
-  {
-    id: 1,
-    name: "Mamadou Diallo",
-    position: "PDG, GuineaTech Solutions",
-    company: "Entreprise Guinéenne Locale",
-    avatar: "https://randomuser.me/api/portraits/men/32.jpg",
-    rating: 5,
-    content: "Lynxa Tech a transformé notre entreprise avec une application mobile qui a augmenté l'engagement client de façon significative. Leur compréhension du marché local combinée à des normes de qualité internationales est inégalée en Guinée.",
-    project: "Développement d'Application Mobile",
-    result: "Engagement client fortement amélioré",
-    location: "Conakry, Guinée",
-    flag: "🇬🇳",
-  },
-  {
-    id: 2,
-    name: "Sarah Johnson",
-    position: "Directrice de Programme",
-    company: "ONG Internationale",
-    avatar: "https://randomuser.me/api/portraits/women/44.jpg",
-    rating: 5,
-    content: "Travailler avec Lynxa Tech a été exceptionnel. Ils ont déployé une infrastructure réseau complète garantissant une connectivité fiable pour nos opérations. Leur expertise technique et leur compréhension culturelle ont fait la différence.",
-    project: "Infrastructure Réseau",
-    result: "Connectivité fiable sur plusieurs sites",
-    location: "Opérations Internationales",
-    flag: "🌍",
-  },
-  {
-    id: 3,
-    name: "Dr. Alpha Condé",
-    position: "Directeur IT",
-    company: "Université de Conakry",
-    avatar: "https://randomuser.me/api/portraits/men/56.jpg",
-    rating: 5,
-    content: "Les solutions de cybersécurité mises en œuvre par Lynxa Tech ont protégé notre institution contre de multiples menaces. Leur surveillance et leurs capacités de réponse rapide nous donnent une tranquillité d'esprit totale.",
-    project: "Implémentation de Cybersécurité",
-    result: "Aucune violation de sécurité détectée",
-    location: "Conakry, Guinée",
-    flag: "🇬🇳",
-  },
-  {
-    id: 4,
-    name: "Marie Camara",
-    position: "Fondatrice",
-    company: "Guinea E-commerce Hub",
-    avatar: "https://randomuser.me/api/portraits/women/28.jpg",
-    rating: 5,
-    content: "Notre plateforme e-commerce construite par Lynxa Tech génère des revenus croissants chaque mois. Leur expertise en développement web et leur compréhension des systèmes de paiement africains ont été cruciales pour notre succès.",
-    project: "Plateforme E-commerce",
-    result: "Revenus mensuels en forte croissance",
-    location: "Conakry, Guinée",
-    flag: "🇬🇳",
-  },
-];
 
 const TestimonialCarousel = () => {
   const [current, setCurrent] = useState(0);
   const [direction, setDirection] = useState(1);
   const [autoPlay, setAutoPlay] = useState(true);
-  const { data: cmsTestimonials } = useTestimonials();
+  const { data: cmsTestimonials, loading } = useTestimonials();
 
-  const testimonials =
-    cmsTestimonials && cmsTestimonials.length > 0
-      ? cmsTestimonials.map((t) => ({
-          id: t.id,
-          name: t.author_name,
-          position: t.author_position,
-          company: t.author_company,
-          avatar: t.author_image,
-          rating: t.rating ?? 5,
-          content: t.quote,
-          project: t.project_ref,
-          result: t.result,
-          location: "",
-          flag: "",
-        }))
-      : STATIC_TESTIMONIALS;
+  const testimonials = (cmsTestimonials ?? []).map((t) => ({
+    id: t.id,
+    name: t.author_name,
+    position: t.author_position,
+    company: t.author_company,
+    avatar: t.author_image,
+    rating: t.rating ?? 5,
+    content: t.quote,
+    project: t.project_ref,
+    result: t.result,
+    location: "",
+    flag: "",
+  }));
 
   const total = testimonials.length;
 
+  // All hooks must be declared before any early return
   useEffect(() => {
-    if (!autoPlay) return;
+    if (!autoPlay || total === 0) return;
     const id = setInterval(() => {
       setDirection(1);
       setCurrent((p) => (p + 1) % total);
     }, 6000);
     return () => clearInterval(id);
   }, [autoPlay, total]);
+
+  // Hidden while loading or when no testimonials have been added yet
+  if (loading || total === 0) return null;
 
   function go(index) {
     setDirection(index > current ? 1 : -1);

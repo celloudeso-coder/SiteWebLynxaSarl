@@ -6,7 +6,7 @@ import {
   Users, DollarSign, Clock, BarChart2, MessageSquare,
   Settings, LogOut, Menu, X, ChevronRight, ChevronDown,
   Mail, Handshake, UserPlus, Home, Info, Layers, BookOpen,
-  Phone, LayoutGrid, Inbox, Sparkles,
+  Phone, LayoutGrid, Inbox, Sparkles, Newspaper,
 } from "lucide-react";
 
 // ── Nav structure ─────────────────────────────────────────────────────────────
@@ -22,6 +22,13 @@ const NAV_GROUPS = [
       { to: "/admin/timeline",     label: "Timeline",      icon: Clock         },
       { to: "/admin/testimonials",  label: "Témoignages",   icon: MessageSquare },
       { to: "/admin/home-content",  label: "Accueil+",      icon: Sparkles      },
+      { to: "/admin/about-content",    label: "À propos+",    icon: Info          },
+      { to: "/admin/services-content",   label: "Services+",    icon: Layers        },
+      { to: "/admin/portfolio-content",    label: "Portfolio+",   icon: FolderOpen    },
+      { to: "/admin/contact-content",     label: "Contact+",     icon: Phone         },
+      { to: "/admin/partnership-content", label: "Partenariat+", icon: Handshake     },
+      { to: "/admin/join-us-content",     label: "Rejoindre+",   icon: UserPlus      },
+      { to: "/admin/insights-content",    label: "Insights+",    icon: Newspaper     },
     ],
   },
   {
@@ -47,6 +54,8 @@ const NAV_GROUPS = [
       { to: "/admin/pages/portfolio",   label: "Portfolio",   icon: FolderOpen},
       { to: "/admin/pages/contact",     label: "Contact",     icon: Phone     },
       { to: "/admin/pages/partnership", label: "Partenariat", icon: Handshake },
+      { to: "/admin/pages/join-us",     label: "Rejoindre",   icon: UserPlus  },
+      { to: "/admin/pages/insights",    label: "Insights",    icon: Newspaper },
     ],
   },
   {

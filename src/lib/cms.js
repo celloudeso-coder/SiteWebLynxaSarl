@@ -333,6 +333,209 @@ export async function deleteHomeWhyItem(id) {
   return deleteRow("home_why_items", id);
 }
 
+// ─── Contact — Form Config & Office Details ───────────────────────────────────
+
+export async function getContactFormConfig() {
+  const s = await getSettings();
+  return s.contact_form_config ?? null;
+}
+
+export async function saveContactFormConfig(data) {
+  return saveSetting("contact_form_config", data);
+}
+
+export async function getOfficeDetails() {
+  const s = await getSettings();
+  return s.office_details ?? null;
+}
+
+export async function saveOfficeDetails(data) {
+  return saveSetting("office_details", data);
+}
+
+// ─── Partnership — Process Steps ─────────────────────────────────────────────
+
+export async function getPartnershipProcessSteps() {
+  return fetchTable("partnership_process_steps", { orderBy: "sort_order" });
+}
+
+export async function savePartnershipProcessStep(item) {
+  return upsertRow("partnership_process_steps", item);
+}
+
+export async function deletePartnershipProcessStep(id) {
+  return deleteRow("partnership_process_steps", id);
+}
+
+// ─── Partnership — Trust Signals ─────────────────────────────────────────────
+
+export async function getTrustSecurityItems() {
+  return fetchTable("trust_security_items", { orderBy: "sort_order" });
+}
+
+export async function saveTrustSecurityItem(item) {
+  return upsertRow("trust_security_items", item);
+}
+
+export async function deleteTrustSecurityItem(id) {
+  return deleteRow("trust_security_items", id);
+}
+
+export async function getTrustCommitmentItems() {
+  return fetchTable("trust_commitment_items", { orderBy: "sort_order" });
+}
+
+export async function saveTrustCommitmentItem(item) {
+  return upsertRow("trust_commitment_items", item);
+}
+
+export async function deleteTrustCommitmentItem(id) {
+  return deleteRow("trust_commitment_items", id);
+}
+
+// ─── Portfolio — Innovation Lab ───────────────────────────────────────────────
+
+export async function getPortfolioInnovations() {
+  return fetchTable("portfolio_innovations", { orderBy: "sort_order" });
+}
+
+export async function savePortfolioInnovation(item) {
+  return upsertRow("portfolio_innovations", item);
+}
+
+export async function deletePortfolioInnovation(id) {
+  return deleteRow("portfolio_innovations", id);
+}
+
+// ─── Service — Process Steps ──────────────────────────────────────────────────
+
+export async function getServiceProcessSteps() {
+  return fetchTable("service_process_steps", { orderBy: "sort_order" });
+}
+
+export async function saveServiceProcessStep(item) {
+  return upsertRow("service_process_steps", item);
+}
+
+export async function deleteServiceProcessStep(id) {
+  return deleteRow("service_process_steps", id);
+}
+
+// ─── Service — Tech Items ──────────────────────────────────────────────────────
+
+export async function getServiceTechItems() {
+  const { data, error } = await supabase
+    .from("service_tech_items")
+    .select("*")
+    .eq("active", true)
+    .order("category_key")
+    .order("sort_order");
+  if (error) throw error;
+  return data;
+}
+
+export async function saveServiceTechItem(item) {
+  return upsertRow("service_tech_items", item);
+}
+
+export async function deleteServiceTechItem(id) {
+  return deleteRow("service_tech_items", id);
+}
+
+export async function getServiceTechCategories() {
+  const s = await getSettings();
+  return s.service_tech_categories ?? null;
+}
+
+export async function saveServiceTechCategories(data) {
+  return saveSetting("service_tech_categories", data);
+}
+
+// ─── About — Core Values ─────────────────────────────────────────────────────
+
+export async function getAboutCoreValues() {
+  return fetchTable("about_core_values", { orderBy: "sort_order" });
+}
+
+export async function saveAboutCoreValue(item) {
+  return upsertRow("about_core_values", item);
+}
+
+export async function deleteAboutCoreValue(id) {
+  return deleteRow("about_core_values", id);
+}
+
+// ─── About — Advantages (Pourquoi Guinée ?) ──────────────────────────────────
+
+export async function getAboutAdvantages() {
+  return fetchTable("about_advantages", { orderBy: "sort_order" });
+}
+
+export async function saveAboutAdvantage(item) {
+  return upsertRow("about_advantages", item);
+}
+
+export async function deleteAboutAdvantage(id) {
+  return deleteRow("about_advantages", id);
+}
+
+// ─── About — Vision Pillars ───────────────────────────────────────────────────
+
+export async function getAboutVisionPillars() {
+  return fetchTable("about_vision_pillars", { orderBy: "sort_order" });
+}
+
+export async function saveAboutVisionPillar(item) {
+  return upsertRow("about_vision_pillars", item);
+}
+
+export async function deleteAboutVisionPillar(id) {
+  return deleteRow("about_vision_pillars", id);
+}
+
+// ─── About — Roadmap Phases ───────────────────────────────────────────────────
+
+export async function getAboutRoadmapPhases() {
+  return fetchTable("about_roadmap_phases", { orderBy: "sort_order" });
+}
+
+export async function saveAboutRoadmapPhase(item) {
+  return upsertRow("about_roadmap_phases", item);
+}
+
+export async function deleteAboutRoadmapPhase(id) {
+  return deleteRow("about_roadmap_phases", id);
+}
+
+// ─── About — Settings (Founder, Ecosystem Stats, Impact Metrics) ─────────────
+
+export async function getAboutFounder() {
+  const s = await getSettings();
+  return s.about_founder ?? null;
+}
+
+export async function saveAboutFounder(data) {
+  return saveSetting("about_founder", data);
+}
+
+export async function getAboutEcosystemStats() {
+  const s = await getSettings();
+  return s.about_ecosystem_stats ?? null;
+}
+
+export async function saveAboutEcosystemStats(data) {
+  return saveSetting("about_ecosystem_stats", data);
+}
+
+export async function getAboutImpactMetrics() {
+  const s = await getSettings();
+  return s.about_impact_metrics ?? null;
+}
+
+export async function saveAboutImpactMetrics(data) {
+  return saveSetting("about_impact_metrics", data);
+}
+
 // ─── Media Upload ─────────────────────────────────────────────────────────────
 
 export async function uploadMedia(file, path) {
@@ -342,4 +545,108 @@ export async function uploadMedia(file, path) {
   if (error) throw error;
   const { data: urlData } = supabase.storage.from("cms-media").getPublicUrl(data.path);
   return urlData.publicUrl;
+}
+
+// ─── Portfolio — Filter Options ───────────────────────────────────────────────
+
+export async function getPortfolioFilterOptions() {
+  const s = await getSettings();
+  return s.portfolio_filter_options ?? null;
+}
+
+export async function savePortfolioFilterOptions(data) {
+  return saveSetting("portfolio_filter_options", data);
+}
+
+// ─── Join-Us — Process Steps ──────────────────────────────────────────────────
+
+export async function getJoinUsProcessSteps() {
+  return fetchTable("join_us_process_steps", { orderBy: "sort_order" });
+}
+
+export async function saveJoinUsProcessStep(item) {
+  return upsertRow("join_us_process_steps", item);
+}
+
+export async function deleteJoinUsProcessStep(id) {
+  return deleteRow("join_us_process_steps", id);
+}
+
+// ─── Insights — Categories ────────────────────────────────────────────────────
+
+export async function getInsightsCategories() {
+  const s = await getSettings();
+  return s.insights_categories ?? null;
+}
+
+export async function saveInsightsCategories(data) {
+  return saveSetting("insights_categories", data);
+}
+
+// ─── Insights — Blog Posts ────────────────────────────────────────────────────
+
+export async function getBlogPosts(activeOnly = true) {
+  return fetchTable("blog_posts", {
+    orderBy: "sort_order",
+    filters: activeOnly ? { active: true } : {},
+  });
+}
+
+export async function saveBlogPost(post) {
+  return upsertRow("blog_posts", post);
+}
+
+export async function deleteBlogPost(id) {
+  return deleteRow("blog_posts", id);
+}
+
+// ─── Insights — Whitepapers ───────────────────────────────────────────────────
+
+export async function getWhitepapers(activeOnly = true) {
+  return fetchTable("whitepapers", {
+    orderBy: "sort_order",
+    filters: activeOnly ? { active: true } : {},
+  });
+}
+
+export async function saveWhitepaper(item) {
+  return upsertRow("whitepapers", item);
+}
+
+export async function deleteWhitepaper(id) {
+  return deleteRow("whitepapers", id);
+}
+
+// ─── Insights — Tech Talks ────────────────────────────────────────────────────
+
+export async function getTechTalks(activeOnly = true) {
+  return fetchTable("tech_talks", {
+    orderBy: "sort_order",
+    filters: activeOnly ? { active: true } : {},
+  });
+}
+
+export async function saveTechTalk(item) {
+  return upsertRow("tech_talks", item);
+}
+
+export async function deleteTechTalk(id) {
+  return deleteRow("tech_talks", id);
+}
+
+// ─── Insights — Industry Reports ──────────────────────────────────────────────
+
+export async function getIndustryReports(activeOnly = true) {
+  return fetchTable("industry_reports", {
+    orderBy: "sort_order",
+    filters: activeOnly ? { active: true } : {},
+  });
+}
+
+export async function saveIndustryReport(item) {
+  return upsertRow("industry_reports", item);
+}
+
+export async function deleteIndustryReport(id) {
+  return deleteRow("industry_reports", id);
 }

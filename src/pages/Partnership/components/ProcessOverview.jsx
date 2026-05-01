@@ -1,9 +1,10 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import Icon from "../../../components/AppIcon";
+import { getPartnershipProcessSteps } from "../../../lib/cms";
 
-const STEPS = [
+const STATIC_STEPS = [
   {
     id: 1, icon: "Search", color: "primary",
     title: "Découverte & Consultation",
@@ -48,7 +49,23 @@ const STEPS = [
   },
 ];
 
-const ProcessOverview = () => (
+const ProcessOverview = () => {
+  const [steps, setSteps] = useState(STATIC_STEPS);
+
+  useEffect(() => {
+    getPartnershipProcessSteps()
+      .then((data) => {
+        if (data?.length) {
+          setSteps(data.map((s) => ({
+            ...s,
+            deliverables: Array.isArray(s.deliverables) ? s.deliverables : [],
+          })));
+        }
+      })
+      .catch(() => {});
+  }, []);
+
+  return (
   <section className="py-20 bg-white">
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <motion.div
@@ -73,7 +90,7 @@ const ProcessOverview = () => (
         <div className="hidden lg:block absolute left-1/2 -translate-x-1/2 top-8 bottom-8 w-0.5 bg-gradient-to-b from-primary via-accent to-primary opacity-20" />
 
         <div className="space-y-10">
-          {STEPS.map((step, index) => {
+          {steps.map((step, index) => {
             const isLeft = index % 2 === 0;
             return (
               <div key={step.id} className="flex flex-col lg:flex-row items-center gap-0 lg:gap-0">
@@ -129,7 +146,7 @@ const ProcessOverview = () => (
                     viewport={{ once: true }}
                     transition={{ duration: 0.4, delay: 0.2 }}
                   >
-                    <span className="text-lg font-bold text-primary">{step.id}</span>
+                    <span className="text-lg font-bold text-primary">{index + 1}</span>
                   </motion.div>
                 </div>
 
@@ -175,6 +192,7 @@ const ProcessOverview = () => (
       </motion.div>
     </div>
   </section>
-);
+  );
+};
 
 export default ProcessOverview;

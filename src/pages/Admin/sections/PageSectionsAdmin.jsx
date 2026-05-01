@@ -5,6 +5,7 @@ import {
   Globe, Briefcase, FolderOpen, Users, DollarSign,
   Clock, BarChart2, MessageSquare, Settings, Handshake,
   Home, Info, Layers, Phone, Mail, Sparkles, Flag,
+  UserPlus, Newspaper, BookOpen, Video,
 } from "lucide-react";
 
 // ── Page configurations ───────────────────────────────────────────────────────
@@ -34,10 +35,10 @@ const PAGE_CONFIGS = {
       { label: "Hero Section",       desc: "Titre et description de la page",              icon: Globe,         link: "/admin/hero",         cms: true  },
       { label: "Équipe",             desc: "Membres et profils de l'équipe",               icon: Users,         link: "/admin/team",         cms: true  },
       { label: "Timeline",           desc: "Historique et jalons de l'entreprise",         icon: Clock,         link: "/admin/timeline",     cms: true  },
-      { label: "Histoire Fondateur", desc: "Story du fondateur — intégrée au code",        icon: Lock,          link: null,                  cms: false },
-      { label: "Valeurs",            desc: "Valeurs de l'entreprise — intégrées au code",  icon: Lock,          link: null,                  cms: false },
-      { label: "Pourquoi Guinée ?",  desc: "Avantages Guinée — intégré au code",           icon: Lock,          link: null,                  cms: false },
-      { label: "Vision & Roadmap",   desc: "Feuille de route — intégrée au code",          icon: Lock,          link: null,                  cms: false },
+      { label: "Histoire Fondateur", desc: "Story du fondateur — éditable via CMS",        icon: Sparkles,      link: "/admin/about-content", cms: true  },
+      { label: "Valeurs",            desc: "Valeurs de l'entreprise — éditables via CMS",  icon: Sparkles,      link: "/admin/about-content", cms: true  },
+      { label: "Pourquoi Guinée ?",  desc: "Avantages Guinée — éditable via CMS",          icon: Sparkles,      link: "/admin/about-content", cms: true  },
+      { label: "Vision & Roadmap",   desc: "Feuille de route — éditable via CMS",          icon: Sparkles,      link: "/admin/about-content", cms: true  },
     ],
   },
   services: {
@@ -50,8 +51,8 @@ const PAGE_CONFIGS = {
       { label: "Hero Section",      desc: "Titre et description de la page Services",     icon: Globe,      link: "/admin/hero",     cms: true  },
       { label: "Services",          desc: "Liste et détails de chaque service",            icon: Briefcase,  link: "/admin/services", cms: true  },
       { label: "Tarifs",            desc: "Plans et grilles tarifaires",                   icon: DollarSign, link: "/admin/pricing",  cms: true  },
-      { label: "Processus",         desc: "Timeline du processus — intégrée au code",      icon: Lock,       link: null,              cms: false },
-      { label: "Stack Technique",   desc: "Technologies utilisées — intégrée au code",     icon: Lock,       link: null,              cms: false },
+      { label: "Processus",         desc: "Timeline du processus — éditable via CMS",      icon: Sparkles,   link: "/admin/services-content", cms: true  },
+      { label: "Stack Technique",   desc: "Technologies utilisées — éditable via CMS",     icon: Sparkles,   link: "/admin/services-content", cms: true  },
     ],
   },
   portfolio: {
@@ -61,9 +62,10 @@ const PAGE_CONFIGS = {
     color: "bg-teal-500",
     description: "Page de présentation des projets réalisés",
     sections: [
-      { label: "Hero Section", desc: "Titre et description de la page Portfolio",          icon: Globe,      link: "/admin/hero",      cms: true  },
-      { label: "Projets",      desc: "Liste des projets et études de cas",                 icon: FolderOpen, link: "/admin/portfolio", cms: true  },
-      { label: "Lab Innovation",desc: "Section R&D — intégrée au code",                   icon: Lock,       link: null,               cms: false },
+      { label: "Hero Section",   desc: "Titre et description de la page Portfolio",        icon: Globe,      link: "/admin/hero",              cms: true  },
+      { label: "Projets",        desc: "Liste des projets et études de cas",               icon: FolderOpen, link: "/admin/portfolio",         cms: true  },
+      { label: "Lab Innovation", desc: "Section R&D — éditable via CMS",                  icon: Sparkles,   link: "/admin/portfolio-content", cms: true  },
+      { label: "Filtres",        desc: "Services & industries filtrables — éditable via CMS", icon: Briefcase, link: "/admin/portfolio-content", cms: true },
     ],
   },
   contact: {
@@ -75,8 +77,8 @@ const PAGE_CONFIGS = {
     sections: [
       { label: "Hero Section",    desc: "Titre et description de la page Contact",         icon: Globe,    link: "/admin/hero",     cms: true  },
       { label: "Paramètres",      desc: "Email, téléphone, adresse",                       icon: Settings, link: "/admin/settings", cms: true  },
-      { label: "Formulaire",      desc: "Formulaire de contact — intégré au code",          icon: Lock,     link: null,              cms: false },
-      { label: "Localisation",    desc: "Carte et adresse — intégrée au code",              icon: Lock,     link: null,              cms: false },
+      { label: "Formulaire",   desc: "Options du formulaire — éditable via CMS",        icon: Sparkles, link: "/admin/contact-content",     cms: true  },
+      { label: "Localisation", desc: "Adresse, carte, horaires — éditable via CMS",       icon: Sparkles, link: "/admin/contact-content",     cms: true  },
     ],
   },
   partnership: {
@@ -86,10 +88,38 @@ const PAGE_CONFIGS = {
     color: "bg-indigo-500",
     description: "Page de présentation des opportunités de partenariat",
     sections: [
-      { label: "Hero Section",   desc: "Titre et description de la page Partenariat",     icon: Globe,     link: "/admin/hero",        cms: true  },
-      { label: "Partenariat",    desc: "Formulaire et options de partenariat",             icon: Handshake, link: "/admin/partnership", cms: true  },
-      { label: "Processus",      desc: "Étapes du partenariat — intégrées au code",        icon: Lock,      link: null,                cms: false },
-      { label: "Signaux Confiance", desc: "Certifications, garanties — intégrées au code", icon: Lock,     link: null,                cms: false },
+      { label: "Hero Section",      desc: "Titre et description de la page Partenariat",   icon: Globe,     link: "/admin/hero",               cms: true  },
+      { label: "Partenariat",       desc: "Formulaire et options de partenariat",           icon: Handshake, link: "/admin/partnership",        cms: true  },
+      { label: "Processus",         desc: "Étapes du processus — éditables via CMS",       icon: Sparkles,  link: "/admin/partnership-content", cms: true  },
+      { label: "Signaux Confiance", desc: "Sécurité & engagements — éditables via CMS",    icon: Sparkles,  link: "/admin/partnership-content", cms: true  },
+    ],
+  },
+  "join-us": {
+    label: "Rejoindre",
+    path: "/join-us",
+    icon: UserPlus,
+    color: "bg-rose-500",
+    description: "Page de recrutement et offres d'emploi",
+    sections: [
+      { label: "Hero Section",        desc: "Titre et description de la page Rejoindre",   icon: Globe,     link: "/admin/hero",           cms: true  },
+      { label: "Processus Recrutement", desc: "Étapes du processus — éditables via CMS",  icon: Sparkles,  link: "/admin/join-us-content", cms: true  },
+      { label: "Offres d'emploi",     desc: "Postes disponibles",                          icon: Briefcase, link: "/admin/join-us",        cms: true  },
+      { label: "Formulaire Candidature", desc: "Formulaire de candidature spontanée",      icon: Mail,      link: "/admin/join-us",        cms: true  },
+    ],
+  },
+  insights: {
+    label: "Insights",
+    path: "/insights-knowledge-leadership",
+    icon: Newspaper,
+    color: "bg-cyan-500",
+    description: "Page Articles, Livres Blancs, Tech Talks et Rapports",
+    sections: [
+      { label: "Hero Section",      desc: "Titre et description de la page Insights",     icon: Globe,    link: "/admin/hero",            cms: true  },
+      { label: "Catégories",        desc: "Filtres par catégorie — éditables via CMS",    icon: Briefcase, link: "/admin/insights-content", cms: true  },
+      { label: "Articles de Blog",  desc: "Articles publiés — éditables via CMS",         icon: BookOpen, link: "/admin/insights-content", cms: true  },
+      { label: "Livres Blancs",     desc: "Whitepapers téléchargeables — éditables",      icon: Sparkles, link: "/admin/insights-content", cms: true  },
+      { label: "Tech Talks",        desc: "Vidéos et conférences — éditables via CMS",    icon: Video,    link: "/admin/insights-content", cms: true  },
+      { label: "Rapports Industrie",desc: "Rapports sectoriels — éditables via CMS",      icon: BarChart2, link: "/admin/insights-content", cms: true  },
     ],
   },
 };

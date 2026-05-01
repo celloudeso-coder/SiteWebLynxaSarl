@@ -1,13 +1,11 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { Link } from "react-router-dom";
 import Icon from "../../../components/AppIcon";
 import Image from "../../../components/AppImage";
 import Button from "../../../components/ui/Button";
+import { getBlogPosts } from "../../../lib/cms";
 
-const BlogSection = ({ activeCategory, searchQuery }) => {
-  const [visiblePosts, setVisiblePosts] = useState(6);
-
-  const blogPosts = [
+const STATIC_BLOG_POSTS = [
     {
       id: 1,
       title:
@@ -146,7 +144,25 @@ const BlogSection = ({ activeCategory, searchQuery }) => {
         "Compétences Tech",
       ],
     },
-  ];
+];
+
+const BlogSection = ({ activeCategory, searchQuery }) => {
+  const [visiblePosts, setVisiblePosts] = useState(6);
+  const [blogPosts, setBlogPosts]       = useState(STATIC_BLOG_POSTS);
+
+  useEffect(() => {
+    getBlogPosts()
+      .then((data) => {
+        if (data?.length) {
+          setBlogPosts(data.map((p) => ({
+            ...p,
+            readTime: p.read_time ?? p.readTime ?? "",
+            tags: Array.isArray(p.tags) ? p.tags : [],
+          })));
+        }
+      })
+      .catch(() => {});
+  }, []);
 
   const filteredPosts = useMemo(() => {
     let filtered = blogPosts;

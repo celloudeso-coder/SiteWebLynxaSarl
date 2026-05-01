@@ -1,8 +1,9 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import Icon from "../../../components/AppIcon";
+import { getTrustSecurityItems, getTrustCommitmentItems } from "../../../lib/cms";
 
-const SECURITY = [
+const STATIC_SECURITY = [
   { icon: "Key",       title: "Chiffrement bout-en-bout",    desc: "Toutes les transmissions chiffrées AES-256." },
   { icon: "Code",      title: "Développement sécurisé",      desc: "Respect des directives OWASP tout au long du cycle." },
   { icon: "Search",    title: "Audits réguliers",             desc: "Tests de pénétration trimestriels et évaluations." },
@@ -11,7 +12,7 @@ const SECURITY = [
   { icon: "Eye",       title: "Surveillance 24/7",            desc: "Monitoring continu et détection des menaces." },
 ];
 
-const COMMITMENTS = [
+const STATIC_COMMITMENTS = [
   { icon: "FileText",  title: "Accord de confidentialité",   desc: "Protection complète des informations et de la propriété intellectuelle." },
   { icon: "Clock",     title: "Contrat de niveau de service", desc: "Délais de réponse garantis avec clauses pénales." },
   { icon: "Copyright", title: "Droits de propriété intel.",  desc: "Propriété claire et accords de licence sur les solutions développées." },
@@ -26,7 +27,22 @@ const cardVariants = {
   }),
 };
 
-const TrustSignals = () => (
+const normalize = (item) => ({ ...item, desc: item.description ?? item.desc ?? "" });
+
+const TrustSignals = () => {
+  const [security, setSecurity]       = useState(STATIC_SECURITY);
+  const [commitments, setCommitments] = useState(STATIC_COMMITMENTS);
+
+  useEffect(() => {
+    getTrustSecurityItems()
+      .then((data) => { if (data?.length) setSecurity(data.map(normalize)); })
+      .catch(() => {});
+    getTrustCommitmentItems()
+      .then((data) => { if (data?.length) setCommitments(data.map(normalize)); })
+      .catch(() => {});
+  }, []);
+
+  return (
   <section className="py-20 bg-surface">
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <motion.div
@@ -54,7 +70,7 @@ const TrustSignals = () => (
           Sécurité & Protection des données
         </motion.h3>
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
-          {SECURITY.map((item, i) => (
+          {security.map((item, i) => (
             <motion.div
               key={item.title}
               custom={i}
@@ -88,7 +104,7 @@ const TrustSignals = () => (
           Engagements légaux & contractuels
         </motion.h3>
         <div className="grid md:grid-cols-2 gap-5">
-          {COMMITMENTS.map((item, i) => (
+          {commitments.map((item, i) => (
             <motion.div
               key={item.title}
               custom={i}
@@ -148,6 +164,7 @@ const TrustSignals = () => (
       </motion.div>
     </div>
   </section>
-);
+  );
+};
 
 export default TrustSignals;

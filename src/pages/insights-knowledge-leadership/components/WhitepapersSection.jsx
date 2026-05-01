@@ -1,10 +1,10 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Icon from "../../../components/AppIcon";
 import Image from "../../../components/AppImage";
 import Button from "../../../components/ui/Button";
+import { getWhitepapers } from "../../../lib/cms";
 
-const WhitepapersSection = ({ activeCategory, searchQuery }) => {
-  const whitepapers = [
+const STATIC_WHITEPAPERS = [
     {
       id: 1,
       title: "Cybersécurité pour les PME africaines : Guide complet",
@@ -75,7 +75,25 @@ const WhitepapersSection = ({ activeCategory, searchQuery }) => {
         "Capital Risque",
       ],
     },
-  ];
+];
+
+const WhitepapersSection = ({ activeCategory, searchQuery }) => {
+  const [whitepapers, setWhitepapers] = useState(STATIC_WHITEPAPERS);
+
+  useEffect(() => {
+    getWhitepapers()
+      .then((data) => {
+        if (data?.length) {
+          setWhitepapers(data.map((w) => ({
+            ...w,
+            downloadCount: w.download_count ?? w.downloadCount ?? 0,
+            publishDate:   w.publish_date  ?? w.publishDate   ?? "",
+            tags: Array.isArray(w.tags) ? w.tags : [],
+          })));
+        }
+      })
+      .catch(() => {});
+  }, []);
 
   const filteredWhitepapers = whitepapers?.filter((whitepaper) => {
     const matchesCategory =

@@ -1,43 +1,25 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import Icon from "../../../components/AppIcon";
+import { getJoinUsProcessSteps } from "../../../lib/cms";
 
-const STEPS = [
-  {
-    id: 1,
-    icon: "FileText",
-    color: "bg-primary",
-    title: "Postulez",
-    desc: "Remplissez le formulaire ci-dessous avec votre CV et votre lettre de motivation. Simple et rapide.",
-    detail: "~5 minutes",
-  },
-  {
-    id: 2,
-    icon: "MessageSquare",
-    color: "bg-accent",
-    title: "Entretien",
-    desc: "Nos recruteurs vous contactent sous 48h pour un échange convivial sur votre profil et vos ambitions.",
-    detail: "Sous 48h",
-  },
-  {
-    id: 3,
-    icon: "Code",
-    color: "bg-primary",
-    title: "Test technique",
-    desc: "Un petit exercice pratique adapté au poste — l'occasion de montrer votre façon de penser.",
-    detail: "Optionnel",
-  },
-  {
-    id: 4,
-    icon: "PartyPopper",
-    color: "bg-accent",
-    title: "Bienvenue à bord !",
-    desc: "Si le feeling est là, vous rejoignez la famille Lynxa Tech et contribuez à façonner l'avenir tech africain.",
-    detail: "C'est parti 🚀",
-  },
+const STATIC_STEPS = [
+  { id: 1, icon: "FileText",     color: "bg-primary", title: "Postulez",          desc: "Remplissez le formulaire ci-dessous avec votre CV et votre lettre de motivation. Simple et rapide.", detail: "~5 minutes" },
+  { id: 2, icon: "MessageSquare",color: "bg-accent",  title: "Entretien",         desc: "Nos recruteurs vous contactent sous 48h pour un échange convivial sur votre profil et vos ambitions.", detail: "Sous 48h" },
+  { id: 3, icon: "Code",         color: "bg-primary", title: "Test technique",    desc: "Un petit exercice pratique adapté au poste — l'occasion de montrer votre façon de penser.", detail: "Optionnel" },
+  { id: 4, icon: "PartyPopper",  color: "bg-accent",  title: "Bienvenue à bord !", desc: "Si le feeling est là, vous rejoignez la famille Lynxa Tech et contribuez à façonner l'avenir tech africain.", detail: "C'est parti 🚀" },
 ];
 
-const JoinUsProcess = () => (
+const JoinUsProcess = () => {
+  const [steps, setSteps] = useState(STATIC_STEPS);
+
+  useEffect(() => {
+    getJoinUsProcessSteps()
+      .then((data) => { if (data?.length) setSteps(data); })
+      .catch(() => {});
+  }, []);
+
+  return (
   <section className="py-20 bg-white">
     <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
       <motion.div
@@ -61,7 +43,7 @@ const JoinUsProcess = () => (
         <div className="hidden md:block absolute top-10 left-[12.5%] right-[12.5%] h-0.5 bg-gradient-to-r from-primary via-accent to-primary opacity-20" />
 
         <div className="grid md:grid-cols-4 gap-8">
-          {STEPS.map((step, i) => (
+          {steps.map((step, i) => (
             <motion.div
               key={step.id}
               className="flex flex-col items-center text-center relative"
@@ -98,6 +80,7 @@ const JoinUsProcess = () => (
       </div>
     </div>
   </section>
-);
+  );
+};
 
 export default JoinUsProcess;

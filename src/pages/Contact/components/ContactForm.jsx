@@ -1,9 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Icon from "../../../components/AppIcon";
-import { submitContactMessage } from "../../../lib/cms";
+import { submitContactMessage, getContactFormConfig } from "../../../lib/cms";
 
-const INQUIRY_TYPES = [
+const STATIC_INQUIRY_TYPES = [
   { value: "new-project",   label: "Développement de nouveau projet" },
   { value: "partnership",   label: "Partenariat commercial"           },
   { value: "career",        label: "Opportunités de carrière"         },
@@ -12,7 +12,7 @@ const INQUIRY_TYPES = [
   { value: "other",         label: "Autre"                            },
 ];
 
-const BUDGET_RANGES = [
+const STATIC_BUDGET_RANGES = [
   { value: "under-5k",  label: "Moins de 5 000 $"    },
   { value: "5k-15k",    label: "5 000 $ – 15 000 $"  },
   { value: "15k-50k",   label: "15 000 $ – 50 000 $" },
@@ -20,7 +20,7 @@ const BUDGET_RANGES = [
   { value: "discuss",   label: "Préfère en discuter"  },
 ];
 
-const CONTACT_METHODS = [
+const STATIC_CONTACT_METHODS = [
   { value: "email",    label: "Email"              },
   { value: "phone",    label: "Appel téléphonique" },
   { value: "whatsapp", label: "WhatsApp"            },
@@ -36,6 +36,20 @@ const ContactForm = () => {
   const [errors, setErrors]       = useState({});
   const [submitting, setSubmitting] = useState(false);
   const [status, setStatus]       = useState(null); // "success" | "error"
+  const [inquiryTypes, setInquiryTypes]     = useState(STATIC_INQUIRY_TYPES);
+  const [budgetRanges, setBudgetRanges]     = useState(STATIC_BUDGET_RANGES);
+  const [contactMethods, setContactMethods] = useState(STATIC_CONTACT_METHODS);
+
+  useEffect(() => {
+    getContactFormConfig()
+      .then((cfg) => {
+        if (!cfg) return;
+        if (cfg.inquiry_types?.length)   setInquiryTypes(cfg.inquiry_types);
+        if (cfg.budget_ranges?.length)   setBudgetRanges(cfg.budget_ranges);
+        if (cfg.contact_methods?.length) setContactMethods(cfg.contact_methods);
+      })
+      .catch(() => {});
+  }, []);
 
   const set = (field, value) => {
     setForm((p) => ({ ...p, [field]: value }));
@@ -211,7 +225,7 @@ const ContactForm = () => {
                   className={inputClass("inquiryType")}
                 >
                   <option value="">Sélectionner…</option>
-                  {INQUIRY_TYPES.map((o) => (
+                  {inquiryTypes.map((o) => (
                     <option key={o.value} value={o.value}>{o.label}</option>
                   ))}
                 </select>
@@ -225,7 +239,7 @@ const ContactForm = () => {
                   className={inputClass("contactMethod")}
                 >
                   <option value="">Sélectionner…</option>
-                  {CONTACT_METHODS.map((o) => (
+                  {contactMethods.map((o) => (
                     <option key={o.value} value={o.value}>{o.label}</option>
                   ))}
                 </select>
@@ -241,7 +255,7 @@ const ContactForm = () => {
                 className={inputClass("budget")}
               >
                 <option value="">Sélectionner une fourchette…</option>
-                {BUDGET_RANGES.map((o) => (
+                {budgetRanges.map((o) => (
                   <option key={o.value} value={o.value}>{o.label}</option>
                 ))}
               </select>

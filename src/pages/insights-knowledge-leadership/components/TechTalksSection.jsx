@@ -1,12 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Icon from "../../../components/AppIcon";
 import Image from "../../../components/AppImage";
 import Button from "../../../components/ui/Button";
+import { getTechTalks } from "../../../lib/cms";
 
-const TechTalksSection = ({ activeCategory, searchQuery }) => {
-  const [selectedVideo, setSelectedVideo] = useState(null);
-
-  const techTalks = [
+const STATIC_TECH_TALKS = [
     {
       id: 1,
       title: "L'avenir de la cybersécurité en Afrique",
@@ -118,7 +116,26 @@ const TechTalksSection = ({ activeCategory, searchQuery }) => {
         "Infrastructure",
       ],
     },
-  ];
+];
+
+const TechTalksSection = ({ activeCategory, searchQuery }) => {
+  const [selectedVideo, setSelectedVideo] = useState(null);
+  const [techTalks, setTechTalks]         = useState(STATIC_TECH_TALKS);
+
+  useEffect(() => {
+    getTechTalks()
+      .then((data) => {
+        if (data?.length) {
+          setTechTalks(data.map((t) => ({
+            ...t,
+            videoId:     t.video_id     ?? t.videoId     ?? "",
+            publishDate: t.publish_date ?? t.publishDate ?? "",
+            tags: Array.isArray(t.tags) ? t.tags : [],
+          })));
+        }
+      })
+      .catch(() => {});
+  }, []);
 
   const filteredTechTalks = techTalks?.filter((talk) => {
     const matchesCategory =

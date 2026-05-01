@@ -1,8 +1,9 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import Icon from "../../../components/AppIcon";
+import { getAboutRoadmapPhases, getAboutVisionPillars, getAboutImpactMetrics } from "../../../lib/cms";
 
-const ROADMAP_PHASES = [
+const STATIC_ROADMAP_PHASES = [
   {
     phase: "Phase 1",
     timeline: "2025 – 2027",
@@ -56,189 +57,216 @@ const ROADMAP_PHASES = [
   },
 ];
 
-const VISION_PILLARS = [
+const STATIC_VISION_PILLARS = [
   { icon: "Rocket",    title: "Leadership en Innovation",    description: "Devenir l'entreprise technologique la plus innovante d'Afrique, définissant les standards pour l'industrie tech mondiale." },
   { icon: "Users",     title: "Développement des Talents",  description: "Créer 1000+ emplois technologiques de qualité et former 10 000+ développeurs à travers l'Afrique d'ici 2030." },
   { icon: "Building",  title: "Construction d'Écosystème",  description: "Établir des hubs technologiques et des centres d'innovation qui nourrissent la prochaine génération d'entrepreneurs africains." },
   { icon: "Handshake", title: "Partenariats Globaux",       description: "Former des alliances stratégiques avec des géants technologiques internationaux tout en conservant notre identité africaine." },
 ];
 
-const IMPACT_METRICS = [
+const STATIC_IMPACT_METRICS = [
   { current: "7+",  target: "25+",  label: "Membres de l'équipe", icon: "Users" },
   { current: "1",   target: "20+",  label: "Pays",                icon: "MapPin" },
   { current: "6+",  target: "500+", label: "Clients",             icon: "Briefcase" },
   { current: "0+",  target: "1K+",  label: "Vies impactées",      icon: "Heart" },
 ];
 
-const VisionRoadmap = () => (
-  <section className="py-20 bg-gray-50">
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <motion.div
-        className="text-center mb-14"
-        initial={{ opacity: 0, y: 20 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.5 }}
-      >
-        <div className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-2 rounded-full text-sm font-medium mb-4">
-          <Icon name="Rocket" size={16} />
-          <span>Feuille de route</span>
-        </div>
-        <h2 className="text-3xl md:text-4xl font-heading font-bold text-secondary mb-4">
-          Vision 2030 : Construire l'avenir technologique de l'Afrique
-        </h2>
-        <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-          Notre feuille de route stratégique pour devenir l'entreprise technologique leader en Afrique
-        </p>
-      </motion.div>
+function normalizePhase(p) {
+  return {
+    ...p,
+    statusColor: p.status_color ?? p.statusColor ?? "bg-gray-100 text-gray-500",
+    goals: Array.isArray(p.goals) ? p.goals : [],
+    markets: Array.isArray(p.markets) ? p.markets : [],
+  };
+}
 
-      {/* Vision quote */}
-      <motion.div
-        className="bg-gradient-to-br from-secondary to-primary/80 rounded-2xl p-8 text-white mb-14 text-center"
-        initial={{ opacity: 0, scale: 0.97 }}
-        whileInView={{ opacity: 1, scale: 1 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.5 }}
-      >
-        <h3 className="text-xl font-heading font-bold mb-4">Notre Vision</h3>
-        <blockquote className="text-lg italic max-w-4xl mx-auto text-white/90 leading-relaxed">
-          « Être le pont qui relie l'expertise africaine aux opportunités mondiales, prouvant que des entreprises
-          technologiques de classe mondiale peuvent émerger de n'importe où et concurrencer partout. »
-        </blockquote>
-      </motion.div>
+const VisionRoadmap = () => {
+  const [roadmapPhases, setRoadmapPhases] = useState(STATIC_ROADMAP_PHASES);
+  const [visionPillars, setVisionPillars] = useState(STATIC_VISION_PILLARS);
+  const [impactMetrics, setImpactMetrics] = useState(STATIC_IMPACT_METRICS);
 
-      {/* Roadmap phases */}
-      <div className="space-y-8 mb-14 relative">
-        <div className="absolute left-6 top-0 bottom-0 w-0.5 bg-primary/20 z-0" />
-        {ROADMAP_PHASES.map((phase, index) => (
-          <motion.div
-            key={index}
-            className="flex flex-col lg:flex-row lg:items-start lg:gap-8 relative"
-            initial={{ opacity: 0, x: -30 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: index * 0.1 }}
-          >
-            {/* Icon */}
-            <div className="flex-shrink-0 mb-4 lg:mb-0 relative z-10">
-              <motion.div
-                className={`w-12 h-12 ${phase.color} rounded-full flex items-center justify-center shadow-lg`}
-                whileHover={{ scale: 1.1 }}
-                transition={{ type: "spring", stiffness: 300 }}
-              >
-                <Icon name={phase.icon} size={22} color="white" />
-              </motion.div>
-              <div className="text-center mt-2">
-                <div className="text-xs font-semibold text-primary">{phase.phase}</div>
-                <div className="text-xs text-gray-400">{phase.timeline}</div>
-              </div>
-            </div>
+  useEffect(() => {
+    getAboutRoadmapPhases()
+      .then((d) => { if (d?.length) setRoadmapPhases(d.map(normalizePhase)); })
+      .catch(() => {});
+    getAboutVisionPillars()
+      .then((d) => { if (d?.length) setVisionPillars(d); })
+      .catch(() => {});
+    getAboutImpactMetrics()
+      .then((d) => { if (d?.length) setImpactMetrics(d); })
+      .catch(() => {});
+  }, []);
 
-            {/* Card */}
-            <div className="flex-1 bg-white rounded-2xl p-6 shadow-soft">
-              <div className="flex items-center justify-between mb-4 flex-wrap gap-3">
-                <h3 className="text-xl font-heading font-bold text-secondary">{phase.title}</h3>
-                <span className={`px-3 py-1 rounded-full text-xs font-medium ${phase.statusColor}`}>
-                  {phase.status}
-                </span>
-              </div>
-              <p className="text-gray-500 mb-5 text-sm leading-relaxed">{phase.description}</p>
-              <div className="grid md:grid-cols-2 gap-6">
-                <div>
-                  <h4 className="font-semibold text-secondary mb-3 text-sm">Objectifs clés</h4>
-                  <div className="space-y-2">
-                    {phase.goals.map((goal, i) => (
-                      <div key={i} className="flex items-start gap-2">
-                        <Icon name="CheckCircle" size={14} color="var(--color-success)" className="mt-0.5 flex-shrink-0" />
-                        <span className="text-xs text-gray-500">{goal}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-                <div>
-                  <h4 className="font-semibold text-secondary mb-3 text-sm">Marchés cibles</h4>
-                  <div className="flex flex-wrap gap-2">
-                    {phase.markets.map((market, i) => (
-                      <span key={i} className="px-3 py-1 bg-primary/10 text-primary text-xs rounded-full">{market}</span>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </motion.div>
-        ))}
-      </div>
+  return (
+    <section className="py-20 bg-gray-50">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <motion.div
+          className="text-center mb-14"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5 }}
+        >
+          <div className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-2 rounded-full text-sm font-medium mb-4">
+            <Icon name="Rocket" size={16} />
+            <span>Feuille de route</span>
+          </div>
+          <h2 className="text-3xl md:text-4xl font-heading font-bold text-secondary mb-4">
+            Vision 2030 : Construire l'avenir technologique de l'Afrique
+          </h2>
+          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+            Notre feuille de route stratégique pour devenir l'entreprise technologique leader en Afrique
+          </p>
+        </motion.div>
 
-      {/* Vision pillars */}
-      <div className="mb-14">
-        <div className="text-center mb-8">
-          <h3 className="text-2xl font-heading font-bold text-secondary mb-2">Les quatre piliers de notre vision</h3>
-          <p className="text-gray-500 text-sm">Les éléments fondamentaux qui guideront notre succès</p>
-        </div>
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-5">
-          {VISION_PILLARS.map((pillar, index) => (
+        {/* Vision quote */}
+        <motion.div
+          className="bg-gradient-to-br from-secondary to-primary/80 rounded-2xl p-8 text-white mb-14 text-center"
+          initial={{ opacity: 0, scale: 0.97 }}
+          whileInView={{ opacity: 1, scale: 1 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5 }}
+        >
+          <h3 className="text-xl font-heading font-bold mb-4">Notre Vision</h3>
+          <blockquote className="text-lg italic max-w-4xl mx-auto text-white/90 leading-relaxed">
+            « Être le pont qui relie l'expertise africaine aux opportunités mondiales, prouvant que des entreprises
+            technologiques de classe mondiale peuvent émerger de n'importe où et concurrencer partout. »
+          </blockquote>
+        </motion.div>
+
+        {/* Roadmap phases */}
+        <div className="space-y-8 mb-14 relative">
+          <div className="absolute left-6 top-0 bottom-0 w-0.5 bg-primary/20 z-0" />
+          {roadmapPhases.map((phase, index) => (
             <motion.div
-              key={index}
-              className="bg-white rounded-2xl p-6 text-center hover:shadow-medium transition-shadow duration-300"
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
+              key={phase.id || index}
+              className="flex flex-col lg:flex-row lg:items-start lg:gap-8 relative"
+              initial={{ opacity: 0, x: -30 }}
+              whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.4, delay: index * 0.07 }}
-              whileHover={{ y: -4 }}
+              transition={{ duration: 0.5, delay: index * 0.1 }}
             >
-              <motion.div
-                className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4"
-                whileHover={{ scale: 1.1, rotate: 5 }}
-                transition={{ type: "spring", stiffness: 300 }}
-              >
-                <Icon name={pillar.icon} size={22} color="var(--color-primary)" />
-              </motion.div>
-              <h4 className="font-heading font-bold text-secondary mb-2 text-sm">{pillar.title}</h4>
-              <p className="text-xs text-gray-500 leading-relaxed">{pillar.description}</p>
+              {/* Icon */}
+              <div className="flex-shrink-0 mb-4 lg:mb-0 relative z-10">
+                <motion.div
+                  className={`w-12 h-12 ${phase.color} rounded-full flex items-center justify-center shadow-lg`}
+                  whileHover={{ scale: 1.1 }}
+                  transition={{ type: "spring", stiffness: 300 }}
+                >
+                  <Icon name={phase.icon} size={22} color="white" />
+                </motion.div>
+                <div className="text-center mt-2">
+                  <div className="text-xs font-semibold text-primary">{phase.phase}</div>
+                  <div className="text-xs text-gray-400">{phase.timeline}</div>
+                </div>
+              </div>
+
+              {/* Card */}
+              <div className="flex-1 bg-white rounded-2xl p-6 shadow-soft">
+                <div className="flex items-center justify-between mb-4 flex-wrap gap-3">
+                  <h3 className="text-xl font-heading font-bold text-secondary">{phase.title}</h3>
+                  <span className={`px-3 py-1 rounded-full text-xs font-medium ${phase.statusColor}`}>
+                    {phase.status}
+                  </span>
+                </div>
+                <p className="text-gray-500 mb-5 text-sm leading-relaxed">{phase.description}</p>
+                <div className="grid md:grid-cols-2 gap-6">
+                  <div>
+                    <h4 className="font-semibold text-secondary mb-3 text-sm">Objectifs clés</h4>
+                    <div className="space-y-2">
+                      {phase.goals.map((goal, i) => (
+                        <div key={i} className="flex items-start gap-2">
+                          <Icon name="CheckCircle" size={14} color="var(--color-success)" className="mt-0.5 flex-shrink-0" />
+                          <span className="text-xs text-gray-500">{goal}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-secondary mb-3 text-sm">Marchés cibles</h4>
+                    <div className="flex flex-wrap gap-2">
+                      {phase.markets.map((market, i) => (
+                        <span key={i} className="px-3 py-1 bg-primary/10 text-primary text-xs rounded-full">{market}</span>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
             </motion.div>
           ))}
         </div>
-      </div>
 
-      {/* Growth trajectory */}
-      <motion.div
-        className="bg-white rounded-2xl p-8"
-        initial={{ opacity: 0, y: 20 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.5 }}
-      >
-        <div className="text-center mb-8">
-          <h3 className="text-2xl font-heading font-bold text-secondary mb-2">Trajectoire de croissance</h3>
-          <p className="text-gray-500 text-sm">De notre situation actuelle à nos ambitions pour 2027</p>
+        {/* Vision pillars */}
+        <div className="mb-14">
+          <div className="text-center mb-8">
+            <h3 className="text-2xl font-heading font-bold text-secondary mb-2">Les quatre piliers de notre vision</h3>
+            <p className="text-gray-500 text-sm">Les éléments fondamentaux qui guideront notre succès</p>
+          </div>
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-5">
+            {visionPillars.map((pillar, index) => (
+              <motion.div
+                key={pillar.id || index}
+                className="bg-white rounded-2xl p-6 text-center hover:shadow-medium transition-shadow duration-300"
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.4, delay: index * 0.07 }}
+                whileHover={{ y: -4 }}
+              >
+                <motion.div
+                  className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4"
+                  whileHover={{ scale: 1.1, rotate: 5 }}
+                  transition={{ type: "spring", stiffness: 300 }}
+                >
+                  <Icon name={pillar.icon} size={22} color="var(--color-primary)" />
+                </motion.div>
+                <h4 className="font-heading font-bold text-secondary mb-2 text-sm">{pillar.title}</h4>
+                <p className="text-xs text-gray-500 leading-relaxed">{pillar.description}</p>
+              </motion.div>
+            ))}
+          </div>
         </div>
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
-          {IMPACT_METRICS.map((metric, index) => (
-            <motion.div
-              key={index}
-              className="text-center p-4 bg-gray-50 rounded-xl"
-              initial={{ opacity: 0, scale: 0.9 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.4, delay: index * 0.08 }}
-            >
-              <div className="w-11 h-11 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-3">
-                <Icon name={metric.icon} size={20} color="var(--color-primary)" />
-              </div>
-              <div className="space-y-1">
-                <div className="text-base font-bold text-gray-400">{metric.current}</div>
-                <div className="text-xs text-gray-400">Actuel</div>
-                <Icon name="ArrowDown" size={14} color="var(--color-primary)" className="mx-auto" />
-                <div className="text-2xl font-bold text-primary">{metric.target}</div>
-                <div className="text-xs text-gray-400">Objectif 2027</div>
-              </div>
-              <div className="text-xs font-semibold text-secondary mt-2">{metric.label}</div>
-            </motion.div>
-          ))}
-        </div>
-      </motion.div>
-    </div>
-  </section>
-);
+
+        {/* Growth trajectory */}
+        <motion.div
+          className="bg-white rounded-2xl p-8"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5 }}
+        >
+          <div className="text-center mb-8">
+            <h3 className="text-2xl font-heading font-bold text-secondary mb-2">Trajectoire de croissance</h3>
+            <p className="text-gray-500 text-sm">De notre situation actuelle à nos ambitions pour 2027</p>
+          </div>
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
+            {impactMetrics.map((metric, index) => (
+              <motion.div
+                key={index}
+                className="text-center p-4 bg-gray-50 rounded-xl"
+                initial={{ opacity: 0, scale: 0.9 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.4, delay: index * 0.08 }}
+              >
+                <div className="w-11 h-11 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-3">
+                  <Icon name={metric.icon} size={20} color="var(--color-primary)" />
+                </div>
+                <div className="space-y-1">
+                  <div className="text-base font-bold text-gray-400">{metric.current}</div>
+                  <div className="text-xs text-gray-400">Actuel</div>
+                  <Icon name="ArrowDown" size={14} color="var(--color-primary)" className="mx-auto" />
+                  <div className="text-2xl font-bold text-primary">{metric.target}</div>
+                  <div className="text-xs text-gray-400">Objectif 2027</div>
+                </div>
+                <div className="text-xs font-semibold text-secondary mt-2">{metric.label}</div>
+              </motion.div>
+            ))}
+          </div>
+        </motion.div>
+      </div>
+    </section>
+  );
+};
 
 export default VisionRoadmap;

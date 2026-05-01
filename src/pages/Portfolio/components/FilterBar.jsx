@@ -1,8 +1,9 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Icon from "../../../components/AppIcon";
+import { getPortfolioFilterOptions } from "../../../lib/cms";
 
-const SERVICES = [
+const STATIC_SERVICES = [
   "Tous",
   "Mobile Development",
   "Network Infrastructure",
@@ -10,7 +11,7 @@ const SERVICES = [
   "Cybersecurity",
 ];
 
-const INDUSTRIES = [
+const STATIC_INDUSTRIES = [
   "Tous",
   "Financial Services",
   "Healthcare",
@@ -29,6 +30,18 @@ const FilterBar = ({
   setSearchTerm,
   onClearFilters,
 }) => {
+  const [services, setServices]     = useState(STATIC_SERVICES);
+  const [industries, setIndustries] = useState(STATIC_INDUSTRIES);
+
+  useEffect(() => {
+    getPortfolioFilterOptions()
+      .then((opts) => {
+        if (opts?.services?.length)   setServices(opts.services);
+        if (opts?.industries?.length) setIndustries(opts.industries);
+      })
+      .catch(() => {});
+  }, []);
+
   const hasActive =
     activeService !== "Tous" || activeIndustry !== "Tous" || searchTerm;
 
@@ -56,7 +69,7 @@ const FilterBar = ({
           Service
         </p>
         <div className="flex flex-wrap gap-2">
-          {SERVICES.map((s) => (
+          {services.map((s) => (
             <motion.button
               key={s}
               onClick={() => setActiveService(s)}
@@ -81,7 +94,7 @@ const FilterBar = ({
           Industrie
         </p>
         <div className="flex flex-wrap gap-2">
-          {INDUSTRIES.map((ind) => (
+          {industries.map((ind) => (
             <motion.button
               key={ind}
               onClick={() => setActiveIndustry(ind)}

@@ -5,6 +5,7 @@ import {
   DollarSign, Clock, BarChart2, MessageSquare, Settings,
   ArrowRight, Handshake, UserPlus, Mail,
   Home, Info, Layers, Phone, LayoutGrid, Lock, CheckCircle2, Inbox,
+  Newspaper,
 } from "lucide-react";
 
 const CONTENT_SECTIONS = [
@@ -25,11 +26,13 @@ const CONTENT_SECTIONS = [
 
 const PAGE_SECTIONS = [
   { to: "/admin/pages/home",        label: "Accueil",     desc: "6 sections éditables",   icon: Home,      color: "bg-blue-500",    cms: 6,  total: 6 },
-  { to: "/admin/pages/about",       label: "À propos",    desc: "3 sections éditables",   icon: Info,      color: "bg-purple-500",  cms: 3,  total: 7 },
-  { to: "/admin/pages/services",    label: "Services",    desc: "3 sections éditables",   icon: Layers,    color: "bg-orange-500",  cms: 3,  total: 5 },
-  { to: "/admin/pages/portfolio",   label: "Portfolio",   desc: "2 sections éditables",   icon: FolderOpen,color: "bg-teal-500",    cms: 2,  total: 3 },
-  { to: "/admin/pages/contact",     label: "Contact",     desc: "2 sections éditables",   icon: Phone,     color: "bg-green-500",   cms: 2,  total: 4 },
-  { to: "/admin/pages/partnership", label: "Partenariat", desc: "2 sections éditables",   icon: Handshake, color: "bg-indigo-500",  cms: 2,  total: 4 },
+  { to: "/admin/pages/about",       label: "À propos",    desc: "7 sections éditables",   icon: Info,      color: "bg-purple-500",  cms: 7,  total: 7 },
+  { to: "/admin/pages/services",    label: "Services",    desc: "5 sections éditables",   icon: Layers,    color: "bg-orange-500",  cms: 5,  total: 5 },
+  { to: "/admin/pages/portfolio",   label: "Portfolio",   desc: "4 sections éditables",   icon: FolderOpen,color: "bg-teal-500",    cms: 4,  total: 4 },
+  { to: "/admin/pages/contact",     label: "Contact",     desc: "4 sections éditables",   icon: Phone,     color: "bg-green-500",   cms: 4,  total: 4 },
+  { to: "/admin/pages/partnership", label: "Partenariat", desc: "4 sections éditables",   icon: Handshake, color: "bg-indigo-500",  cms: 4,  total: 4 },
+  { to: "/admin/pages/join-us",     label: "Rejoindre",   desc: "4 sections éditables",   icon: UserPlus,  color: "bg-rose-500",    cms: 4,  total: 4 },
+  { to: "/admin/pages/insights",    label: "Insights",    desc: "6 sections éditables",   icon: Newspaper, color: "bg-cyan-500",    cms: 6,  total: 6 },
 ];
 
 function SectionCard({ to, label, desc, icon: Icon, color }) {
@@ -95,7 +98,7 @@ export default function AdminDashboard() {
           <span className="text-xs text-gray-400 bg-gray-100 px-2 py-0.5 rounded-full ml-1">Nouveau</span>
         </div>
         <p className="text-sm text-gray-500 mb-4">Vue par page — identifiez rapidement quelles sections sont éditables pour chaque page du site.</p>
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+        <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-3">
           {PAGE_SECTIONS.map((p) => (
             <PageCard key={p.to} {...p} />
           ))}
