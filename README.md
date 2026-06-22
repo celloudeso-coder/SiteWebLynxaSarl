@@ -78,27 +78,10 @@ supabase/
 npm install
 ```
 
-### 2. Démarrer le stack Supabase local
-
-```bash
-supabase start
-```
-
-Au premier lancement, Docker télécharge les images (~1-2 Go). Les commandes suivantes sont quasi-instantanées.
-
-Une fois démarré, créer le fichier `.env.local` à la racine du projet :
-
-```bash
-# .env.local  (ne jamais committer ce fichier)
-VITE_SUPABASE_URL=http://127.0.0.1:54321
-VITE_SUPABASE_ANON_KEY=<Publishable key affichée par supabase start>
-```
 
 ### 3. Appliquer le schéma CMS
 
-```bash
-psql postgresql://postgres:postgres@127.0.0.1:54322/postgres -f supabase/schema.sql
-```
+
 
 ### 4. Créer le compte admin
 
