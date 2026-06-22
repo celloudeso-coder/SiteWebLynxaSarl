@@ -40,7 +40,7 @@ src/
 │   │   ├── AdminLogin.jsx
 │   │   ├── AdminDashboard.jsx
 │   │   ├── components/      # Layout, Guard, FormField, SaveButton
-│   │   └── sections/        # HeroAdmin, ServicesAdmin, PortfolioAdmin…
+│   │   └── sections/        # 1 admin par entité (HeroAdmin…) + *ContentAdmin par page
 │   ├── Home/
 │   ├── About/
 │   ├── Services/
@@ -48,6 +48,7 @@ src/
 │   ├── Partnership/
 │   ├── Contact/
 │   ├── join-us/
+│   ├── insights-knowledge-leadership/   # présent mais route désactivée
 │   └── NotFound.jsx
 ├── styles/
 │   ├── index.css
@@ -78,10 +79,28 @@ supabase/
 npm install
 ```
 
+### 2. Configurer l'environnement et démarrer Supabase
+
+Créer un fichier `.env.local` à la racine :
+
+```bash
+VITE_SUPABASE_URL=http://127.0.0.1:54321
+VITE_SUPABASE_ANON_KEY=<clé anon locale affichée par `supabase status`>
+```
+
+Puis démarrer le stack Supabase local (Docker requis) :
+
+```bash
+supabase start
+```
 
 ### 3. Appliquer le schéma CMS
 
+Le schéma (tables + données initiales + RLS) est versionné dans `supabase/schema.sql`. Il n'y a pas de dossier `migrations/` : on l'applique directement en base.
 
+```bash
+psql postgresql://postgres:postgres@127.0.0.1:54322/postgres -f supabase/schema.sql
+```
 
 ### 4. Créer le compte admin
 
@@ -180,6 +199,10 @@ Le site dispose d'un CMS headless complet basé sur **Supabase**.
 
 ### Sections gérables
 
+Le panel est monté dans `src/pages/Admin/index.jsx`. Toutes les routes sont préfixées par `/admin`.
+
+#### Entités globales
+
 | Section | Route admin | Contenu |
 |---|---|---|
 | Hero Sections | `/admin/hero` | Titres, sous-titres, CTA par page |
@@ -190,6 +213,30 @@ Le site dispose d'un CMS headless complet basé sur **Supabase**.
 | Timeline | `/admin/timeline` | Historique de l'entreprise |
 | Métriques | `/admin/metrics` | Compteurs de la page d'accueil |
 | Témoignages | `/admin/testimonials` | Citations clients |
+| Partenariats | `/admin/partnership` | Voies de collaboration |
+| Recrutement | `/admin/join-us` | Offres d'emploi |
+
+#### Contenu détaillé par page
+
+| Section | Route admin |
+|---|---|
+| Accueil | `/admin/home-content` |
+| À propos | `/admin/about-content` |
+| Services | `/admin/services-content` |
+| Portfolio | `/admin/portfolio-content` |
+| Contact | `/admin/contact-content` |
+| Partenariats | `/admin/partnership-content` |
+| Rejoindre l'équipe | `/admin/join-us-content` |
+| Insights | `/admin/insights-content` |
+
+Chaque page dispose aussi d'un éditeur de visibilité des sections via `/admin/pages/<page>` (`PageSectionsAdmin`).
+
+#### Soumissions & configuration
+
+| Section | Route admin | Contenu |
+|---|---|---|
+| Messages | `/admin/messages` | Messages reçus via le formulaire de contact |
+| Newsletter | `/admin/newsletter` | Abonnés à la newsletter |
 | Paramètres | `/admin/settings` | Contact, réseaux sociaux, infos entreprise |
 
 ### Architecture
