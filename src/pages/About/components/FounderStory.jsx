@@ -42,10 +42,10 @@ const FounderStory = () => {
             <span>Le fondateur</span>
           </div>
           <h2 className="text-3xl md:text-4xl font-heading font-bold text-secondary mb-4">
-            Le parcours de l'un des fondateurs de Lynxa Tech
+            La vision derrière LYNXA
           </h2>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Rencontrez un visionnaire qui a choisi de construire l'avenir depuis la Guinée
+            Construire l'avenir numérique de l'Afrique depuis Conakry
           </p>
         </motion.div>
 
