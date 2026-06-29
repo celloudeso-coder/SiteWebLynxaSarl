@@ -104,6 +104,14 @@ psql postgresql://postgres:postgres@127.0.0.1:54322/postgres -f supabase/schema.
 
 ### 4. Créer le compte admin
 
+Le login `/admin` s'appuie sur **Supabase Auth** (`signInWithPassword`) : il n'y a ni inscription ni « mot de passe oublié » dans l'UI, les comptes se gèrent côté Supabase.
+
+#### Méthode recommandée (local ou cloud) — via Studio / dashboard
+
+Authentication → Users → **Add user → Create new user** : saisir email + mot de passe et bien cocher **Auto Confirm User** (sans confirmation, le login échoue avec un 400).
+
+#### Alternative en local — via l'API
+
 ```bash
 # Créer le compte
 curl -s -X POST "http://127.0.0.1:54321/auth/v1/signup" \
@@ -114,6 +122,17 @@ curl -s -X POST "http://127.0.0.1:54321/auth/v1/signup" \
 # Confirmer l'email directement en base
 psql postgresql://postgres:postgres@127.0.0.1:54322/postgres \
   -c "UPDATE auth.users SET email_confirmed_at = now() WHERE email = 'ton@email.com';"
+```
+
+#### Réinitialiser un mot de passe
+
+Dans le **SQL Editor** (nécessite l'extension `pgcrypto`) :
+
+```sql
+UPDATE auth.users
+SET encrypted_password = crypt('NouveauMotDePasse', gen_salt('bf')),
+    email_confirmed_at  = COALESCE(email_confirmed_at, now())
+WHERE email = 'ton@email.com';
 ```
 
 ### 5. Lancer le serveur de développement
@@ -157,12 +176,25 @@ npm run serve     # prévisualiser le build
 
 ### Vercel (recommandé)
 
-Le fichier `vercel.json` est préconfiguré. Connecter le dépôt sur Vercel puis ajouter les variables d'environnement dans le dashboard Vercel :
+Le fichier `vercel.json` est préconfiguré. Connecter le dépôt sur Vercel puis ajouter les variables d'environnement dans le dashboard Vercel (Settings → Environment Variables) :
 
 ```
-VITE_SUPABASE_URL      → URL du projet Supabase cloud
-VITE_SUPABASE_ANON_KEY → Clé publique du projet Supabase cloud
+VITE_SUPABASE_URL      → URL du projet Supabase cloud (ex. https://uavhrkujdyeyjunqessv.supabase.co)
+VITE_SUPABASE_ANON_KEY → Clé anon/publishable du projet Supabase cloud
 ```
+
+⚠️ Ces deux variables sont **obligatoires** : le client Supabase (`src/lib/supabase.js`) n'a plus de valeurs de repli et le build échoue volontairement si elles manquent. Comme Vite les gèle au moment du build, il faut **redéployer** après toute modification.
+
+#### Domaine personnalisé
+
+Domaine de production : **`www.lynxatech.com`** (principal) ; `lynxatech.com` redirige (308) vers `www`. Configuration DNS chez le registrar (GoDaddy), en utilisant les **valeurs exactes affichées dans Vercel → Domains** :
+
+| Type | Name | Value |
+| --- | --- | --- |
+| A | `@` | `216.198.79.1` |
+| CNAME | `www` | `<id>.vercel-dns-017.com` |
+
+Supprimer les anciens enregistrements de parking (A `@` « Parked ») qui entrent en conflit, et **ne pas toucher aux `MX`** (email `contact@lynxatech.com`). Vercel émet le certificat HTTPS automatiquement une fois le DNS propagé.
 
 ### Docker (auto-hébergement)
 
@@ -253,6 +285,8 @@ Chaque page dispose aussi d'un éditeur de visibilité des sections via `/admin/
 | `VITE_SUPABASE_URL` | `http://127.0.0.1:54321` | URL projet Supabase cloud |
 | `VITE_SUPABASE_ANON_KEY` | Clé locale (`sb_publishable_…`) | Clé publique cloud |
 
+> **Obligatoires dans les deux environnements** : `src/lib/supabase.js` n'a plus de valeurs de repli, l'application lève une erreur explicite (et le build échoue) si elles manquent.
+
 ---
 
 ## Services proposés
@@ -267,5 +301,5 @@ Chaque page dispose aussi d'un éditeur de visibilité des sections via `/admin/
 ## Contact
 
 - Conakry, République de Guinée
-- +224 621 724 657
+- +224 614 666 680
 - contact@lynxatech.com
