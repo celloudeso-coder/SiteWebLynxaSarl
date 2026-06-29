@@ -55,10 +55,10 @@ const CompanyValues = () => {
         >
           <div className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-2 rounded-full text-sm font-medium mb-4">
             <Icon name="Heart" size={16} />
-            <span>Nos valeurs</span>
+            <span>Notre philosophie</span>
           </div>
           <h2 className="text-3xl md:text-4xl font-heading font-bold text-secondary mb-4">
-            Nos valeurs en action
+            Notre vision et nos valeurs fondamentales
           </h2>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
             Plus que de simples mots — les principes qui guident chaque décision et animent chaque projet
