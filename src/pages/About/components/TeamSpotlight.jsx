@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef, useEffect } from "react";
 import { motion } from "framer-motion";
 import Image from "../../../components/AppImage";
 import Icon from "../../../components/AppIcon";
@@ -67,6 +67,96 @@ const TeamSpotlight = () => {
       : STATIC_TEAM;
   const teamMembers = allMembers;
 
+  const scrollRef = useRef(null);
+  const pausedRef = useRef(false);   // pause temporaire (survol / interaction)
+  const dragRef = useRef({ down: false, startX: 0, startScroll: 0, moved: false });
+
+  // Défilement automatique + support du défilement manuel (molette, trackpad, drag, tactile)
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (!el || loading || teamMembers.length === 0) return;
+
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    let raf;
+    let resumeTimer;
+
+    const step = () => {
+      const half = el.scrollWidth / 2;
+      if (!reduceMotion && !pausedRef.current && !dragRef.current.down) {
+        el.scrollLeft += 0.5;
+      }
+      // Boucle sans couture : le contenu est dupliqué, on revient au début après une copie
+      if (half > 0 && el.scrollLeft >= half) el.scrollLeft -= half;
+      raf = requestAnimationFrame(step);
+    };
+    raf = requestAnimationFrame(step);
+
+    const pauseTemporarily = () => {
+      pausedRef.current = true;
+      clearTimeout(resumeTimer);
+      resumeTimer = setTimeout(() => { pausedRef.current = false; }, 1500);
+    };
+    const onEnter = () => { pausedRef.current = true; clearTimeout(resumeTimer); };
+    const onLeave = () => { pausedRef.current = false; };
+
+    // Glisser-déposer à la souris (le tactile utilise le scroll natif)
+    const onPointerDown = (e) => {
+      if (e.pointerType !== "mouse") return;
+      dragRef.current = { down: true, startX: e.clientX, startScroll: el.scrollLeft, moved: false };
+      el.style.cursor = "grabbing";
+    };
+    const onPointerMove = (e) => {
+      if (!dragRef.current.down) return;
+      const dx = e.clientX - dragRef.current.startX;
+      if (Math.abs(dx) > 3) {
+        dragRef.current.moved = true;
+        el.setPointerCapture?.(e.pointerId);
+      }
+      el.scrollLeft = dragRef.current.startScroll - dx;
+    };
+    const onPointerUp = (e) => {
+      if (!dragRef.current.down) return;
+      dragRef.current.down = false;
+      el.releasePointerCapture?.(e.pointerId);
+      el.style.cursor = "grab";
+      pauseTemporarily();
+    };
+    // Empêche l'ouverture d'un lien si l'utilisateur a fait glisser
+    const onClickCapture = (e) => {
+      if (dragRef.current.moved) {
+        e.preventDefault();
+        e.stopPropagation();
+        dragRef.current.moved = false;
+      }
+    };
+
+    el.addEventListener("mouseenter", onEnter);
+    el.addEventListener("mouseleave", onLeave);
+    el.addEventListener("wheel", pauseTemporarily, { passive: true });
+    el.addEventListener("touchstart", pauseTemporarily, { passive: true });
+    el.addEventListener("touchend", pauseTemporarily, { passive: true });
+    el.addEventListener("pointerdown", onPointerDown);
+    el.addEventListener("pointermove", onPointerMove);
+    el.addEventListener("pointerup", onPointerUp);
+    el.addEventListener("pointercancel", onPointerUp);
+    el.addEventListener("click", onClickCapture, true);
+
+    return () => {
+      cancelAnimationFrame(raf);
+      clearTimeout(resumeTimer);
+      el.removeEventListener("mouseenter", onEnter);
+      el.removeEventListener("mouseleave", onLeave);
+      el.removeEventListener("wheel", pauseTemporarily);
+      el.removeEventListener("touchstart", pauseTemporarily);
+      el.removeEventListener("touchend", pauseTemporarily);
+      el.removeEventListener("pointerdown", onPointerDown);
+      el.removeEventListener("pointermove", onPointerMove);
+      el.removeEventListener("pointerup", onPointerUp);
+      el.removeEventListener("pointercancel", onPointerUp);
+      el.removeEventListener("click", onClickCapture, true);
+    };
+  }, [loading, teamMembers.length]);
+
   return (
     <section className="py-20 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -96,14 +186,11 @@ const TeamSpotlight = () => {
             ))}
           </div>
         ) : (
-          <div className="relative overflow-hidden group">
-            <style>{`
-              @keyframes team-marquee {
-                from { transform: translateX(0); }
-                to { transform: translateX(-50%); }
-              }
-            `}</style>
-            <div className="flex w-max animate-[team-marquee_30s_linear_infinite] group-hover:[animation-play-state:paused] motion-reduce:animate-none">
+          <div className="relative group">
+            <div
+              ref={scrollRef}
+              className="flex overflow-x-auto cursor-grab select-none [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
+            >
               {[...teamMembers, ...teamMembers].map((member, index) => (
                 <div
                   key={index}
