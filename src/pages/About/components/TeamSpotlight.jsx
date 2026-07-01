@@ -89,20 +89,26 @@ const TeamSpotlight = () => {
           </p>
         </motion.div>
 
-        <div
-          className="flex gap-6 overflow-x-auto pb-4 snap-x snap-mandatory scroll-smooth [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
-        >
-          {loading
-            ? [0, 1, 2, 3].map((i) => <SkeletonCard key={i} />)
-            : teamMembers.map((member, index) => (
-                <motion.div
-                  key={member.id}
-                  className="bg-gray-50 rounded-2xl p-6 hover:shadow-medium transition-shadow duration-300 flex-shrink-0 w-[280px] snap-start"
-                  initial={{ opacity: 0, y: 30 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.4, delay: index * 0.08 }}
-                  whileHover={{ y: -4 }}
+        {loading ? (
+          <div className="flex gap-6 overflow-hidden">
+            {[0, 1, 2, 3].map((i) => (
+              <SkeletonCard key={i} />
+            ))}
+          </div>
+        ) : (
+          <div className="relative overflow-hidden group">
+            <style>{`
+              @keyframes team-marquee {
+                from { transform: translateX(0); }
+                to { transform: translateX(-50%); }
+              }
+            `}</style>
+            <div className="flex w-max animate-[team-marquee_30s_linear_infinite] group-hover:[animation-play-state:paused] motion-reduce:animate-none">
+              {[...teamMembers, ...teamMembers].map((member, index) => (
+                <div
+                  key={index}
+                  aria-hidden={index >= teamMembers.length}
+                  className="bg-gray-50 rounded-2xl p-6 hover:shadow-medium hover:-translate-y-1 transition-all duration-300 flex-shrink-0 w-[280px] mr-6"
                 >
                   {/* Avatar */}
                   <div className="relative mb-5">
@@ -168,9 +174,13 @@ const TeamSpotlight = () => {
                       </a>
                     )}
                   </div>
-                </motion.div>
+                </div>
               ))}
-        </div>
+            </div>
+            <div className="pointer-events-none absolute inset-y-0 left-0 w-12 sm:w-20 bg-gradient-to-r from-white to-transparent" />
+            <div className="pointer-events-none absolute inset-y-0 right-0 w-12 sm:w-20 bg-gradient-to-l from-white to-transparent" />
+          </div>
+        )}
       </div>
     </section>
   );
