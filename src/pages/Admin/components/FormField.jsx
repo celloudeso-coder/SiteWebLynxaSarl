@@ -180,3 +180,95 @@ export function ImageUpload({ value, onChange, folder = "team-members" }) {
     </div>
   );
 }
+
+// Champ image polyvalent : téléverser un fichier OU coller une URL (l'un ou l'autre).
+export function ImageField({ value, onChange, folder = "projects", placeholder = "https://…" }) {
+  const [uploading, setUploading] = useState(false);
+  const [error, setError] = useState(null);
+  const inputRef = useRef(null);
+
+  async function handleFile(e) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploading(true);
+    setError(null);
+    try {
+      const ext = file.name.split(".").pop();
+      const path = `${folder}/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
+      const url = await uploadMedia(file, path);
+      onChange(url);
+    } catch (err) {
+      setError("Échec de l'upload. Vérifiez la connexion à Supabase.");
+    } finally {
+      setUploading(false);
+      if (inputRef.current) inputRef.current.value = "";
+    }
+  }
+
+  return (
+    <div className="space-y-3">
+      {/* Option 1 — Téléverser un fichier */}
+      <div className="flex items-start gap-4">
+        <div className="w-28 h-20 rounded-lg bg-gray-100 overflow-hidden flex-shrink-0 border border-gray-200 flex items-center justify-center">
+          {value ? (
+            <img src={value} alt="Aperçu" className="w-full h-full object-cover" />
+          ) : (
+            <span className="text-gray-300 text-2xl">🖼️</span>
+          )}
+        </div>
+        <div className="flex-1 space-y-2">
+          <input
+            ref={inputRef}
+            type="file"
+            accept="image/png,image/jpeg,image/jpg,image/webp,image/svg+xml"
+            className="hidden"
+            onChange={handleFile}
+          />
+          <button
+            type="button"
+            onClick={() => inputRef.current?.click()}
+            disabled={uploading}
+            className="flex items-center gap-2 px-4 py-2 text-sm border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          >
+            {uploading ? (
+              <>
+                <svg className="animate-spin w-4 h-4 text-orange-500" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
+                </svg>
+                Upload en cours…
+              </>
+            ) : (
+              <>
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+                </svg>
+                Téléverser une image
+              </>
+            )}
+          </button>
+          {value && !uploading && (
+            <button
+              type="button"
+              onClick={() => onChange("")}
+              className="block text-xs text-red-400 hover:text-red-600"
+            >
+              Supprimer l'image
+            </button>
+          )}
+          {error && <p className="text-xs text-red-500">{error}</p>}
+        </div>
+      </div>
+
+      {/* Séparateur */}
+      <div className="flex items-center gap-3 text-xs text-gray-400">
+        <span className="flex-1 h-px bg-gray-200" />
+        ou coller une URL
+        <span className="flex-1 h-px bg-gray-200" />
+      </div>
+
+      {/* Option 2 — URL directe */}
+      <TextInput value={value} onChange={onChange} placeholder={placeholder} />
+    </div>
+  );
+}

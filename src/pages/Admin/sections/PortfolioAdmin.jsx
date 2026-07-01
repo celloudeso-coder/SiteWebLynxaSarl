@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { getProjects, saveProject, deleteProject } from "../../../lib/cms";
-import { FormField, TextInput, TextArea, Toggle, JsonArrayEditor } from "../components/FormField";
+import { FormField, TextInput, TextArea, Toggle, JsonArrayEditor, ImageField } from "../components/FormField";
 import SaveButton from "../components/SaveButton";
 import { Plus, Trash2, ChevronDown, ChevronUp } from "lucide-react";
 
@@ -236,14 +236,13 @@ export default function PortfolioAdmin() {
                   />
                 </FormField>
 
-                {/* Image */}
-                <FormField label="URL de l'image">
-                  <TextInput value={project.image_url} onChange={(v) => update(project.id, "image_url", v)} placeholder="https://…" />
-                  {project.image_url && (
-                    <div className="mt-2 rounded-lg overflow-hidden h-28 w-full max-w-xs border border-gray-200">
-                      <img src={project.image_url} alt="Aperçu" className="w-full h-full object-cover" />
-                    </div>
-                  )}
+                {/* Image — upload ou URL */}
+                <FormField label="Image du projet" hint="Téléversez un fichier ou collez une URL — l'une ou l'autre option.">
+                  <ImageField
+                    value={project.image_url}
+                    onChange={(v) => update(project.id, "image_url", v)}
+                    folder="projects"
+                  />
                 </FormField>
 
                 {/* Project link */}
