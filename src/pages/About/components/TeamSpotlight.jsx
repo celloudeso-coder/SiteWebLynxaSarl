@@ -48,7 +48,7 @@ const STATIC_TEAM = [
 ];
 
 const SkeletonCard = () => (
-  <div className="bg-gray-50 rounded-2xl p-6 animate-pulse space-y-4">
+  <div className="bg-gray-50 rounded-2xl p-6 animate-pulse space-y-4 flex-shrink-0 w-[280px] snap-start">
     <div className="w-20 h-20 bg-gray-200 rounded-full mx-auto" />
     <div className="h-4 bg-gray-200 rounded-full w-3/4 mx-auto" />
     <div className="h-3 bg-gray-100 rounded-full w-1/2 mx-auto" />
@@ -65,7 +65,7 @@ const TeamSpotlight = () => {
     cmsTeam && cmsTeam.length > 0
       ? cmsTeam.map((m) => ({ ...m, image: m.image_url }))
       : STATIC_TEAM;
-  const teamMembers = allMembers.slice(0, 4);
+  const teamMembers = allMembers;
 
   return (
     <section className="py-20 bg-white">
@@ -89,13 +89,15 @@ const TeamSpotlight = () => {
           </p>
         </motion.div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div
+          className="flex gap-6 overflow-x-auto pb-4 snap-x snap-mandatory scroll-smooth [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
+        >
           {loading
             ? [0, 1, 2, 3].map((i) => <SkeletonCard key={i} />)
             : teamMembers.map((member, index) => (
                 <motion.div
                   key={member.id}
-                  className="bg-gray-50 rounded-2xl p-6 hover:shadow-medium transition-shadow duration-300"
+                  className="bg-gray-50 rounded-2xl p-6 hover:shadow-medium transition-shadow duration-300 flex-shrink-0 w-[280px] snap-start"
                   initial={{ opacity: 0, y: 30 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
