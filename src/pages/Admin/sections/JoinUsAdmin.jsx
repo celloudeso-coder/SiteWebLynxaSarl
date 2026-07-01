@@ -285,6 +285,24 @@ function OpeningsTab() {
     setSaved(null);
   }
 
+  // Le toggle de la liste enregistre immédiatement en base (maj optimiste + rollback si échec)
+  async function toggleActive(item, value) {
+    setItems((prev) => prev.map((p) => (p.id === item.id ? { ...p, active: value } : p)));
+    setSaving(item.id);
+    try {
+      const reqs = Array.isArray(item.requirements)
+        ? item.requirements
+        : (item.requirements || "").split("\n").filter(Boolean);
+      const updated = await saveJobOpening({ ...item, active: value, requirements: reqs });
+      setItems((prev) => prev.map((p) => (p.id === item.id ? updated : p)));
+    } catch (e) {
+      setItems((prev) => prev.map((p) => (p.id === item.id ? { ...p, active: item.active } : p)));
+      alert("Échec de l'enregistrement du statut. Vérifiez la connexion à Supabase.");
+    } finally {
+      setSaving(null);
+    }
+  }
+
   async function save(item) {
     setSaving(item.id);
     try {
@@ -336,7 +354,7 @@ function OpeningsTab() {
                   </div>
                 </button>
                 {item.is_urgent && <span className="text-xs bg-red-100 text-red-600 px-2 py-0.5 rounded-full font-medium">Urgent</span>}
-                <Toggle checked={item.active} onChange={(v) => update(item.id, "active", v)} />
+                <Toggle checked={item.active} onChange={(v) => toggleActive(item, v)} />
                 <button onClick={() => remove(item.id)} className="text-gray-300 hover:text-red-500 ml-1">
                   <Trash2 size={15} />
                 </button>

@@ -91,6 +91,21 @@ export default function PortfolioAdmin() {
     setSaved(null);
   }
 
+  // Le toggle de la liste enregistre immédiatement en base (maj optimiste + rollback si échec)
+  async function toggleActive(project, value) {
+    setProjects((prev) => prev.map((p) => (p.id === project.id ? { ...p, active: value } : p)));
+    setSaving(project.id);
+    try {
+      const updated = await saveProject({ ...project, active: value });
+      setProjects((prev) => prev.map((p) => (p.id === project.id ? updated : p)));
+    } catch (e) {
+      setProjects((prev) => prev.map((p) => (p.id === project.id ? { ...p, active: project.active } : p)));
+      alert("Échec de l'enregistrement du statut. Vérifiez la connexion à Supabase.");
+    } finally {
+      setSaving(null);
+    }
+  }
+
   function updateTestimonial(id, field, value) {
     setProjects((prev) => prev.map((p) => {
       if (p.id !== id) return p;
@@ -153,7 +168,7 @@ export default function PortfolioAdmin() {
                   <p className="text-xs text-gray-500">{project.service_type} · {project.industry} · {project.duration}</p>
                 </div>
               </button>
-              <Toggle checked={project.active} onChange={(v) => update(project.id, "active", v)} />
+              <Toggle checked={project.active} onChange={(v) => toggleActive(project, v)} />
               <button onClick={() => remove(project.id)} className="text-red-400 hover:text-red-600 ml-2">
                 <Trash2 size={16} />
               </button>

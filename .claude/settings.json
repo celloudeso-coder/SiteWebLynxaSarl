@@ -4,7 +4,13 @@
       "Bash(npx eslint *)",
       "Bash(ps -o args= -p 1015837)",
       "Bash(curl -s \"http://localhost:4038/src/pages/About/components/TeamSpotlight.jsx\")",
-      "Bash(curl -s \"http://localhost:4038/src/pages/Admin/components/FormField.jsx\")"
+      "Bash(curl -s \"http://localhost:4038/src/pages/Admin/components/FormField.jsx\")",
+      "Bash(curl -s \"http://localhost:4038/src/pages/About/components/CompanyTimeline.jsx\")",
+      "Bash(curl -s \"http://localhost:4038/src/pages/Admin/sections/JoinUsAdmin.jsx\")",
+      "mcp__claude_ai_Supabase__execute_sql",
+      "Bash(curl -s \"http://localhost:4038/src/pages/Admin/sections/TeamAdmin.jsx\")",
+      "Bash(curl -s \"http://localhost:4038/src/pages/Admin/sections/PortfolioAdmin.jsx\")",
+      "Bash(curl -s \"http://localhost:4038/src/pages/Admin/components/AdminLayout.jsx\")"
     ]
   }
 }

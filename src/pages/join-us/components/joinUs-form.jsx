@@ -25,11 +25,8 @@ async function uploadFile(file, folder) {
   const path = `${folder}/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
   const { data, error } = await supabase.storage
     .from("Cv_lettredemotivation_joinus")
-    .upload(path, file);
-  if (error) {
-    console.warn("Upload storage échoué (non bloquant) :", error.message);
-    return "";
-  }
+    .upload(path, file, { contentType: file.type || "application/pdf" });
+  if (error) throw error;
   return supabase.storage.from("Cv_lettredemotivation_joinus").getPublicUrl(data.path).data.publicUrl;
 }
 
@@ -66,11 +63,25 @@ const JoinUsForm = () => {
     if (!validate()) return;
     setSubmitting(true);
     try {
-      // 1. Upload fichiers (non bloquant — continue même si le bucket est absent)
-      const [cvUrl, letterUrl] = await Promise.all([
-        uploadFile(form.cv, "cv"),
-        uploadFile(form.motivationLetter, "letters"),
-      ]);
+      // 1. Upload du CV (obligatoire) — un échec doit être signalé, pas ignoré
+      let cvUrl = "";
+      try {
+        cvUrl = await uploadFile(form.cv, "cv");
+      } catch (err) {
+        console.error("Upload CV échoué :", err.message);
+        setErrors((p) => ({ ...p, cv: "Échec de l'envoi du CV. Vérifiez le fichier (PDF, max 10 Mo) et réessayez." }));
+        setStatus("error");
+        setSubmitting(false);
+        return;
+      }
+
+      // Lettre de motivation (optionnelle) — non bloquant
+      let letterUrl = "";
+      try {
+        letterUrl = await uploadFile(form.motivationLetter, "letters");
+      } catch (err) {
+        console.warn("Upload lettre échoué (optionnel) :", err.message);
+      }
 
       const payload = {
         name:          form.name,

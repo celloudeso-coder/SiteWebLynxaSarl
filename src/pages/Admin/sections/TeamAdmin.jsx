@@ -27,6 +27,21 @@ export default function TeamAdmin() {
     setSaved(null);
   }
 
+  // Le toggle de la liste enregistre immédiatement en base (maj optimiste + rollback si échec)
+  async function toggleActive(member, value) {
+    setMembers((prev) => prev.map((m) => (m.id === member.id ? { ...m, active: value } : m)));
+    setSaving(member.id);
+    try {
+      const updated = await saveTeamMember({ ...member, active: value });
+      setMembers((prev) => prev.map((m) => (m.id === member.id ? updated : m)));
+    } catch (e) {
+      setMembers((prev) => prev.map((m) => (m.id === member.id ? { ...m, active: member.active } : m)));
+      alert("Échec de l'enregistrement du statut. Vérifiez la connexion à Supabase.");
+    } finally {
+      setSaving(null);
+    }
+  }
+
   function updateSocial(id, field, value) {
     setMembers((prev) => prev.map((m) => {
       if (m.id !== id) return m;
@@ -90,7 +105,7 @@ export default function TeamAdmin() {
                   <p className="text-xs text-gray-500">{member.role}</p>
                 </div>
               </button>
-              <Toggle checked={member.active} onChange={(v) => update(member.id, "active", v)} />
+              <Toggle checked={member.active} onChange={(v) => toggleActive(member, v)} />
               <button onClick={() => remove(member.id)} className="text-red-400 hover:text-red-600 ml-2">
                 <Trash2 size={16} />
               </button>

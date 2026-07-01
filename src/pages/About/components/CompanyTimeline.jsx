@@ -154,7 +154,7 @@ const CompanyTimeline = () => {
               Rejoignez-nous alors que nous continuons à construire l'avenir de la technologie en Afrique et au-delà.
             </p>
             <div className="flex flex-wrap justify-center gap-4">
-              <Link to="/contact">
+              <Link to="/join-us">
                 <motion.span
                   whileHover={{ scale: 1.04 }}
                   className="inline-flex items-center gap-2 bg-primary hover:bg-primary/90 text-white font-semibold px-5 py-2.5 rounded-xl transition-all duration-200 glow-orange cursor-pointer text-sm"
