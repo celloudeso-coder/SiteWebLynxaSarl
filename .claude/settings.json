@@ -3,7 +3,8 @@
     "allow": [
       "Bash(npx eslint *)",
       "Bash(ps -o args= -p 1015837)",
-      "Bash(curl -s \"http://localhost:4038/src/pages/About/components/TeamSpotlight.jsx\")"
+      "Bash(curl -s \"http://localhost:4038/src/pages/About/components/TeamSpotlight.jsx\")",
+      "Bash(curl -s \"http://localhost:4038/src/pages/Admin/components/FormField.jsx\")"
     ]
   }
 }
