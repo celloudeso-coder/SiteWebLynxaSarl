@@ -60,7 +60,7 @@ const JoinUsProcess = () => {
               >
                 <Icon name={step.icon} size={32} color="white" />
                 <div className="absolute -top-2.5 -right-2.5 w-7 h-7 bg-white border-2 border-primary rounded-full flex items-center justify-center">
-                  <span className="text-xs font-bold text-primary">{step.id}</span>
+                  <span className="text-xs font-bold text-primary">{i + 1}</span>
                 </div>
               </motion.div>
 

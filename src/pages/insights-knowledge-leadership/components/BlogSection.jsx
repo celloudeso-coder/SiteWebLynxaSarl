@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from "react";
-import { Link } from "react-router-dom";
+import { motion } from "framer-motion";
 import Icon from "../../../components/AppIcon";
 import Image from "../../../components/AppImage";
 import Button from "../../../components/ui/Button";
@@ -148,20 +148,18 @@ const STATIC_BLOG_POSTS = [
 
 const BlogSection = ({ activeCategory, searchQuery }) => {
   const [visiblePosts, setVisiblePosts] = useState(6);
-  const [blogPosts, setBlogPosts]       = useState(STATIC_BLOG_POSTS);
+  const [blogPosts, setBlogPosts]       = useState([]);
 
   useEffect(() => {
     getBlogPosts()
       .then((data) => {
-        if (data?.length) {
-          setBlogPosts(data.map((p) => ({
-            ...p,
-            readTime: p.read_time ?? p.readTime ?? "",
-            tags: Array.isArray(p.tags) ? p.tags : [],
-          })));
-        }
+        setBlogPosts((data || []).map((p) => ({
+          ...p,
+          readTime: p.read_time ?? p.readTime ?? "",
+          tags: Array.isArray(p.tags) ? p.tags : [],
+        })));
       })
-      .catch(() => {});
+      .catch(() => setBlogPosts(STATIC_BLOG_POSTS));
   }, []);
 
   const filteredPosts = useMemo(() => {
@@ -185,13 +183,18 @@ const BlogSection = ({ activeCategory, searchQuery }) => {
     }
 
     return filtered;
-  }, [activeCategory, searchQuery]);
+  }, [activeCategory, searchQuery, blogPosts]);
 
   const displayedPosts = filteredPosts?.slice(0, visiblePosts);
 
   const loadMorePosts = () => {
     setVisiblePosts((prev) => prev + 6);
   };
+
+  // Aucun article en base → section masquée (le CMS fait autorité)
+  if (blogPosts.length === 0) {
+    return null;
+  }
 
   if (filteredPosts?.length === 0) {
     return (
@@ -233,10 +236,15 @@ const BlogSection = ({ activeCategory, searchQuery }) => {
 
         {/* Blog Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {displayedPosts?.map((post) => (
-            <article
+          {displayedPosts?.map((post, index) => (
+            <motion.article
               key={post?.id}
-              className="bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 overflow-hidden border border-gray-100"
+              initial={{ opacity: 0, y: 24 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-40px" }}
+              transition={{ duration: 0.45, delay: (index % 3) * 0.08, ease: "easeOut" }}
+              whileHover={{ y: -6 }}
+              className="bg-white rounded-2xl shadow-md hover:shadow-xl transition-shadow duration-300 overflow-hidden border border-gray-100"
             >
               {/* Post Image */}
               <div className="relative overflow-hidden">
@@ -266,9 +274,13 @@ const BlogSection = ({ activeCategory, searchQuery }) => {
 
                 {/* Post Title */}
                 <h3 className="text-xl font-heading font-bold text-secondary mb-3 line-clamp-2 hover:text-primary transition-colors">
-                  <Link to={`/blog/${post?.id}`} className="hover:underline">
-                    {post?.title}
-                  </Link>
+                  {post?.url ? (
+                    <a href={post.url} target="_blank" rel="noopener noreferrer" className="hover:underline">
+                      {post?.title}
+                    </a>
+                  ) : (
+                    post?.title
+                  )}
                 </h3>
 
                 {/* Post Excerpt */}
@@ -288,16 +300,20 @@ const BlogSection = ({ activeCategory, searchQuery }) => {
                   ))}
                 </div>
 
-                {/* Read More */}
-                <Link
-                  to={`/blog/${post?.id}`}
-                  className="inline-flex items-center text-primary hover:text-accent transition-colors font-medium"
-                >
-                  <span>Lire la suite</span>
-                  <Icon name="ArrowRight" size={16} className="ml-2" />
-                </Link>
+                {/* Read More — seulement si un lien externe est défini */}
+                {post?.url && (
+                  <a
+                    href={post.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center text-primary hover:text-accent transition-colors font-medium"
+                  >
+                    <span>Lire la suite</span>
+                    <Icon name="ArrowRight" size={16} className="ml-2" />
+                  </a>
+                )}
               </div>
-            </article>
+            </motion.article>
           ))}
         </div>
 

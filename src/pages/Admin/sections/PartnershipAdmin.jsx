@@ -37,6 +37,26 @@ export default function PartnershipAdmin() {
     setSaved(null);
   }
 
+  // Le toggle de la liste enregistre immédiatement (maj optimiste + rollback si échec)
+  async function toggleActive(item, value) {
+    setItems((prev) => prev.map((p) => (p.id === item.id ? { ...p, active: value } : p)));
+    setSaving(item.id);
+    try {
+      const payload = {
+        ...item,
+        active: value,
+        features: Array.isArray(item.features) ? item.features : featuresFromValue(item.features),
+      };
+      const updated = await savePartnershipPathway(payload);
+      setItems((prev) => prev.map((p) => (p.id === item.id ? updated : p)));
+    } catch (e) {
+      setItems((prev) => prev.map((p) => (p.id === item.id ? { ...p, active: item.active } : p)));
+      alert("Échec de l'enregistrement du statut. Vérifiez la connexion à Supabase.");
+    } finally {
+      setSaving(null);
+    }
+  }
+
   async function save(item) {
     setSaving(item.id);
     try {
@@ -100,7 +120,7 @@ export default function PartnershipAdmin() {
                     <p className="text-xs text-gray-500">{item.timeline || "—"} · {item.budget || "—"}</p>
                   </div>
                 </button>
-                <Toggle checked={item.active} onChange={(v) => update(item.id, "active", v)} />
+                <Toggle checked={item.active} onChange={(v) => toggleActive(item, v)} />
                 <button onClick={() => remove(item.id)} className="text-red-400 hover:text-red-600 ml-2">
                   <Trash2 size={16} />
                 </button>

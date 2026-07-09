@@ -43,7 +43,8 @@ INSERT INTO hero_sections (page, title, subtitle, description, cta_primary_text,
   ('services', 'Nos Services', 'Solutions Technologiques de Pointe', 'Développement mobile, infrastructure réseau, web — des solutions pensées pour l''Afrique, compétitives à l''échelle mondiale.', 'Demander un devis', '/contact', 'Voir le portfolio', '/portfolio'),
   ('portfolio', 'Nos Réalisations', 'Histoires de Succès Inspirantes', 'Des projets qui transforment des vies et propulsent des organisations.', 'Démarrer un projet', '/contact', 'Partenariats', '/partnership'),
   ('partnership', 'Partenariat', 'Collaborons Ensemble', 'Rejoignez notre réseau de partenaires et construisons l''avenir technologique de l''Afrique.', 'Soumettre un projet', '#', 'Nous contacter', '/contact'),
-  ('contact', 'Contactez-nous', 'Toujours à Votre Écoute', 'Discutons de votre projet. Nous répondons sous 24h.', 'WhatsApp', '#', 'Email', 'mailto:contact@lynxatech.com')
+  ('contact', 'Contactez-nous', 'Toujours à Votre Écoute', 'Discutons de votre projet. Nous répondons sous 24h.', 'WhatsApp', '#', 'Email', 'mailto:contact@lynxatech.com'),
+  ('insights', 'Perspectives & Leadership de Savoir', 'Pionnier de l''innovation technologique africaine grâce à l''analyse experte et au leadership éclairé', 'Restez à la pointe avec les analyses complètes de Lynxa Tech sur les tendances de cybersécurité en Afrique de l''Ouest, les meilleures pratiques de développement mobile pour les marchés émergents et les innovations en infrastructure réseau à travers la Guinée et au-delà.', 'Explorez les articles', '#blog-section', 'Souscrire aux mises à jour', '#newsletter')
 ON CONFLICT (page) DO NOTHING;
 
 -- -------------------------------------------------------
@@ -414,6 +415,15 @@ ON CONFLICT (id) DO NOTHING;
 CREATE POLICY "Lecture publique médias" ON storage.objects FOR SELECT USING (bucket_id = 'cms-media');
 CREATE POLICY "Upload admin" ON storage.objects FOR INSERT WITH CHECK (bucket_id = 'cms-media' AND auth.role() = 'authenticated');
 CREATE POLICY "Suppression admin" ON storage.objects FOR DELETE USING (bucket_id = 'cms-media' AND auth.role() = 'authenticated');
+
+-- Bucket pour les CV / lettres de motivation (candidatures « Rejoindre ») — PDF ≤ 10 Mo, upload public autorisé
+INSERT INTO storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
+VALUES ('Cv_lettredemotivation_joinus', 'Cv_lettredemotivation_joinus', true, 10485760, ARRAY['application/pdf'])
+ON CONFLICT (id) DO NOTHING;
+
+CREATE POLICY "joinus_public_upload" ON storage.objects FOR INSERT WITH CHECK (bucket_id = 'Cv_lettredemotivation_joinus');
+CREATE POLICY "joinus_public_read"   ON storage.objects FOR SELECT USING (bucket_id = 'Cv_lettredemotivation_joinus');
+CREATE POLICY "joinus_admin_delete"  ON storage.objects FOR DELETE USING (bucket_id = 'Cv_lettredemotivation_joinus' AND auth.role() = 'authenticated');
 
 -- -------------------------------------------------------
 -- 13. CONTACT MESSAGES (soumissions du formulaire contact)
@@ -869,11 +879,11 @@ CREATE TABLE IF NOT EXISTS join_us_process_steps (
   icon text NOT NULL DEFAULT 'Star',
   color text DEFAULT 'bg-primary',
   title text NOT NULL DEFAULT '',
-  desc text DEFAULT '',
+  "desc" text DEFAULT '',
   detail text DEFAULT '',
   updated_at timestamptz DEFAULT now()
 );
-INSERT INTO join_us_process_steps (sort_order, icon, color, title, desc, detail) VALUES
+INSERT INTO join_us_process_steps (sort_order, icon, color, title, "desc", detail) VALUES
   (1, 'FileText',     'bg-primary', 'Postulez',          'Remplissez le formulaire ci-dessous avec votre CV et votre lettre de motivation. Simple et rapide.', '~5 minutes'),
   (2, 'MessageSquare','bg-accent',  'Entretien',         'Nos recruteurs vous contactent sous 48h pour un échange convivial sur votre profil et vos ambitions.', 'Sous 48h'),
   (3, 'Code',         'bg-primary', 'Test technique',    'Un petit exercice pratique adapté au poste — l''occasion de montrer votre façon de penser.', 'Optionnel'),
@@ -900,6 +910,7 @@ CREATE TABLE IF NOT EXISTS blog_posts (
   read_time text DEFAULT '',
   image text DEFAULT '',
   tags jsonb DEFAULT '[]',
+  url text DEFAULT '',
   updated_at timestamptz DEFAULT now()
 );
 INSERT INTO blog_posts (sort_order, title, excerpt, category, author, date, read_time, image, tags) VALUES
@@ -933,6 +944,7 @@ CREATE TABLE IF NOT EXISTS whitepapers (
   publish_date date DEFAULT CURRENT_DATE,
   image text DEFAULT '',
   tags jsonb DEFAULT '[]',
+  file_url text DEFAULT '',
   updated_at timestamptz DEFAULT now()
 );
 INSERT INTO whitepapers (sort_order, title, description, category, pages, download_count, publish_date, image, tags) VALUES
@@ -995,6 +1007,7 @@ CREATE TABLE IF NOT EXISTS industry_reports (
   executive_summary text DEFAULT '',
   sections jsonb DEFAULT '[]',
   tags jsonb DEFAULT '[]',
+  file_url text DEFAULT '',
   updated_at timestamptz DEFAULT now()
 );
 INSERT INTO industry_reports (sort_order, title, subtitle, category, publish_date, pages, downloads, image, key_insights, executive_summary, sections, tags) VALUES

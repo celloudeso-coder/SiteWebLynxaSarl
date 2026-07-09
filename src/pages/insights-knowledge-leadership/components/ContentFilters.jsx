@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { motion } from "framer-motion";
 import Icon from "../../../components/AppIcon";
 import Input from "../../../components/ui/Input";
 import Button from "../../../components/ui/Button";
@@ -30,8 +31,14 @@ const ContentFilters = ({
     <section className="py-16 bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
-        <div className="text-center mb-12">
-          <h2 className="text-3xl font-heading font-bold text-secondary mb-4">
+        <motion.div
+          className="text-center mb-12"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5 }}
+        >
+          <h2 className="text-3xl md:text-4xl font-heading font-bold text-secondary mb-4">
             Trouvez Votre{" "}
             <span className="text-gradient-orange">Expertise</span>
           </h2>
@@ -39,10 +46,16 @@ const ContentFilters = ({
             Filtrez notre contenu organisé par catégorie ou recherchez des
             sujets spécifiques pour trouver exactement ce dont vous avez besoin.
           </p>
-        </div>
+        </motion.div>
 
         {/* Search Bar */}
-        <div className="mb-8 max-w-2xl mx-auto">
+        <motion.div
+          className="mb-8 max-w-2xl mx-auto"
+          initial={{ opacity: 0, y: 16 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5, delay: 0.1 }}
+        >
           <div className="relative">
             <Input
               type="text"
@@ -66,10 +79,16 @@ const ContentFilters = ({
               </button>
             )}
           </div>
-        </div>
+        </motion.div>
 
         {/* Category Filters */}
-        <div className="flex flex-wrap justify-center gap-4">
+        <motion.div
+          className="flex flex-wrap justify-center gap-3 sm:gap-4"
+          initial={{ opacity: 0, y: 16 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5, delay: 0.2 }}
+        >
           {categories?.map((category) => (
             <Button
               key={category?.id}
@@ -87,7 +106,7 @@ const ContentFilters = ({
               {category?.label}
             </Button>
           ))}
-        </div>
+        </motion.div>
 
         {/* Active Filters Display */}
         {(searchQuery || activeCategory !== "all") && (

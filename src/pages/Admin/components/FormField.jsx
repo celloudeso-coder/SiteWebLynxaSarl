@@ -272,3 +272,56 @@ export function ImageField({ value, onChange, folder = "projects", placeholder =
     </div>
   );
 }
+
+// Champ fichier optionnel : téléverser un document (PDF par défaut) OU coller une URL.
+export function FileUpload({ value, onChange, folder = "documents", accept = "application/pdf" }) {
+  const [uploading, setUploading] = useState(false);
+  const [error, setError] = useState(null);
+  const inputRef = useRef(null);
+
+  async function handleFile(e) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploading(true);
+    setError(null);
+    try {
+      const ext = file.name.split(".").pop();
+      const path = `${folder}/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
+      const url = await uploadMedia(file, path);
+      onChange(url);
+    } catch (err) {
+      setError("Échec de l'upload. Vérifiez la connexion à Supabase.");
+    } finally {
+      setUploading(false);
+      if (inputRef.current) inputRef.current.value = "";
+    }
+  }
+
+  return (
+    <div className="space-y-2">
+      <div className="flex items-center gap-3 flex-wrap">
+        <input ref={inputRef} type="file" accept={accept} className="hidden" onChange={handleFile} />
+        <button
+          type="button"
+          onClick={() => inputRef.current?.click()}
+          disabled={uploading}
+          className="flex items-center gap-2 px-3 py-2 text-sm border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+        >
+          {uploading ? "Upload en cours…" : "Téléverser un fichier"}
+        </button>
+        {value && !uploading && (
+          <>
+            <a href={value} target="_blank" rel="noopener noreferrer" className="text-xs text-blue-600 hover:underline truncate max-w-[180px]">
+              {value.split("/").pop()}
+            </a>
+            <button type="button" onClick={() => onChange("")} className="text-xs text-red-400 hover:text-red-600">
+              Retirer
+            </button>
+          </>
+        )}
+      </div>
+      {error && <p className="text-xs text-red-500">{error}</p>}
+      <TextInput value={value} onChange={onChange} placeholder="ou coller une URL (https://…)" />
+    </div>
+  );
+}

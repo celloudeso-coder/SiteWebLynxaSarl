@@ -6,7 +6,7 @@ import {
   getIndustryReports, saveIndustryReport, deleteIndustryReport,
   getInsightsCategories, saveInsightsCategories,
 } from "../../../lib/cms";
-import { FormField, TextInput, TextArea, Toggle } from "../components/FormField";
+import { FormField, TextInput, TextArea, Toggle, FileUpload } from "../components/FormField";
 import SaveButton from "../components/SaveButton";
 import { Plus, Trash2, BookOpen, FileText, Video, BarChart2, Grid } from "lucide-react";
 
@@ -154,6 +154,11 @@ function BlogSection() {
               </FormField>
             </div>
             <div className="mt-3">
+              <FormField label="Lien externe (optionnel)" hint="Si renseigné, le titre et « Lire la suite » ouvrent ce lien. Sinon la carte reste un simple aperçu.">
+                <TextInput value={item.url || ""} onChange={(v) => update(item.id, "url", v)} placeholder="https://…" />
+              </FormField>
+            </div>
+            <div className="mt-3">
               <FormField label="Tags (un par ligne)">
                 <TagsInput value={item.tags} onChange={(v) => update(item.id, "tags", v)} />
               </FormField>
@@ -255,6 +260,11 @@ function WhitepapersSection() {
             <div className="mt-3">
               <FormField label="URL Image">
                 <TextInput value={item.image || ""} onChange={(v) => update(item.id, "image", v)} placeholder="https://..." />
+              </FormField>
+            </div>
+            <div className="mt-3">
+              <FormField label="Fichier PDF (optionnel)" hint="Téléversez le PDF ou collez une URL. Le bouton « Télécharger » n'apparaît que si un fichier est défini.">
+                <FileUpload value={item.file_url} onChange={(v) => update(item.id, "file_url", v)} folder="whitepapers" />
               </FormField>
             </div>
             <div className="mt-3">
@@ -479,6 +489,11 @@ function ReportsSection() {
             <div className="mt-3">
               <FormField label="URL Image">
                 <TextInput value={item.image || ""} onChange={(v) => update(item.id, "image", v)} placeholder="https://..." />
+              </FormField>
+            </div>
+            <div className="mt-3">
+              <FormField label="Fichier PDF (optionnel)" hint="Téléversez le PDF ou collez une URL. Le bouton « Telecharger » n'apparaît que si un fichier est défini.">
+                <FileUpload value={item.file_url} onChange={(v) => update(item.id, "file_url", v)} folder="reports" />
               </FormField>
             </div>
             <div className="grid sm:grid-cols-2 gap-3 mt-3">

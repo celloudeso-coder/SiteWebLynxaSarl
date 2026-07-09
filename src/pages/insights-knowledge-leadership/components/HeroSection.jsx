@@ -1,14 +1,36 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import { motion } from "framer-motion";
 import Icon from "../../../components/AppIcon";
 import Image from "../../../components/AppImage";
 import Button from "../../../components/ui/Button";
+import { getHeroSection } from "../../../lib/cms";
+
+const STATIC_HERO = {
+  title: "Perspectives & Leadership de Savoir",
+  subtitle:
+    "Pionnier de l’innovation technologique africaine grâce à l’analyse experte et au leadership éclairé",
+  description:
+    "Restez à la pointe avec les analyses complètes de Lynxa Tech sur les tendances de cybersécurité en Afrique de l’Ouest, les meilleures pratiques de développement mobile pour les marchés émergents et les innovations en infrastructure réseau à travers la Guinée et au-delà.",
+};
 
 const HeroSection = () => {
   const [isVisible, setIsVisible] = useState(false);
+  const [hero, setHero] = useState(STATIC_HERO);
 
   useEffect(() => {
     setIsVisible(true);
+    getHeroSection("insights")
+      .then((data) => {
+        if (data) {
+          setHero({
+            title: data.title || STATIC_HERO.title,
+            subtitle: data.subtitle || STATIC_HERO.subtitle,
+            description: data.description || STATIC_HERO.description,
+          });
+        }
+      })
+      .catch(() => {});
   }, []);
 
   return (
@@ -50,24 +72,17 @@ const HeroSection = () => {
         >
           {/* Main Headline */}
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-heading font-bold text-white mb-6">
-            <span className="block text-gradient-orange mb-2">
-              Perspectives &
-            </span>
-            <span className="block">Leadership de Savoir</span>
+            {hero.title}
           </h1>
 
           {/* Subtitle */}
           <p className="text-xl sm:text-2xl text-gray-200 mb-8 font-medium max-w-4xl mx-auto">
-            Pionnier de l’innovation technologique africaine grâce à l’analyse
-            experte et au leadership éclairé
+            {hero.subtitle}
           </p>
 
           {/* Description */}
           <p className="text-lg text-gray-300 mb-12 max-w-3xl mx-auto leading-relaxed">
-            Restez à la pointe avec les analyses complètes de Lynxa Tech sur les
-            tendances de cybersécurité en Afrique de l’Ouest, les meilleures
-            pratiques de développement mobile pour les marchés émergents et les
-            innovations en infrastructure réseau à travers la Guinée et au-delà.
+            {hero.description}
           </p>
 
           {/* Key Topics */}
@@ -77,10 +92,15 @@ const HeroSection = () => {
               { icon: "Smartphone", label: "Mobile Innovation" },
               { icon: "Network", label: "Network Solutions" },
               { icon: "TrendingUp", label: "African Tech Ecosystem" },
-            ]?.map((topic) => (
-              <div
+            ]?.map((topic, i) => (
+              <motion.div
                 key={topic?.label}
-                className="bg-white/10 backdrop-blur-sm rounded-lg p-4 border border-white/20"
+                initial={{ opacity: 0, y: 16 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.4, delay: i * 0.08 }}
+                whileHover={{ y: -5, scale: 1.05 }}
+                className="bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20 hover:border-primary/50 hover:bg-white/15 transition-colors cursor-default"
               >
                 <Icon
                   name={topic?.icon}
@@ -89,7 +109,7 @@ const HeroSection = () => {
                   className="mx-auto mb-2"
                 />
                 <p className="text-white text-sm font-medium">{topic?.label}</p>
-              </div>
+              </motion.div>
             ))}
           </div>
 

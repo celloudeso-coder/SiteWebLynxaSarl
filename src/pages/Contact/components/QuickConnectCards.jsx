@@ -1,7 +1,6 @@
 import React from "react";
 import { motion } from "framer-motion";
 import Icon from "../../../components/AppIcon";
-import Button from "../../../components/ui/Button";
 import { useSiteSettings } from "../../../hooks/useContent";
 
 const QuickConnectCards = () => {
@@ -98,51 +97,37 @@ const QuickConnectCards = () => {
           viewport={{ once: true }}
         >
           {options.map((option) => (
-            <motion.div
+            <motion.a
               key={option.id}
+              href={option.href}
+              target={option.external ? "_blank" : "_self"}
+              rel={option.external ? "noopener noreferrer" : undefined}
               variants={cardVariants}
               whileHover={{ y: -6 }}
-              className="relative bg-white rounded-2xl p-6 shadow-soft hover:shadow-medium transition-shadow duration-300 group"
+              className="relative bg-white rounded-2xl p-6 shadow-soft hover:shadow-medium transition-all duration-300 group flex flex-col items-center text-center border border-transparent hover:border-primary/30"
             >
               {option.popular && (
                 <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-                  <span className="bg-primary text-white text-xs font-medium px-3 py-1 rounded-full">
+                  <span className="bg-primary text-white text-xs font-medium px-3 py-1 rounded-full whitespace-nowrap">
                     Le plus populaire
                   </span>
                 </div>
               )}
 
-              <div className="text-center">
-                <motion.div
-                  className={`inline-flex items-center justify-center w-16 h-16 ${option.color} rounded-2xl mb-4`}
-                  whileHover={{ scale: 1.1, rotate: 5 }}
-                  transition={{ type: "spring", stiffness: 300 }}
-                >
-                  <Icon name={option.icon} size={28} color="white" />
-                </motion.div>
-
-                <h3 className="text-lg font-heading font-semibold text-secondary mb-2">
-                  {option.title}
-                </h3>
-
-                <p className="text-muted-foreground text-sm mb-4 leading-relaxed">
-                  {option.description}
-                </p>
-
-                <p className="text-sm font-medium text-secondary mb-5">
-                  {option.contact}
-                </p>
-
-                <a
-                  href={option.href}
-                  target={option.external ? "_blank" : "_self"}
-                  rel={option.external ? "noopener noreferrer" : undefined}
-                  className="block w-full text-center border border-border text-secondary text-sm font-medium py-2 px-4 rounded-lg group-hover:bg-primary group-hover:text-white group-hover:border-primary transition-all duration-300"
-                >
-                  {option.action}
-                </a>
+              <div
+                className={`inline-flex items-center justify-center w-16 h-16 ${option.color} rounded-2xl mb-4 shadow-sm transition-transform duration-300 group-hover:scale-110 group-hover:-rotate-3`}
+              >
+                <Icon name={option.icon} size={28} color="white" />
               </div>
-            </motion.div>
+
+              <h3 className="text-lg font-heading font-semibold text-secondary mb-1.5">
+                {option.title}
+              </h3>
+
+              <p className="text-sm font-medium text-muted-foreground group-hover:text-primary transition-colors break-words">
+                {option.contact}
+              </p>
+            </motion.a>
           ))}
         </motion.div>
 

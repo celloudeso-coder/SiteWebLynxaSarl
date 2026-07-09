@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { motion } from "framer-motion";
 import Icon from "../../../components/AppIcon";
 import Image from "../../../components/AppImage";
 import Button from "../../../components/ui/Button";
@@ -120,21 +121,19 @@ const STATIC_TECH_TALKS = [
 
 const TechTalksSection = ({ activeCategory, searchQuery }) => {
   const [selectedVideo, setSelectedVideo] = useState(null);
-  const [techTalks, setTechTalks]         = useState(STATIC_TECH_TALKS);
+  const [techTalks, setTechTalks]         = useState([]);
 
   useEffect(() => {
     getTechTalks()
       .then((data) => {
-        if (data?.length) {
-          setTechTalks(data.map((t) => ({
-            ...t,
-            videoId:     t.video_id     ?? t.videoId     ?? "",
-            publishDate: t.publish_date ?? t.publishDate ?? "",
-            tags: Array.isArray(t.tags) ? t.tags : [],
-          })));
-        }
+        setTechTalks((data || []).map((t) => ({
+          ...t,
+          videoId:     t.video_id     ?? t.videoId     ?? "",
+          publishDate: t.publish_date ?? t.publishDate ?? "",
+          tags: Array.isArray(t.tags) ? t.tags : [],
+        })));
       })
-      .catch(() => {});
+      .catch(() => setTechTalks(STATIC_TECH_TALKS));
   }, []);
 
   const filteredTechTalks = techTalks?.filter((talk) => {
@@ -181,10 +180,15 @@ const TechTalksSection = ({ activeCategory, searchQuery }) => {
 
         {/* Tech Talks Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {filteredTechTalks?.map((talk) => (
-            <div
+          {filteredTechTalks?.map((talk, index) => (
+            <motion.div
               key={talk?.id}
-              className="bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 overflow-hidden border border-gray-100"
+              initial={{ opacity: 0, y: 24 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-40px" }}
+              transition={{ duration: 0.45, delay: (index % 3) * 0.08, ease: "easeOut" }}
+              whileHover={{ y: -6 }}
+              className="bg-white rounded-2xl shadow-md hover:shadow-xl transition-shadow duration-300 overflow-hidden border border-gray-100"
             >
               {/* Video Thumbnail */}
               <div
@@ -276,7 +280,7 @@ const TechTalksSection = ({ activeCategory, searchQuery }) => {
                   Regardez Maintenant
                 </Button>
               </div>
-            </div>
+            </motion.div>
           ))}
         </div>
 
@@ -297,20 +301,26 @@ const TechTalksSection = ({ activeCategory, searchQuery }) => {
                 </button>
               </div>
 
-              {/* Video Player Placeholder */}
+              {/* Video Player */}
               <div className="p-6">
-                <div className="aspect-video bg-gray-900 rounded-lg flex items-center justify-center mb-6">
-                  <div className="text-center text-white">
-                    <Icon
-                      name="Play"
-                      size={64}
-                      className="mx-auto mb-4 opacity-50"
+                <div className="aspect-video bg-gray-900 rounded-lg overflow-hidden mb-6">
+                  {selectedVideo?.videoId ? (
+                    <iframe
+                      className="w-full h-full"
+                      src={`https://www.youtube.com/embed/${selectedVideo?.videoId}?autoplay=1&rel=0`}
+                      title={selectedVideo?.title}
+                      allow="autoplay; encrypted-media; picture-in-picture"
+                      allowFullScreen
                     />
-                    <p className="text-lg">Video Player</p>
-                    <p className="text-sm text-gray-300">
-                      Durée: {selectedVideo?.duration}
-                    </p>
-                  </div>
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center text-center text-white">
+                      <div>
+                        <Icon name="Play" size={64} className="mx-auto mb-4 opacity-50" />
+                        <p className="text-lg">Vidéo indisponible</p>
+                        <p className="text-sm text-gray-300">Durée: {selectedVideo?.duration}</p>
+                      </div>
+                    </div>
+                  )}
                 </div>
 
                 {/* Video Details */}

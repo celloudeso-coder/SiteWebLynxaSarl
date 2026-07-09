@@ -81,46 +81,27 @@ const SocialConnect = () => {
           </p>
         </motion.div>
 
-        {/* Social cards */}
-        <div className="flex flex-wrap justify-center gap-6 mb-16">
+        {/* Social icons — modernes, sans texte */}
+        <div className="flex justify-center items-center gap-5 sm:gap-6 mb-16">
           {platforms.map((p, i) => (
-            <motion.div
+            <motion.a
               key={p.name}
+              href={p.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label={`${p.name} — ${p.handle}`}
+              title={`${p.name} · ${p.handle}`}
               custom={i}
               variants={cardVariants}
               initial="hidden"
               whileInView="visible"
               viewport={{ once: true }}
-              whileHover={{ y: -6 }}
-              className="bg-surface rounded-2xl p-6 shadow-soft hover:shadow-medium transition-shadow duration-300 group w-64 relative"
+              whileHover={{ y: -5, scale: 1.08 }}
+              whileTap={{ scale: 0.95 }}
+              className={`w-14 h-14 sm:w-16 sm:h-16 rounded-2xl ${p.color} text-white flex items-center justify-center shadow-soft hover:shadow-medium transition-shadow duration-300`}
             >
-              <div className="absolute top-4 right-4 w-2.5 h-2.5 bg-green-500 rounded-full animate-pulse" />
-
-              <div className="text-center">
-                <motion.div
-                  className={`inline-flex items-center justify-center w-16 h-16 ${p.color} rounded-2xl mb-4`}
-                  whileHover={{ scale: 1.1, rotate: 5 }}
-                  transition={{ type: "spring", stiffness: 300 }}
-                >
-                  <Icon name={p.icon} size={28} color="white" />
-                </motion.div>
-
-                <h3 className="text-lg font-heading font-semibold text-secondary mb-1">
-                  {p.name}
-                </h3>
-                <p className="text-primary text-sm font-medium mb-3">{p.handle}</p>
-                <p className="text-muted-foreground text-sm mb-5 leading-relaxed">{p.description}</p>
-
-                <a
-                  href={p.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="block w-full text-center border border-border text-secondary text-sm font-medium py-2 px-4 rounded-lg group-hover:bg-primary group-hover:text-white group-hover:border-primary transition-all duration-300"
-                >
-                  Suivre
-                </a>
-              </div>
-            </motion.div>
+              <Icon name={p.icon} size={26} color="white" />
+            </motion.a>
           ))}
         </div>
 

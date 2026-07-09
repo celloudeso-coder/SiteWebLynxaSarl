@@ -27,6 +27,21 @@ export default function PricingAdmin() {
     setSaved(null);
   }
 
+  // Le toggle de la liste enregistre immédiatement (maj optimiste + rollback si échec)
+  async function toggleActive(plan, value) {
+    setPlans((prev) => prev.map((p) => (p.id === plan.id ? { ...p, active: value } : p)));
+    setSaving(plan.id);
+    try {
+      const updated = await savePricingPlan({ ...plan, active: value });
+      setPlans((prev) => prev.map((p) => (p.id === plan.id ? updated : p)));
+    } catch (e) {
+      setPlans((prev) => prev.map((p) => (p.id === plan.id ? { ...p, active: plan.active } : p)));
+      alert("Échec de l'enregistrement du statut. Vérifiez la connexion à Supabase.");
+    } finally {
+      setSaving(null);
+    }
+  }
+
   async function save(plan) {
     setSaving(plan.id);
     try {
@@ -81,7 +96,7 @@ export default function PricingAdmin() {
                   <p className="text-xs text-gray-500">{plan.price} {plan.price_note}</p>
                 </div>
               </button>
-              <Toggle checked={plan.active} onChange={(v) => update(plan.id, "active", v)} />
+              <Toggle checked={plan.active} onChange={(v) => toggleActive(plan, v)} />
               <button onClick={() => remove(plan.id)} className="text-red-400 hover:text-red-600 ml-2">
                 <Trash2 size={16} />
               </button>

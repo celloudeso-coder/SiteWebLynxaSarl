@@ -41,6 +41,12 @@ const Header = () => {
       path: "/portfolio",
       icon: "Briefcase",
     },
+    // Masqué temporairement — page Insights sans contenu. Réactiver ce bloc quand du contenu sera publié.
+    // {
+    //   name: "Insights",
+    //   path: "/insights",
+    //   icon: "Newspaper",
+    // },
     {
       name: "Partenariat",
       path: "/partnership",

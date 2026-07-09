@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { motion } from "framer-motion";
 import Icon from "../../../components/AppIcon";
 import Image from "../../../components/AppImage";
 import Button from "../../../components/ui/Button";
@@ -137,23 +138,21 @@ const STATIC_INDUSTRY_REPORTS = [
 
 const IndustryReportsSection = ({ activeCategory, searchQuery }) => {
   const [selectedReport, setSelectedReport] = useState(null);
-  const [industryReports, setIndustryReports] = useState(STATIC_INDUSTRY_REPORTS);
+  const [industryReports, setIndustryReports] = useState([]);
 
   useEffect(() => {
     getIndustryReports()
       .then((data) => {
-        if (data?.length) {
-          setIndustryReports(data.map((r) => ({
-            ...r,
-            publishDate:      r.publish_date      ?? r.publishDate      ?? "",
-            keyInsights:      Array.isArray(r.key_insights)      ? r.key_insights      : (Array.isArray(r.keyInsights)      ? r.keyInsights      : []),
-            executiveSummary: r.executive_summary ?? r.executiveSummary ?? "",
-            sections: Array.isArray(r.sections) ? r.sections : [],
-            tags:     Array.isArray(r.tags)     ? r.tags     : [],
-          })));
-        }
+        setIndustryReports((data || []).map((r) => ({
+          ...r,
+          publishDate:      r.publish_date      ?? r.publishDate      ?? "",
+          keyInsights:      Array.isArray(r.key_insights)      ? r.key_insights      : (Array.isArray(r.keyInsights)      ? r.keyInsights      : []),
+          executiveSummary: r.executive_summary ?? r.executiveSummary ?? "",
+          sections: Array.isArray(r.sections) ? r.sections : [],
+          tags:     Array.isArray(r.tags)     ? r.tags     : [],
+        })));
       })
-      .catch(() => {});
+      .catch(() => setIndustryReports(STATIC_INDUSTRY_REPORTS));
   }, []);
 
   const filteredReports = industryReports?.filter((report) => {
@@ -203,10 +202,15 @@ const IndustryReportsSection = ({ activeCategory, searchQuery }) => {
 
         {/* Reports Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {filteredReports?.map((report) => (
-            <div
+          {filteredReports?.map((report, index) => (
+            <motion.div
               key={report?.id}
-              className="bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 overflow-hidden border border-gray-100"
+              initial={{ opacity: 0, y: 24 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-40px" }}
+              transition={{ duration: 0.45, delay: (index % 2) * 0.1, ease: "easeOut" }}
+              whileHover={{ y: -6 }}
+              className="bg-white rounded-2xl shadow-md hover:shadow-xl transition-shadow duration-300 overflow-hidden border border-gray-100"
             >
               <div className="md:flex h-full">
                 {/* Report Image */}
@@ -283,19 +287,22 @@ const IndustryReportsSection = ({ activeCategory, searchQuery }) => {
                     >
                       Aperçu
                     </Button>
-                    <Button
-                      variant="default"
-                      size="sm"
-                      iconName="Download"
-                      iconPosition="left"
-                      className="flex-1 glow-orange"
-                    >
-                      Telecharger
-                    </Button>
+                    {report?.file_url && (
+                      <Button
+                        variant="default"
+                        size="sm"
+                        iconName="Download"
+                        iconPosition="left"
+                        className="flex-1 glow-orange"
+                        onClick={() => window.open(report.file_url, "_blank", "noopener,noreferrer")}
+                      >
+                        Telecharger
+                      </Button>
+                    )}
                   </div>
                 </div>
               </div>
-            </div>
+            </motion.div>
           ))}
         </div>
 
@@ -434,15 +441,18 @@ const IndustryReportsSection = ({ activeCategory, searchQuery }) => {
                   >
                     Fermer Aperçu
                   </Button>
-                  <Button
-                    variant="default"
-                    size="lg"
-                    iconName="Download"
-                    iconPosition="left"
-                    className="flex-1 glow-orange"
-                  >
-                    Telecharger le rapport complet
-                  </Button>
+                  {selectedReport?.file_url && (
+                    <Button
+                      variant="default"
+                      size="lg"
+                      iconName="Download"
+                      iconPosition="left"
+                      className="flex-1 glow-orange"
+                      onClick={() => window.open(selectedReport.file_url, "_blank", "noopener,noreferrer")}
+                    >
+                      Telecharger le rapport complet
+                    </Button>
+                  )}
                 </div>
               </div>
             </div>

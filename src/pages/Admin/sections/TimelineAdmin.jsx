@@ -26,6 +26,21 @@ export default function TimelineAdmin() {
     setSaved(null);
   }
 
+  // Le toggle de la liste enregistre immédiatement (maj optimiste + rollback si échec)
+  async function toggleActive(event, value) {
+    setEvents((prev) => prev.map((e) => (e.id === event.id ? { ...e, active: value } : e)));
+    setSaving(event.id);
+    try {
+      const updated = await saveTimelineEvent({ ...event, active: value });
+      setEvents((prev) => prev.map((e) => (e.id === event.id ? updated : e)));
+    } catch (err) {
+      setEvents((prev) => prev.map((e) => (e.id === event.id ? { ...e, active: event.active } : e)));
+      alert("Échec de l'enregistrement du statut. Vérifiez la connexion à Supabase.");
+    } finally {
+      setSaving(null);
+    }
+  }
+
   async function save(event) {
     setSaving(event.id);
     try {
@@ -80,7 +95,7 @@ export default function TimelineAdmin() {
                   <p className="text-xs text-gray-500 truncate max-w-xs">{event.description}</p>
                 </div>
               </button>
-              <Toggle checked={event.active} onChange={(v) => update(event.id, "active", v)} />
+              <Toggle checked={event.active} onChange={(v) => toggleActive(event, v)} />
               <button onClick={() => remove(event.id)} className="text-red-400 hover:text-red-600 ml-2">
                 <Trash2 size={16} />
               </button>

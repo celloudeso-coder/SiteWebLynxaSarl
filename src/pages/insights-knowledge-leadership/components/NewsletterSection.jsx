@@ -3,6 +3,7 @@ import Icon from "../../../components/AppIcon";
 import Input from "../../../components/ui/Input";
 import Button from "../../../components/ui/Button";
 import { Checkbox } from "../../../components/ui/Checkbox";
+import { subscribeNewsletter } from "../../../lib/cms";
 
 const NewsletterSection = () => {
   const [email, setEmail] = useState("");
@@ -10,6 +11,7 @@ const NewsletterSection = () => {
   const [interests, setInterests] = useState([]);
   const [isSubscribed, setIsSubscribed] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [subError, setSubError] = useState(false);
 
   const interestOptions = [
     { id: "cybersecurity", label: "Cybersécurité", icon: "Shield" },
@@ -44,16 +46,17 @@ const NewsletterSection = () => {
     }
 
     setIsLoading(true);
+    setSubError(false);
 
     try {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      await subscribeNewsletter(email.trim());
       setIsSubscribed(true);
       setEmail("");
       setName("");
       setInterests([]);
     } catch (error) {
       console.error("Newsletter subscription failed:", error);
+      setSubError(true);
     } finally {
       setIsLoading(false);
     }
@@ -237,6 +240,13 @@ const NewsletterSection = () => {
                 </a>
               </p>
             </div>
+
+            {/* Erreur */}
+            {subError && (
+              <p className="text-center text-white bg-red-500/30 border border-white/30 rounded-lg py-2 text-sm">
+                Une erreur s'est produite. Veuillez réessayer dans un instant.
+              </p>
+            )}
 
             {/* Submit Button */}
             <div className="text-center">

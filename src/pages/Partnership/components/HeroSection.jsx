@@ -6,7 +6,7 @@ import { useHeroSection } from "../../../hooks/useContent";
 
 const STATS = [
   { icon: "Rocket",     label: "Projets lancés",     value: "1+"  },
-  { icon: "Globe",      label: "Présence africaine",  value: "🌍"  },
+  { icon: "Globe",      label: "Présence africaine",  value: "Africa"  },
   { icon: "Award",      label: "Taux de réussite",    value: "98%" },
   { icon: "Clock",      label: "Support",             value: "24/7"},
 ];

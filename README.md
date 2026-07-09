@@ -48,7 +48,7 @@ src/
 │   ├── Partnership/
 │   ├── Contact/
 │   ├── join-us/
-│   ├── insights-knowledge-leadership/   # présent mais route désactivée
+│   ├── insights-knowledge-leadership/   # route /insights active — lien menu masqué (sans contenu)
 │   └── NotFound.jsx
 ├── styles/
 │   ├── index.css
@@ -59,7 +59,7 @@ src/
 └── Routes.jsx
 supabase/
 ├── config.toml              # Configuration Supabase CLI locale
-└── schema.sql               # Schéma CMS (tables + données initiales + RLS)
+└── schema.sql               # Schéma CMS (tables + seeds + RLS + buckets Storage)
 ```
 
 ---
@@ -218,6 +218,7 @@ L'image multi-stage utilise `node:18-alpine` pour le build puis `nginx:alpine` p
 | `/partnership` | Partenariats |
 | `/contact` | Contact |
 | `/join-us` | Rejoindre l'équipe |
+| `/insights` | Insights & Knowledge *(alias `/insights-knowledge-leadership` ; lien menu masqué — sans contenu pour l'instant)* |
 | `/about/teamspotlight1` | Spotlight équipe |
 | `/admin/login` | Connexion admin CMS |
 | `/admin/*` | Panel d'administration CMS |
@@ -275,8 +276,8 @@ Chaque page dispose aussi d'un éditeur de visibilité des sections via `/admin/
 
 - **`src/lib/cms.js`** — Fonctions CRUD (get/save/delete) pour chaque table
 - **`src/hooks/useContent.js`** — Hooks React (`useServices`, `useTeamMembers`, etc.)
-- Les composants chargent d'abord le contenu Supabase ; en l'absence de données, ils affichent le contenu statique (fallback)
-- Upload de médias via Supabase Storage (bucket `cms-media`)
+- Les composants chargent d'abord le contenu Supabase ; en l'absence de données, la plupart affichent un contenu statique (fallback). Les sections de la page **Insights** font autorité sur le CMS : vide en base ⇒ section masquée (le statique ne sert plus que de secours en cas d'erreur réseau)
+- Upload de médias via Supabase Storage : bucket `cms-media` (images / PDF gérés depuis l'admin — photos équipe, images, livres blancs, rapports) et bucket `Cv_lettredemotivation_joinus` (CV & lettres déposés via le formulaire public « Rejoindre », PDF ≤ 10 Mo)
 
 ### Variables d'environnement
 

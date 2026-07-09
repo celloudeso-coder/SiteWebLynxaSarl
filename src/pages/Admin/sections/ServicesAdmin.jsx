@@ -123,6 +123,21 @@ export default function ServicesAdmin() {
     setSaved(null);
   }
 
+  // Le toggle de la liste enregistre immédiatement (maj optimiste + rollback si échec)
+  async function toggleActive(service, value) {
+    setServices((prev) => prev.map((s) => (s.id === service.id ? { ...s, active: value } : s)));
+    setSaving(service.id);
+    try {
+      const updated = await saveService({ ...service, active: value });
+      setServices((prev) => prev.map((s) => (s.id === service.id ? updated : s)));
+    } catch (e) {
+      setServices((prev) => prev.map((s) => (s.id === service.id ? { ...s, active: service.active } : s)));
+      alert("Échec de l'enregistrement du statut. Vérifiez la connexion à Supabase.");
+    } finally {
+      setSaving(null);
+    }
+  }
+
   async function save(service) {
     setSaving(service.id);
     try {
@@ -179,7 +194,7 @@ export default function ServicesAdmin() {
                   <p className="text-xs text-gray-500">{service.subtitle} · {service.slug}</p>
                 </div>
               </button>
-              <Toggle checked={service.active} onChange={(v) => update(service.id, "active", v)} />
+              <Toggle checked={service.active} onChange={(v) => toggleActive(service, v)} />
               <button onClick={() => remove(service.id)} className="text-red-400 hover:text-red-600 ml-2">
                 <Trash2 size={16} />
               </button>

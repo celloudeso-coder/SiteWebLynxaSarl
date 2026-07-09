@@ -10,7 +10,7 @@ import PartnershipCollaborationGateway from "./pages/Partnership";
 import ServicesPage from "./pages/Services";
 import Homepage from "./pages/Home";
 import PortfolioShowcase from "./pages/Portfolio";
-// import InsightsKnowledgeLeadership from './pages/insights-knowledge-leadership';
+import InsightsKnowledgeLeadership from "./pages/insights-knowledge-leadership";
 import JoinUsPage from "pages/join-us";
 import AdminLogin from "./pages/Admin/AdminLogin";
 import AdminApp from "./pages/Admin";
@@ -30,6 +30,8 @@ const Routes = () => {
           <Route path="/partnership" element={<PartnershipCollaborationGateway />} />
           <Route path="/service" element={<ServicesPage />} />
           <Route path="/portfolio" element={<PortfolioShowcase />} />
+          <Route path="/insights" element={<InsightsKnowledgeLeadership />} />
+          <Route path="/insights-knowledge-leadership" element={<InsightsKnowledgeLeadership />} />
           <Route path="/join-us" element={<JoinUsPage />} />
           {/* Admin CMS */}
           <Route path="/admin/login" element={<AdminLogin />} />

@@ -10,7 +10,14 @@
       "mcp__claude_ai_Supabase__execute_sql",
       "Bash(curl -s \"http://localhost:4038/src/pages/Admin/sections/TeamAdmin.jsx\")",
       "Bash(curl -s \"http://localhost:4038/src/pages/Admin/sections/PortfolioAdmin.jsx\")",
-      "Bash(curl -s \"http://localhost:4038/src/pages/Admin/components/AdminLayout.jsx\")"
+      "Bash(curl -s \"http://localhost:4038/src/pages/Admin/components/AdminLayout.jsx\")",
+      "Bash(curl -s \"http://localhost:4038/src/pages/Contact/components/QuickConnectCards.jsx\")",
+      "Bash(curl -s \"http://localhost:4038/src/pages/Contact/components/SocialConnect.jsx\")",
+      "Bash(node -e \"const l=require\\('lucide-react'\\); console.log\\('Newspaper' in l ? 'OK Newspaper existe' : 'MANQUANT'\\)\")",
+      "Bash(curl -s \"http://localhost:4038/src/Routes.jsx\")",
+      "Bash(grep -nE 'handleVideoPlay|closeVideoModal|video_url|videoUrl|\\\\.url|iframe|src=|youtube|embed' __TRACKED_VAR__/TechTalksSection.jsx)",
+      "Bash(curl -s \"http://localhost:4038/src/components/ui/Header.jsx\")",
+      "Bash(awk '/CREATE TABLE IF NOT EXISTS join_us_process_steps/,/\\\\\\);/' supabase/schema.sql)"
     ]
   }
 }

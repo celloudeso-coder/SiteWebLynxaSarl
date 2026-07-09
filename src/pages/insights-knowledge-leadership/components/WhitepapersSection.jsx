@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { motion } from "framer-motion";
 import Icon from "../../../components/AppIcon";
 import Image from "../../../components/AppImage";
 import Button from "../../../components/ui/Button";
@@ -78,21 +79,19 @@ const STATIC_WHITEPAPERS = [
 ];
 
 const WhitepapersSection = ({ activeCategory, searchQuery }) => {
-  const [whitepapers, setWhitepapers] = useState(STATIC_WHITEPAPERS);
+  const [whitepapers, setWhitepapers] = useState([]);
 
   useEffect(() => {
     getWhitepapers()
       .then((data) => {
-        if (data?.length) {
-          setWhitepapers(data.map((w) => ({
-            ...w,
-            downloadCount: w.download_count ?? w.downloadCount ?? 0,
-            publishDate:   w.publish_date  ?? w.publishDate   ?? "",
-            tags: Array.isArray(w.tags) ? w.tags : [],
-          })));
-        }
+        setWhitepapers((data || []).map((w) => ({
+          ...w,
+          downloadCount: w.download_count ?? w.downloadCount ?? 0,
+          publishDate:   w.publish_date  ?? w.publishDate   ?? "",
+          tags: Array.isArray(w.tags) ? w.tags : [],
+        })));
       })
-      .catch(() => {});
+      .catch(() => setWhitepapers(STATIC_WHITEPAPERS));
   }, []);
 
   const filteredWhitepapers = whitepapers?.filter((whitepaper) => {
@@ -132,10 +131,15 @@ const WhitepapersSection = ({ activeCategory, searchQuery }) => {
 
         {/* Whitepapers Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          {filteredWhitepapers?.map((whitepaper) => (
-            <div
+          {filteredWhitepapers?.map((whitepaper, index) => (
+            <motion.div
               key={whitepaper?.id}
-              className="bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 overflow-hidden border border-gray-100"
+              initial={{ opacity: 0, y: 24 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-40px" }}
+              transition={{ duration: 0.45, delay: (index % 2) * 0.1, ease: "easeOut" }}
+              whileHover={{ y: -6 }}
+              className="bg-white rounded-2xl shadow-md hover:shadow-xl transition-shadow duration-300 overflow-hidden border border-gray-100"
             >
               <div className="md:flex">
                 {/* Whitepaper Image */}
@@ -192,19 +196,22 @@ const WhitepapersSection = ({ activeCategory, searchQuery }) => {
                     ))}
                   </div>
 
-                  {/* Download Button */}
-                  <Button
-                    variant="default"
-                    size="sm"
-                    iconName="Download"
-                    iconPosition="left"
-                    className="w-full md:w-auto glow-orange"
-                  >
-                    Télécharger PDF
-                  </Button>
+                  {/* Download Button — visible seulement si un fichier est disponible */}
+                  {whitepaper?.file_url && (
+                    <Button
+                      variant="default"
+                      size="sm"
+                      iconName="Download"
+                      iconPosition="left"
+                      className="w-full md:w-auto glow-orange"
+                      onClick={() => window.open(whitepaper.file_url, "_blank", "noopener,noreferrer")}
+                    >
+                      Télécharger PDF
+                    </Button>
+                  )}
                 </div>
               </div>
-            </div>
+            </motion.div>
           ))}
         </div>
 

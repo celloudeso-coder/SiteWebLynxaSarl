@@ -28,6 +28,21 @@ export default function TestimonialsAdmin() {
     setSaved(null);
   }
 
+  // Le toggle de la liste enregistre immédiatement (maj optimiste + rollback si échec)
+  async function toggleActive(item, value) {
+    setItems((prev) => prev.map((t) => (t.id === item.id ? { ...t, active: value } : t)));
+    setSaving(item.id);
+    try {
+      const updated = await saveTestimonial({ ...item, active: value });
+      setItems((prev) => prev.map((t) => (t.id === item.id ? updated : t)));
+    } catch (e) {
+      setItems((prev) => prev.map((t) => (t.id === item.id ? { ...t, active: item.active } : t)));
+      alert("Échec de l'enregistrement du statut. Vérifiez la connexion à Supabase.");
+    } finally {
+      setSaving(null);
+    }
+  }
+
   async function save(item) {
     setSaving(item.id);
     try {
@@ -81,7 +96,7 @@ export default function TestimonialsAdmin() {
                   <p className="text-xs text-gray-500 truncate max-w-xs">"{item.quote?.slice(0, 60)}…"</p>
                 </div>
               </button>
-              <Toggle checked={item.active} onChange={(v) => update(item.id, "active", v)} />
+              <Toggle checked={item.active} onChange={(v) => toggleActive(item, v)} />
               <button onClick={() => remove(item.id)} className="text-red-400 hover:text-red-600 ml-2">
                 <Trash2 size={16} />
               </button>
