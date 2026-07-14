@@ -1,16 +1,35 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
   <head>
     <meta charset="utf-8" />
-    <title>Lynxa-tech-guinea</title>
+    <title>Lynxa Tech</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#000000" />
     <meta
       name="description"
-      content="Web site created using create-react-app"
+      content="Lynxa Tech, solutions numériques et administration du site."
     />
     <link rel="icon" href="/LYNXA.ico" />
-    <link rel="manifest" href="/manifest.json" />
+    <script>
+      // Le manifeste doit être choisi pendant l'analyse du <head>. Le remplacer
+      // après le démarrage de React laisse certains navigateurs installer le site
+      // principal même lorsque l'utilisateur se trouve dans le CMS.
+      (function selectWebAppManifest() {
+        var isAdmin = window.location.pathname === "/admin"
+          || window.location.pathname.indexOf("/admin/") === 0;
+        var manifest = document.createElement("link");
+        manifest.rel = "manifest";
+        manifest.href = isAdmin ? "/admin-manifest.webmanifest" : "/manifest.json";
+        manifest.id = "app-manifest";
+        document.head.appendChild(manifest);
+
+        if (!isAdmin) return;
+        document.title = "Lynxa Admin — Lynxa Tech";
+        document.querySelector('meta[name="theme-color"]').content = "#030712";
+        document.querySelector('meta[name="description"]').content =
+          "Administration du site et des solutions Lynxa Tech.";
+      })();
+    </script>
     <script
       type="module"
       src="https://static.rocket.new/rocket-web.js?_cfg=https%3A%2F%2Flynxate5967back.builtwithrocket.new&_be=https%3A%2F%2Fapplication.rocket.new&_v=0.1.8"

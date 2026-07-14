@@ -31,7 +31,7 @@ function requiresManualInstall() {
 
 function setAdminDocumentMetadata() {
   document.title = "Lynxa Admin — Lynxa Tech";
-  let manifest = document.querySelector('link[rel="manifest"]');
+  let manifest = document.querySelector('#app-manifest, link[rel="manifest"]');
   if (!manifest) {
     manifest = document.createElement("link");
     manifest.rel = "manifest";

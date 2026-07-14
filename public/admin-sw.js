@@ -1,4 +1,4 @@
-const VERSION = "lynxa-admin-v1";
+const VERSION = "lynxa-admin-v2";
 const SHELL_CACHE = `${VERSION}-shell`;
 const ASSET_CACHE = `${VERSION}-assets`;
 const ADMIN_SHELL = "/admin/";
