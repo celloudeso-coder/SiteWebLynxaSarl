@@ -120,7 +120,7 @@ export function ImageUpload({ value, onChange, folder = "team-members" }) {
   }
 
   return (
-    <div className="flex items-center gap-4">
+    <div className="flex flex-col items-start gap-4 sm:flex-row sm:items-center">
       {/* Aperçu circulaire */}
       <div className="w-16 h-16 rounded-full bg-gray-100 overflow-hidden flex-shrink-0 border-2 border-gray-200">
         {value ? (
@@ -130,7 +130,7 @@ export function ImageUpload({ value, onChange, folder = "team-members" }) {
         )}
       </div>
 
-      <div className="flex-1 space-y-2">
+      <div className="w-full flex-1 space-y-2">
         <input
           ref={inputRef}
           type="file"

@@ -102,9 +102,9 @@ Le schéma (tables + données initiales + RLS) est versionné dans `supabase/sch
 psql postgresql://postgres:postgres@127.0.0.1:54322/postgres -f supabase/schema.sql
 ```
 
-### 4. Créer le compte admin
+### 4. Créer le premier compte propriétaire
 
-Le login `/admin` s'appuie sur **Supabase Auth** (`signInWithPassword`) : il n'y a ni inscription ni « mot de passe oublié » dans l'UI, les comptes se gèrent côté Supabase.
+Le login `/admin` s'appuie sur **Supabase Auth** (`signInWithPassword`). Lors de l'application du schéma, le plus ancien compte Auth devient automatiquement le propriétaire du CMS.
 
 #### Méthode recommandée (local ou cloud) — via Studio / dashboard
 
@@ -134,6 +134,21 @@ SET encrypted_password = crypt('NouveauMotDePasse', gen_salt('bf')),
     email_confirmed_at  = COALESCE(email_confirmed_at, now())
 WHERE email = 'ton@email.com';
 ```
+
+#### Ajouter les autres administrateurs
+
+Après connexion avec le compte propriétaire, ouvrir **Administration → Utilisateurs** (`/admin/users`), choisir le rôle puis créer un lien d'invitation. Le lien reste valide 7 jours et doit être transmis au collaborateur.
+
+Rôles disponibles :
+
+- **Propriétaire** : accès total et gestion des utilisateurs ;
+- **Administrateur** : contenu et données confidentielles ;
+- **Éditeur** : gestion du contenu public ;
+- **Lecture seule** : consultation sans modification.
+
+Le propriétaire choisit ensuite les sections accessibles à chaque collaborateur et, pour chaque section, les actions **Voir**, **Créer**, **Modifier** et **Supprimer**. Le rôle reste un plafond : un éditeur ne peut pas supprimer et un compte en lecture seule ne peut jamais écrire, même si une permission incompatible est enregistrée.
+
+Les permissions sont appliquées dans PostgreSQL par RLS et filtrent aussi les menus, le tableau de bord et les routes du CMS. La désactivation ou la rétrogradation du dernier propriétaire actif est refusée automatiquement.
 
 ### 5. Lancer le serveur de développement
 
@@ -218,9 +233,13 @@ L'image multi-stage utilise `node:18-alpine` pour le build puis `nginx:alpine` p
 | `/partnership` | Partenariats |
 | `/contact` | Contact |
 | `/join-us` | Rejoindre l'équipe |
+| `/confidentialite` | Politique de confidentialité |
+| `/cgu` | Conditions générales d'utilisation |
+| `/securite` | Sécurité et signalement responsable |
 | `/insights` | Insights & Knowledge *(alias `/insights-knowledge-leadership` ; lien menu masqué — sans contenu pour l'instant)* |
 | `/about/teamspotlight1` | Spotlight équipe |
 | `/admin/login` | Connexion admin CMS |
+| `/admin/subscriptions` | Tracker privé des abonnements clients |
 | `/admin/*` | Panel d'administration CMS |
 | `*` | 404 |
 
@@ -229,6 +248,12 @@ L'image multi-stage utilise `node:18-alpine` pour le build puis `nginx:alpine` p
 ## CMS — Panel d'administration
 
 Le site dispose d'un CMS headless complet basé sur **Supabase**.
+
+### Installation PWA du CMS
+
+L'administration possède son propre manifeste et un service worker limité au périmètre `/admin`. Sur Chrome, Edge et Android, utiliser le bouton **Installer l'app** dans la barre du CMS ou sous le formulaire de connexion. Sur iPhone/iPad, ouvrir le menu **Partager** de Safari puis choisir **Sur l'écran d'accueil**.
+
+L'interface installée conserve son shell hors ligne et signale la perte de connexion. Les données Supabase et les modifications restent disponibles uniquement avec une connexion réseau.
 
 ### Sections gérables
 
@@ -248,6 +273,8 @@ Le panel est monté dans `src/pages/Admin/index.jsx`. Toutes les routes sont pr�
 | Témoignages | `/admin/testimonials` | Citations clients |
 | Partenariats | `/admin/partnership` | Voies de collaboration |
 | Recrutement | `/admin/join-us` | Offres d'emploi |
+| Abonnements | `/admin/subscriptions` | Échéances, paiements, impayés, historique et export CSV |
+| Utilisateurs | `/admin/users` | Invitations, rôles et suspension des accès administratifs |
 
 #### Contenu détaillé par page
 

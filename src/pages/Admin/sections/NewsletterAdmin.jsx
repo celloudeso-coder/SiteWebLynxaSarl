@@ -132,7 +132,7 @@ export default function NewsletterAdmin() {
       </div>
 
       {/* Table */}
-      <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+      <div className="overflow-x-auto rounded-xl border border-gray-200 bg-white">
         {loading ? (
           <div className="py-16 text-center text-gray-400 text-sm">Chargement…</div>
         ) : filtered.length === 0 ? (
@@ -141,7 +141,7 @@ export default function NewsletterAdmin() {
             <p className="text-gray-400 text-sm">Aucun abonné{search ? " pour cette recherche" : ""}.</p>
           </div>
         ) : (
-          <table className="w-full text-sm">
+          <table className="min-w-[680px] w-full text-sm">
             <thead className="bg-gray-50 border-b border-gray-200">
               <tr>
                 <th className="text-left px-5 py-3 font-medium text-gray-600">Email</th>

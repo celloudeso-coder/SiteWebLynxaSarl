@@ -290,9 +290,13 @@ const Homepage = () => {
               <p className="text-gray-400 text-sm">
                 © {new Date().getFullYear()} Lynxa Tech Guinea. Tous droits réservés.
               </p>
-              <div className="flex gap-6">
-                {["Confidentialité", "CGU", "Sécurité"].map((t) => (
-                  <a key={t} href="#" className="text-gray-400 hover:text-primary transition-colors text-sm">{t}</a>
+              <div className="flex flex-wrap justify-center gap-x-6 gap-y-2">
+                {[
+                  { label: "Confidentialité", path: "/confidentialite" },
+                  { label: "CGU", path: "/cgu" },
+                  { label: "Sécurité", path: "/securite" },
+                ].map((item) => (
+                  <Link key={item.path} to={item.path} className="text-gray-400 hover:text-primary transition-colors text-sm">{item.label}</Link>
                 ))}
               </div>
             </div>

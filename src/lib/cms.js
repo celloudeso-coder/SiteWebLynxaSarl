@@ -123,6 +123,115 @@ export async function deletePricingPlan(id) {
   return deleteRow("pricing_plans", id);
 }
 
+// ─── Subscription Tracker (admin only) ──────────────────────────────────────
+
+const SUBSCRIPTION_COLUMNS = [
+  "id",
+  "client_name",
+  "vercel_supabase_account",
+  "managed_server_account",
+  "billing_cycle",
+  "free_months",
+  "start_date",
+  "payment_start_date",
+  "end_date",
+  "amount_gnf",
+  "notes",
+  "active",
+  "created_at",
+  "updated_at",
+].join(",");
+
+export async function getTrackedSubscriptions() {
+  const { data, error } = await supabase
+    .from("subscription_tracker")
+    .select(SUBSCRIPTION_COLUMNS)
+    .order("active", { ascending: false })
+    .order("end_date", { ascending: true, nullsFirst: false })
+    .order("client_name", { ascending: true });
+  if (error) throw error;
+  return data || [];
+}
+
+export async function saveTrackedSubscription(subscription) {
+  const payload = {
+    client_name: subscription.client_name.trim(),
+    vercel_supabase_account: subscription.vercel_supabase_account?.trim() || "",
+    managed_server_account: subscription.managed_server_account?.trim() || "",
+    billing_cycle: subscription.billing_cycle,
+    free_months: Number(subscription.free_months || 0),
+    start_date: subscription.start_date || null,
+    payment_start_date: subscription.payment_start_date || null,
+    end_date: subscription.end_date || null,
+    amount_gnf: subscription.amount_gnf === "" || subscription.amount_gnf == null
+      ? null
+      : Number(subscription.amount_gnf),
+    notes: subscription.notes?.trim() || "",
+    active: subscription.active !== false,
+    updated_at: new Date().toISOString(),
+  };
+
+  const query = subscription.id
+    ? supabase.from("subscription_tracker").update(payload).eq("id", subscription.id)
+    : supabase.from("subscription_tracker").insert(payload);
+  const { data, error } = await query.select(SUBSCRIPTION_COLUMNS).single();
+  if (error) throw error;
+  return data;
+}
+
+export async function deleteTrackedSubscription(id) {
+  return deleteRow("subscription_tracker", id);
+}
+
+// ─── Subscription Payments (admin only) ─────────────────────────────────────
+
+const PAYMENT_COLUMNS = [
+  "id",
+  "subscription_id",
+  "due_date",
+  "amount_gnf",
+  "status",
+  "paid_at",
+  "payment_method",
+  "reference",
+  "notes",
+  "created_at",
+  "updated_at",
+].join(",");
+
+export async function getSubscriptionPayments() {
+  const { data, error } = await supabase
+    .from("subscription_payments")
+    .select(PAYMENT_COLUMNS)
+    .order("due_date", { ascending: false });
+  if (error) throw error;
+  return data || [];
+}
+
+export async function saveSubscriptionPayment(payment) {
+  const payload = {
+    subscription_id: payment.subscription_id,
+    due_date: payment.due_date,
+    amount_gnf: Number(payment.amount_gnf || 0),
+    status: payment.status || "pending",
+    paid_at: payment.status === "paid" ? (payment.paid_at || new Date().toISOString().slice(0, 10)) : null,
+    payment_method: payment.payment_method?.trim() || "",
+    reference: payment.reference?.trim() || "",
+    notes: payment.notes?.trim() || "",
+    updated_at: new Date().toISOString(),
+  };
+  const query = payment.id
+    ? supabase.from("subscription_payments").update(payload).eq("id", payment.id)
+    : supabase.from("subscription_payments").insert(payload);
+  const { data, error } = await query.select(PAYMENT_COLUMNS).single();
+  if (error) throw error;
+  return data;
+}
+
+export async function deleteSubscriptionPayment(id) {
+  return deleteRow("subscription_payments", id);
+}
+
 // ─── Timeline Events ──────────────────────────────────────────────────────────
 
 export async function getTimelineEvents(activeOnly = true) {

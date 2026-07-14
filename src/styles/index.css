@@ -10,3 +10,55 @@ body {
   font-family: inherit;
   margin: unset;
 }
+
+html.admin-pwa-mode,
+html.admin-pwa-mode body,
+html.admin-pwa-mode #root {
+  min-height: 100%;
+  overscroll-behavior: none;
+}
+
+.admin-sidebar {
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+.admin-topbar {
+  padding-top: max(0.625rem, env(safe-area-inset-top, 0px));
+  padding-right: max(0.75rem, env(safe-area-inset-right, 0px));
+}
+
+.admin-content {
+  padding-right: max(0.75rem, env(safe-area-inset-right, 0px));
+  padding-bottom: max(0.75rem, env(safe-area-inset-bottom, 0px));
+}
+
+@media (max-width: 640px) {
+  .admin-content input:not([type="checkbox"]):not([type="radio"]),
+  .admin-content select,
+  .admin-content textarea {
+    font-size: 16px;
+  }
+
+  .admin-content h1 {
+    line-height: 1.2;
+  }
+
+  .admin-content button,
+  .admin-topbar button,
+  .admin-sidebar a,
+  .admin-sidebar button {
+    touch-action: manipulation;
+  }
+}
+
+@media (display-mode: standalone) {
+  .admin-topbar {
+    -webkit-app-region: drag;
+  }
+
+  .admin-topbar button,
+  .admin-topbar a {
+    -webkit-app-region: no-drag;
+  }
+}

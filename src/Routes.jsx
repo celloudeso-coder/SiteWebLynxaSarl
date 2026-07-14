@@ -13,7 +13,9 @@ import PortfolioShowcase from "./pages/Portfolio";
 import InsightsKnowledgeLeadership from "./pages/insights-knowledge-leadership";
 import JoinUsPage from "pages/join-us";
 import AdminLogin from "./pages/Admin/AdminLogin";
+import AdminAcceptInvite from "./pages/Admin/AdminAcceptInvite";
 import AdminApp from "./pages/Admin";
+import LegalPage from "./pages/Legal";
 
 const Routes = () => {
   return (
@@ -33,8 +35,12 @@ const Routes = () => {
           <Route path="/insights" element={<InsightsKnowledgeLeadership />} />
           <Route path="/insights-knowledge-leadership" element={<InsightsKnowledgeLeadership />} />
           <Route path="/join-us" element={<JoinUsPage />} />
+          <Route path="/confidentialite" element={<LegalPage page="confidentialite" />} />
+          <Route path="/cgu" element={<LegalPage page="cgu" />} />
+          <Route path="/securite" element={<LegalPage page="securite" />} />
           {/* Admin CMS */}
           <Route path="/admin/login" element={<AdminLogin />} />
+          <Route path="/admin/accept-invite" element={<AdminAcceptInvite />} />
           <Route path="/admin/*" element={<AdminApp />} />
           {/* Fallback */}
           <Route path="*" element={<NotFound />} />

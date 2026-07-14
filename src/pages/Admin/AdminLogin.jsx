@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "../../lib/supabase";
-import { Loader2 } from "lucide-react";
+import { Download, Loader2 } from "lucide-react";
+import { useAdminPwa } from "../../lib/adminPwa";
 
 export default function AdminLogin() {
   const navigate = useNavigate();
@@ -9,6 +10,7 @@ export default function AdminLogin() {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const pwa = useAdminPwa();
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -39,7 +41,7 @@ export default function AdminLogin() {
 
         <form
           onSubmit={handleLogin}
-          className="bg-white rounded-2xl p-8 shadow-xl space-y-4"
+          className="space-y-4 rounded-2xl bg-white p-5 shadow-xl sm:p-8"
         >
           <h2 className="text-lg font-semibold text-gray-900">Connexion</h2>
 
@@ -82,6 +84,11 @@ export default function AdminLogin() {
             Se connecter
           </button>
         </form>
+        {(pwa.installable || pwa.manualInstall) && !pwa.installed && (
+          <button type="button" onClick={pwa.install} className="mx-auto mt-5 flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-gray-300 hover:bg-white/5 hover:text-white">
+            <Download size={15} /> Installer Lynxa Admin sur cet appareil
+          </button>
+        )}
       </div>
     </div>
   );

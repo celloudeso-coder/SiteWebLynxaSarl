@@ -5,34 +5,37 @@ import {
   DollarSign, Clock, BarChart2, MessageSquare, Settings,
   ArrowRight, Handshake, UserPlus, Mail,
   Home, Info, Layers, Phone, LayoutGrid, Lock, CheckCircle2, Inbox,
-  Newspaper,
+  Newspaper, CalendarClock,
+  ShieldCheck,
 } from "lucide-react";
+import { useAdminAuth } from "./components/AdminAuthContext";
 
 const CONTENT_SECTIONS = [
-  { to: "/admin/hero",         label: "Hero Sections", desc: "Titres et descriptions des pages",     icon: Globe,         color: "bg-blue-50 text-blue-600"   },
-  { to: "/admin/services",     label: "Services",      desc: "Offres et détails techniques",          icon: Briefcase,     color: "bg-orange-50 text-orange-600"},
-  { to: "/admin/portfolio",    label: "Portfolio",     desc: "Projets et études de cas",              icon: FolderOpen,    color: "bg-purple-50 text-purple-600"},
-  { to: "/admin/team",         label: "Équipe",        desc: "Membres et profils",                    icon: Users,         color: "bg-green-50 text-green-600"  },
-  { to: "/admin/pricing",      label: "Tarifs",        desc: "Plans et grilles tarifaires",           icon: DollarSign,    color: "bg-yellow-50 text-yellow-600"},
-  { to: "/admin/timeline",     label: "Timeline",      desc: "Historique de l'entreprise",            icon: Clock,         color: "bg-pink-50 text-pink-600"    },
-  { to: "/admin/metrics",      label: "Métriques",     desc: "Compteurs et statistiques",             icon: BarChart2,     color: "bg-teal-50 text-teal-600"    },
-  { to: "/admin/testimonials", label: "Témoignages",   desc: "Citations et avis clients",             icon: MessageSquare, color: "bg-indigo-50 text-indigo-600"},
-  { to: "/admin/partnership",  label: "Partenariat",   desc: "Formulaires partenariat",               icon: Handshake,     color: "bg-rose-50 text-rose-600"    },
-  { to: "/admin/join-us",      label: "Rejoindre",     desc: "Candidatures et recrutement",           icon: UserPlus,      color: "bg-cyan-50 text-cyan-600"    },
-  { to: "/admin/messages",     label: "Messages",      desc: "Soumissions du formulaire contact",     icon: Inbox,         color: "bg-sky-50 text-sky-600"      },
-  { to: "/admin/newsletter",   label: "Newsletter",    desc: "Abonnements et campagnes",              icon: Mail,          color: "bg-lime-50 text-lime-600"    },
-  { to: "/admin/settings",     label: "Paramètres",    desc: "Contact, réseaux sociaux, infos",       icon: Settings,      color: "bg-gray-100 text-gray-600"   },
+  { to: "/admin/hero", label: "Hero Sections", desc: "Titres et descriptions des pages", icon: Globe, color: "bg-blue-50 text-blue-600", resource: "hero" },
+  { to: "/admin/services", label: "Services", desc: "Offres et détails techniques", icon: Briefcase, color: "bg-orange-50 text-orange-600", resource: "services" },
+  { to: "/admin/portfolio", label: "Portfolio", desc: "Projets et études de cas", icon: FolderOpen, color: "bg-purple-50 text-purple-600", resource: "portfolio" },
+  { to: "/admin/team", label: "Équipe", desc: "Membres et profils", icon: Users, color: "bg-green-50 text-green-600", resource: "team" },
+  { to: "/admin/pricing", label: "Tarifs", desc: "Plans et grilles tarifaires", icon: DollarSign, color: "bg-yellow-50 text-yellow-600", resource: "pricing" },
+  { to: "/admin/timeline", label: "Timeline", desc: "Historique de l'entreprise", icon: Clock, color: "bg-pink-50 text-pink-600", resource: "timeline" },
+  { to: "/admin/metrics", label: "Métriques", desc: "Compteurs et statistiques", icon: BarChart2, color: "bg-teal-50 text-teal-600", resource: "metrics" },
+  { to: "/admin/testimonials", label: "Témoignages", desc: "Citations et avis clients", icon: MessageSquare, color: "bg-indigo-50 text-indigo-600", resource: "testimonials" },
+  { to: "/admin/partnership", label: "Partenariat", desc: "Formulaires partenariat", icon: Handshake, color: "bg-rose-50 text-rose-600", resource: "partnership" },
+  { to: "/admin/join-us", label: "Rejoindre", desc: "Candidatures et recrutement", icon: UserPlus, color: "bg-cyan-50 text-cyan-600", resource: "recruitment" },
+  { to: "/admin/messages", label: "Messages", desc: "Soumissions du formulaire contact", icon: Inbox, color: "bg-sky-50 text-sky-600", resource: "messages" },
+  { to: "/admin/newsletter", label: "Newsletter", desc: "Abonnements et campagnes", icon: Mail, color: "bg-lime-50 text-lime-600", resource: "newsletter" },
+  { to: "/admin/subscriptions", label: "Tracker", desc: "Échéances et abonnements clients", icon: CalendarClock, color: "bg-violet-50 text-violet-600", resource: "subscriptions" },
+  { to: "/admin/settings", label: "Paramètres", desc: "Contact, réseaux sociaux, infos", icon: Settings, color: "bg-gray-100 text-gray-600", resource: "settings" },
 ];
 
 const PAGE_SECTIONS = [
-  { to: "/admin/pages/home",        label: "Accueil",     desc: "6 sections éditables",   icon: Home,      color: "bg-blue-500",    cms: 6,  total: 6 },
-  { to: "/admin/pages/about",       label: "À propos",    desc: "7 sections éditables",   icon: Info,      color: "bg-purple-500",  cms: 7,  total: 7 },
-  { to: "/admin/pages/services",    label: "Services",    desc: "5 sections éditables",   icon: Layers,    color: "bg-orange-500",  cms: 5,  total: 5 },
-  { to: "/admin/pages/portfolio",   label: "Portfolio",   desc: "4 sections éditables",   icon: FolderOpen,color: "bg-teal-500",    cms: 4,  total: 4 },
-  { to: "/admin/pages/contact",     label: "Contact",     desc: "4 sections éditables",   icon: Phone,     color: "bg-green-500",   cms: 4,  total: 4 },
-  { to: "/admin/pages/partnership", label: "Partenariat", desc: "4 sections éditables",   icon: Handshake, color: "bg-indigo-500",  cms: 4,  total: 4 },
-  { to: "/admin/pages/join-us",     label: "Rejoindre",   desc: "4 sections éditables",   icon: UserPlus,  color: "bg-rose-500",    cms: 4,  total: 4 },
-  { to: "/admin/pages/insights",    label: "Insights",    desc: "6 sections éditables",   icon: Newspaper, color: "bg-cyan-500",    cms: 6,  total: 6 },
+  { to: "/admin/pages/home", label: "Accueil", desc: "6 sections éditables", icon: Home, color: "bg-blue-500", cms: 6, total: 6, resources: ["hero", "metrics", "services", "testimonials", "home_content"] },
+  { to: "/admin/pages/about", label: "À propos", desc: "7 sections éditables", icon: Info, color: "bg-purple-500", cms: 7, total: 7, resources: ["hero", "team", "timeline", "about_content"] },
+  { to: "/admin/pages/services", label: "Services", desc: "5 sections éditables", icon: Layers, color: "bg-orange-500", cms: 5, total: 5, resources: ["hero", "services", "pricing", "services_content"] },
+  { to: "/admin/pages/portfolio", label: "Portfolio", desc: "4 sections éditables", icon: FolderOpen, color: "bg-teal-500", cms: 4, total: 4, resources: ["hero", "portfolio", "portfolio_content"] },
+  { to: "/admin/pages/contact", label: "Contact", desc: "4 sections éditables", icon: Phone, color: "bg-green-500", cms: 4, total: 4, resources: ["hero", "settings", "contact_content"] },
+  { to: "/admin/pages/partnership", label: "Partenariat", desc: "4 sections éditables", icon: Handshake, color: "bg-indigo-500", cms: 4, total: 4, resources: ["hero", "partnership", "partnership_content"] },
+  { to: "/admin/pages/join-us", label: "Rejoindre", desc: "4 sections éditables", icon: UserPlus, color: "bg-rose-500", cms: 4, total: 4, resources: ["hero", "recruitment", "recruitment_content"] },
+  { to: "/admin/pages/insights", label: "Insights", desc: "6 sections éditables", icon: Newspaper, color: "bg-cyan-500", cms: 6, total: 6, resources: ["hero", "insights"] },
 ];
 
 function SectionCard({ to, label, desc, icon: Icon, color }) {
@@ -80,6 +83,7 @@ function PageCard({ to, label, icon: Icon, color, cms, total }) {
 }
 
 export default function AdminDashboard() {
+  const { can, canAccess } = useAdminAuth();
   return (
     <div className="space-y-10">
       {/* Header */}
@@ -99,7 +103,7 @@ export default function AdminDashboard() {
         </div>
         <p className="text-sm text-gray-500 mb-4">Vue par page — identifiez rapidement quelles sections sont éditables pour chaque page du site.</p>
         <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-3">
-          {PAGE_SECTIONS.map((p) => (
+          {PAGE_SECTIONS.filter((page) => page.resources.some((resource) => canAccess(resource, "view"))).map((p) => (
             <PageCard key={p.to} {...p} />
           ))}
         </div>
@@ -112,11 +116,23 @@ export default function AdminDashboard() {
           <h2 className="text-base font-bold text-gray-800">Contenu & Administration</h2>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {CONTENT_SECTIONS.map((s) => (
+          {CONTENT_SECTIONS.filter((section) => canAccess(section.resource, "view")).map((s) => (
             <SectionCard key={s.to} {...s} />
           ))}
         </div>
       </div>
+
+      {can("owner") && (
+        <div className="rounded-xl border border-orange-200 bg-orange-50 p-5">
+          <div className="flex items-start justify-between gap-4">
+            <div>
+              <div className="flex items-center gap-2 text-orange-800"><ShieldCheck size={19} /><h2 className="font-bold">Administration en équipe</h2></div>
+              <p className="mt-1 text-sm text-orange-800/70">Invitez des collaborateurs et attribuez leurs rôles d’accès au CMS.</p>
+            </div>
+            <Link to="/admin/users" className="shrink-0 rounded-lg bg-orange-500 px-4 py-2 text-sm font-medium text-white hover:bg-orange-600">Gérer l’équipe</Link>
+          </div>
+        </div>
+      )}
 
       {/* Getting started */}
       <div className="bg-orange-50 border border-orange-200 rounded-xl p-5">

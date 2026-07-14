@@ -1027,3 +1027,770 @@ INSERT INTO site_settings (key, value) VALUES
   ('portfolio_filter_options', '{"services":["Tous","Mobile Development","Network Infrastructure","Web Development","Cybersecurity"],"industries":["Tous","Financial Services","Healthcare","Government","NGO","Education","Retail"]}'),
   ('insights_categories', '[{"id":"all","label":"All Content","icon":"Grid"},{"id":"cybersecurity","label":"Cybersecurity","icon":"Shield"},{"id":"mobile","label":"Mobile Innovation","icon":"Smartphone"},{"id":"network","label":"Network Solutions","icon":"Network"},{"id":"ecosystem","label":"African Tech Ecosystem","icon":"Globe"}]')
 ON CONFLICT (key) DO NOTHING;
+
+-- -------------------------------------------------------
+-- 32. TRACKER D'ABONNEMENTS (privé — CMS uniquement)
+-- -------------------------------------------------------
+CREATE TABLE IF NOT EXISTS subscription_tracker (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  client_name text UNIQUE NOT NULL CHECK (length(trim(client_name)) > 0),
+  vercel_supabase_account text NOT NULL DEFAULT '',
+  managed_server_account text NOT NULL DEFAULT '',
+  billing_cycle text NOT NULL DEFAULT 'annual'
+    CHECK (billing_cycle IN ('annual', 'monthly')),
+  free_months smallint NOT NULL DEFAULT 0
+    CHECK (free_months BETWEEN 0 AND 6),
+  start_date date,
+  payment_start_date date,
+  end_date date,
+  amount_gnf bigint CHECK (amount_gnf IS NULL OR amount_gnf >= 0),
+  notes text NOT NULL DEFAULT '',
+  active boolean NOT NULL DEFAULT true,
+  created_at timestamptz NOT NULL DEFAULT now(),
+  updated_at timestamptz NOT NULL DEFAULT now(),
+  CHECK (end_date IS NULL OR start_date IS NULL OR end_date >= start_date)
+);
+
+ALTER TABLE subscription_tracker
+  ADD COLUMN IF NOT EXISTS free_months smallint NOT NULL DEFAULT 0
+  CHECK (free_months BETWEEN 0 AND 6);
+
+ALTER TABLE subscription_tracker
+  ADD COLUMN IF NOT EXISTS payment_start_date date;
+
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_constraint
+    WHERE conname = 'subscription_tracker_payment_dates_check'
+      AND conrelid = 'subscription_tracker'::regclass
+  ) THEN
+    ALTER TABLE subscription_tracker
+      ADD CONSTRAINT subscription_tracker_payment_dates_check
+      CHECK (
+        (payment_start_date IS NULL OR start_date IS NULL OR payment_start_date >= start_date)
+        AND (end_date IS NULL OR payment_start_date IS NULL OR end_date >= payment_start_date)
+      );
+  END IF;
+END
+$$;
+
+-- Les mois offerts commencent au déploiement. La facturation démarre ensuite,
+-- puis la durée payée (1 ou 12 mois) détermine l'échéance contractuelle.
+UPDATE subscription_tracker
+SET
+  payment_start_date = (
+    start_date + make_interval(months => free_months::integer)
+  )::date,
+  end_date = (
+    start_date + make_interval(
+      months => free_months::integer
+        + CASE WHEN billing_cycle = 'monthly' THEN 1 ELSE 12 END
+    )
+  )::date
+WHERE start_date IS NOT NULL;
+
+CREATE INDEX IF NOT EXISTS subscription_tracker_active_end_date_idx
+  ON subscription_tracker (active, end_date);
+
+INSERT INTO subscription_tracker (client_name, billing_cycle, amount_gnf) VALUES
+  ('NassFit', 'annual', 500000),
+  ('2AC', 'annual', 1200000),
+  ('Fiija', 'annual', 700000),
+  ('AS-SPA', 'monthly', 100000),
+  ('LUMORA', 'annual', NULL)
+ON CONFLICT (client_name) DO NOTHING;
+
+ALTER TABLE subscription_tracker ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "admin_all" ON subscription_tracker
+  FOR ALL TO authenticated USING (true) WITH CHECK (true);
+
+REVOKE ALL ON subscription_tracker FROM anon, authenticated;
+GRANT SELECT, INSERT, UPDATE, DELETE ON subscription_tracker TO authenticated;
+
+-- -------------------------------------------------------
+-- 33. PAIEMENTS DES ABONNEMENTS (privé — CMS uniquement)
+-- -------------------------------------------------------
+CREATE TABLE IF NOT EXISTS subscription_payments (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  subscription_id uuid NOT NULL REFERENCES subscription_tracker(id) ON DELETE CASCADE,
+  due_date date NOT NULL,
+  amount_gnf bigint NOT NULL CHECK (amount_gnf >= 0),
+  status text NOT NULL DEFAULT 'pending'
+    CHECK (status IN ('pending', 'paid', 'cancelled')),
+  paid_at date,
+  payment_method text NOT NULL DEFAULT '',
+  reference text NOT NULL DEFAULT '',
+  notes text NOT NULL DEFAULT '',
+  created_at timestamptz NOT NULL DEFAULT now(),
+  updated_at timestamptz NOT NULL DEFAULT now(),
+  UNIQUE (subscription_id, due_date),
+  CHECK (status <> 'paid' OR paid_at IS NOT NULL)
+);
+
+CREATE INDEX IF NOT EXISTS subscription_payments_subscription_due_idx
+  ON subscription_payments (subscription_id, due_date DESC);
+CREATE INDEX IF NOT EXISTS subscription_payments_paid_at_idx
+  ON subscription_payments (paid_at)
+  WHERE status = 'paid';
+
+ALTER TABLE subscription_payments ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "admin_all" ON subscription_payments
+  FOR ALL TO authenticated USING (true) WITH CHECK (true);
+
+REVOKE ALL ON subscription_payments FROM anon, authenticated;
+GRANT SELECT, INSERT, UPDATE, DELETE ON subscription_payments TO authenticated;
+
+-- -------------------------------------------------------
+-- 34. UTILISATEURS ET RÔLES DU CMS (privé)
+-- -------------------------------------------------------
+CREATE TABLE IF NOT EXISTS admin_profiles (
+  user_id uuid PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
+  email text NOT NULL,
+  full_name text NOT NULL DEFAULT '',
+  role text NOT NULL DEFAULT 'viewer'
+    CHECK (role IN ('owner', 'admin', 'editor', 'viewer')),
+  active boolean NOT NULL DEFAULT false,
+  invited_by uuid REFERENCES auth.users(id) ON DELETE SET NULL,
+  created_at timestamptz NOT NULL DEFAULT now(),
+  updated_at timestamptz NOT NULL DEFAULT now()
+);
+
+ALTER TABLE admin_profiles ENABLE ROW LEVEL SECURITY;
+
+-- Les décisions d'autorisation sont lues dans une table serveur et non dans
+-- user_metadata, qui peut être modifié par l'utilisateur.
+CREATE OR REPLACE FUNCTION public.current_admin_role()
+RETURNS text
+LANGUAGE sql
+STABLE
+SECURITY DEFINER
+SET search_path = ''
+AS $$
+  SELECT role
+  FROM public.admin_profiles
+  WHERE user_id = (SELECT auth.uid())
+    AND active = true
+  LIMIT 1
+$$;
+
+CREATE OR REPLACE FUNCTION public.can_admin(required_role text DEFAULT 'viewer')
+RETURNS boolean
+LANGUAGE sql
+STABLE
+SECURITY DEFINER
+SET search_path = ''
+AS $$
+  SELECT COALESCE(
+    CASE public.current_admin_role()
+      WHEN 'owner'  THEN 4
+      WHEN 'admin'  THEN 3
+      WHEN 'editor' THEN 2
+      WHEN 'viewer' THEN 1
+      ELSE 0
+    END >=
+    CASE required_role
+      WHEN 'owner'  THEN 4
+      WHEN 'admin'  THEN 3
+      WHEN 'editor' THEN 2
+      WHEN 'viewer' THEN 1
+      ELSE 99
+    END,
+    false
+  )
+$$;
+
+REVOKE ALL ON FUNCTION public.current_admin_role() FROM PUBLIC, anon;
+REVOKE ALL ON FUNCTION public.can_admin(text) FROM PUBLIC, anon;
+GRANT EXECUTE ON FUNCTION public.current_admin_role() TO authenticated;
+GRANT EXECUTE ON FUNCTION public.can_admin(text) TO authenticated;
+
+-- Tout nouveau compte Auth reste suspendu tant qu'un propriétaire ne l'a pas
+-- invité et activé depuis le CMS.
+CREATE OR REPLACE FUNCTION public.handle_new_admin_user()
+RETURNS trigger
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = ''
+AS $$
+BEGIN
+  INSERT INTO public.admin_profiles (user_id, email, full_name, role, active)
+  VALUES (
+    NEW.id,
+    COALESCE(NEW.email, ''),
+    COALESCE(NEW.raw_user_meta_data ->> 'full_name', ''),
+    'viewer',
+    false
+  )
+  ON CONFLICT (user_id) DO UPDATE SET
+    email = EXCLUDED.email,
+    updated_at = now();
+  RETURN NEW;
+END
+$$;
+
+DROP TRIGGER IF EXISTS on_auth_user_created_admin_profile ON auth.users;
+CREATE TRIGGER on_auth_user_created_admin_profile
+  AFTER INSERT OR UPDATE OF email ON auth.users
+  FOR EACH ROW EXECUTE FUNCTION public.handle_new_admin_user();
+
+REVOKE ALL ON FUNCTION public.handle_new_admin_user() FROM PUBLIC, anon, authenticated;
+
+-- Empêche la désactivation, la rétrogradation ou la suppression du dernier
+-- propriétaire actif du CMS.
+CREATE OR REPLACE FUNCTION public.protect_last_admin_owner()
+RETURNS trigger
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = ''
+AS $$
+BEGIN
+  IF OLD.role = 'owner' AND OLD.active = true
+     AND (TG_OP = 'DELETE' OR NEW.role <> 'owner' OR NEW.active = false)
+     AND NOT EXISTS (
+       SELECT 1 FROM public.admin_profiles
+       WHERE role = 'owner' AND active = true AND user_id <> OLD.user_id
+     )
+  THEN
+    RAISE EXCEPTION 'Le dernier propriétaire actif ne peut pas être retiré.';
+  END IF;
+  RETURN CASE WHEN TG_OP = 'DELETE' THEN OLD ELSE NEW END;
+END
+$$;
+
+DROP TRIGGER IF EXISTS protect_last_admin_owner_trigger ON admin_profiles;
+CREATE TRIGGER protect_last_admin_owner_trigger
+  BEFORE UPDATE OF role, active OR DELETE ON admin_profiles
+  FOR EACH ROW EXECUTE FUNCTION public.protect_last_admin_owner();
+
+REVOKE ALL ON FUNCTION public.protect_last_admin_owner() FROM PUBLIC, anon, authenticated;
+
+-- Le plus ancien compte Auth devient propriétaire lors de la première mise en
+-- place. Les éventuels comptes déjà présents deviennent administrateurs.
+WITH existing_users AS (
+  SELECT
+    id,
+    COALESCE(email, '') AS email,
+    COALESCE(raw_user_meta_data ->> 'full_name', '') AS full_name,
+    row_number() OVER (ORDER BY created_at, id) AS position
+  FROM auth.users
+)
+INSERT INTO admin_profiles (user_id, email, full_name, role, active)
+SELECT
+  id,
+  email,
+  full_name,
+  CASE WHEN position = 1 THEN 'owner' ELSE 'admin' END,
+  true
+FROM existing_users
+ON CONFLICT (user_id) DO UPDATE SET
+  email = EXCLUDED.email,
+  updated_at = now();
+
+DROP POLICY IF EXISTS "admin_profiles_read" ON admin_profiles;
+DROP POLICY IF EXISTS "admin_profiles_insert" ON admin_profiles;
+DROP POLICY IF EXISTS "admin_profiles_update" ON admin_profiles;
+DROP POLICY IF EXISTS "admin_profiles_delete" ON admin_profiles;
+
+CREATE POLICY "admin_profiles_read" ON admin_profiles
+  FOR SELECT TO authenticated
+  USING (user_id = (SELECT auth.uid()) OR (SELECT public.can_admin('owner')));
+CREATE POLICY "admin_profiles_insert" ON admin_profiles
+  FOR INSERT TO authenticated
+  WITH CHECK ((SELECT public.can_admin('owner')));
+CREATE POLICY "admin_profiles_update" ON admin_profiles
+  FOR UPDATE TO authenticated
+  USING ((SELECT public.can_admin('owner')))
+  WITH CHECK ((SELECT public.can_admin('owner')));
+CREATE POLICY "admin_profiles_delete" ON admin_profiles
+  FOR DELETE TO authenticated
+  USING ((SELECT public.can_admin('owner')));
+
+REVOKE ALL ON admin_profiles FROM anon, authenticated;
+GRANT SELECT, INSERT, UPDATE, DELETE ON admin_profiles TO authenticated;
+
+-- Remplace les anciennes politiques d'écriture ouvertes à tous les comptes
+-- authentifiés. Un éditeur peut gérer le contenu; les données confidentielles
+-- restent réservées aux propriétaires et administrateurs.
+DO $$
+DECLARE
+  table_name text;
+  policy_record record;
+  content_tables text[] := ARRAY[
+    'site_settings', 'hero_sections', 'services', 'portfolio_projects',
+    'team_members', 'pricing_plans', 'timeline_events', 'metrics',
+    'testimonials', 'job_openings', 'partnership_pathways',
+    'home_engagements', 'home_why_items', 'about_core_values',
+    'about_advantages', 'about_vision_pillars', 'about_roadmap_phases',
+    'service_process_steps', 'service_tech_items', 'portfolio_innovations',
+    'partnership_process_steps', 'trust_security_items',
+    'trust_commitment_items', 'join_us_process_steps', 'blog_posts',
+    'whitepapers', 'tech_talks', 'industry_reports'
+  ];
+  private_tables text[] := ARRAY[
+    'job_applications', 'newsletter_subscriptions', 'contact_messages',
+    'subscription_tracker', 'subscription_payments'
+  ];
+BEGIN
+  FOREACH table_name IN ARRAY content_tables || private_tables LOOP
+    IF to_regclass('public.' || table_name) IS NULL THEN
+      CONTINUE;
+    END IF;
+
+    FOR policy_record IN
+      SELECT policyname
+      FROM pg_policies
+      WHERE schemaname = 'public'
+        AND tablename = table_name
+        AND cmd = 'ALL'
+    LOOP
+      EXECUTE format('DROP POLICY IF EXISTS %I ON public.%I', policy_record.policyname, table_name);
+    END LOOP;
+
+    EXECUTE format('DROP POLICY IF EXISTS "cms_authenticated_read" ON public.%I', table_name);
+    EXECUTE format('DROP POLICY IF EXISTS "cms_authorized_insert" ON public.%I', table_name);
+    EXECUTE format('DROP POLICY IF EXISTS "cms_authorized_update" ON public.%I', table_name);
+    EXECUTE format('DROP POLICY IF EXISTS "cms_authorized_delete" ON public.%I', table_name);
+
+    IF table_name = ANY(content_tables) THEN
+      EXECUTE format(
+        'CREATE POLICY "cms_authenticated_read" ON public.%I FOR SELECT TO authenticated USING ((SELECT public.can_admin(''viewer'')))',
+        table_name
+      );
+      EXECUTE format(
+        'CREATE POLICY "cms_authorized_insert" ON public.%I FOR INSERT TO authenticated WITH CHECK ((SELECT public.can_admin(''editor'')))',
+        table_name
+      );
+      EXECUTE format(
+        'CREATE POLICY "cms_authorized_update" ON public.%I FOR UPDATE TO authenticated USING ((SELECT public.can_admin(''editor''))) WITH CHECK ((SELECT public.can_admin(''editor'')))',
+        table_name
+      );
+      EXECUTE format(
+        'CREATE POLICY "cms_authorized_delete" ON public.%I FOR DELETE TO authenticated USING ((SELECT public.can_admin(''editor'')))',
+        table_name
+      );
+    ELSE
+      EXECUTE format(
+        'CREATE POLICY "cms_authenticated_read" ON public.%I FOR SELECT TO authenticated USING ((SELECT public.can_admin(''admin'')))',
+        table_name
+      );
+      EXECUTE format(
+        'CREATE POLICY "cms_authorized_insert" ON public.%I FOR INSERT TO authenticated WITH CHECK ((SELECT public.can_admin(''admin'')))',
+        table_name
+      );
+      EXECUTE format(
+        'CREATE POLICY "cms_authorized_update" ON public.%I FOR UPDATE TO authenticated USING ((SELECT public.can_admin(''admin''))) WITH CHECK ((SELECT public.can_admin(''admin'')))',
+        table_name
+      );
+      EXECUTE format(
+        'CREATE POLICY "cms_authorized_delete" ON public.%I FOR DELETE TO authenticated USING ((SELECT public.can_admin(''admin'')))',
+        table_name
+      );
+    END IF;
+  END LOOP;
+END
+$$;
+
+-- Les médias du CMS suivent les mêmes droits que le contenu éditorial.
+DROP POLICY IF EXISTS "Upload admin" ON storage.objects;
+DROP POLICY IF EXISTS "Modification admin" ON storage.objects;
+DROP POLICY IF EXISTS "Suppression admin" ON storage.objects;
+DROP POLICY IF EXISTS "joinus_admin_delete" ON storage.objects;
+
+CREATE POLICY "Upload admin" ON storage.objects FOR INSERT TO authenticated
+  WITH CHECK (bucket_id = 'cms-media' AND (SELECT public.can_admin('editor')));
+CREATE POLICY "Modification admin" ON storage.objects FOR UPDATE TO authenticated
+  USING (bucket_id = 'cms-media' AND (SELECT public.can_admin('editor')))
+  WITH CHECK (bucket_id = 'cms-media' AND (SELECT public.can_admin('editor')));
+CREATE POLICY "Suppression admin" ON storage.objects FOR DELETE TO authenticated
+  USING (bucket_id = 'cms-media' AND (SELECT public.can_admin('editor')));
+CREATE POLICY "joinus_admin_delete" ON storage.objects FOR DELETE TO authenticated
+  USING (bucket_id = 'Cv_lettredemotivation_joinus' AND (SELECT public.can_admin('admin')));
+
+NOTIFY pgrst, 'reload schema';
+
+-- -------------------------------------------------------
+-- 35. PERMISSIONS GRANULAIRES PAR SECTION DU CMS
+-- -------------------------------------------------------
+-- Déclaration anticipée pour que ce bloc reste autonome lors d'une nouvelle
+-- installation. Le bloc Invitations ci-dessous complète ensuite ses policies.
+CREATE TABLE IF NOT EXISTS admin_invitations (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  token uuid UNIQUE NOT NULL DEFAULT gen_random_uuid(),
+  email text NOT NULL,
+  full_name text NOT NULL DEFAULT '',
+  role text NOT NULL CHECK (role IN ('admin', 'editor', 'viewer')),
+  invited_by uuid NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+  expires_at timestamptz NOT NULL DEFAULT (now() + interval '7 days'),
+  accepted_at timestamptz,
+  permissions jsonb NOT NULL DEFAULT '[]'::jsonb,
+  created_at timestamptz NOT NULL DEFAULT now()
+);
+
+CREATE TABLE IF NOT EXISTS admin_permissions (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id uuid NOT NULL REFERENCES admin_profiles(user_id) ON DELETE CASCADE,
+  resource text NOT NULL CHECK (resource IN (
+    'hero', 'services', 'portfolio', 'timeline', 'testimonials',
+    'team', 'pricing', 'metrics', 'partnership', 'recruitment',
+    'subscriptions', 'home_content', 'about_content', 'services_content',
+    'portfolio_content', 'contact_content', 'partnership_content',
+    'recruitment_content', 'insights', 'messages', 'newsletter', 'settings'
+  )),
+  can_view boolean NOT NULL DEFAULT false,
+  can_create boolean NOT NULL DEFAULT false,
+  can_update boolean NOT NULL DEFAULT false,
+  can_delete boolean NOT NULL DEFAULT false,
+  created_at timestamptz NOT NULL DEFAULT now(),
+  updated_at timestamptz NOT NULL DEFAULT now(),
+  UNIQUE (user_id, resource),
+  CHECK (NOT can_create OR can_view),
+  CHECK (NOT can_update OR can_view),
+  CHECK (NOT can_delete OR can_view)
+);
+
+ALTER TABLE admin_permissions ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS "admin_permissions_read" ON admin_permissions;
+DROP POLICY IF EXISTS "admin_permissions_insert" ON admin_permissions;
+DROP POLICY IF EXISTS "admin_permissions_update" ON admin_permissions;
+DROP POLICY IF EXISTS "admin_permissions_delete" ON admin_permissions;
+
+CREATE POLICY "admin_permissions_read" ON admin_permissions
+  FOR SELECT TO authenticated
+  USING (user_id = (SELECT auth.uid()) OR (SELECT public.can_admin('owner')));
+CREATE POLICY "admin_permissions_insert" ON admin_permissions
+  FOR INSERT TO authenticated
+  WITH CHECK ((SELECT public.can_admin('owner')));
+CREATE POLICY "admin_permissions_update" ON admin_permissions
+  FOR UPDATE TO authenticated
+  USING ((SELECT public.can_admin('owner')))
+  WITH CHECK ((SELECT public.can_admin('owner')));
+CREATE POLICY "admin_permissions_delete" ON admin_permissions
+  FOR DELETE TO authenticated
+  USING ((SELECT public.can_admin('owner')));
+
+REVOKE ALL ON admin_permissions FROM anon, authenticated;
+GRANT SELECT, INSERT, UPDATE, DELETE ON admin_permissions TO authenticated;
+
+-- Le rôle limite les actions maximales; la ligne de permission choisit les
+-- sections réellement accessibles à chaque utilisateur.
+CREATE OR REPLACE FUNCTION public.has_admin_permission(
+  requested_resource text,
+  requested_action text DEFAULT 'view'
+)
+RETURNS boolean
+LANGUAGE sql
+STABLE
+SECURITY DEFINER
+SET search_path = ''
+AS $$
+  WITH current_profile AS (
+    SELECT role
+    FROM public.admin_profiles
+    WHERE user_id = (SELECT auth.uid()) AND active = true
+  )
+  SELECT COALESCE(
+    (SELECT role = 'owner' FROM current_profile),
+    false
+  ) OR COALESCE((
+    SELECT
+      CASE requested_action
+        WHEN 'view' THEN permission.can_view
+        WHEN 'create' THEN permission.can_create AND profile.role IN ('admin', 'editor')
+        WHEN 'update' THEN permission.can_update AND profile.role IN ('admin', 'editor')
+        WHEN 'delete' THEN permission.can_delete AND profile.role = 'admin'
+        ELSE false
+      END
+    FROM public.admin_profiles profile
+    JOIN public.admin_permissions permission ON permission.user_id = profile.user_id
+    WHERE profile.user_id = (SELECT auth.uid())
+      AND profile.active = true
+      AND permission.resource = requested_resource
+  ), false)
+$$;
+
+CREATE OR REPLACE FUNCTION public.has_any_admin_permission(
+  requested_action text DEFAULT 'view'
+)
+RETURNS boolean
+LANGUAGE sql
+STABLE
+SECURITY DEFINER
+SET search_path = ''
+AS $$
+  SELECT
+    COALESCE(public.current_admin_role() = 'owner', false)
+    OR EXISTS (
+      SELECT 1
+      FROM public.admin_permissions permission
+      JOIN public.admin_profiles profile ON profile.user_id = permission.user_id
+      WHERE permission.user_id = (SELECT auth.uid())
+        AND profile.active = true
+        AND CASE requested_action
+          WHEN 'view' THEN permission.can_view
+          WHEN 'create' THEN permission.can_create AND profile.role IN ('admin', 'editor')
+          WHEN 'update' THEN permission.can_update AND profile.role IN ('admin', 'editor')
+          WHEN 'delete' THEN permission.can_delete AND profile.role = 'admin'
+          ELSE false
+        END
+    )
+$$;
+
+REVOKE ALL ON FUNCTION public.has_admin_permission(text, text) FROM PUBLIC, anon;
+REVOKE ALL ON FUNCTION public.has_any_admin_permission(text) FROM PUBLIC, anon;
+GRANT EXECUTE ON FUNCTION public.has_admin_permission(text, text) TO authenticated;
+GRANT EXECUTE ON FUNCTION public.has_any_admin_permission(text) TO authenticated;
+
+ALTER TABLE admin_invitations
+  ADD COLUMN IF NOT EXISTS permissions jsonb NOT NULL DEFAULT '[]'::jsonb;
+
+-- L'acceptation d'une invitation installe aussi la sélection initiale des
+-- sections. Chaque entrée JSON contient resource + quatre actions booléennes.
+CREATE OR REPLACE FUNCTION public.accept_admin_invitation(invitation_token uuid)
+RETURNS jsonb
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = ''
+AS $$
+DECLARE
+  invitation public.admin_invitations%ROWTYPE;
+  current_email text;
+BEGIN
+  IF (SELECT auth.uid()) IS NULL THEN
+    RAISE EXCEPTION 'Authentification requise.';
+  END IF;
+
+  SELECT * INTO invitation
+  FROM public.admin_invitations
+  WHERE token = invitation_token
+    AND accepted_at IS NULL
+    AND expires_at > now()
+  FOR UPDATE;
+
+  IF invitation.id IS NULL THEN
+    RAISE EXCEPTION 'Cette invitation est invalide, expirée ou déjà utilisée.';
+  END IF;
+
+  SELECT lower(email) INTO current_email
+  FROM auth.users
+  WHERE id = (SELECT auth.uid());
+
+  IF current_email IS DISTINCT FROM lower(invitation.email) THEN
+    RAISE EXCEPTION 'Cette invitation appartient à une autre adresse e-mail.';
+  END IF;
+
+  INSERT INTO public.admin_profiles (
+    user_id, email, full_name, role, active, invited_by, updated_at
+  ) VALUES (
+    (SELECT auth.uid()), invitation.email, invitation.full_name,
+    invitation.role, true, invitation.invited_by, now()
+  )
+  ON CONFLICT (user_id) DO UPDATE SET
+    email = EXCLUDED.email,
+    full_name = EXCLUDED.full_name,
+    role = EXCLUDED.role,
+    active = true,
+    invited_by = EXCLUDED.invited_by,
+    updated_at = now();
+
+  INSERT INTO public.admin_permissions (
+    user_id, resource, can_view, can_create, can_update, can_delete
+  )
+  SELECT
+    (SELECT auth.uid()),
+    item.resource,
+    COALESCE(item.can_view, false),
+    COALESCE(item.can_create, false),
+    COALESCE(item.can_update, false),
+    COALESCE(item.can_delete, false)
+  FROM jsonb_to_recordset(invitation.permissions) AS item(
+    resource text,
+    can_view boolean,
+    can_create boolean,
+    can_update boolean,
+    can_delete boolean
+  )
+  WHERE item.resource IS NOT NULL
+  ON CONFLICT (user_id, resource) DO UPDATE SET
+    can_view = EXCLUDED.can_view,
+    can_create = EXCLUDED.can_create,
+    can_update = EXCLUDED.can_update,
+    can_delete = EXCLUDED.can_delete,
+    updated_at = now();
+
+  UPDATE public.admin_invitations
+  SET accepted_at = now()
+  WHERE id = invitation.id;
+
+  RETURN jsonb_build_object('role', invitation.role, 'full_name', invitation.full_name);
+END
+$$;
+
+REVOKE ALL ON FUNCTION public.accept_admin_invitation(uuid) FROM PUBLIC, anon;
+GRANT EXECUTE ON FUNCTION public.accept_admin_invitation(uuid) TO authenticated;
+
+-- Correspondance entre chaque table et la section visible dans le CMS.
+DO $$
+DECLARE
+  table_name text;
+  resource_name text;
+  table_resources jsonb := jsonb_build_object(
+    'hero_sections', 'hero',
+    'services', 'services',
+    'portfolio_projects', 'portfolio',
+    'timeline_events', 'timeline',
+    'testimonials', 'testimonials',
+    'team_members', 'team',
+    'pricing_plans', 'pricing',
+    'metrics', 'metrics',
+    'partnership_pathways', 'partnership',
+    'job_openings', 'recruitment',
+    'job_applications', 'recruitment',
+    'subscription_tracker', 'subscriptions',
+    'subscription_payments', 'subscriptions',
+    'home_engagements', 'home_content',
+    'home_why_items', 'home_content',
+    'about_core_values', 'about_content',
+    'about_advantages', 'about_content',
+    'about_vision_pillars', 'about_content',
+    'about_roadmap_phases', 'about_content',
+    'service_process_steps', 'services_content',
+    'service_tech_items', 'services_content',
+    'portfolio_innovations', 'portfolio_content',
+    'partnership_process_steps', 'partnership_content',
+    'trust_security_items', 'partnership_content',
+    'trust_commitment_items', 'partnership_content',
+    'join_us_process_steps', 'recruitment_content',
+    'blog_posts', 'insights',
+    'whitepapers', 'insights',
+    'tech_talks', 'insights',
+    'industry_reports', 'insights',
+    'contact_messages', 'messages',
+    'newsletter_subscriptions', 'newsletter'
+  );
+BEGIN
+  FOR table_name, resource_name IN SELECT key, value #>> '{}' FROM jsonb_each(table_resources)
+  LOOP
+    IF to_regclass('public.' || table_name) IS NULL THEN CONTINUE; END IF;
+
+    EXECUTE format('DROP POLICY IF EXISTS "cms_authenticated_read" ON public.%I', table_name);
+    EXECUTE format('DROP POLICY IF EXISTS "cms_authorized_insert" ON public.%I', table_name);
+    EXECUTE format('DROP POLICY IF EXISTS "cms_authorized_update" ON public.%I', table_name);
+    EXECUTE format('DROP POLICY IF EXISTS "cms_authorized_delete" ON public.%I', table_name);
+
+    EXECUTE format(
+      'CREATE POLICY "cms_authenticated_read" ON public.%I FOR SELECT TO authenticated USING ((SELECT public.has_admin_permission(%L, ''view'')))',
+      table_name, resource_name
+    );
+    EXECUTE format(
+      'CREATE POLICY "cms_authorized_insert" ON public.%I FOR INSERT TO authenticated WITH CHECK ((SELECT public.has_admin_permission(%L, ''create'')))',
+      table_name, resource_name
+    );
+    EXECUTE format(
+      'CREATE POLICY "cms_authorized_update" ON public.%I FOR UPDATE TO authenticated USING ((SELECT public.has_admin_permission(%L, ''update''))) WITH CHECK ((SELECT public.has_admin_permission(%L, ''update'')))',
+      table_name, resource_name, resource_name
+    );
+    EXECUTE format(
+      'CREATE POLICY "cms_authorized_delete" ON public.%I FOR DELETE TO authenticated USING ((SELECT public.has_admin_permission(%L, ''delete'')))',
+      table_name, resource_name
+    );
+  END LOOP;
+END
+$$;
+
+-- site_settings regroupe plusieurs sections : la ressource est déterminée par
+-- la clé de configuration pour ne pas donner un accès global involontaire.
+CREATE OR REPLACE FUNCTION public.settings_admin_resource(setting_key text)
+RETURNS text
+LANGUAGE sql
+IMMUTABLE
+SET search_path = ''
+AS $$
+  SELECT CASE
+    WHEN setting_key IN ('contact_form_config', 'office_details') THEN 'contact_content'
+    WHEN setting_key = 'service_tech_categories' THEN 'services_content'
+    WHEN setting_key LIKE 'about_%' THEN 'about_content'
+    WHEN setting_key = 'portfolio_filter_options' THEN 'portfolio_content'
+    WHEN setting_key = 'insights_categories' THEN 'insights'
+    ELSE 'settings'
+  END
+$$;
+
+DROP POLICY IF EXISTS "cms_authenticated_read" ON site_settings;
+DROP POLICY IF EXISTS "cms_authorized_insert" ON site_settings;
+DROP POLICY IF EXISTS "cms_authorized_update" ON site_settings;
+DROP POLICY IF EXISTS "cms_authorized_delete" ON site_settings;
+
+CREATE POLICY "cms_authenticated_read" ON site_settings FOR SELECT TO authenticated
+  USING ((SELECT public.has_admin_permission(public.settings_admin_resource(key), 'view')));
+CREATE POLICY "cms_authorized_insert" ON site_settings FOR INSERT TO authenticated
+  WITH CHECK ((SELECT public.has_admin_permission(public.settings_admin_resource(key), 'create')));
+CREATE POLICY "cms_authorized_update" ON site_settings FOR UPDATE TO authenticated
+  USING ((SELECT public.has_admin_permission(public.settings_admin_resource(key), 'update')))
+  WITH CHECK ((SELECT public.has_admin_permission(public.settings_admin_resource(key), 'update')));
+CREATE POLICY "cms_authorized_delete" ON site_settings FOR DELETE TO authenticated
+  USING ((SELECT public.has_admin_permission(public.settings_admin_resource(key), 'delete')));
+
+DROP POLICY IF EXISTS "Upload admin" ON storage.objects;
+DROP POLICY IF EXISTS "Modification admin" ON storage.objects;
+DROP POLICY IF EXISTS "Suppression admin" ON storage.objects;
+DROP POLICY IF EXISTS "joinus_admin_delete" ON storage.objects;
+
+CREATE POLICY "Upload admin" ON storage.objects FOR INSERT TO authenticated
+  WITH CHECK (bucket_id = 'cms-media' AND (SELECT public.has_any_admin_permission('create')));
+CREATE POLICY "Modification admin" ON storage.objects FOR UPDATE TO authenticated
+  USING (bucket_id = 'cms-media' AND (SELECT public.has_any_admin_permission('update')))
+  WITH CHECK (bucket_id = 'cms-media' AND (SELECT public.has_any_admin_permission('update')));
+CREATE POLICY "Suppression admin" ON storage.objects FOR DELETE TO authenticated
+  USING (bucket_id = 'cms-media' AND (SELECT public.has_any_admin_permission('delete')));
+CREATE POLICY "joinus_admin_delete" ON storage.objects FOR DELETE TO authenticated
+  USING (bucket_id = 'Cv_lettredemotivation_joinus' AND (SELECT public.has_admin_permission('recruitment', 'delete')));
+
+NOTIFY pgrst, 'reload schema';
+
+-- -------------------------------------------------------
+-- 36. FINALISATION DES INVITATIONS SÉCURISÉES
+-- -------------------------------------------------------
+CREATE TABLE IF NOT EXISTS admin_invitations (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  token uuid UNIQUE NOT NULL DEFAULT gen_random_uuid(),
+  email text NOT NULL,
+  full_name text NOT NULL DEFAULT '',
+  role text NOT NULL CHECK (role IN ('admin', 'editor', 'viewer')),
+  invited_by uuid NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+  expires_at timestamptz NOT NULL DEFAULT (now() + interval '7 days'),
+  accepted_at timestamptz,
+  created_at timestamptz NOT NULL DEFAULT now()
+);
+
+CREATE UNIQUE INDEX IF NOT EXISTS admin_invitations_pending_email_idx
+  ON admin_invitations (lower(email))
+  WHERE accepted_at IS NULL;
+
+ALTER TABLE admin_invitations ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS "admin_invitations_owner_read" ON admin_invitations;
+DROP POLICY IF EXISTS "admin_invitations_owner_insert" ON admin_invitations;
+DROP POLICY IF EXISTS "admin_invitations_owner_update" ON admin_invitations;
+DROP POLICY IF EXISTS "admin_invitations_owner_delete" ON admin_invitations;
+
+CREATE POLICY "admin_invitations_owner_read" ON admin_invitations
+  FOR SELECT TO authenticated USING ((SELECT public.can_admin('owner')));
+CREATE POLICY "admin_invitations_owner_insert" ON admin_invitations
+  FOR INSERT TO authenticated
+  WITH CHECK ((SELECT public.can_admin('owner')) AND invited_by = (SELECT auth.uid()));
+CREATE POLICY "admin_invitations_owner_update" ON admin_invitations
+  FOR UPDATE TO authenticated
+  USING ((SELECT public.can_admin('owner')))
+  WITH CHECK ((SELECT public.can_admin('owner')));
+CREATE POLICY "admin_invitations_owner_delete" ON admin_invitations
+  FOR DELETE TO authenticated USING ((SELECT public.can_admin('owner')));
+
+REVOKE ALL ON admin_invitations FROM anon, authenticated;
+GRANT SELECT, INSERT, UPDATE, DELETE ON admin_invitations TO authenticated;
+
+-- accept_admin_invitation est défini dans le bloc des permissions granulaires
+-- afin d'installer simultanément le profil et ses sections autorisées.
+
+NOTIFY pgrst, 'reload schema';

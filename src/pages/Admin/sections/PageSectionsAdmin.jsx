@@ -1,5 +1,5 @@
 import React from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import {
   ArrowRight, ExternalLink, Lock, CheckCircle2,
   Globe, Briefcase, FolderOpen, Users, DollarSign,
@@ -7,6 +7,8 @@ import {
   Home, Info, Layers, Phone, Mail, Sparkles, Flag,
   UserPlus, Newspaper, BookOpen, Video,
 } from "lucide-react";
+import { ROUTE_RESOURCES } from "../../../lib/adminUsers";
+import { useAdminAuth } from "../components/AdminAuthContext";
 
 // ── Page configurations ───────────────────────────────────────────────────────
 const PAGE_CONFIGS = {
@@ -161,7 +163,7 @@ function SectionCard({ section }) {
 // ── Main component ────────────────────────────────────────────────────────────
 export default function PageSectionsAdmin({ page }) {
   const config = PAGE_CONFIGS[page];
-  const navigate = useNavigate();
+  const { canAccess } = useAdminAuth();
 
   if (!config) {
     return (
@@ -172,8 +174,13 @@ export default function PageSectionsAdmin({ page }) {
   }
 
   const PageIcon = config.icon;
-  const cmsCount  = config.sections.filter((s) => s.cms).length;
-  const totalCount = config.sections.length;
+  const visibleSections = config.sections.filter((section) => {
+    if (!section.cms || !section.link) return true;
+    const resource = ROUTE_RESOURCES[section.link];
+    return resource ? canAccess(resource, "view") : false;
+  });
+  const cmsCount = visibleSections.filter((s) => s.cms).length;
+  const totalCount = visibleSections.length;
 
   return (
     <div>
@@ -213,7 +220,7 @@ export default function PageSectionsAdmin({ page }) {
 
       {/* Sections grid */}
       <div className="grid sm:grid-cols-2 gap-3 mb-8">
-        {config.sections.map((section, i) => (
+        {visibleSections.map((section, i) => (
           <SectionCard key={i} section={section} />
         ))}
       </div>

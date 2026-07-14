@@ -25,6 +25,10 @@ import ContactContentAdmin from "./sections/ContactContentAdmin";
 import PartnershipContentAdmin from "./sections/PartnershipContentAdmin";
 import JoinUsContentAdmin from "./sections/JoinUsContentAdmin";
 import InsightsAdmin from "./sections/InsightsAdmin";
+import SubscriptionTrackerAdmin from "./sections/SubscriptionTrackerAdmin";
+import AdminUsersAdmin from "./sections/AdminUsersAdmin";
+import RequireAdminRole from "./components/RequireAdminRole";
+import RequireAdminPermission from "./components/RequireAdminPermission";
 
 export default function AdminApp() {
   return (
@@ -32,37 +36,39 @@ export default function AdminApp() {
       <AdminLayout>
         <Routes>
           <Route index element={<AdminDashboard />} />
-          <Route path="hero"         element={<HeroAdmin />} />
-          <Route path="services"     element={<ServicesAdmin />} />
-          <Route path="portfolio"    element={<PortfolioAdmin />} />
-          <Route path="team"         element={<TeamAdmin />} />
-          <Route path="pricing"      element={<PricingAdmin />} />
-          <Route path="timeline"     element={<TimelineAdmin />} />
-          <Route path="metrics"      element={<MetricsAdmin />} />
-          <Route path="testimonials" element={<TestimonialsAdmin />} />
-          <Route path="partnership"  element={<PartnershipAdmin />} />
-          <Route path="join-us"      element={<JoinUsAdmin />} />
-          <Route path="home-content"   element={<HomeContentAdmin />} />
-          <Route path="about-content"    element={<AboutContentAdmin />} />
-          <Route path="services-content"   element={<ServicesContentAdmin />} />
-          <Route path="portfolio-content"    element={<PortfolioContentAdmin />} />
-          <Route path="contact-content"     element={<ContactContentAdmin />} />
-          <Route path="partnership-content" element={<PartnershipContentAdmin />} />
-          <Route path="join-us-content"     element={<JoinUsContentAdmin />} />
-          <Route path="insights-content"    element={<InsightsAdmin />} />
-          <Route path="messages"     element={<MessagesAdmin />} />
-          <Route path="newsletter"   element={<NewsletterAdmin />} />
-          <Route path="settings"     element={<SettingsAdmin />} />
+          <Route path="hero" element={<RequireAdminPermission resource="hero"><HeroAdmin /></RequireAdminPermission>} />
+          <Route path="services" element={<RequireAdminPermission resource="services"><ServicesAdmin /></RequireAdminPermission>} />
+          <Route path="portfolio" element={<RequireAdminPermission resource="portfolio"><PortfolioAdmin /></RequireAdminPermission>} />
+          <Route path="team" element={<RequireAdminPermission resource="team"><TeamAdmin /></RequireAdminPermission>} />
+          <Route path="pricing" element={<RequireAdminPermission resource="pricing"><PricingAdmin /></RequireAdminPermission>} />
+          <Route path="timeline" element={<RequireAdminPermission resource="timeline"><TimelineAdmin /></RequireAdminPermission>} />
+          <Route path="metrics" element={<RequireAdminPermission resource="metrics"><MetricsAdmin /></RequireAdminPermission>} />
+          <Route path="testimonials" element={<RequireAdminPermission resource="testimonials"><TestimonialsAdmin /></RequireAdminPermission>} />
+          <Route path="partnership" element={<RequireAdminPermission resource="partnership"><PartnershipAdmin /></RequireAdminPermission>} />
+          <Route path="join-us" element={<RequireAdminPermission resource="recruitment"><JoinUsAdmin /></RequireAdminPermission>} />
+          <Route path="home-content" element={<RequireAdminPermission resource="home_content"><HomeContentAdmin /></RequireAdminPermission>} />
+          <Route path="about-content" element={<RequireAdminPermission resource="about_content"><AboutContentAdmin /></RequireAdminPermission>} />
+          <Route path="services-content" element={<RequireAdminPermission resource="services_content"><ServicesContentAdmin /></RequireAdminPermission>} />
+          <Route path="portfolio-content" element={<RequireAdminPermission resource="portfolio_content"><PortfolioContentAdmin /></RequireAdminPermission>} />
+          <Route path="contact-content" element={<RequireAdminPermission resource="contact_content"><ContactContentAdmin /></RequireAdminPermission>} />
+          <Route path="partnership-content" element={<RequireAdminPermission resource="partnership_content"><PartnershipContentAdmin /></RequireAdminPermission>} />
+          <Route path="join-us-content" element={<RequireAdminPermission resource="recruitment_content"><JoinUsContentAdmin /></RequireAdminPermission>} />
+          <Route path="insights-content" element={<RequireAdminPermission resource="insights"><InsightsAdmin /></RequireAdminPermission>} />
+          <Route path="messages" element={<RequireAdminPermission resource="messages"><MessagesAdmin /></RequireAdminPermission>} />
+          <Route path="newsletter" element={<RequireAdminPermission resource="newsletter"><NewsletterAdmin /></RequireAdminPermission>} />
+          <Route path="settings" element={<RequireAdminPermission resource="settings"><SettingsAdmin /></RequireAdminPermission>} />
+          <Route path="subscriptions" element={<RequireAdminPermission resource="subscriptions"><SubscriptionTrackerAdmin /></RequireAdminPermission>} />
+          <Route path="users" element={<RequireAdminRole role="owner"><AdminUsersAdmin /></RequireAdminRole>} />
 
           {/* Sections des Pages */}
-          <Route path="pages/home"        element={<PageSectionsAdmin page="home" />} />
-          <Route path="pages/about"       element={<PageSectionsAdmin page="about" />} />
-          <Route path="pages/services"    element={<PageSectionsAdmin page="services" />} />
-          <Route path="pages/portfolio"   element={<PageSectionsAdmin page="portfolio" />} />
-          <Route path="pages/contact"     element={<PageSectionsAdmin page="contact" />} />
-          <Route path="pages/partnership" element={<PageSectionsAdmin page="partnership" />} />
-          <Route path="pages/join-us"     element={<PageSectionsAdmin page="join-us" />} />
-          <Route path="pages/insights"    element={<PageSectionsAdmin page="insights" />} />
+          <Route path="pages/home" element={<RequireAdminPermission resources={["hero", "metrics", "services", "testimonials", "home_content"]}><PageSectionsAdmin page="home" /></RequireAdminPermission>} />
+          <Route path="pages/about" element={<RequireAdminPermission resources={["hero", "team", "timeline", "about_content"]}><PageSectionsAdmin page="about" /></RequireAdminPermission>} />
+          <Route path="pages/services" element={<RequireAdminPermission resources={["hero", "services", "pricing", "services_content"]}><PageSectionsAdmin page="services" /></RequireAdminPermission>} />
+          <Route path="pages/portfolio" element={<RequireAdminPermission resources={["hero", "portfolio", "portfolio_content"]}><PageSectionsAdmin page="portfolio" /></RequireAdminPermission>} />
+          <Route path="pages/contact" element={<RequireAdminPermission resources={["hero", "settings", "contact_content"]}><PageSectionsAdmin page="contact" /></RequireAdminPermission>} />
+          <Route path="pages/partnership" element={<RequireAdminPermission resources={["hero", "partnership", "partnership_content"]}><PageSectionsAdmin page="partnership" /></RequireAdminPermission>} />
+          <Route path="pages/join-us" element={<RequireAdminPermission resources={["hero", "recruitment", "recruitment_content"]}><PageSectionsAdmin page="join-us" /></RequireAdminPermission>} />
+          <Route path="pages/insights" element={<RequireAdminPermission resources={["hero", "insights"]}><PageSectionsAdmin page="insights" /></RequireAdminPermission>} />
         </Routes>
       </AdminLayout>
     </AdminGuard>
