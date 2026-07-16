@@ -6,8 +6,11 @@ import JoinUsProcess from "./components/joinus-process";
 import JoinUsOpenings from "./components/joinus-openings";
 import JoinUsForm from "./components/joinUs-form";
 import logoIco from "../../../public/LYNXA.ico";
+import { useSiteSettings } from "../../hooks/useContent";
 
 const JoinUsPage = () => {
+  const { data: settings } = useSiteSettings();
+  const contact = settings?.contact || {};
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
@@ -58,24 +61,30 @@ const JoinUsPage = () => {
                 </p>
                 <div className="flex items-center gap-2 text-sm text-white/60">
                   <span>🇬🇳</span>
-                  <span>Fièrement basé à Conakry, Guinée</span>
+                  <span>Fièrement basé à {contact.address || "Conakry, Guinée"}</span>
                 </div>
               </div>
 
               <div>
                 <h4 className="font-semibold mb-4">Contact Rapide</h4>
                 <div className="space-y-2 text-sm text-white/80">
-                  <div>+224 621 724 657</div>
-                  <div>contact@lynxatech.com</div>
+                  <div>{contact.phone || "+224 621 724 657"}</div>
+                  <div>{contact.email || "contact@lynxatech.com"}</div>
                 </div>
               </div>
 
               <div>
                 <h4 className="font-semibold mb-4">Heures d'Ouverture</h4>
                 <div className="space-y-2 text-sm text-white/80">
-                  <div>Lun-Ven : 8h-18h</div>
-                  <div>Samedi : 9h-14h</div>
-                  <div>Dimanche : Fermé</div>
+                  {contact.hours ? (
+                    <div>{contact.hours}</div>
+                  ) : (
+                    <>
+                      <div>Lun-Ven : 8h-18h</div>
+                      <div>Samedi : 9h-14h</div>
+                      <div>Dimanche : Fermé</div>
+                    </>
+                  )}
                   <div className="text-primary">GMT+0 (Heure de Guinée)</div>
                 </div>
               </div>

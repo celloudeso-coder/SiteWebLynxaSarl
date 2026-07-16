@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import Header from "../../components/ui/Header";
 import Icon from "../../components/AppIcon";
 import logoIco from "../../../public/LYNXA.ico";
+import { useSiteSettings } from "../../hooks/useContent";
 
 const LAST_UPDATED = "14 juillet 2026";
 
@@ -218,6 +219,8 @@ const LEGAL_LINKS = [
 
 const LegalPage = ({ page }) => {
   const content = PAGES[page];
+  const { data: settings } = useSiteSettings();
+  const contactEmail = settings?.contact?.email || "contact@lynxatech.com";
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -276,7 +279,7 @@ const LegalPage = ({ page }) => {
               </nav>
               <div className="mt-5 border-t border-gray-100 pt-5">
                 <p className="text-sm leading-relaxed text-gray-500">Une question sur cette page ?</p>
-                <a href="mailto:contact@lynxatech.com" className="mt-2 inline-flex items-center gap-2 text-sm font-semibold text-primary hover:text-accent">
+                <a href={`mailto:${contactEmail}`} className="mt-2 inline-flex items-center gap-2 text-sm font-semibold text-primary hover:text-accent">
                   <Icon name="Mail" size={16} />
                   Nous écrire
                 </a>

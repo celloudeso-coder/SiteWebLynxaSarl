@@ -10,6 +10,7 @@ import TestimonialCarousel from "./components/TestimonialCarousel";
 import Icon from "../../components/AppIcon";
 import logoIco from "../../../public/LYNXA.ico";
 import { getHomeEngagements, getHomeWhyItems } from "../../lib/cms";
+import { useSiteSettings } from "../../hooks/useContent";
 
 const STATIC_COMMITMENTS = [
   { icon: "Flag",        label: "100 % Guinéen",       sub_label: "Ancré localement"       },
@@ -30,6 +31,10 @@ const STATIC_WHY = [
 const Homepage = () => {
   const [commitments, setCommitments] = useState(STATIC_COMMITMENTS);
   const [whyItems, setWhyItems]       = useState(STATIC_WHY);
+  const { data: settings } = useSiteSettings();
+  const contact = settings?.contact || {};
+  const social  = settings?.social  || {};
+  const company = settings?.company || {};
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -222,24 +227,23 @@ const Homepage = () => {
                   </div>
                 </div>
                 <p className="text-gray-300 mb-5 leading-relaxed text-sm">
-                  Construire l'avenir technologique de la Guinée vers le monde.
-                  Solutions de classe mondiale avec une compréhension locale approfondie.
+                  {company.description || "Construire l'avenir technologique de la Guinée vers le monde. Solutions de classe mondiale avec une compréhension locale approfondie."}
                 </p>
                 <div className="flex items-center gap-2 text-sm text-gray-400 mb-5">
                   <span>🇬🇳</span>
-                  <span>Fièrement basé à Conakry, Guinée</span>
+                  <span>Fièrement basé à {contact.address || "Conakry, Guinée"}</span>
                 </div>
                 <div className="flex gap-3">
-                  <a href="https://www.linkedin.com/company/lynxatech" target="_blank" rel="noopener noreferrer" className="w-9 h-9 bg-white/10 rounded-full flex items-center justify-center hover:bg-primary transition-colors duration-200">
+                  <a href={social.linkedin || "https://www.linkedin.com/company/lynxatech"} target="_blank" rel="noopener noreferrer" className="w-9 h-9 bg-white/10 rounded-full flex items-center justify-center hover:bg-primary transition-colors duration-200">
                     <Icon name="Linkedin" size={16} />
                   </a>
-                  <a href="#" className="w-9 h-9 bg-white/10 rounded-full flex items-center justify-center hover:bg-primary transition-colors duration-200">
+                  <a href={social.twitter || "#"} target="_blank" rel="noopener noreferrer" className="w-9 h-9 bg-white/10 rounded-full flex items-center justify-center hover:bg-primary transition-colors duration-200">
                     <Icon name="Twitter" size={16} />
                   </a>
-                  <a href="#" className="w-9 h-9 bg-white/10 rounded-full flex items-center justify-center hover:bg-primary transition-colors duration-200">
+                  <a href={social.facebook || "#"} target="_blank" rel="noopener noreferrer" className="w-9 h-9 bg-white/10 rounded-full flex items-center justify-center hover:bg-primary transition-colors duration-200">
                     <Icon name="Facebook" size={16} />
                   </a>
-                  <a href="mailto:contact@lynxatech.com" className="w-9 h-9 bg-white/10 rounded-full flex items-center justify-center hover:bg-primary transition-colors duration-200">
+                  <a href={`mailto:${contact.email || "contact@lynxatech.com"}`} className="w-9 h-9 bg-white/10 rounded-full flex items-center justify-center hover:bg-primary transition-colors duration-200">
                     <Icon name="Mail" size={16} />
                   </a>
                 </div>
@@ -267,15 +271,15 @@ const Homepage = () => {
                 <ul className="space-y-2.5 text-sm text-gray-300">
                   <li className="flex items-center gap-2">
                     <Icon name="MapPin" size={14} className="text-primary flex-shrink-0" />
-                    Conakry, Guinée
+                    {contact.address || "Conakry, Guinée"}
                   </li>
                   <li className="flex items-center gap-2">
                     <Icon name="Phone" size={14} className="text-primary flex-shrink-0" />
-                    +224 621 724 657
+                    {contact.phone || "+224 621 724 657"}
                   </li>
                   <li className="flex items-center gap-2">
                     <Icon name="Mail" size={14} className="text-primary flex-shrink-0" />
-                    contact@lynxatech.com
+                    {contact.email || "contact@lynxatech.com"}
                   </li>
                   <li className="pt-1">
                     <a href="/contact" className="text-primary hover:text-accent transition-colors font-medium">

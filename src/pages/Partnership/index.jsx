@@ -7,8 +7,11 @@ import ProjectRequestForm from "./components/ProjectRequestForm";
 import ProcessOverview from "./components/ProcessOverview";
 import TrustSignals from "./components/TrustSignals";
 import logoIco from "../../../public/LYNXA.ico";
+import { useSiteSettings } from "../../hooks/useContent";
 
 const PartnershipCollaborationGateway = () => {
+  const { data: settings } = useSiteSettings();
+  const contact = settings?.contact || {};
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
@@ -82,9 +85,9 @@ const PartnershipCollaborationGateway = () => {
               <div>
                 <h4 className="font-semibold mb-4">Contact</h4>
                 <ul className="space-y-2 text-sm text-gray-400">
-                  <li>contact@lynxatech.com</li>
-                  <li>+224 621 724 657</li>
-                  <li>Conakry, Guinée 🇬🇳</li>
+                  <li>{contact.email || "contact@lynxatech.com"}</li>
+                  <li>{contact.phone || "+224 621 724 657"}</li>
+                  <li>{contact.address || "Conakry, Guinée"} 🇬🇳</li>
                 </ul>
               </div>
             </div>

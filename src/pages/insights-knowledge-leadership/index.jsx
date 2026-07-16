@@ -8,10 +8,13 @@ import TechTalksSection from "./components/TechTalksSection";
 import IndustryReportsSection from "./components/IndustryReportsSection";
 import NewsletterSection from "./components/NewsletterSection";
 import ContentFilters from "./components/ContentFilters";
+import { useSiteSettings } from "../../hooks/useContent";
 
 const InsightsKnowledgeLeadership = () => {
   const [activeCategory, setActiveCategory] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
+  const { data: settings } = useSiteSettings();
+  const contact = settings?.contact || {};
 
   useEffect(() => {
     // Scroll to top on component mount
@@ -152,7 +155,7 @@ const InsightsKnowledgeLeadership = () => {
                 </p>
                 <div className="flex items-center space-x-2 text-sm text-gray-400">
                   <span>🇬🇳</span>
-                  <span>Basé fièrement à Conakry, Guinée</span>
+                  <span>Basé fièrement à {contact.address || "Conakry, Guinée"}</span>
                 </div>
               </div>
 
@@ -199,9 +202,9 @@ const InsightsKnowledgeLeadership = () => {
               <div>
                 <h4 className="font-heading font-bold mb-4">Contact</h4>
                 <ul className="space-y-2 text-gray-300 text-sm">
-                  <li>Conakry, Guinea</li>
-                  <li>+224 123 456 789</li>
-                  <li>hello@lynxatech.gn</li>
+                  <li>{contact.address || "Conakry, Guinée"}</li>
+                  <li>{contact.phone || "+224 621 724 657"}</li>
+                  <li>{contact.email || "contact@lynxatech.com"}</li>
                   <li>
                     <a
                       href="/contact"

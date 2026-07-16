@@ -7,8 +7,11 @@ import ContactForm from "./components/ContactForm";
 import OfficeLocation from "./components/OfficeLocation";
 import SocialConnect from "./components/SocialConnect";
 import logoIco from "../../../public/LYNXA.ico";
+import { useSiteSettings } from "../../hooks/useContent";
 
 const ContactMultiChannelConnection = () => {
+  const { data: settings } = useSiteSettings();
+  const contact = settings?.contact || {};
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
@@ -83,8 +86,8 @@ const ContactMultiChannelConnection = () => {
               <div>
                 <h4 className="font-semibold mb-4">Contact Rapide</h4>
                 <div className="space-y-2 text-sm text-white/80">
-                  <div>+224 621 724 657</div>
-                  <div>contact@lynxatech.com</div>
+                  <div>{contact.phone || "+224 621 724 657"}</div>
+                  <div>{contact.email || "contact@lynxatech.com"}</div>
                   {/* <div>Quartier Almamya, Conakry</div> */}
                 </div>
               </div>
@@ -92,8 +95,14 @@ const ContactMultiChannelConnection = () => {
               <div>
                 <h4 className="font-semibold mb-4">Heures d'Ouverture</h4>
                 <div className="space-y-2 text-sm text-white/80">
-                  <div>Lun-Ven: 8h-18h</div>
-                  <div>Samedi: 9h-14h</div>
+                  {contact.hours ? (
+                    <div>{contact.hours}</div>
+                  ) : (
+                    <>
+                      <div>Lun-Ven: 8h-18h</div>
+                      <div>Samedi: 9h-14h</div>
+                    </>
+                  )}
                   <div>Dimanche: Urgences uniquement</div>
                   <div className="text-primary">GMT+0 (Heure de Guinée)</div>
                 </div>

@@ -11,8 +11,12 @@ import CompanyValues from "./components/CompanyValues";
 import VisionRoadmap from "./components/VisionRoadmap";
 import Icon from "../../components/AppIcon";
 import logoIco from "../../../public/LYNXA.ico";
+import { useSiteSettings } from "../../hooks/useContent";
 
 const AboutInnovationStoryVision = () => {
+  const { data: settings } = useSiteSettings();
+  const contact = settings?.contact || {};
+  const social  = settings?.social  || {};
   useEffect(() => {
     window.scrollTo(0, 0);
     document.title = "À propos | Lynxa Tech Guinée";
@@ -58,7 +62,7 @@ const AboutInnovationStoryVision = () => {
                 transition={{ delay: 0.2, duration: 0.4 }}
               >
                 <Icon name="MapPin" size={16} />
-                Conakry, Guinée
+                {contact.address || "Conakry, Guinée"}
               </motion.div>
 
               <motion.h1
@@ -179,16 +183,16 @@ const AboutInnovationStoryVision = () => {
                   Construire l'avenir de la technologie depuis le cœur de l'Afrique de l'Ouest.
                 </p>
                 <div className="flex gap-3">
-                  <a href="https://www.linkedin.com/company/lynxatech" target="_blank" rel="noopener noreferrer" className="w-9 h-9 bg-white/10 rounded-full flex items-center justify-center hover:bg-white/20 transition-colors duration-200">
+                  <a href={social.linkedin || "https://www.linkedin.com/company/lynxatech"} target="_blank" rel="noopener noreferrer" className="w-9 h-9 bg-white/10 rounded-full flex items-center justify-center hover:bg-white/20 transition-colors duration-200">
                     <Icon name="Linkedin" size={18} />
                   </a>
-                  <a href="#" className="w-9 h-9 bg-white/10 rounded-full flex items-center justify-center hover:bg-white/20 transition-colors duration-200">
+                  <a href={social.twitter || "#"} target="_blank" rel="noopener noreferrer" className="w-9 h-9 bg-white/10 rounded-full flex items-center justify-center hover:bg-white/20 transition-colors duration-200">
                     <Icon name="Twitter" size={18} />
                   </a>
-                  <a href="#" className="w-9 h-9 bg-white/10 rounded-full flex items-center justify-center hover:bg-white/20 transition-colors duration-200">
+                  <a href={social.facebook || "#"} target="_blank" rel="noopener noreferrer" className="w-9 h-9 bg-white/10 rounded-full flex items-center justify-center hover:bg-white/20 transition-colors duration-200">
                     <Icon name="Facebook" size={18} />
                   </a>
-                  <a href="mailto:contact@lynxatech.com" className="w-9 h-9 bg-white/10 rounded-full flex items-center justify-center hover:bg-white/20 transition-colors duration-200">
+                  <a href={`mailto:${contact.email || "contact@lynxatech.com"}`} className="w-9 h-9 bg-white/10 rounded-full flex items-center justify-center hover:bg-white/20 transition-colors duration-200">
                     <Icon name="Mail" size={18} />
                   </a>
                 </div>
