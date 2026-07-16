@@ -17,7 +17,12 @@
       "Bash(curl -s \"http://localhost:4038/src/Routes.jsx\")",
       "Bash(grep -nE 'handleVideoPlay|closeVideoModal|video_url|videoUrl|\\\\.url|iframe|src=|youtube|embed' __TRACKED_VAR__/TechTalksSection.jsx)",
       "Bash(curl -s \"http://localhost:4038/src/components/ui/Header.jsx\")",
-      "Bash(awk '/CREATE TABLE IF NOT EXISTS join_us_process_steps/,/\\\\\\);/' supabase/schema.sql)"
+      "Bash(awk '/CREATE TABLE IF NOT EXISTS join_us_process_steps/,/\\\\\\);/' supabase/schema.sql)",
+      "Bash(git -C /home/clvx/Desktop/SiteWebLynxaSarl log --oneline -10 --since=\"2026-07-15\")",
+      "Bash(git -C /home/clvx/Desktop/SiteWebLynxaSarl log --format='%h %ad %s' --date=iso -5)",
+      "Bash(git -C /home/clvx/Desktop/SiteWebLynxaSarl diff --stat 66aad2d..3ce6ebf)",
+      "Bash(git -C /home/clvx/Desktop/SiteWebLynxaSarl diff 66aad2d..3ce6ebf -- src/)",
+      "Bash(git -C /home/clvx/Desktop/SiteWebLynxaSarl diff 66aad2d..3ce6ebf -- dist/)"
     ]
   }
 }
