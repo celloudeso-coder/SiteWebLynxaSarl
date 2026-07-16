@@ -19,6 +19,11 @@ export default function AdminAcceptInvite() {
   const [notice, setNotice] = useState("");
 
   useEffect(() => {
+    const hashParams = new URLSearchParams(window.location.hash.replace(/^#/, ""));
+    if (hashParams.get("error_code") === "otp_expired") {
+      setError("Le lien de confirmation a expiré ou a déjà été utilisé. Saisissez votre adresse e-mail puis renvoyez un nouveau lien.");
+      window.history.replaceState(null, "", window.location.pathname + window.location.search);
+    }
     supabase.auth.getSession().then(({ data }) => {
       setSession(data.session);
       setLoading(false);
@@ -41,6 +46,21 @@ export default function AdminAcceptInvite() {
       setError(acceptError?.message || "Cette invitation ne peut pas être acceptée.");
       setSaving(false);
     }
+  }
+
+  async function resendConfirmation() {
+    if (!email.trim()) return setError("Saisissez d’abord votre adresse e-mail pour renvoyer le lien.");
+    setSaving(true);
+    setError("");
+    setNotice("");
+    const { error: resendError } = await supabase.auth.resend({
+      type: "signup",
+      email: email.trim().toLowerCase(),
+      options: { emailRedirectTo: window.location.href },
+    });
+    setSaving(false);
+    if (resendError) return setError(resendError.message || "Impossible de renvoyer l’e-mail de confirmation.");
+    setNotice("Un nouvel e-mail de confirmation vient d’être envoyé. Ouvrez le lien le plus récent.");
   }
 
   async function handleAccount(event) {
@@ -120,6 +140,9 @@ export default function AdminAcceptInvite() {
             </button>
             <button type="button" onClick={() => { setMode(mode === "signup" ? "login" : "signup"); setError(""); }} className="w-full text-sm text-orange-600 hover:underline">
               {mode === "signup" ? "J’ai déjà un compte" : "Créer un nouveau compte"}
+            </button>
+            <button type="button" onClick={resendConfirmation} disabled={saving} className="w-full text-xs text-gray-500 hover:text-gray-800 disabled:opacity-50">
+              Renvoyer l’e-mail de confirmation
             </button>
           </form>
         )}
