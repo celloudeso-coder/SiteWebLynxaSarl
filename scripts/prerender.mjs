@@ -15,10 +15,12 @@
 //
 // /admin/* est volontairement exclu (panneau privé, jamais indexé).
 //
-// Best-effort : si Chromium ne peut pas être lancé (environnement sans les
-// bibliothèques nécessaires, etc.), on logue un avertissement clair et on
-// sort en succès plutôt que de faire échouer "npm run build" — le site se
-// déploie alors comme avant (SPA pure), sans régression.
+// En local et en préproduction (Vercel preview, ou CI sans cible de prod
+// explicite) : best-effort. Si Chromium ne peut pas être lancé, on logue un
+// avertissement et on sort en succès — le site se déploie comme avant (SPA
+// pure), sans régression. En revanche, sur un build CI/Vercel dont la
+// cible EST la production, un prerendering manquant est une régression SEO
+// silencieuse inacceptable : le build échoue avec un message explicite.
 
 import { createServer } from "node:http";
 import { createReadStream } from "node:fs";
@@ -33,6 +35,27 @@ const PORT = 4318;
 // Les 6 routes publiques principales du site (voir la nav dans Header.jsx).
 // /admin/* reste hors prerendering.
 const ROUTES = ["/", "/about", "/service", "/portfolio", "/partnership", "/contact"];
+
+// true sur un runner CI générique (GitHub Actions, etc.) ou sur Vercel.
+function isRunningOnCiOrVercel() {
+  return process.env.CI === "true" || process.env.CI === "1" || Boolean(process.env.VERCEL);
+}
+
+// true si la cible du build est la production.
+function isProductionTarget() {
+  if (process.env.VERCEL) {
+    // Vercel positionne VERCEL_ENV sur CHAQUE déploiement : "production",
+    // "preview" ou "development" — c'est le signal le plus fiable, il
+    // distingue nativement la production de la préproduction (preview).
+    return process.env.VERCEL_ENV === "production";
+  }
+  // CI générique hors Vercel : PRERENDER_TARGET=production permet de le
+  // préciser explicitement dans le pipeline ; à défaut on se fie à
+  // NODE_ENV s'il est déjà positionné par l'environnement appelant.
+  return process.env.PRERENDER_TARGET === "production" || process.env.NODE_ENV === "production";
+}
+
+const STRICT_MODE = isRunningOnCiOrVercel() && isProductionTarget();
 
 const MIME_TYPES = {
   ".html": "text/html; charset=utf-8",
@@ -103,6 +126,26 @@ function dedupeStaticDescription(html) {
   });
 }
 
+// Extrait un résumé diagnostique du HTML final écrit sur disque, pour le
+// récapitulatif affiché en fin de build.
+function summarizeRoute(route, html) {
+  const titleMatch = html.match(/<title>([^<]*)<\/title>/);
+  const descriptionMatch = html.match(/<meta\s+name="description"\s+content="([^"]*)"/);
+  return {
+    Route: route,
+    Titre: titleMatch ? titleMatch[1] : "(absent)",
+    "Longueur description": descriptionMatch ? descriptionMatch[1].length : 0,
+    Canonical: /<link\s+rel="canonical"/.test(html) ? "✓" : "✗",
+    "og:image": /<meta\s+property="og:image"/.test(html) ? "✓" : "✗",
+    "JSON-LD": /application\/ld\+json/.test(html) ? "✓" : "✗",
+  };
+}
+
+function printRouteSummary(summaries) {
+  console.log("\n[prerender] Récapitulatif par route :");
+  console.table(summaries);
+}
+
 async function outputPathFor(route) {
   const outDir = route === "/" ? DIST_DIR : path.join(DIST_DIR, route);
   await mkdir(outDir, { recursive: true });
@@ -153,7 +196,7 @@ async function prerender() {
           const html = dedupeStaticDescription(await page.content());
           const outFile = await outputPathFor(route);
           await writeFile(outFile, html, "utf-8");
-          results.push({ route, outFile, ok: true });
+          results.push({ route, outFile, ok: true, summary: summarizeRoute(route, html) });
           console.log(`[prerender] ✓ ${route} → ${path.relative(process.cwd(), outFile)}`);
         } finally {
           await page.close();
@@ -178,11 +221,24 @@ async function main() {
   try {
     const results = await prerender();
     console.log(`[prerender] Terminé : ${results.length} route(s) prérendue(s).`);
+    printRouteSummary(results.map((r) => r.summary));
   } catch (error) {
-    // Ne jamais faire échouer "npm run build" à cause du prerendering :
-    // le site reste déployable en SPA pure si Chromium n'a pas pu tourner
-    // dans cet environnement.
-    console.warn("[prerender] Étape ignorée (best-effort) — le build SPA reste valide.");
+    if (STRICT_MODE) {
+      // Build CI/Vercel ciblant la production : un prerendering manquant
+      // serait une régression SEO silencieuse (retour au HTML générique
+      // sans title/description/OG par page). On fait échouer le build
+      // plutôt que de le laisser passer discrètement.
+      console.error("[prerender] ÉCHEC — build de production (CI/Vercel, VERCEL_ENV=production) sans prerendering.");
+      console.error(`[prerender] Raison : ${error?.message || error}`);
+      console.error("[prerender] Corrigez l'environnement de build (Chromium indisponible ?) ou, en dernier recours,");
+      console.error("[prerender] forcez le mode best-effort avec PRERENDER_TARGET=preview.");
+      process.exitCode = 1;
+      return;
+    }
+    // Local ou préproduction : ne jamais faire échouer "npm run build" à
+    // cause du prerendering — le site reste déployable en SPA pure si
+    // Chromium n'a pas pu tourner dans cet environnement.
+    console.warn("[prerender] Étape ignorée (best-effort, hors production) — le build SPA reste valide.");
     console.warn(`[prerender] Raison : ${error?.message || error}`);
   }
 }
