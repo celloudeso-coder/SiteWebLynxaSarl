@@ -86,7 +86,7 @@ const Header = () => {
           {/* Logo */}
           <Link
             to="/home"
-            className="flex items-center space-x-3 group"
+            className="flex items-center space-x-3 group min-h-11"
           >
             <div className="relative">
               <div className="w-10 h-10 bg-black from-primary to-accent rounded-lg flex items-center justify-center glow-orange group-hover:scale-105 transition-transform duration-300">
@@ -115,9 +115,10 @@ const Header = () => {
                 to={item?.path}
                 className={`flex items-center space-x-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300 ${
                   isActivePath(item?.path)
-                    ? "bg-primary text-primary-foreground shadow-glow-orange"
+                    ? "bg-primary text-secondary shadow-glow-orange"
                     : "text-text-primary hover:bg-muted hover:text-primary"
                 }`}
+                aria-current={isActivePath(item?.path) ? "page" : undefined}
               >
                 <Icon name={item?.icon} size={16} />
                 <span>{item?.name}</span>
@@ -166,8 +167,10 @@ const Header = () => {
           {/* Mobile Menu Button */}
           <button
             onClick={toggleMenu}
-            className="lg:hidden p-2 rounded-lg hover:bg-muted transition-colors duration-200"
-            aria-label="Toggle menu"
+            className="lg:hidden p-2.5 rounded-lg hover:bg-muted transition-colors duration-200"
+            aria-label={isMenuOpen ? "Fermer le menu" : "Ouvrir le menu"}
+            aria-expanded={isMenuOpen}
+            aria-controls="mobile-nav"
           >
             <Icon name={isMenuOpen ? "X" : "Menu"} size={24} />
           </button>
@@ -175,6 +178,7 @@ const Header = () => {
 
         {/* Mobile Navigation */}
         <div
+          id="mobile-nav"
           className={`lg:hidden transition-all duration-300 overflow-hidden ${
             isMenuOpen ? "max-h-96 opacity-100" : "max-h-0 opacity-0"
           }`}
@@ -186,11 +190,12 @@ const Header = () => {
                   key={item?.path}
                   to={item?.path}
                   onClick={() => setIsMenuOpen(false)}
-                  className={`flex items-center space-x-3 px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200 ${
+                  className={`flex items-center space-x-3 px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200 min-h-11 ${
                     isActivePath(item?.path)
-                      ? "bg-primary text-primary-foreground"
+                      ? "bg-primary text-secondary"
                       : "text-text-primary hover:bg-muted hover:text-primary"
                   }`}
+                  aria-current={isActivePath(item?.path) ? "page" : undefined}
                 >
                   <Icon name={item?.icon} size={20} /> {/* ← ici */}
                   <span>{item?.name}</span>
