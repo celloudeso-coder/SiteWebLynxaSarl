@@ -55,6 +55,9 @@ function normalize(p) {
     technologies:   Array.isArray(p.technologies) ? p.technologies : [],
     testimonial:    p.testimonial,
     projectUrl:     p.project_url,
+    status:         p.status,
+    isFlagship:     !!p.is_flagship_product,
+    productSlug:    p.product_slug,
   };
 }
 

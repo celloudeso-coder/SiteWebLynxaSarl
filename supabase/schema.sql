@@ -121,12 +121,40 @@ CREATE TABLE IF NOT EXISTS portfolio_projects (
   image_url text,
   gallery_urls jsonb DEFAULT '[]',
   project_url text,
+  status text,
+  is_flagship_product boolean DEFAULT false,
+  product_slug text UNIQUE,
+  value_proposition text,
+  key_features jsonb DEFAULT '[]',
+  compliance_notes text,
+  demo_url text,
   updated_at timestamptz DEFAULT now()
 );
--- Colonne ajoutée après le premier déploiement : jusqu'à 2 captures d'écran
--- supplémentaires pour l'étude de cas (image_url reste la photo principale,
--- affichée en en-tête de la fiche projet).
+-- Colonnes ajoutées après le premier déploiement :
+-- - gallery_urls : jusqu'à 2 captures d'écran supplémentaires pour l'étude
+--   de cas (image_url reste la photo principale, en en-tête de la fiche).
+-- - status : statut affiché de façon cohérente partout où le projet
+--   apparaît (ex. "Phase pilote", "En production") — remplace les mentions
+--   de statut auparavant possiblement divergentes entre pages.
+-- - is_flagship_product / product_slug / value_proposition / key_features /
+--   compliance_notes / demo_url : pour les produits qui méritent leur propre
+--   page dédiée (voir KONTA, point 4) au lieu de rester une simple étude de
+--   cas. product_slug pilote l'URL /produits/:slug (src/pages/Product).
 ALTER TABLE portfolio_projects ADD COLUMN IF NOT EXISTS gallery_urls jsonb DEFAULT '[]';
+ALTER TABLE portfolio_projects ADD COLUMN IF NOT EXISTS status text;
+ALTER TABLE portfolio_projects ADD COLUMN IF NOT EXISTS is_flagship_product boolean DEFAULT false;
+ALTER TABLE portfolio_projects ADD COLUMN IF NOT EXISTS product_slug text;
+ALTER TABLE portfolio_projects ADD COLUMN IF NOT EXISTS value_proposition text;
+ALTER TABLE portfolio_projects ADD COLUMN IF NOT EXISTS key_features jsonb DEFAULT '[]';
+ALTER TABLE portfolio_projects ADD COLUMN IF NOT EXISTS compliance_notes text;
+ALTER TABLE portfolio_projects ADD COLUMN IF NOT EXISTS demo_url text;
+DO $$ BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_constraint WHERE conname = 'portfolio_projects_product_slug_key'
+  ) THEN
+    ALTER TABLE portfolio_projects ADD CONSTRAINT portfolio_projects_product_slug_key UNIQUE (product_slug);
+  END IF;
+END $$;
 
 -- -------------------------------------------------------
 -- 5. TEAM MEMBERS

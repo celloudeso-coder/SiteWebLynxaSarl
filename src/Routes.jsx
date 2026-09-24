@@ -23,6 +23,7 @@ const PortfolioShowcase = lazy(() => import("./pages/Portfolio"));
 const InsightsKnowledgeLeadership = lazy(() => import("./pages/insights-knowledge-leadership"));
 const JoinUsPage = lazy(() => import("pages/join-us"));
 const LegalPage = lazy(() => import("./pages/Legal"));
+const ProductPage = lazy(() => import("./pages/Product"));
 
 // Admin CMS : isolé dans ses propres chunks, jamais référencé statiquement
 // depuis le code public.
@@ -49,6 +50,7 @@ const Routes = () => {
             <Route path="/insights" element={<InsightsKnowledgeLeadership />} />
             <Route path="/insights-knowledge-leadership" element={<InsightsKnowledgeLeadership />} />
             <Route path="/join-us" element={<JoinUsPage />} />
+            <Route path="/produits/:slug" element={<ProductPage />} />
             <Route path="/confidentialite" element={<LegalPage page="confidentialite" />} />
             <Route path="/cgu" element={<LegalPage page="cgu" />} />
             <Route path="/securite" element={<LegalPage page="securite" />} />

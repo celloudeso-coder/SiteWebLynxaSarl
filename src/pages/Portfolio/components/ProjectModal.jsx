@@ -74,6 +74,11 @@ const ProjectModal = ({ project, isOpen, onClose }) => (
                     <span className="text-primary font-medium text-sm">{project?.service}</span>
                     <span className="text-muted-foreground text-sm">·</span>
                     <span className="text-muted-foreground text-sm">{project?.industry}</span>
+                    {project?.status && (
+                      <span className="bg-secondary/10 text-secondary text-xs font-medium px-2 py-0.5 rounded-full">
+                        {project.status}
+                      </span>
+                    )}
                   </div>
                   <h2 className="text-2xl font-heading font-bold text-secondary">
                     {project?.title}
@@ -228,6 +233,16 @@ const ProjectModal = ({ project, isOpen, onClose }) => (
                 Intéressé par un projet similaire ? Discutons de vos besoins.
               </p>
               <div className="flex flex-wrap gap-3">
+                {project?.isFlagship && project?.productSlug && (
+                  <Link
+                    to={`/produits/${project.productSlug}`}
+                    onClick={onClose}
+                    className="inline-flex items-center gap-2 border border-secondary text-secondary hover:bg-secondary hover:text-white font-semibold px-5 py-2.5 rounded-xl transition-all duration-200 text-sm whitespace-nowrap"
+                  >
+                    <Icon name="Rocket" size={16} />
+                    Voir la fiche produit
+                  </Link>
+                )}
                 {project?.projectUrl && (() => {
                   const meta = PROJECT_LINK_META[project.service] || { label: "Voir le projet", icon: "ExternalLink" };
                   return (

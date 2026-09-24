@@ -66,11 +66,15 @@ function MetricsEditor({ value = [], onChange }) {
   );
 }
 
+const STATUS_OPTIONS = ["Phase pilote", "En production", "Bêta", "Archivé"];
+
 const emptyProject = {
   sort_order: 0, active: true, title: "", service_type: "", industry: "",
   scale: "", impact: "", description: "", challenge: "", solution: "",
   implementation_steps: [], technologies: [], metrics: [], testimonial: null,
   duration: "", image_url: "", gallery_urls: [], project_url: "",
+  status: "", is_flagship_product: false, product_slug: "",
+  value_proposition: "", key_features: [], compliance_notes: "", demo_url: "",
 };
 
 function updateGalleryUrl(galleryUrls, index, value) {
@@ -173,8 +177,17 @@ export default function PortfolioAdmin() {
                   ? <ChevronUp size={16} className="text-gray-400" />
                   : <ChevronDown size={16} className="text-gray-400" />}
                 <div>
-                  <p className="font-medium text-gray-900 text-sm">{project.title || "Nouveau projet"}</p>
-                  <p className="text-xs text-gray-500">{project.service_type} · {project.industry} · {project.duration}</p>
+                  <p className="font-medium text-gray-900 text-sm flex items-center gap-2">
+                    {project.title || "Nouveau projet"}
+                    {project.is_flagship_product && (
+                      <span className="text-[10px] font-semibold uppercase tracking-wide bg-orange-100 text-orange-600 px-1.5 py-0.5 rounded">
+                        Produit phare
+                      </span>
+                    )}
+                  </p>
+                  <p className="text-xs text-gray-500">
+                    {[project.service_type, project.industry, project.status, project.duration].filter(Boolean).join(" · ")}
+                  </p>
                 </div>
               </button>
               <Toggle checked={project.active} onChange={(v) => toggleActive(project, v)} />
@@ -205,6 +218,16 @@ export default function PortfolioAdmin() {
                   </FormField>
                   <FormField label="Durée">
                     <TextInput value={project.duration} onChange={(v) => update(project.id, "duration", v)} placeholder="6 mois" />
+                  </FormField>
+                  <FormField label="Statut" hint="Affiché de façon cohérente partout où ce projet apparaît.">
+                    <select
+                      value={project.status || ""}
+                      onChange={(e) => update(project.id, "status", e.target.value)}
+                      className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-400"
+                    >
+                      <option value="">— Choisir —</option>
+                      {STATUS_OPTIONS.map((s) => <option key={s}>{s}</option>)}
+                    </select>
                   </FormField>
                   <FormField label="Échelle">
                     <select
@@ -308,6 +331,55 @@ export default function PortfolioAdmin() {
                     </a>
                   )}
                 </FormField>
+
+                {/* Produit phare — page dédiée */}
+                <div className="border-t border-gray-100 pt-5">
+                  <Toggle
+                    checked={!!project.is_flagship_product}
+                    onChange={(v) => update(project.id, "is_flagship_product", v)}
+                    label="Produit phare (a sa propre page dédiée)"
+                  />
+                  {project.is_flagship_product && (
+                    <div className="mt-4 space-y-4">
+                      <FormField label="Slug de la page produit" hint='URL publique : /produits/<slug>. Ex. "konta"'>
+                        <TextInput
+                          value={project.product_slug}
+                          onChange={(v) => update(project.id, "product_slug", v.trim().toLowerCase().replace(/[^a-z0-9-]+/g, "-"))}
+                          placeholder="konta"
+                        />
+                      </FormField>
+                      <FormField label="Proposition de valeur" hint="Phrase d'accroche affichée en haut de la page produit.">
+                        <TextArea
+                          value={project.value_proposition}
+                          onChange={(v) => update(project.id, "value_proposition", v)}
+                          rows={2}
+                          placeholder="La gestion comptable simplifiée pour les PME guinéennes, conforme SYSCOHADA."
+                        />
+                      </FormField>
+                      <FormField label="Fonctions principales">
+                        <JsonArrayEditor
+                          value={project.key_features}
+                          onChange={(v) => update(project.id, "key_features", v)}
+                          placeholder="Ajouter une fonction"
+                        />
+                      </FormField>
+                      <FormField label="Conformité SYSCOHADA" hint="Description de la conformité réglementaire, affichée en section dédiée.">
+                        <TextArea
+                          value={project.compliance_notes}
+                          onChange={(v) => update(project.id, "compliance_notes", v)}
+                          rows={3}
+                        />
+                      </FormField>
+                      <FormField label="Lien de démonstration" hint='Utilisé pour le bouton "Voir la démo".'>
+                        <TextInput
+                          value={project.demo_url}
+                          onChange={(v) => update(project.id, "demo_url", v)}
+                          placeholder="https://konta.lynxatech.com/demo"
+                        />
+                      </FormField>
+                    </div>
+                  )}
+                </div>
 
                 {/* Testimonial */}
                 <div className="border-t border-gray-100 pt-5">

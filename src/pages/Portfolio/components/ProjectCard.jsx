@@ -1,5 +1,6 @@
 import React from "react";
 import { motion } from "framer-motion";
+import { Link } from "react-router-dom";
 import Icon from "../../../components/AppIcon";
 import Image from "../../../components/AppImage";
 
@@ -56,10 +57,15 @@ const ProjectCard = ({ project, onViewDetails, index = 0 }) => {
           sizes="(min-width: 1024px) 400px, (min-width: 768px) 50vw, 100vw"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
-        <div className="absolute top-4 left-4">
+        <div className="absolute top-4 left-4 flex flex-col gap-1.5 items-start">
           <span className={`px-3 py-1 rounded-full text-xs font-medium ${impactStyle}`}>
             {IMPACT_LABELS[project?.impact] || project?.impact}
           </span>
+          {project?.status && (
+            <span className="px-3 py-1 rounded-full text-xs font-medium bg-secondary/90 text-white">
+              {project.status}
+            </span>
+          )}
         </div>
         <div className="absolute top-4 right-4">
           <div className="bg-white/90 backdrop-blur-sm rounded-xl p-2">
@@ -111,6 +117,17 @@ const ProjectCard = ({ project, onViewDetails, index = 0 }) => {
               <Icon name="ArrowRight" size={14} />
             </motion.button>
           </div>
+
+          {project?.isFlagship && project?.productSlug && (
+            <Link
+              to={`/produits/${project.productSlug}`}
+              className="flex items-center justify-center gap-2 w-full bg-secondary/10 hover:bg-secondary hover:text-white text-secondary text-sm font-medium py-2 rounded-xl transition-all duration-200"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <Icon name="Rocket" size={15} />
+              Voir la fiche produit
+            </Link>
+          )}
 
           {project?.projectUrl && (
             <a

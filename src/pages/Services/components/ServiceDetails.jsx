@@ -125,28 +125,41 @@ const ServiceDetails = ({ service }) => {
               Projets Réalisés
             </h3>
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              {service.projects.map((project, i) => (
+              {service.projects.map((project, i) => {
+                // Un projet peut référencer sa page produit dédiée (ex. KONTA) en
+                // ajoutant "product_slug" à son entrée dans le champ CMS "projects"
+                // du service (/admin/services) — sinon simple encart texte, comme
+                // avant.
+                const Wrapper = project.product_slug ? Link : "div";
+                const wrapperProps = project.product_slug ? { to: `/produits/${project.product_slug}` } : {};
+                return (
                 <motion.div
                   key={i}
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: i * 0.07 }}
                   whileHover={{ y: -3 }}
-                  className="bg-gray-50 rounded-xl p-4 hover:bg-white hover:shadow-md transition-all duration-300 border border-gray-100"
                 >
-                  <h4 className="font-semibold text-secondary mb-1.5 text-sm">
-                    {project.name}
-                  </h4>
-                  <p className="text-xs text-gray-500 mb-3 leading-relaxed">
-                    {project.description}
-                  </p>
-                  {project.industry && (
-                    <span className="text-xs text-primary bg-primary/10 px-2.5 py-1 rounded-full">
-                      {project.industry}
-                    </span>
-                  )}
+                  <Wrapper
+                    {...wrapperProps}
+                    className="block bg-gray-50 rounded-xl p-4 hover:bg-white hover:shadow-md transition-all duration-300 border border-gray-100"
+                  >
+                    <h4 className="font-semibold text-secondary mb-1.5 text-sm flex items-center gap-1.5">
+                      {project.name}
+                      {project.product_slug && <Icon name="ArrowUpRight" size={14} className="text-primary" />}
+                    </h4>
+                    <p className="text-xs text-gray-500 mb-3 leading-relaxed">
+                      {project.description}
+                    </p>
+                    {project.industry && (
+                      <span className="text-xs text-primary bg-primary/10 px-2.5 py-1 rounded-full">
+                        {project.industry}
+                      </span>
+                    )}
+                  </Wrapper>
                 </motion.div>
-              ))}
+                );
+              })}
             </div>
           </div>
         )}
