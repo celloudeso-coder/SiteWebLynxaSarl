@@ -144,7 +144,7 @@ const SocialConnect = () => {
                 disabled={loading || !email}
                 whileHover={{ scale: 1.03 }}
                 whileTap={{ scale: 0.97 }}
-                className="bg-primary hover:bg-primary/90 disabled:opacity-50 text-white font-semibold px-6 py-3 min-h-11 rounded-xl transition-all duration-200 glow-orange flex items-center gap-2 justify-center"
+                className="bg-primary hover:bg-primary/90 disabled:opacity-50 text-primary-foreground font-semibold px-6 py-3 min-h-11 rounded-xl transition-all duration-200 glow-orange flex items-center gap-2 justify-center"
               >
                 {loading ? (
                   <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">

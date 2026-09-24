@@ -93,12 +93,12 @@ const CollaborationPathways = () => {
               <div className="flex items-start justify-between mb-6">
                 <motion.div
                   className={`w-14 h-14 rounded-xl flex items-center justify-center ${
-                    pathway.color === "primary" ? "bg-primary" : "bg-accent"
+                    pathway.color === "primary" ? "bg-primary text-primary-foreground" : "bg-accent text-accent-foreground"
                   } glow-orange`}
                   whileHover={{ scale: 1.1, rotate: 5 }}
                   transition={{ type: "spring", stiffness: 300 }}
                 >
-                  <Icon name={pathway.icon} size={26} color="white" />
+                  <Icon name={pathway.icon} size={26} />
                 </motion.div>
                 <div className="text-right">
                   <p className="text-xs text-muted-foreground mb-1">Durée estimée</p>
@@ -142,7 +142,7 @@ const CollaborationPathways = () => {
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 onClick={() => setSelectedPathway(pathway)}
-                className="w-full flex items-center justify-center gap-2 border border-border text-secondary hover:bg-primary hover:text-white hover:border-primary text-sm font-medium py-2.5 px-4 rounded-xl transition-all duration-300"
+                className="w-full flex items-center justify-center gap-2 border border-border text-secondary hover:bg-primary hover:text-primary-foreground hover:border-primary text-sm font-medium py-2.5 px-4 rounded-xl transition-all duration-300"
               >
                 Explorer cette voie
                 <Icon name="ArrowRight" size={15} />
@@ -165,9 +165,9 @@ const CollaborationPathways = () => {
             href="/contact"
             whileHover={{ scale: 1.03 }}
             whileTap={{ scale: 0.97 }}
-            className="inline-flex items-center gap-2 bg-primary hover:bg-primary/90 text-white px-7 py-3 min-h-11 rounded-xl font-semibold transition-all glow-orange"
+            className="inline-flex items-center gap-2 bg-primary hover:bg-primary/90 text-primary-foreground px-7 py-3 min-h-11 rounded-xl font-semibold transition-all glow-orange"
           >
-            <Icon name="MessageCircle" size={18} color="white" />
+            <Icon name="MessageCircle" size={18} color="var(--color-primary-foreground)" />
             Consultation personnalisée gratuite
           </motion.a>
         </motion.div>

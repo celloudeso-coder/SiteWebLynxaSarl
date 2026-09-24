@@ -349,7 +349,7 @@ const ProjectRequestForm = () => {
                       className="pointer-events-none absolute inset-0 rounded border-2 flex items-center justify-center transition-colors border-border peer-checked:bg-primary peer-checked:border-primary group-hover:border-primary peer-focus-visible:ring-2 peer-focus-visible:ring-primary peer-focus-visible:ring-offset-2"
                     >
                       {form.requirements.includes(req) && (
-                        <Icon name="Check" size={12} color="white" />
+                        <Icon name="Check" size={12} color="var(--color-primary-foreground)" />
                       )}
                     </span>
                   </span>
@@ -388,7 +388,7 @@ const ProjectRequestForm = () => {
               disabled={submitting}
               whileHover={{ scale: submitting ? 1 : 1.03 }}
               whileTap={{ scale: 0.97 }}
-              className="inline-flex items-center gap-2 bg-primary hover:bg-primary/90 disabled:opacity-60 text-white font-semibold px-12 py-3.5 min-h-11 rounded-xl text-base transition-all glow-orange"
+              className="inline-flex items-center gap-2 bg-primary hover:bg-primary/90 disabled:opacity-60 text-primary-foreground font-semibold px-12 py-3.5 min-h-11 rounded-xl text-base transition-all glow-orange"
             >
               {submitting ? (
                 <>
@@ -400,7 +400,7 @@ const ProjectRequestForm = () => {
                 </>
               ) : (
                 <>
-                  <Icon name="Send" size={18} color="white" />
+                  <Icon name="Send" size={18} color="var(--color-primary-foreground)" />
                   Soumettre la demande
                 </>
               )}

@@ -268,7 +268,7 @@ const LegalPage = ({ page }) => {
                       to={link.path}
                       aria-current={active ? "page" : undefined}
                       className={`flex items-center gap-3 rounded-xl px-3 py-3 text-sm font-semibold transition-colors ${
-                        active ? "bg-primary text-white" : "text-gray-600 hover:bg-gray-50 hover:text-primary"
+                        active ? "bg-primary text-primary-foreground" : "text-gray-600 hover:bg-gray-50 hover:text-primary"
                       }`}
                     >
                       <Icon name={link.icon} size={18} />

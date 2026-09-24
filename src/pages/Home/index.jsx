@@ -188,9 +188,9 @@ const Homepage = () => {
                     <motion.span
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.97 }}
-                      className="inline-flex items-center gap-2 bg-primary hover:bg-primary/90 text-white px-8 py-4 rounded-xl font-semibold text-lg transition-colors duration-300 glow-orange cursor-pointer"
+                      className="inline-flex items-center gap-2 bg-primary hover:bg-primary/90 text-primary-foreground px-8 py-4 rounded-xl font-semibold text-lg transition-colors duration-300 glow-orange cursor-pointer"
                     >
-                      <Icon name="MessageCircle" size={20} color="white" />
+                      <Icon name="MessageCircle" size={20} color="var(--color-primary-foreground)" />
                       Lancer votre projet
                     </motion.span>
                   </Link>

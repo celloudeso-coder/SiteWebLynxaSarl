@@ -66,7 +66,7 @@ const FounderStory = () => {
               />
             </div>
             <motion.div
-              className="absolute -bottom-4 -right-4 lg:right-auto lg:-right-4 bg-primary text-white px-4 py-3 rounded-xl shadow-lg"
+              className="absolute -bottom-4 -right-4 lg:right-auto lg:-right-4 bg-primary text-primary-foreground px-4 py-3 rounded-xl shadow-lg"
               initial={{ opacity: 0, scale: 0.8 }}
               whileInView={{ opacity: 1, scale: 1 }}
               viewport={{ once: true }}
@@ -123,7 +123,7 @@ const FounderStory = () => {
                 href={founderData.linkedinUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 bg-primary hover:bg-primary/90 text-white font-semibold px-5 py-2.5 rounded-xl transition-all duration-200 text-sm glow-orange"
+                className="inline-flex items-center gap-2 bg-primary hover:bg-primary/90 text-primary-foreground font-semibold px-5 py-2.5 rounded-xl transition-all duration-200 text-sm glow-orange"
               >
                 <Icon name="Linkedin" size={16} />
                 Profil LinkedIn

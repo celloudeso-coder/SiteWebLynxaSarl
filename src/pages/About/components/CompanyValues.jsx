@@ -75,8 +75,8 @@ const CompanyValues = () => {
         >
           <div className="lg:w-1/2 mb-8 lg:mb-0">
             <div className="flex items-center gap-4 mb-4">
-              <div className={`w-12 h-12 ${HIGHLIGHT_VALUE.color} rounded-xl flex items-center justify-center`}>
-                <Icon name={HIGHLIGHT_VALUE.icon} size={24} color="white" />
+              <div className={`w-12 h-12 ${HIGHLIGHT_VALUE.color} text-primary-foreground rounded-xl flex items-center justify-center`}>
+                <Icon name={HIGHLIGHT_VALUE.icon} size={24} />
               </div>
               <h3 className="text-2xl font-heading font-bold text-secondary">{HIGHLIGHT_VALUE.title}</h3>
             </div>

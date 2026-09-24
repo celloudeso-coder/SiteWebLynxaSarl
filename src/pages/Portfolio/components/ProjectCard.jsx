@@ -116,7 +116,7 @@ const ProjectCard = ({ project, onViewDetails, index = 0 }) => {
               href={project.projectUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center justify-center gap-2 w-full bg-primary/10 hover:bg-primary hover:text-white text-primary text-sm font-medium py-2 rounded-xl transition-all duration-200 group/link"
+              className="flex items-center justify-center gap-2 w-full bg-primary/10 hover:bg-primary hover:text-primary-foreground text-primary text-sm font-medium py-2 rounded-xl transition-all duration-200 group/link"
               onClick={(e) => e.stopPropagation()}
             >
               <Icon name={linkMeta.icon} size={15} />

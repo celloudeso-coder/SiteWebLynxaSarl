@@ -460,7 +460,7 @@ const JoinUsForm = () => {
               disabled={submitting}
               whileHover={{ scale: submitting ? 1 : 1.03 }}
               whileTap={{ scale: 0.97 }}
-              className="inline-flex items-center gap-2 bg-primary hover:bg-primary/90 disabled:opacity-60 text-white font-semibold px-10 py-3.5 min-h-11 rounded-xl transition-all glow-orange min-w-[220px] justify-center"
+              className="inline-flex items-center gap-2 bg-primary hover:bg-primary/90 disabled:opacity-60 text-primary-foreground font-semibold px-10 py-3.5 min-h-11 rounded-xl transition-all glow-orange min-w-[220px] justify-center"
             >
               {submitting ? (
                 <>
@@ -472,7 +472,7 @@ const JoinUsForm = () => {
                 </>
               ) : (
                 <>
-                  <Icon name="Send" size={16} color="white" />
+                  <Icon name="Send" size={16} color="var(--color-primary-foreground)" />
                   Soumettre ma candidature
                 </>
               )}

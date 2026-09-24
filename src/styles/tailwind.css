@@ -26,7 +26,13 @@
     
     /* Primary Colors */
     --color-primary: #FF8C00; /* orange-500 */
-    --color-primary-foreground: #FFFFFF; /* white */
+    /* Texte/icônes sur fond primary plein (boutons, badges) : le blanc n'y
+       passe qu'à 2.33:1 (échec AA). #111111 y passe à ~8:1 (AAA) sans
+       assombrir la couleur de marque elle-même. Ce token est LE point
+       central : tout ce qui utilise text-primary-foreground (Button.jsx,
+       Checkbox.jsx, Select.jsx, et les boutons/badges pleins du site)
+       suit automatiquement ce choix. */
+    --color-primary-foreground: #111111;
     /* Même teinte, assombrie pour rester lisible (AA, 5.4:1) quand utilisée
        comme texte sur fond clair — #FF8C00 en texte ne passe qu'à 2.33:1. */
     --color-primary-strong: #A65400;

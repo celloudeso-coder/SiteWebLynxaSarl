@@ -3,6 +3,12 @@ import { motion } from "framer-motion";
 import Icon from "../../../components/AppIcon";
 import { getAboutRoadmapPhases, getAboutVisionPillars, getAboutImpactMetrics } from "../../../lib/cms";
 
+const PHASE_TEXT_COLORS = {
+  "bg-primary": "text-primary-foreground",
+  "bg-accent": "text-accent-foreground",
+  "bg-success": "text-success-foreground",
+};
+
 const STATIC_ROADMAP_PHASES = [
   {
     phase: "Phase 1",
@@ -149,11 +155,11 @@ const VisionRoadmap = () => {
               {/* Icon */}
               <div className="flex-shrink-0 mb-4 lg:mb-0 relative z-10">
                 <motion.div
-                  className={`w-12 h-12 ${phase.color} rounded-full flex items-center justify-center shadow-lg`}
+                  className={`w-12 h-12 ${phase.color} ${PHASE_TEXT_COLORS[phase.color] || "text-white"} rounded-full flex items-center justify-center shadow-lg`}
                   whileHover={{ scale: 1.1 }}
                   transition={{ type: "spring", stiffness: 300 }}
                 >
-                  <Icon name={phase.icon} size={22} color="white" />
+                  <Icon name={phase.icon} size={22} />
                 </motion.div>
                 <div className="text-center mt-2">
                   <div className="text-xs font-semibold text-primary">{phase.phase}</div>

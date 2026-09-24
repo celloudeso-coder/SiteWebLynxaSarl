@@ -171,7 +171,7 @@ const ServiceDetails = ({ service }) => {
             </Link>
             <Link
               to="/contact"
-              className="inline-flex items-center gap-2 bg-primary hover:bg-primary/90 text-white px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 glow-orange"
+              className="inline-flex items-center gap-2 bg-primary hover:bg-primary/90 text-primary-foreground px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 glow-orange"
             >
               <Icon name="MessageCircle" size={16} />
               Obtenir un Devis

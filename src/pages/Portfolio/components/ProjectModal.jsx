@@ -123,7 +123,7 @@ const ProjectModal = ({ project, isOpen, onClose }) => (
                   <div className="space-y-3">
                     {project.implementation.map((step, i) => (
                       <div key={i} className="flex items-start gap-3">
-                        <div className="flex-shrink-0 w-6 h-6 bg-primary rounded-full flex items-center justify-center text-white text-xs font-bold">
+                        <div className="flex-shrink-0 w-6 h-6 bg-primary rounded-full flex items-center justify-center text-primary-foreground text-xs font-bold">
                           {i + 1}
                         </div>
                         <p className="text-muted-foreground text-sm leading-relaxed">{step}</p>
@@ -212,7 +212,7 @@ const ProjectModal = ({ project, isOpen, onClose }) => (
                       href={project.projectUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center gap-2 border border-primary text-primary hover:bg-primary hover:text-white font-semibold px-5 py-2.5 rounded-xl transition-all duration-200 text-sm whitespace-nowrap"
+                      className="inline-flex items-center gap-2 border border-primary text-primary hover:bg-primary hover:text-primary-foreground font-semibold px-5 py-2.5 rounded-xl transition-all duration-200 text-sm whitespace-nowrap"
                     >
                       <Icon name={meta.icon} size={16} />
                       {meta.label}
@@ -223,7 +223,7 @@ const ProjectModal = ({ project, isOpen, onClose }) => (
                 <Link
                   to="/contact"
                   onClick={onClose}
-                  className="inline-flex items-center gap-2 bg-primary hover:bg-primary/90 text-white font-semibold px-5 py-2.5 rounded-xl transition-all duration-200 glow-orange text-sm whitespace-nowrap"
+                  className="inline-flex items-center gap-2 bg-primary hover:bg-primary/90 text-primary-foreground font-semibold px-5 py-2.5 rounded-xl transition-all duration-200 glow-orange text-sm whitespace-nowrap"
                 >
                   <Icon name="MessageCircle" size={16} />
                   Commencer une Discussion

@@ -153,7 +153,7 @@ const HeroSection = () => {
             <motion.span
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.97 }}
-              className="inline-flex items-center gap-2 bg-primary hover:bg-primary/90 text-white px-8 py-4 rounded-xl font-semibold text-lg transition-colors duration-300 glow-orange cursor-pointer min-w-[200px] justify-center"
+              className="inline-flex items-center gap-2 bg-primary hover:bg-primary/90 text-primary-foreground px-8 py-4 rounded-xl font-semibold text-lg transition-colors duration-300 glow-orange cursor-pointer min-w-[200px] justify-center"
             >
               <Icon name="Rocket" size={20} />
               {ctaPrimaryText}

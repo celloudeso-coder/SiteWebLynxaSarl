@@ -54,11 +54,11 @@ const JoinUsProcess = () => {
             >
               {/* Numéro + icône */}
               <motion.div
-                className={`relative w-20 h-20 ${step.color} rounded-2xl flex items-center justify-center mb-5 shadow-md z-10`}
+                className={`relative w-20 h-20 ${step.color} ${step.color === "bg-primary" ? "text-primary-foreground" : "text-accent-foreground"} rounded-2xl flex items-center justify-center mb-5 shadow-md z-10`}
                 whileHover={{ scale: 1.1, rotate: 5 }}
                 transition={{ type: "spring", stiffness: 300 }}
               >
-                <Icon name={step.icon} size={32} color="white" />
+                <Icon name={step.icon} size={32} />
                 <div className="absolute -top-2.5 -right-2.5 w-7 h-7 bg-white border-2 border-primary rounded-full flex items-center justify-center">
                   <span className="text-xs font-bold text-primary">{i + 1}</span>
                 </div>

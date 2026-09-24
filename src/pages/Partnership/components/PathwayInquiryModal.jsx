@@ -104,7 +104,7 @@ const PathwayInquiryModal = ({ pathway, onClose }) => {
 
             <Button
               type="submit"
-              className="w-full bg-primary text-white py-3 rounded-lg hover:bg-accent transition"
+              className="w-full bg-primary text-primary-foreground py-3 rounded-lg hover:bg-accent transition"
             >
               Envoyer ma demande
             </Button>

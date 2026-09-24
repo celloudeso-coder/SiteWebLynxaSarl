@@ -346,7 +346,7 @@ const ContactForm = () => {
                 disabled={submitting}
                 whileHover={{ scale: submitting ? 1 : 1.03 }}
                 whileTap={{ scale: 0.97 }}
-                className="inline-flex items-center gap-2 bg-primary hover:bg-primary/90 disabled:opacity-60 text-white font-semibold px-8 py-3 rounded-xl transition-all duration-200 glow-orange min-w-[200px] min-h-11 justify-center"
+                className="inline-flex items-center gap-2 bg-primary hover:bg-primary/90 disabled:opacity-60 text-primary-foreground font-semibold px-8 py-3 rounded-xl transition-all duration-200 glow-orange min-w-[200px] min-h-11 justify-center"
               >
                 {submitting ? (
                   <>

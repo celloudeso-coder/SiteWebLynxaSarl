@@ -143,7 +143,7 @@ const AboutInnovationStoryVision = () => {
                 <Link to="/service">
                   <motion.span
                     whileHover={{ scale: 1.04 }}
-                    className="inline-flex items-center gap-2 bg-primary hover:bg-primary/90 text-white font-semibold px-6 py-3 rounded-xl transition-all duration-200 glow-orange cursor-pointer"
+                    className="inline-flex items-center gap-2 bg-primary hover:bg-primary/90 text-primary-foreground font-semibold px-6 py-3 rounded-xl transition-all duration-200 glow-orange cursor-pointer"
                   >
                     <Icon name="ArrowRight" size={18} />
                     Découvrez nos services

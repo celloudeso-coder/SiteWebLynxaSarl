@@ -54,7 +54,7 @@ const ServiceHero = () => {
         >
           <a
             href="#services"
-            className="inline-flex items-center gap-2 bg-primary hover:bg-primary/90 text-white font-semibold px-7 py-3 rounded-xl transition-all duration-200 glow-orange"
+            className="inline-flex items-center gap-2 bg-primary hover:bg-primary/90 text-primary-foreground font-semibold px-7 py-3 rounded-xl transition-all duration-200 glow-orange"
           >
             <Icon name="ArrowDown" size={18} />
             Explorer les Services

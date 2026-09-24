@@ -63,9 +63,9 @@ const JoinUsHero = () => {
                 href="#candidature"
                 whileHover={{ scale: 1.04 }}
                 whileTap={{ scale: 0.97 }}
-                className="inline-flex items-center justify-center gap-2 bg-primary hover:bg-primary/90 text-white px-7 py-3.5 rounded-xl font-semibold transition-all glow-orange"
+                className="inline-flex items-center justify-center gap-2 bg-primary hover:bg-primary/90 text-primary-foreground px-7 py-3.5 rounded-xl font-semibold transition-all glow-orange"
               >
-                <Icon name="Send" size={18} color="white" />
+                <Icon name="Send" size={18} color="var(--color-primary-foreground)" />
                 {cta1}
               </motion.a>
               <motion.a

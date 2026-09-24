@@ -151,7 +151,7 @@ const TeamSpotlight1 = () => {
                     href={member.social_links.linkedin}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center hover:bg-primary hover:text-white transition-colors duration-200"
+                    className="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center hover:bg-primary hover:text-primary-foreground transition-colors duration-200"
                   >
                     <Icon name="Linkedin" size={16} />
                   </a>
@@ -161,7 +161,7 @@ const TeamSpotlight1 = () => {
                     href={member.social_links.github}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center hover:bg-primary hover:text-white transition-colors duration-200"
+                    className="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center hover:bg-primary hover:text-primary-foreground transition-colors duration-200"
                   >
                     <Icon name="Github" size={16} />
                   </a>
@@ -171,7 +171,7 @@ const TeamSpotlight1 = () => {
                     href={member.social_links.facebook}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center hover:bg-primary hover:text-white transition-colors duration-200"
+                    className="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center hover:bg-primary hover:text-primary-foreground transition-colors duration-200"
                   >
                     <Icon name="Facebook" size={16} />
                   </a>
@@ -185,7 +185,7 @@ const TeamSpotlight1 = () => {
         <div className="flex justify-end mt-8">
           <button
             onClick={() => navigate(-1)}
-            className="px-6 py-2 bg-primary text-white rounded-full hover:bg-primary/90 transition-colors duration-200"
+            className="px-6 py-2 bg-primary text-primary-foreground rounded-full hover:bg-primary/90 transition-colors duration-200"
           >
             Fermer
           </button>

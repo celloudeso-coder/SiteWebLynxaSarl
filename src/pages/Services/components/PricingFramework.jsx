@@ -136,7 +136,7 @@ const PricingFramework = () => {
             >
               {plan?.popular && (
                 <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
-                  <div className="bg-primary text-white px-6 py-2 rounded-full text-sm font-bold">
+                  <div className="bg-primary text-primary-foreground px-6 py-2 rounded-full text-sm font-bold">
                     Le Plus Populaire
                   </div>
                 </div>

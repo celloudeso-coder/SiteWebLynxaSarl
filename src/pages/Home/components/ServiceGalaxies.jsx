@@ -128,11 +128,11 @@ const ServiceGalaxies = () => {
                     <div className="flex items-start justify-between mb-6">
                       <div className="flex items-center gap-4">
                         <motion.div
-                          className="w-16 h-16 bg-gradient-to-br from-primary to-accent rounded-xl flex items-center justify-center glow-orange"
+                          className="w-16 h-16 bg-gradient-to-br from-primary to-accent text-primary-foreground rounded-xl flex items-center justify-center glow-orange"
                           whileHover={{ scale: 1.1, rotate: 5 }}
                           transition={{ duration: 0.2 }}
                         >
-                          <Icon name={service.icon || "Briefcase"} size={28} color="white" />
+                          <Icon name={service.icon || "Briefcase"} size={28} />
                         </motion.div>
                         <div>
                           <h3 className="text-2xl font-heading font-bold text-secondary mb-1">{service.title}</h3>

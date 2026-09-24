@@ -254,7 +254,7 @@ const BlogSection = ({ activeCategory, searchQuery }) => {
                   className="w-full h-48 object-cover transition-transform duration-300 hover:scale-105"
                 />
                 <div className="absolute top-4 left-4">
-                  <span className="bg-primary text-white px-3 py-1 rounded-full text-xs font-semibold capitalize">
+                  <span className="bg-primary text-primary-foreground px-3 py-1 rounded-full text-xs font-semibold capitalize">
                     {post?.category?.replace("-", " ")}
                   </span>
                 </div>
@@ -326,7 +326,7 @@ const BlogSection = ({ activeCategory, searchQuery }) => {
               size="lg"
               iconName="Plus"
               iconPosition="left"
-              className="px-8 py-3 border-primary text-primary hover:bg-primary hover:text-white"
+              className="px-8 py-3 border-primary text-primary hover:bg-primary hover:text-primary-foreground"
             >
               Charger plus d'articles
             </Button>

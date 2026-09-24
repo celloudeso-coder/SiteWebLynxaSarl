@@ -115,7 +115,7 @@ const Header = () => {
                 to={item?.path}
                 className={`flex items-center space-x-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300 ${
                   isActivePath(item?.path)
-                    ? "bg-primary text-secondary shadow-glow-orange"
+                    ? "bg-primary text-primary-foreground shadow-glow-orange"
                     : "text-text-primary hover:bg-muted hover:text-primary"
                 }`}
                 aria-current={isActivePath(item?.path) ? "page" : undefined}
@@ -192,7 +192,7 @@ const Header = () => {
                   onClick={() => setIsMenuOpen(false)}
                   className={`flex items-center space-x-3 px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200 min-h-11 ${
                     isActivePath(item?.path)
-                      ? "bg-primary text-secondary"
+                      ? "bg-primary text-primary-foreground"
                       : "text-text-primary hover:bg-muted hover:text-primary"
                   }`}
                   aria-current={isActivePath(item?.path) ? "page" : undefined}

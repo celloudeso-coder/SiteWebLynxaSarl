@@ -81,7 +81,7 @@ const FilterBar = ({
               className={`px-4 py-2 rounded-full text-sm font-medium transition-colors duration-200 border
                 ${
                   activeService === s
-                    ? "bg-primary text-white border-primary"
+                    ? "bg-primary text-primary-foreground border-primary"
                     : "bg-white text-secondary border-border hover:border-primary/50"
                 }`}
             >

@@ -92,7 +92,7 @@ const TechnologyStack = () => {
               onClick={() => setActiveCategory(cat.key)}
               className={`flex items-center space-x-2 px-6 py-3 rounded-xl font-medium transition-all duration-300 ${
                 activeCategory === cat.key
-                  ? "bg-primary text-white shadow-lg glow-orange"
+                  ? "bg-primary text-primary-foreground shadow-lg glow-orange"
                   : "bg-gray-100 text-gray-700 hover:bg-gray-200"
               }`}
             >
@@ -153,13 +153,13 @@ const TechnologyStack = () => {
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
               <Link to="/contact">
-                <button className="flex items-center space-x-2 px-6 py-3 bg-white border-2 border-primary text-primary-strong rounded-xl font-medium hover:bg-primary hover:text-white transition-all duration-300">
+                <button className="flex items-center space-x-2 px-6 py-3 bg-white border-2 border-primary text-primary-strong rounded-xl font-medium hover:bg-primary hover:text-primary-foreground transition-all duration-300">
                   <Icon name="MessageCircle" size={20} />
                   <span>Discuter des Besoins</span>
                 </button>
               </Link>
               <Link to="/contact">
-                <button className="flex items-center space-x-2 px-6 py-3 bg-primary text-white rounded-xl font-medium hover:bg-accent transition-all duration-300 glow-orange">
+                <button className="flex items-center space-x-2 px-6 py-3 bg-primary text-primary-foreground rounded-xl font-medium hover:bg-accent transition-all duration-300 glow-orange">
                   <Icon name="Calendar" size={20} />
                   <span>Planifier une Consultation</span>
                 </button>

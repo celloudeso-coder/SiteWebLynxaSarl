@@ -250,7 +250,7 @@ const TeamSpotlight = () => {
                         rel="noopener noreferrer"
                         aria-label={`${member.name} sur LinkedIn`}
                         tabIndex={isDuplicate ? -1 : undefined}
-                        className="relative before:absolute before:-inset-1.5 before:content-[''] w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-sm hover:bg-primary hover:text-white transition-colors duration-200"
+                        className="relative before:absolute before:-inset-1.5 before:content-[''] w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-sm hover:bg-primary hover:text-primary-foreground transition-colors duration-200"
                       >
                         <Icon name="Linkedin" size={14} />
                       </a>
@@ -262,7 +262,7 @@ const TeamSpotlight = () => {
                         rel="noopener noreferrer"
                         aria-label={`${member.name} sur GitHub`}
                         tabIndex={isDuplicate ? -1 : undefined}
-                        className="relative before:absolute before:-inset-1.5 before:content-[''] w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-sm hover:bg-primary hover:text-white transition-colors duration-200"
+                        className="relative before:absolute before:-inset-1.5 before:content-[''] w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-sm hover:bg-primary hover:text-primary-foreground transition-colors duration-200"
                       >
                         <Icon name="Github" size={14} />
                       </a>
