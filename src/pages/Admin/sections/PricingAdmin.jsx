@@ -3,9 +3,10 @@ import { getPricingPlans, savePricingPlan, deletePricingPlan } from "../../../li
 import { FormField, TextInput, Toggle, JsonArrayEditor } from "../components/FormField";
 import SaveButton from "../components/SaveButton";
 import { Plus, Trash2, ChevronDown, ChevronUp, Star } from "lucide-react";
+import { formatDualPrice } from "../../../data/pricing";
 
 const emptyPlan = {
-  sort_order: 0, active: true, name: "", price: "", price_note: "",
+  sort_order: 0, active: true, name: "", price: "", price_usd: "", price_note: "",
   is_popular: false, features: [], cta_text: "Demander un devis",
 };
 
@@ -93,7 +94,9 @@ export default function PricingAdmin() {
                 {plan.is_popular && <Star size={14} className="text-orange-400 fill-orange-400" />}
                 <div>
                   <p className="font-medium text-gray-900 text-sm">{plan.name || "Nouveau plan"}</p>
-                  <p className="text-xs text-gray-500">{plan.price} {plan.price_note}</p>
+                  <p className="text-xs text-gray-500">
+                    {plan.price_usd != null ? formatDualPrice(plan.price_usd)?.primary : (plan.price || "—")} {plan.price_note}
+                  </p>
                 </div>
               </button>
               <Toggle checked={plan.active} onChange={(v) => toggleActive(plan, v)} />
@@ -108,8 +111,16 @@ export default function PricingAdmin() {
                   <FormField label="Nom du plan">
                     <TextInput value={plan.name} onChange={(v) => update(plan.id, "name", v)} placeholder="Pack Startup" />
                   </FormField>
-                  <FormField label="Prix">
-                    <TextInput value={plan.price} onChange={(v) => update(plan.id, "price", v)} placeholder="$700 ou Sur devis" />
+                  <FormField label="Prix (USD)" hint="Double affichage GNF/USD automatique. Laisser vide pour « Sur devis ».">
+                    <TextInput
+                      type="number"
+                      value={plan.price_usd ?? ""}
+                      onChange={(v) => update(plan.id, "price_usd", v === "" ? null : Number(v))}
+                      placeholder="500"
+                    />
+                  </FormField>
+                  <FormField label="Prix (texte, repli)" hint="Affiché seulement si « Prix (USD) » est vide, ex. Sur devis">
+                    <TextInput value={plan.price} onChange={(v) => update(plan.id, "price", v)} placeholder="Sur devis" />
                   </FormField>
                   <FormField label="Note de prix" hint="Ex: prix de départ, par mois…">
                     <TextInput value={plan.price_note} onChange={(v) => update(plan.id, "price_note", v)} />

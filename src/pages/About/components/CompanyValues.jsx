@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import Icon from "../../../components/AppIcon";
 import Image from "../../../components/AppImage";
 import { getAboutCoreValues } from "../../../lib/cms";
+import { formatDualPrice } from "../../../data/pricing";
 
 const STATIC_CORE_VALUES = [
   { icon: "Lightbulb", title: "Innovation", description: "Repousser constamment les limites et explorer de nouvelles possibilités" },
@@ -29,8 +30,9 @@ const HIGHLIGHT_VALUE = {
       description: "Livraison de projets fluide, peu importe la localisation",
       image: "/remotecolab.png",
       // "99,5 % de disponibilité" retiré : aucune formule de maintenance
-      // (Services, 100-500 $/mois) ne promet un SLA chiffré.
-      metrics: "Maintenance dès 100 $/mois",
+      // (voir ADDITIONAL_SERVICES "Maintenance Continue" dans
+      // src/data/pricing.js) ne promet un SLA chiffré.
+      metrics: `Maintenance dès ${formatDualPrice(100)?.primary} (${formatDualPrice(100)?.secondary}) /mois`,
     },
   ],
   color: "bg-primary",

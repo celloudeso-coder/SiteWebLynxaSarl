@@ -3,12 +3,14 @@ import { getPartnershipPathways, savePartnershipPathway, deletePartnershipPathwa
 import { FormField, TextInput, TextArea, Toggle } from "../components/FormField";
 import SaveButton from "../components/SaveButton";
 import { Plus, Trash2, ChevronDown, ChevronUp } from "lucide-react";
+import { formatPathwayBudget } from "../../../data/pricing";
 
 const ICONS = ["Rocket", "Building2", "Globe", "Network", "Handshake", "Star", "Zap", "Users", "Award", "Briefcase"];
 
 const empty = {
   sort_order: 0, active: true, title: "", description: "",
-  icon: "Handshake", features: [], ideal_for: "", timeline: "", budget: "", color: "primary",
+  icon: "Handshake", features: [], ideal_for: "", timeline: "",
+  budget: "", budget_min_usd: "", budget_max_usd: "", color: "primary",
 };
 
 function featuresFromValue(val) {
@@ -117,7 +119,7 @@ export default function PartnershipAdmin() {
                   }
                   <div>
                     <p className="font-medium text-gray-900 text-sm">{item.title || "Nouvelle voie"}</p>
-                    <p className="text-xs text-gray-500">{item.timeline || "—"} · {item.budget || "—"}</p>
+                    <p className="text-xs text-gray-500">{item.timeline || "—"} · {formatPathwayBudget(item)?.primary || "—"}</p>
                   </div>
                 </button>
                 <Toggle checked={item.active} onChange={(v) => toggleActive(item, v)} />
@@ -178,10 +180,37 @@ export default function PartnershipAdmin() {
                     <FormField label="Délai estimé">
                       <TextInput value={item.timeline} onChange={(v) => update(item.id, "timeline", v)} placeholder="2-8 semaines" />
                     </FormField>
-                    <FormField label="Budget">
-                      <TextInput value={item.budget} onChange={(v) => update(item.id, "budget", v)} placeholder="700 $ – 3 000 $" />
+                  </div>
+
+                  {/* Budget : min/max en USD → double affichage GNF/USD automatique
+                      (src/data/pricing.js) ; le texte libre ne sert que pour les
+                      paliers sans montant fixe, ex. "Partage de revenus". */}
+                  <div className="grid sm:grid-cols-3 gap-4">
+                    <FormField label="Budget min (USD)">
+                      <TextInput
+                        type="number"
+                        value={item.budget_min_usd ?? ""}
+                        onChange={(v) => update(item.id, "budget_min_usd", v === "" ? null : Number(v))}
+                        placeholder="700"
+                      />
+                    </FormField>
+                    <FormField label="Budget max (USD)" hint="Laisser vide pour « et plus »">
+                      <TextInput
+                        type="number"
+                        value={item.budget_max_usd ?? ""}
+                        onChange={(v) => update(item.id, "budget_max_usd", v === "" ? null : Number(v))}
+                        placeholder="3000"
+                      />
+                    </FormField>
+                    <FormField label="Budget (texte libre)" hint="Utilisé seulement si min/max USD vides">
+                      <TextInput value={item.budget} onChange={(v) => update(item.id, "budget", v)} placeholder="Partage de revenus" />
                     </FormField>
                   </div>
+                  {(item.budget_min_usd || item.budget_max_usd) && (
+                    <p className="text-xs text-gray-400 -mt-3">
+                      Aperçu : {formatPathwayBudget(item)?.primary} {formatPathwayBudget(item)?.secondary}
+                    </p>
+                  )}
 
                   <FormField label="Ordre d'affichage">
                     <input

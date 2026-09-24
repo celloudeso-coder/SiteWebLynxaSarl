@@ -5,6 +5,7 @@ import Button from "../../../components/ui/Button";
 import Input from "../../../components/ui/Input";
 import { logUnrecordedSubmission } from "../../../lib/cms";
 import { useSiteSettings } from "../../../hooks/useContent";
+import { formatPathwayBudget } from "../../../data/pricing";
 
 const PathwayInquiryModal = ({ pathway, onClose }) => {
   const [formData, setFormData] = useState({
@@ -16,6 +17,7 @@ const PathwayInquiryModal = ({ pathway, onClose }) => {
   const [status, setStatus] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const { data: settings } = useSiteSettings();
+  const budget = formatPathwayBudget(pathway);
   const fallbackPhone = settings?.contact?.phone || "+224 621 724 657";
   const fallbackEmail = settings?.contact?.email || "contact@lynxatech.com";
   const fallbackWhatsapp = `https://wa.me/${fallbackPhone.replace(/\s/g, "").replace("+", "")}?text=${encodeURIComponent(`Bonjour, je suis intéressé par : ${pathway?.title || "une voie de collaboration"}.`)}`;
@@ -39,7 +41,7 @@ const PathwayInquiryModal = ({ pathway, onClose }) => {
 
     const payload = {
       pathway_title: pathway?.title,
-      pathway_budget: pathway?.budget,
+      pathway_budget: budget?.primary,
       pathway_timeline: pathway?.timeline,
       name: formData.name,
       email: formData.email,
@@ -75,7 +77,8 @@ const PathwayInquiryModal = ({ pathway, onClose }) => {
             Intéressé par : {pathway?.title}
           </h3>
           <p className="text-gray-500">
-            Budget estimé : <strong>{pathway?.budget}</strong> • Durée :{" "}
+            Budget estimé : <strong>{budget?.primary}</strong>
+            {budget?.secondary && <span className="text-xs"> ({budget.secondary})</span>} • Durée :{" "}
             <strong>{pathway?.timeline}</strong>
           </p>
         </div>

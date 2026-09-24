@@ -4,6 +4,7 @@ import emailjs from "@emailjs/browser";
 import Icon from "../../../components/AppIcon";
 import { logUnrecordedSubmission } from "../../../lib/cms";
 import { useSiteSettings } from "../../../hooks/useContent";
+import { BUDGET_BRACKETS } from "../../../data/pricing";
 
 const PROJECT_TYPES = [
   { value: "mobile",         label: "Application mobile (iOS/Android)" },
@@ -16,14 +17,10 @@ const PROJECT_TYPES = [
   { value: "other",          label: "Autre"                             },
 ];
 
-const BUDGETS = [
-  { value: "under-1k",  label: "Moins de 1 000 $"   },
-  { value: "1k-3k",     label: "1 000 $ – 3 000 $"  },
-  { value: "3k-10k",    label: "3 500 $ – 10 000 $" },
-  { value: "15k",       label: "15 000 $"            },
-  { value: "over-15k",  label: "Plus de 15 000 $"    },
-  { value: "discuss",   label: "Discutons-en"        },
-];
+// Même échelle que Contact/ContactForm.jsx — source unique :
+// src/data/pricing.js (BUDGET_BRACKETS). Comble l'écart qui existait entre
+// "3 500 $ – 10 000 $" et "15 000 $".
+const BUDGETS = BUDGET_BRACKETS;
 
 const TIMELINES = [
   { value: "asap",       label: "Dès que possible (urgent)"  },

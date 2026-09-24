@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Icon from "../../../components/AppIcon";
 import { submitContactMessage, getContactFormConfig } from "../../../lib/cms";
+import { BUDGET_BRACKETS } from "../../../data/pricing";
 
 const STATIC_INQUIRY_TYPES = [
   { value: "new-project",   label: "Développement de nouveau projet" },
@@ -12,13 +13,9 @@ const STATIC_INQUIRY_TYPES = [
   { value: "other",         label: "Autre"                            },
 ];
 
-const STATIC_BUDGET_RANGES = [
-  { value: "under-5k",  label: "Moins de 5 000 $"    },
-  { value: "5k-15k",    label: "5 000 $ – 15 000 $"  },
-  { value: "15k-50k",   label: "15 000 $ – 50 000 $" },
-  { value: "over-50k",  label: "Plus de 50 000 $"     },
-  { value: "discuss",   label: "Préfère en discuter"  },
-];
+// Même échelle que Partnership/ProjectRequestForm.jsx — source unique :
+// src/data/pricing.js (BUDGET_BRACKETS), alignée sur la grille tarifaire.
+const STATIC_BUDGET_RANGES = BUDGET_BRACKETS;
 
 const STATIC_CONTACT_METHODS = [
   { value: "email",    label: "Email"              },

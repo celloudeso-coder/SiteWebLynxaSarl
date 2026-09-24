@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import Icon from "../../../components/AppIcon";
 import PathwayInquiryModal from "./PathwayInquiryModal";
 import { usePartnershipPathways } from "../../../hooks/useContent";
+import { formatPathwayBudget } from "../../../data/pricing";
 
 const STATIC_PATHWAYS = [
   {
@@ -11,7 +12,7 @@ const STATIC_PATHWAYS = [
     icon: "Rocket",
     features: ["Développement MVP", "Plans de paiement flexibles", "Solutions axées sur la croissance", "Support de mentorat"],
     ideal_for: "Startups, Petites Entreprises, Entrepreneurs",
-    timeline: "2-8 semaines", budget: "700 $ – 3 000 $", color: "primary",
+    timeline: "2-8 semaines", budgetMinUsd: 700, budgetMaxUsd: 3000, color: "primary",
   },
   {
     id: 2, sort_order: 2, title: "Solutions Entreprises",
@@ -22,7 +23,7 @@ const STATIC_PATHWAYS = [
     // comme d'ores et déjà acquis.
     features: ["Systèmes entreprises personnalisés", "Support prioritaire 24/7", "Chef de projet dédié", "SLA défini au contrat"],
     ideal_for: "Grandes Entreprises, Gouvernement, ONG",
-    timeline: "3-12 mois", budget: "3 500 $ – 10 000 $", color: "accent",
+    timeline: "3-12 mois", budgetMinUsd: 3500, budgetMaxUsd: 10000, color: "accent",
   },
   {
     id: 3, sort_order: 3, title: "Collaboration Internationale",
@@ -30,7 +31,7 @@ const STATIC_PATHWAYS = [
     icon: "Globe",
     features: ["Adaptation culturelle", "Support multilingue", "Expertise marché local", "Assistance conformité"],
     ideal_for: "Entreprises Internationales, ONG Mondiales",
-    timeline: "4-16 semaines", budget: "15 000 $ et +", color: "primary",
+    timeline: "4-16 semaines", budgetMinUsd: 15000, budgetMaxUsd: null, color: "primary",
   },
   {
     id: 4, sort_order: 4, title: "Réseau Technologique",
@@ -82,7 +83,9 @@ const CollaborationPathways = () => {
         </motion.div>
 
         <div className="grid lg:grid-cols-2 gap-8">
-          {pathways.map((pathway, i) => (
+          {pathways.map((pathway, i) => {
+            const budget = formatPathwayBudget(pathway);
+            return (
             <motion.div
               key={pathway.id}
               custom={i}
@@ -136,7 +139,8 @@ const CollaborationPathways = () => {
                   </div>
                   <div>
                     <p className="text-xs text-muted-foreground mb-1">Budget</p>
-                    <p className="text-xs font-medium text-secondary">{pathway.budget}</p>
+                    <p className="text-xs font-medium text-secondary">{budget?.primary}</p>
+                    {budget?.secondary && <p className="text-[10px] text-muted-foreground">{budget.secondary}</p>}
                   </div>
                 </div>
               </div>
@@ -151,7 +155,8 @@ const CollaborationPathways = () => {
                 <Icon name="ArrowRight" size={15} />
               </motion.button>
             </motion.div>
-          ))}
+            );
+          })}
         </div>
 
         <motion.div

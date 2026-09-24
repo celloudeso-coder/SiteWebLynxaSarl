@@ -33,10 +33,10 @@ export function FormField({ label, children, hint }) {
   );
 }
 
-export function TextInput({ value, onChange, placeholder, className = "" }) {
+export function TextInput({ value, onChange, placeholder, className = "", type = "text" }) {
   return (
     <input
-      type="text"
+      type={type}
       value={value || ""}
       onChange={(e) => onChange(e.target.value)}
       placeholder={placeholder}

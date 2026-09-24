@@ -5,6 +5,7 @@ import {
   ChevronDown, ChevronUp, Clock, Phone, Building2,
   DollarSign, MessageSquare, Tag, Search, RefreshCw,
 } from "lucide-react";
+import { BUDGET_BRACKETS } from "../../../data/pricing";
 
 // ── Status config ─────────────────────────────────────────────────────────────
 const STATUS_CONFIG = {
@@ -23,12 +24,19 @@ const INQUIRY_LABELS = {
   "other":        "Autre",
 };
 
+// Anciennes valeurs ("under-5k"…) conservées pour l'affichage des messages
+// déjà enregistrés avant l'alignement sur la grille tarifaire unique ; les
+// nouveaux messages utilisent les clés de BUDGET_BRACKETS (src/data/pricing.js).
+const LEGACY_BUDGET_LABELS = {
+  "under-5k": "< 5 000 $ (ancienne fourchette)",
+  "5k-15k":   "5k – 15k $ (ancienne fourchette)",
+  "15k-50k":  "15k – 50k $ (ancienne fourchette)",
+  "over-50k": "> 50 000 $ (ancienne fourchette)",
+};
+
 const BUDGET_LABELS = {
-  "under-5k": "< 5 000 $",
-  "5k-15k":   "5k – 15k $",
-  "15k-50k":  "15k – 50k $",
-  "over-50k": "> 50 000 $",
-  "discuss":  "À discuter",
+  ...LEGACY_BUDGET_LABELS,
+  ...Object.fromEntries(BUDGET_BRACKETS.map((b) => [b.value, b.label])),
 };
 
 const CONTACT_LABELS = {

@@ -3,9 +3,14 @@ import { getContactFormConfig, saveContactFormConfig, getOfficeDetails, saveOffi
 import { FormField, TextInput, TextArea } from "../components/FormField";
 import SaveButton from "../components/SaveButton";
 import { Plus, Trash2, Phone, FileText, MapPin } from "lucide-react";
+import { BUDGET_BRACKETS } from "../../../data/pricing";
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
+// budget_ranges par défaut : mêmes fourchettes que le formulaire public
+// (src/data/pricing.js), pour que ce qui est proposé à l'édition ici
+// corresponde à ce qui s'affiche réellement tant qu'aucune valeur CMS n'a
+// été enregistrée dans "site_settings".
 const STATIC_FORM_CONFIG = {
   inquiry_types: [
     { value: "new-project",  label: "Développement de nouveau projet" },
@@ -15,13 +20,7 @@ const STATIC_FORM_CONFIG = {
     { value: "consultation", label: "Consultation gratuite" },
     { value: "other",        label: "Autre" },
   ],
-  budget_ranges: [
-    { value: "under-5k", label: "Moins de 5 000 $" },
-    { value: "5k-15k",   label: "5 000 $ – 15 000 $" },
-    { value: "15k-50k",  label: "15 000 $ – 50 000 $" },
-    { value: "over-50k", label: "Plus de 50 000 $" },
-    { value: "discuss",  label: "Préfère en discuter" },
-  ],
+  budget_ranges: BUDGET_BRACKETS.map(({ value, label }) => ({ value, label })),
   contact_methods: [
     { value: "email",    label: "Email" },
     { value: "phone",    label: "Appel téléphonique" },
