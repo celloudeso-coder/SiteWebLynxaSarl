@@ -6,7 +6,6 @@ import CollaborationPathways from "./components/CollaborationPathways";
 import ProjectRequestForm from "./components/ProjectRequestForm";
 import ProcessOverview from "./components/ProcessOverview";
 import TrustSignals from "./components/TrustSignals";
-import logoIco from "../../../public/LYNXA.ico";
 import { useSiteSettings } from "../../hooks/useContent";
 
 const PartnershipCollaborationGateway = () => {
@@ -43,7 +42,7 @@ const PartnershipCollaborationGateway = () => {
               <div>
                 <div className="flex items-center space-x-3 mb-4">
                   <div className="w-10 h-10 bg-black rounded-lg flex items-center justify-center">
-                    <img src={logoIco} alt="Lynxa Tech logo" className="w-8 h-8 object-cover rounded-lg" />
+                    <img src="/icon-192.png" alt="Lynxa Tech logo" className="w-8 h-8 object-cover rounded-lg" />
                   </div>
                   <div>
                     <h3 className="font-heading font-bold text-lg">Lynxa Tech</h3>

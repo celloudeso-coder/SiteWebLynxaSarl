@@ -8,7 +8,6 @@ import MetricsDashboard from "./components/MetricsDashboard";
 import ServiceGalaxies from "./components/ServiceGalaxies";
 import TestimonialCarousel from "./components/TestimonialCarousel";
 import Icon from "../../components/AppIcon";
-import logoIco from "../../../public/LYNXA.ico";
 import { getHomeEngagements, getHomeWhyItems } from "../../lib/cms";
 import { useSiteSettings } from "../../hooks/useContent";
 
@@ -217,7 +216,7 @@ const Homepage = () => {
               <div className="md:col-span-2">
                 <div className="flex items-center gap-3 mb-5">
                   <div className="w-10 h-10 bg-black rounded-lg flex items-center justify-center overflow-hidden">
-                    <img src={logoIco} alt="Lynxa Tech logo" className="w-8 h-8 object-cover rounded-lg" />
+                    <img src="/icon-192.png" alt="Lynxa Tech logo" className="w-8 h-8 object-cover rounded-lg" />
                   </div>
                   <div>
                     <h3 className="text-xl font-heading font-bold">Lynxa Tech</h3>

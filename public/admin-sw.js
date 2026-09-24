@@ -1,4 +1,4 @@
-const VERSION = "lynxa-admin-v2";
+const VERSION = "lynxa-admin-v3";
 const SHELL_CACHE = `${VERSION}-shell`;
 const ASSET_CACHE = `${VERSION}-assets`;
 const ADMIN_SHELL = "/admin/";
@@ -9,7 +9,7 @@ const PRECACHE = [
   "/admin-manifest.webmanifest",
   "/admin-icon-192.png",
   "/admin-icon-512.png",
-  "/LYNXA.ico",
+  "/favicon.ico",
 ];
 
 self.addEventListener("install", (event) => {

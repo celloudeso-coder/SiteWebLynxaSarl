@@ -5,7 +5,6 @@ import JoinUsHero from "./components/joinus-hero";
 import JoinUsProcess from "./components/joinus-process";
 import JoinUsOpenings from "./components/joinus-openings";
 import JoinUsForm from "./components/joinUs-form";
-import logoIco from "../../../public/LYNXA.ico";
 import { useSiteSettings } from "../../hooks/useContent";
 
 const JoinUsPage = () => {
@@ -41,7 +40,7 @@ const JoinUsPage = () => {
               <div className="md:col-span-2">
                 <div className="flex items-center space-x-3 mb-4">
                   <div className="w-10 h-10 bg-black rounded-lg flex items-center justify-center">
-                    <img src={logoIco} alt="Lynxa Tech logo" className="w-8 h-8 object-cover rounded-lg" />
+                    <img src="/icon-192.png" alt="Lynxa Tech logo" className="w-8 h-8 object-cover rounded-lg" />
                   </div>
                   <div>
                     <h3 className="text-xl font-heading font-bold">Lynxa Tech</h3>

@@ -26,6 +26,9 @@ const BREAKPOINTS = [80, 160, 400, 800, 1600];
 const SKIP = new Set([
   "admin-icon-192.png",
   "admin-icon-512.png",
+  "icon-192.png",
+  "icon-512.png",
+  "apple-touch-icon.png",
   "og-default.png", // spec réseaux sociaux : taille fixe 1200×630 requise
 ]);
 

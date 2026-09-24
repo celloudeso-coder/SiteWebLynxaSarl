@@ -6,7 +6,6 @@ import QuickConnectCards from "./components/QuickConnectCards";
 import ContactForm from "./components/ContactForm";
 import OfficeLocation from "./components/OfficeLocation";
 import SocialConnect from "./components/SocialConnect";
-import logoIco from "../../../public/LYNXA.ico";
 import { useSiteSettings } from "../../hooks/useContent";
 
 const ContactMultiChannelConnection = () => {
@@ -46,7 +45,7 @@ const ContactMultiChannelConnection = () => {
                   <div className="w-10 h-10 bg-black rounded-lg flex items-center justify-center">
 
                 <img
-                  src={logoIco}
+                  src="/icon-192.png"
                   alt="Lynxa Tech logo"
                   className="w-8 h-8 object-cover rounded-lg"
                 />

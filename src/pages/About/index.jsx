@@ -10,7 +10,6 @@ import WhyGuinea from "./components/WhyGuinea";
 import CompanyValues from "./components/CompanyValues";
 import VisionRoadmap from "./components/VisionRoadmap";
 import Icon from "../../components/AppIcon";
-import logoIco from "../../../public/LYNXA.ico";
 import { useSiteSettings } from "../../hooks/useContent";
 
 const AboutInnovationStoryVision = () => {
@@ -170,7 +169,7 @@ const AboutInnovationStoryVision = () => {
               <div className="md:col-span-2">
                 <div className="flex items-center gap-3 mb-4">
                   <div className="w-10 h-10 bg-black rounded-lg flex items-center justify-center overflow-hidden">
-                    <img src={logoIco} alt="Lynxa Tech" className="w-8 h-8 object-cover rounded-lg" />
+                    <img src="/icon-192.png" alt="Lynxa Tech" className="w-8 h-8 object-cover rounded-lg" />
                   </div>
                   <div>
                     <h3 className="text-xl font-heading font-bold">Lynxa Tech</h3>

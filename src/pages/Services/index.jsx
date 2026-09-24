@@ -11,7 +11,6 @@ import TechnologyStack from "./components/TechnologyStack";
 import PricingFramework from "./components/PricingFramework";
 import Icon from "../../components/AppIcon";
 import { useServices } from "../../hooks/useContent";
-import logoIco from "../../../public/LYNXA.ico";
 
 // Statique plutôt que dérivé des services CMS (chargés en async) : reste
 // présent dès le premier rendu et pendant le prerendering au build, sans
@@ -291,7 +290,7 @@ const ServicesPage = () => {
             <div className="md:col-span-2">
               <div className="flex items-center gap-3 mb-4">
                 <div className="w-10 h-10 bg-black rounded-lg flex items-center justify-center overflow-hidden">
-                  <img src={logoIco} alt="Lynxa Tech" className="w-8 h-8 object-cover rounded-lg" />
+                  <img src="/icon-192.png" alt="Lynxa Tech" className="w-8 h-8 object-cover rounded-lg" />
                 </div>
                 <div>
                   <h3 className="text-xl font-heading font-bold">Lynxa Tech</h3>

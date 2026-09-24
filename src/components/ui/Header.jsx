@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import Icon from "../AppIcon";
 import Button from "./Button";
-import logoIco from "../../../public/LYNXA.ico";
 
 
 
@@ -92,7 +91,7 @@ const Header = () => {
               <div className="w-10 h-10 bg-black from-primary to-accent rounded-lg flex items-center justify-center glow-orange group-hover:scale-105 transition-transform duration-300">
 
                 <img
-                  src={logoIco}
+                  src="/icon-192.png"
                   alt="Lynxa Tech logo"
                   className="w-8 h-8 object-cover rounded-lg"
                 />
