@@ -19,7 +19,6 @@ const AboutInnovationStoryVision = () => {
   const social  = settings?.social  || {};
   useEffect(() => {
     window.scrollTo(0, 0);
-    document.title = "À propos | Lynxa Tech Guinée";
   }, []);
 
   return (

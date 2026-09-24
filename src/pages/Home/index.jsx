@@ -38,7 +38,6 @@ const Homepage = () => {
 
   useEffect(() => {
     window.scrollTo(0, 0);
-    document.title = "Lynxa Tech Guinée - Innovation Sans Frontières";
     getHomeEngagements().then((d) => { if (d?.length) setCommitments(d); }).catch(() => {});
     getHomeWhyItems().then((d)    => { if (d?.length) setWhyItems(d);    }).catch(() => {});
   }, []);
