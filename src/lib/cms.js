@@ -1,4 +1,5 @@
 import { supabase } from "./supabase";
+import { compressImageForUpload } from "./imageCompression";
 
 // ─── Generic helpers ────────────────────────────────────────────────────────
 
@@ -654,6 +655,17 @@ export async function uploadMedia(file, path) {
   if (error) throw error;
   const { data: urlData } = supabase.storage.from("cms-media").getPublicUrl(data.path);
   return urlData.publicUrl;
+}
+
+// Redimensionne/compresse une image côté navigateur (voir imageCompression.js
+// et README, section CMS) avant de l'envoyer à uploadMedia(). Retourne l'URL
+// publique plus les tailles avant/après pour affichage dans l'admin.
+export async function uploadImage(file, folder) {
+  const result = await compressImageForUpload(file);
+  const ext = result.file.name.split(".").pop();
+  const path = `${folder}/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
+  const url = await uploadMedia(result.file, path);
+  return { url, ...result };
 }
 
 // ─── Portfolio — Filter Options ───────────────────────────────────────────────

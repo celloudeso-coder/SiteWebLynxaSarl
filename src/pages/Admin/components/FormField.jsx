@@ -1,5 +1,27 @@
 import React, { useState, useRef } from "react";
-import { uploadMedia } from "../../../lib/cms";
+import { uploadMedia, uploadImage } from "../../../lib/cms";
+import { UploadTooLargeError } from "../../../lib/imageCompression";
+
+function formatSize(bytes) {
+  if (bytes == null) return "";
+  return bytes >= 1024 * 1024 ? `${(bytes / 1024 / 1024).toFixed(1)} Mo` : `${Math.round(bytes / 1024)} Ko`;
+}
+
+// Résumé "avant → après" affiché sous le champ après un upload d'image, pour
+// que l'équipe voie le gain de la compression (README, section CMS).
+function CompressionSummary({ result }) {
+  if (!result || result.originalSize == null) return null;
+  if (!result.wasCompressed) {
+    return <p className="text-xs text-emerald-600">Image déjà légère ({formatSize(result.originalSize)}) — envoyée sans modification.</p>;
+  }
+  const pct = Math.round((1 - result.compressedSize / result.originalSize) * 100);
+  return (
+    <p className="text-xs text-emerald-600">
+      {formatSize(result.originalSize)} → {formatSize(result.compressedSize)} (-{pct}%)
+      {result.width ? ` · ${result.width}×${result.height}px` : ""}
+    </p>
+  );
+}
 
 export function FormField({ label, children, hint }) {
   return (
@@ -99,6 +121,7 @@ export function JsonArrayEditor({ value = [], onChange, placeholder = "Ajouter u
 export function ImageUpload({ value, onChange, folder = "team-members" }) {
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState(null);
+  const [lastResult, setLastResult] = useState(null);
   const inputRef = useRef(null);
 
   async function handleFile(e) {
@@ -106,13 +129,13 @@ export function ImageUpload({ value, onChange, folder = "team-members" }) {
     if (!file) return;
     setUploading(true);
     setError(null);
+    setLastResult(null);
     try {
-      const ext = file.name.split(".").pop();
-      const path = `${folder}/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
-      const url = await uploadMedia(file, path);
-      onChange(url);
+      const result = await uploadImage(file, folder);
+      onChange(result.url);
+      setLastResult(result);
     } catch (err) {
-      setError("Échec de l'upload. Vérifiez la connexion à Supabase.");
+      setError(err instanceof UploadTooLargeError ? err.message : "Échec de l'upload. Vérifiez la connexion à Supabase.");
     } finally {
       setUploading(false);
       if (inputRef.current) inputRef.current.value = "";
@@ -163,6 +186,7 @@ export function ImageUpload({ value, onChange, folder = "team-members" }) {
         </button>
 
         {error && <p className="text-xs text-red-500">{error}</p>}
+        {!uploading && <CompressionSummary result={lastResult} />}
 
         {value && !uploading && (
           <div className="flex items-center gap-2">
@@ -185,6 +209,7 @@ export function ImageUpload({ value, onChange, folder = "team-members" }) {
 export function ImageField({ value, onChange, folder = "projects", placeholder = "https://…" }) {
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState(null);
+  const [lastResult, setLastResult] = useState(null);
   const inputRef = useRef(null);
 
   async function handleFile(e) {
@@ -192,13 +217,13 @@ export function ImageField({ value, onChange, folder = "projects", placeholder =
     if (!file) return;
     setUploading(true);
     setError(null);
+    setLastResult(null);
     try {
-      const ext = file.name.split(".").pop();
-      const path = `${folder}/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
-      const url = await uploadMedia(file, path);
-      onChange(url);
+      const result = await uploadImage(file, folder);
+      onChange(result.url);
+      setLastResult(result);
     } catch (err) {
-      setError("Échec de l'upload. Vérifiez la connexion à Supabase.");
+      setError(err instanceof UploadTooLargeError ? err.message : "Échec de l'upload. Vérifiez la connexion à Supabase.");
     } finally {
       setUploading(false);
       if (inputRef.current) inputRef.current.value = "";
@@ -257,6 +282,7 @@ export function ImageField({ value, onChange, folder = "projects", placeholder =
             </button>
           )}
           {error && <p className="text-xs text-red-500">{error}</p>}
+          {!uploading && <CompressionSummary result={lastResult} />}
         </div>
       </div>
 

@@ -306,6 +306,21 @@ Chaque page dispose aussi d'un éditeur de visibilité des sections via `/admin/
 - Les composants chargent d'abord le contenu Supabase ; en l'absence de données, la plupart affichent un contenu statique (fallback). Les sections de la page **Insights** font autorité sur le CMS : vide en base ⇒ section masquée (le statique ne sert plus que de secours en cas d'erreur réseau)
 - Upload de médias via Supabase Storage : bucket `cms-media` (images / PDF gérés depuis l'admin — photos équipe, images, livres blancs, rapports) et bucket `Cv_lettredemotivation_joinus` (CV & lettres déposés via le formulaire public « Rejoindre », PDF ≤ 10 Mo)
 
+### Images téléversées depuis l'admin
+
+Toute image envoyée via l'admin (photo d'équipe, illustration de projet, etc.) passe par `src/lib/imageCompression.js` **dans le navigateur, avant l'upload** vers le bucket `cms-media` — c'est ce qui a évité de reproduire le problème des photos d'équipe de plusieurs milliers de pixels de large affichées dans des vignettes de 80px.
+
+Règle appliquée (`compressImageForUpload()`) :
+
+1. **Fichier > 20 Mo** → rejeté avant même d'être décodé, avec un message d'erreur explicite (`UploadTooLargeError`) affiché dans l'admin.
+2. **Image déjà légère** (< 300 Ko **et** < 1600px de large) → envoyée telle quelle, aucun retraitement.
+3. **Sinon** → redimensionnée à 1600px de large maximum (jamais agrandie), puis réencodée en **WebP** (qualité 0.88 — pas de compression agressive) avec repli automatique en **JPEG** si le navigateur ne sait pas encoder de WebP (`canvas.toBlob` retombe sur un autre type dans ce cas).
+4. Si la compression ne réduit pas le poids du fichier (rare), l'original est conservé plutôt qu'un remplaçant plus lourd.
+
+Les champs d'upload de l'admin (`ImageUpload`, `ImageField` dans `src/pages/Admin/components/FormField.jsx`) affichent le poids avant → après (et les dimensions finales) une fois l'upload terminé, pour que l'équipe voie le gain directement.
+
+Cette compression est indépendante du pipeline de variantes WebP/srcset du site public (`scripts/generate-image-variants.mjs`, qui ne traite que les images statiques de `public/`) : les deux se complètent, l'un empêchant les fichiers surdimensionnés d'entrer dans le CMS, l'autre servant des tailles adaptées à chaque affichage pour les images déjà présentes dans le dépôt.
+
 ### Variables d'environnement
 
 | Variable | Dev (`.env.local`) | Prod (Vercel) |
