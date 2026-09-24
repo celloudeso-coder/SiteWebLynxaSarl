@@ -2,6 +2,8 @@ import React, { useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import emailjs from "@emailjs/browser";
 import Icon from "../../../components/AppIcon";
+import { logUnrecordedSubmission } from "../../../lib/cms";
+import { useSiteSettings } from "../../../hooks/useContent";
 
 const PROJECT_TYPES = [
   { value: "mobile",         label: "Application mobile (iOS/Android)" },
@@ -77,6 +79,10 @@ const ProjectRequestForm = () => {
   const [errors, setErrors]     = useState({});
   const [submitting, setSubmitting] = useState(false);
   const [status, setStatus]     = useState(null); // "success" | "error"
+  const { data: settings } = useSiteSettings();
+  const fallbackPhone = settings?.contact?.phone || "+224 621 724 657";
+  const fallbackEmail = settings?.contact?.email || "contact@lynxatech.com";
+  const fallbackWhatsapp = `https://wa.me/${fallbackPhone.replace(/\s/g, "").replace("+", "")}?text=${encodeURIComponent("Bonjour, je viens d'essayer de soumettre une demande de projet sur le site mais l'envoi a échoué.")}`;
 
   const fieldRefs = Object.fromEntries(REQUIRED_FIELDS.map(([field]) => [field, useRef(null)]));
 
@@ -116,16 +122,24 @@ const ProjectRequestForm = () => {
     e.preventDefault();
     if (!validate()) return;
     setSubmitting(true);
+    const payload = { ...form, requirements: form.requirements.join(", ") };
     try {
       await emailjs.send(
         "service_nru6i81",
         "template_jje294m",
-        { ...form, requirements: form.requirements.join(", ") },
+        payload,
         "RE-vtDTXpbEbLN8jl"
       );
+      // Ce formulaire n'a pas de table dédiée : EmailJS est le seul canal.
+      // On journalise quand même chaque envoi réussi pour qu'il reste
+      // consultable côté admin (autrement la seule trace serait la boîte
+      // mail de destination). Voir /admin/unrecorded-submissions.
+      await logUnrecordedSubmission({ form: "partnership_project_request", payload, emailSent: true });
       setStatus("success");
       setForm(EMPTY);
-    } catch {
+    } catch (err) {
+      console.error("Envoi de la demande de projet échoué :", err);
+      await logUnrecordedSubmission({ form: "partnership_project_request", payload, dbError: "Aucune table dédiée — voir handleSubmit", emailSent: false });
       setStatus("error");
     } finally {
       setSubmitting(false);
@@ -206,7 +220,15 @@ const ProjectRequestForm = () => {
               <Icon name="AlertCircle" size={18} className="mt-0.5 flex-shrink-0" />
               <div>
                 <p className="font-semibold">Erreur d'envoi</p>
-                <p className="text-sm">Une erreur s'est produite. Contactez-nous directement par WhatsApp.</p>
+                <p className="text-sm mb-2">Une erreur s'est produite. Contactez-nous directement pour ne pas perdre votre demande :</p>
+                <div className="flex flex-wrap gap-x-4 gap-y-1 text-sm font-medium">
+                  <a href={fallbackWhatsapp} target="_blank" rel="noopener noreferrer" className="underline hover:no-underline">
+                    WhatsApp ({fallbackPhone})
+                  </a>
+                  <a href={`mailto:${fallbackEmail}`} className="underline hover:no-underline">
+                    {fallbackEmail}
+                  </a>
+                </div>
               </div>
             </motion.div>
           )}

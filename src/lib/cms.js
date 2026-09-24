@@ -413,6 +413,55 @@ export async function deleteContactMessage(id) {
   return deleteRow("contact_messages", id);
 }
 
+// ─── Unrecorded Submissions (filet de sécurité formulaires publics) ──────────
+// Voir supabase/schema.sql, section "UNRECORDED SUBMISSIONS", pour le rôle de
+// cette table : capter une soumission qui n'a laissé aucune ligne exploitable
+// dans sa table normale (insertion échouée mais email parti, ou formulaire
+// sans persistance dédiée reposant uniquement sur EmailJS).
+
+// Ne lève jamais : appelée depuis des formulaires publics après un échec (ou
+// une absence de persistance), elle ne doit jamais devenir elle-même une
+// nouvelle source d'erreur visible pour l'utilisateur.
+export async function logUnrecordedSubmission({ form, payload, dbError, emailSent }) {
+  try {
+    const { error } = await supabase.from("unrecorded_submissions").insert({
+      form,
+      payload,
+      db_error: dbError ? String(dbError) : null,
+      email_sent: Boolean(emailSent),
+    });
+    if (error) console.error(`logUnrecordedSubmission(${form}) a échoué :`, error.message);
+  } catch (err) {
+    console.error(`logUnrecordedSubmission(${form}) a échoué :`, err?.message || err);
+  }
+}
+
+export async function getUnrecordedSubmissions() {
+  const { data, error } = await supabase
+    .from("unrecorded_submissions")
+    .select("*")
+    .order("created_at", { ascending: false });
+  if (error) throw error;
+  return data || [];
+}
+
+export async function resolveUnrecordedSubmission(id, resolved, admin_notes) {
+  const payload = { resolved };
+  if (admin_notes !== undefined) payload.admin_notes = admin_notes;
+  const { data, error } = await supabase
+    .from("unrecorded_submissions")
+    .update(payload)
+    .eq("id", id)
+    .select()
+    .single();
+  if (error) throw error;
+  return data;
+}
+
+export async function deleteUnrecordedSubmission(id) {
+  return deleteRow("unrecorded_submissions", id);
+}
+
 // ─── Media Upload ─────────────────────────────────────────────────────────────
 
 // ─── Home Engagements (Bande Engagements) ────────────────────────────────────

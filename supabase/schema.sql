@@ -456,6 +456,32 @@ CREATE POLICY "admin_all" ON contact_messages
   FOR ALL TO authenticated USING (true) WITH CHECK (true);
 
 -- -------------------------------------------------------
+-- 13bis. UNRECORDED SUBMISSIONS (filet de sécurité formulaires publics)
+-- -------------------------------------------------------
+-- Trace toute soumission de formulaire public qui n'a laissé aucune ligne
+-- exploitable dans sa table normale : l'insertion en base a échoué mais
+-- l'email est parti (candidature "Rejoindre"), ou le formulaire n'a jamais
+-- eu de persistance dédiée et repose uniquement sur EmailJS (demande de
+-- projet Partenariat, modales d'intérêt Partenariat/Services). Sans cette
+-- table, ces cas ne laissent aucune trace consultable côté admin.
+CREATE TABLE IF NOT EXISTS unrecorded_submissions (
+  id           uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  form         text NOT NULL,   -- 'join_us' | 'partnership_project_request' | 'partnership_pathway' | 'services_plan_inquiry' | …
+  payload      jsonb NOT NULL,  -- données du formulaire, telles que soumises
+  db_error     text,            -- message d'erreur de l'insertion normale, si elle a été tentée
+  email_sent   boolean DEFAULT false,
+  resolved     boolean DEFAULT false,
+  admin_notes  text,
+  created_at   timestamptz DEFAULT now()
+);
+
+ALTER TABLE unrecorded_submissions ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "public_insert" ON unrecorded_submissions
+  FOR INSERT TO anon WITH CHECK (true);
+CREATE POLICY "admin_all" ON unrecorded_submissions
+  FOR ALL TO authenticated USING (true) WITH CHECK (true);
+
+-- -------------------------------------------------------
 -- 14. HOME ENGAGEMENTS (Bande Engagements — accueil)
 -- -------------------------------------------------------
 CREATE TABLE IF NOT EXISTS home_engagements (
@@ -1338,7 +1364,7 @@ DECLARE
   ];
   private_tables text[] := ARRAY[
     'job_applications', 'newsletter_subscriptions', 'contact_messages',
-    'subscription_tracker', 'subscription_payments'
+    'subscription_tracker', 'subscription_payments', 'unrecorded_submissions'
   ];
 BEGIN
   FOREACH table_name IN ARRAY content_tables || private_tables LOOP
@@ -1676,7 +1702,8 @@ DECLARE
     'tech_talks', 'insights',
     'industry_reports', 'insights',
     'contact_messages', 'messages',
-    'newsletter_subscriptions', 'newsletter'
+    'newsletter_subscriptions', 'newsletter',
+    'unrecorded_submissions', 'messages'
   );
 BEGIN
   FOR table_name, resource_name IN SELECT key, value #>> '{}' FROM jsonb_each(table_resources)

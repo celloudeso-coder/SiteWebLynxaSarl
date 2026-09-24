@@ -2,7 +2,9 @@ import React, { useState } from "react";
 import Icon from "../../../components/AppIcon";
 import Input from "../../../components/ui/Input";
 import Button from "../../../components/ui/Button";
-import emailjs from "@emailjs/browser"; // 📧 à installer : npm install @emailjs/browser
+import emailjs from "@emailjs/browser";
+import { logUnrecordedSubmission } from "../../../lib/cms";
+import { useSiteSettings } from "../../../hooks/useContent";
 
 const PlanInquiryModal = ({ plan, onClose }) => {
   const [formData, setFormData] = useState({
@@ -12,35 +14,50 @@ const PlanInquiryModal = ({ plan, onClose }) => {
     message: "",
   });
   const [status, setStatus] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+  const { data: settings } = useSiteSettings();
+  const fallbackPhone = settings?.contact?.phone || "+224 621 724 657";
+  const fallbackEmail = settings?.contact?.email || "contact@lynxatech.com";
+  const fallbackWhatsapp = `https://wa.me/${fallbackPhone.replace(/\s/g, "").replace("+", "")}?text=${encodeURIComponent(`Bonjour, je suis intéressé par le plan : ${plan?.name || "vos services"}.`)}`;
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    if (submitting) return;
+    setSubmitting(true);
 
+    // ⚠️ Identifiants EmailJS non configurés (placeholders) — cet envoi
+    // échoue systématiquement aujourd'hui. On journalise quand même la
+    // demande (voir /admin/unrecorded-submissions) pour ne pas la perdre
+    // tant que ces identifiants ne sont pas remplacés par les vrais.
     const serviceId = "service_xxxxxx";
     const templateId = "template_xxxxxx";
     const publicKey = "your_public_key";
 
-    const templateParams = {
-      to_email: "lynxa@gmail.com",
-      from_name: formData.name,
-      from_email: formData.email,
+    const payload = {
+      name: formData.name,
+      email: formData.email,
       phone: formData.phone,
       message: formData.message,
       plan_name: plan?.name,
       plan_price: plan?.price,
     };
 
-    emailjs
-      .send(serviceId, templateId, templateParams, publicKey)
-      .then(() => {
-        setStatus("success");
-        setFormData({ name: "", email: "", phone: "", message: "" });
-      })
-      .catch(() => setStatus("error"));
+    try {
+      await emailjs.send(serviceId, templateId, { to_email: "lynxa@gmail.com", ...payload }, publicKey);
+      await logUnrecordedSubmission({ form: "services_plan_inquiry", payload, emailSent: true });
+      setStatus("success");
+      setFormData({ name: "", email: "", phone: "", message: "" });
+    } catch (err) {
+      console.error("Envoi de la demande d'information échoué :", err);
+      await logUnrecordedSubmission({ form: "services_plan_inquiry", payload, dbError: String(err?.text || err?.message || err), emailSent: false });
+      setStatus("error");
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -109,9 +126,10 @@ const PlanInquiryModal = ({ plan, onClose }) => {
 
             <Button
               type="submit"
-              className="w-full bg-primary text-primary-foreground py-3 rounded-lg hover:bg-accent transition"
+              disabled={submitting}
+              className="w-full bg-primary text-primary-foreground py-3 rounded-lg hover:bg-accent transition disabled:opacity-60"
             >
-              Envoyer la demande
+              {submitting ? "Envoi en cours…" : "Envoyer la demande"}
             </Button>
           </form>
         </div>
@@ -122,9 +140,19 @@ const PlanInquiryModal = ({ plan, onClose }) => {
           </p>
         )}
         {status === "error" && (
-          <p className="text-red-500 text-center mt-4">
-            ❌ Une erreur s’est produite. Réessayez.
-          </p>
+          <div className="text-center mt-4 text-sm">
+            <p className="text-red-500 mb-2">
+              ❌ L'envoi automatique n'a pas abouti. Contactez-nous directement pour ne pas perdre votre demande :
+            </p>
+            <div className="flex flex-wrap justify-center gap-x-4 gap-y-1 font-medium">
+              <a href={fallbackWhatsapp} target="_blank" rel="noopener noreferrer" className="text-primary underline hover:no-underline">
+                WhatsApp ({fallbackPhone})
+              </a>
+              <a href={`mailto:${fallbackEmail}`} className="text-primary underline hover:no-underline">
+                {fallbackEmail}
+              </a>
+            </div>
+          </div>
         )}
       </div>
     </div>

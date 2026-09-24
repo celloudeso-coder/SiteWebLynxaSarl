@@ -17,6 +17,7 @@ import NewsletterAdmin from "./sections/NewsletterAdmin";
 import SettingsAdmin from "./sections/SettingsAdmin";
 import PageSectionsAdmin from "./sections/PageSectionsAdmin";
 import MessagesAdmin from "./sections/MessagesAdmin";
+import UnrecordedSubmissionsAdmin from "./sections/UnrecordedSubmissionsAdmin";
 import HomeContentAdmin from "./sections/HomeContentAdmin";
 import AboutContentAdmin from "./sections/AboutContentAdmin";
 import ServicesContentAdmin from "./sections/ServicesContentAdmin";
@@ -55,6 +56,7 @@ export default function AdminApp() {
           <Route path="join-us-content" element={<RequireAdminPermission resource="recruitment_content"><JoinUsContentAdmin /></RequireAdminPermission>} />
           <Route path="insights-content" element={<RequireAdminPermission resource="insights"><InsightsAdmin /></RequireAdminPermission>} />
           <Route path="messages" element={<RequireAdminPermission resource="messages"><MessagesAdmin /></RequireAdminPermission>} />
+          <Route path="unrecorded-submissions" element={<RequireAdminPermission resource="messages"><UnrecordedSubmissionsAdmin /></RequireAdminPermission>} />
           <Route path="newsletter" element={<RequireAdminPermission resource="newsletter"><NewsletterAdmin /></RequireAdminPermission>} />
           <Route path="settings" element={<RequireAdminPermission resource="settings"><SettingsAdmin /></RequireAdminPermission>} />
           <Route path="subscriptions" element={<RequireAdminPermission resource="subscriptions"><SubscriptionTrackerAdmin /></RequireAdminPermission>} />

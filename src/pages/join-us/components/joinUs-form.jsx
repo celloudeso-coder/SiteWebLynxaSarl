@@ -2,8 +2,10 @@ import React, { useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import emailjs from "@emailjs/browser";
 import Icon from "../../../components/AppIcon";
-import { submitJobApplication } from "../../../lib/cms";
+import { submitJobApplication, logUnrecordedSubmission } from "../../../lib/cms";
 import { supabase } from "../../../lib/supabase";
+import { useSiteSettings } from "../../../hooks/useContent";
+import { validatePdfFile } from "../../../lib/fileValidation";
 
 const GENDERS      = [{ value: "male", label: "Homme" }, { value: "female", label: "Femme" }, { value: "other", label: "Autre" }];
 const EDUCATIONS   = [{ value: "highschool", label: "Lycée / Baccalauréat" }, { value: "bachelor", label: "Licence" }, { value: "master", label: "Master" }, { value: "phd", label: "Doctorat" }, { value: "other", label: "Autre" }];
@@ -36,13 +38,32 @@ const JoinUsForm = () => {
   const [form, setForm]         = useState(EMPTY);
   const [errors, setErrors]     = useState({});
   const [submitting, setSubmitting] = useState(false);
-  const [status, setStatus]     = useState(null); // "success" | "error"
+  const [status, setStatus]     = useState(null); // "success" | "degraded" | "error"
+  const { data: settings } = useSiteSettings();
+  const fallbackPhone = settings?.contact?.phone || "+224 621 724 657";
+  const fallbackEmail = settings?.contact?.email || "contact@lynxatech.com";
+  const fallbackWhatsapp = `https://wa.me/${fallbackPhone.replace(/\s/g, "").replace("+", "")}?text=${encodeURIComponent("Bonjour, je viens d'essayer de soumettre ma candidature sur le site mais l'envoi a échoué.")}`;
 
   const fieldRefs = Object.fromEntries(FIELD_ORDER.map((field) => [field, useRef(null)]));
 
   const set = (field, value) => {
     setForm((p) => ({ ...p, [field]: value }));
     if (errors[field]) setErrors((p) => ({ ...p, [field]: "" }));
+  };
+
+  // Validation immédiate à la sélection du fichier : même limite que le
+  // bucket Supabase Storage côté serveur (PDF, 10 Mo max) — évite un
+  // aller-retour réseau inutile pour un fichier qui sera de toute façon
+  // rejeté à l'upload.
+  const setFile = (field, file, label) => {
+    if (!file) { set(field, null); return; }
+    const check = validatePdfFile(file, { label });
+    if (!check.ok) {
+      setErrors((p) => ({ ...p, [field]: check.message }));
+      set(field, null);
+      return;
+    }
+    set(field, file);
   };
 
   const validate = () => {
@@ -108,32 +129,67 @@ const JoinUsForm = () => {
         letter_url:    letterUrl,
       };
 
-      // 2. Sauvegarder en BDD (non bloquant — EmailJS reste le filet de sécurité)
-      submitJobApplication(payload).catch((err) =>
-        console.warn("DB insert échoué (table manquante ?) :", err.message)
-      );
+      // 2. Sauvegarder en BDD — attendu, l'échec est capturé mais ne bloque
+      // pas la tentative d'email : c'est la combinaison des deux résultats
+      // qui détermine ce que voit le candidat (voir plus bas).
+      let dbOk = true;
+      let dbError = null;
+      try {
+        await submitJobApplication(payload);
+      } catch (err) {
+        dbOk = false;
+        dbError = err;
+        console.error("Insertion de la candidature en base échouée :", err.message);
+      }
 
-      // 3. Notification email — c'est l'étape principale, on attend son résultat
-      await emailjs.send(
-        "service_wj7gx89",
-        "template_1hp49rv",
-        {
-          name:         form.name,
-          email:        form.email,
-          phone:        form.phone,
-          position:     form.position,
-          contractType: form.contractType,
-          motivation:   form.motivation,
-          cv_link:      cvUrl      || "Non fourni",
-          letter_link:  letterUrl  || "Non fournie",
-        },
-        "lj6YHCTOjLzZ77Bwu"
-      );
+      // 3. Notification email — également attendue, indépendamment du résultat de l'étape 2.
+      let emailOk = true;
+      try {
+        await emailjs.send(
+          "service_wj7gx89",
+          "template_1hp49rv",
+          {
+            name:         form.name,
+            email:        form.email,
+            phone:        form.phone,
+            position:     form.position,
+            contractType: form.contractType,
+            motivation:   form.motivation,
+            cv_link:      cvUrl      || "Non fourni",
+            letter_link:  letterUrl  || "Non fournie",
+          },
+          "lj6YHCTOjLzZ77Bwu"
+        );
+      } catch (err) {
+        emailOk = false;
+        console.error("Envoi de l'email de notification échoué :", err);
+      }
 
-      setStatus("success");
-      setForm(EMPTY);
+      if (dbOk) {
+        // La candidature est bel et bien enregistrée (visible dans
+        // /admin/join-us) : succès réel, que l'email soit parti ou non.
+        setStatus("success");
+        setForm(EMPTY);
+      } else if (emailOk) {
+        // Rien en base, mais l'email est parti : on ne ment pas au candidat
+        // (pas de "succès" complet) et on garde une trace consultable côté
+        // admin, faute de quoi cette candidature serait purement et
+        // simplement perdue.
+        await logUnrecordedSubmission({ form: "join_us", payload, dbError: dbError?.message, emailSent: true });
+        setStatus("degraded");
+        setForm(EMPTY);
+      } else {
+        // Les deux échouent : rien n'a été transmis nulle part. On tente
+        // quand même de journaliser (peut réussir même si job_applications
+        // a échoué pour une raison spécifique à cette table), et on garde le
+        // formulaire rempli pour que le candidat ne perde pas sa saisie.
+        await logUnrecordedSubmission({ form: "join_us", payload, dbError: dbError?.message, emailSent: false });
+        setStatus("error");
+      }
     } catch (err) {
-      console.error("Erreur soumission candidature :", err);
+      // Filet ultime : une erreur inattendue dans notre propre code (pas
+      // dans l'insertion ou l'envoi, déjà capturées ci-dessus).
+      console.error("Erreur inattendue lors de la soumission :", err);
       setStatus("error");
     } finally {
       setSubmitting(false);
@@ -175,6 +231,43 @@ const JoinUsForm = () => {
     );
   }
 
+  if (status === "degraded") {
+    return (
+      <section className="py-20 bg-white" id="candidature">
+        <div className="max-w-3xl mx-auto px-4 text-center">
+          <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }}>
+            <div className="w-20 h-20 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-6">
+              <Icon name="Clock" size={40} color="#d97706" />
+            </div>
+            <h2 className="text-3xl font-heading font-bold text-secondary mb-4">
+              Candidature reçue par email
+            </h2>
+            <p className="text-xl text-muted-foreground mb-8">
+              Votre candidature a bien été transmise par email, mais son enregistrement
+              automatique n'a pas pu être vérifié. Notre équipe la traitera manuellement —
+              vous pouvez aussi nous écrire directement pour confirmer sa bonne réception.
+            </p>
+            <div className="bg-surface rounded-2xl p-6 max-w-sm mx-auto text-left space-y-3 mb-8">
+              <div className="flex items-center gap-3 text-sm">
+                <Icon name="Mail" size={16} color="var(--color-primary)" />
+                <a href={`mailto:${fallbackEmail}`} className="hover:underline">{fallbackEmail}</a>
+              </div>
+              <div className="flex items-center gap-3 text-sm">
+                <Icon name="MessageCircle" size={16} color="var(--color-primary)" />
+                <a href={fallbackWhatsapp} target="_blank" rel="noopener noreferrer" className="hover:underline">
+                  Confirmer par WhatsApp ({fallbackPhone})
+                </a>
+              </div>
+            </div>
+            <button onClick={() => setStatus(null)} className="text-primary font-medium hover:underline text-sm">
+              Soumettre une autre candidature
+            </button>
+          </motion.div>
+        </div>
+      </section>
+    );
+  }
+
   return (
     <section className="py-20 bg-white" id="candidature">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -203,8 +296,19 @@ const JoinUsForm = () => {
             >
               <Icon name="AlertCircle" size={18} className="mt-0.5 flex-shrink-0" />
               <div>
-                <p className="font-semibold">Erreur d'envoi</p>
-                <p className="text-sm">Une erreur s'est produite. Réessayez ou contactez-nous par WhatsApp.</p>
+                <p className="font-semibold">Échec de l'envoi</p>
+                <p className="text-sm mb-2">
+                  Ni l'enregistrement ni la notification par email n'ont abouti. Réessayez, ou
+                  contactez-nous directement pour ne pas perdre votre candidature :
+                </p>
+                <div className="flex flex-wrap gap-x-4 gap-y-1 text-sm font-medium">
+                  <a href={fallbackWhatsapp} target="_blank" rel="noopener noreferrer" className="underline hover:no-underline">
+                    WhatsApp ({fallbackPhone})
+                  </a>
+                  <a href={`mailto:${fallbackEmail}`} className="underline hover:no-underline">
+                    {fallbackEmail}
+                  </a>
+                </div>
               </div>
             </motion.div>
           )}
@@ -400,7 +504,7 @@ const JoinUsForm = () => {
                     aria-describedby={errors.cv ? "join-cv-error" : undefined}
                     ref={fieldRefs.cv}
                     className="hidden"
-                    onChange={(e) => set("cv", e.target.files?.[0] || null)} />
+                    onChange={(e) => setFile("cv", e.target.files?.[0] || null, "Le CV")} />
                 </label>
                 {errors.cv && <p id="join-cv-error" role="alert" className="mt-1 text-xs text-red-500">{errors.cv}</p>}
               </div>
@@ -410,7 +514,7 @@ const JoinUsForm = () => {
                 <label htmlFor="join-motivation-letter" className="block text-sm font-medium text-secondary mb-1.5">
                   Lettre de motivation (PDF) <span className="text-muted-foreground text-xs">(optionnel)</span>
                 </label>
-                <label className="flex items-center gap-3 cursor-pointer border-2 border-dashed border-border hover:border-primary rounded-xl px-4 py-3 min-h-11 bg-white transition-colors">
+                <label className={`flex items-center gap-3 cursor-pointer border-2 border-dashed rounded-xl px-4 py-3 min-h-11 transition-colors ${errors.motivationLetter ? "border-red-400 bg-red-50" : "border-border hover:border-primary bg-white"}`}>
                   <Icon name="Upload" size={18} color="var(--color-primary)" />
                   <span className="text-sm text-muted-foreground">
                     {form.motivationLetter ? form.motivationLetter.name : "Choisir un fichier PDF…"}
@@ -420,9 +524,12 @@ const JoinUsForm = () => {
                     name="motivationLetter"
                     type="file"
                     accept=".pdf"
+                    aria-invalid={Boolean(errors.motivationLetter)}
+                    aria-describedby={errors.motivationLetter ? "join-motivation-letter-error" : undefined}
                     className="hidden"
-                    onChange={(e) => set("motivationLetter", e.target.files?.[0] || null)} />
+                    onChange={(e) => setFile("motivationLetter", e.target.files?.[0] || null, "La lettre de motivation")} />
                 </label>
+                {errors.motivationLetter && <p id="join-motivation-letter-error" role="alert" className="mt-1 text-xs text-red-500">{errors.motivationLetter}</p>}
               </div>
             </div>
 
