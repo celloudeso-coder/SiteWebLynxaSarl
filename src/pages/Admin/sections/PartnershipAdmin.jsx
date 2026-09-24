@@ -3,14 +3,14 @@ import { getPartnershipPathways, savePartnershipPathway, deletePartnershipPathwa
 import { FormField, TextInput, TextArea, Toggle } from "../components/FormField";
 import SaveButton from "../components/SaveButton";
 import { Plus, Trash2, ChevronDown, ChevronUp } from "lucide-react";
-import { formatPathwayBudget } from "../../../data/pricing";
+import { formatPathwayBudget, roundGnfToCommercialTier } from "../../../data/pricing";
 
 const ICONS = ["Rocket", "Building2", "Globe", "Network", "Handshake", "Star", "Zap", "Users", "Award", "Briefcase"];
 
 const empty = {
   sort_order: 0, active: true, title: "", description: "",
   icon: "Handshake", features: [], ideal_for: "", timeline: "",
-  budget: "", budget_min_usd: "", budget_max_usd: "", color: "primary",
+  budget: "", budget_min_gnf: null, budget_max_gnf: null, color: "primary",
 };
 
 function featuresFromValue(val) {
@@ -65,6 +65,8 @@ export default function PartnershipAdmin() {
       const payload = {
         ...item,
         features: Array.isArray(item.features) ? item.features : featuresFromValue(item.features),
+        budget_min_gnf: roundGnfToCommercialTier(item.budget_min_gnf),
+        budget_max_gnf: roundGnfToCommercialTier(item.budget_max_gnf),
       };
       const updated = await savePartnershipPathway(payload);
       setItems((prev) => prev.map((p) => p.id === item.id ? updated : p));
@@ -182,33 +184,39 @@ export default function PartnershipAdmin() {
                     </FormField>
                   </div>
 
-                  {/* Budget : min/max en USD → double affichage GNF/USD automatique
-                      (src/data/pricing.js) ; le texte libre ne sert que pour les
-                      paliers sans montant fixe, ex. "Partage de revenus". */}
+                  {/* Budget : min/max en GNF (arrondis au palier commercial à
+                      l'enregistrement), équivalent USD calculé ; le texte libre
+                      ne sert que pour les paliers sans montant fixe. */}
                   <div className="grid sm:grid-cols-3 gap-4">
-                    <FormField label="Budget min (USD)">
+                    <FormField label="Budget min (GNF)">
                       <TextInput
                         type="number"
-                        value={item.budget_min_usd ?? ""}
-                        onChange={(v) => update(item.id, "budget_min_usd", v === "" ? null : Number(v))}
-                        placeholder="700"
+                        value={item.budget_min_gnf ?? ""}
+                        onChange={(v) => update(item.id, "budget_min_gnf", v === "" ? null : Number(v))}
+                        placeholder="6500000"
                       />
                     </FormField>
-                    <FormField label="Budget max (USD)" hint="Laisser vide pour « et plus »">
+                    <FormField label="Budget max (GNF)" hint="Laisser vide pour « à partir de »">
                       <TextInput
                         type="number"
-                        value={item.budget_max_usd ?? ""}
-                        onChange={(v) => update(item.id, "budget_max_usd", v === "" ? null : Number(v))}
-                        placeholder="3000"
+                        value={item.budget_max_gnf ?? ""}
+                        onChange={(v) => update(item.id, "budget_max_gnf", v === "" ? null : Number(v))}
+                        placeholder="27000000"
                       />
                     </FormField>
-                    <FormField label="Budget (texte libre)" hint="Utilisé seulement si min/max USD vides">
+                    <FormField label="Budget (texte libre)" hint="Utilisé seulement si min/max GNF vides">
                       <TextInput value={item.budget} onChange={(v) => update(item.id, "budget", v)} placeholder="Partage de revenus" />
                     </FormField>
                   </div>
-                  {(item.budget_min_usd || item.budget_max_usd) && (
+                  {item.budget_min_gnf != null && (
                     <p className="text-xs text-gray-400 -mt-3">
-                      Aperçu : {formatPathwayBudget(item)?.primary} {formatPathwayBudget(item)?.secondary}
+                      Affiché : {(() => {
+                        const b = formatPathwayBudget({
+                          budget_min_gnf: roundGnfToCommercialTier(item.budget_min_gnf),
+                          budget_max_gnf: roundGnfToCommercialTier(item.budget_max_gnf),
+                        });
+                        return `${b.primary} (${b.secondary})`;
+                      })()}
                     </p>
                   )}
 

@@ -21,16 +21,15 @@ const PricingFramework = () => {
     setPlanInfo(null);
   };
 
-  // Les plans CMS ("pricing_plans") ont une colonne price_usd depuis
-  // laquelle on calcule le double affichage GNF/USD ; à défaut (lignes
-  // existantes non encore renseignées, ou "Sur devis"), on retombe sur le
-  // texte brut déjà stocké dans "price" plutôt que d'afficher un montant
-  // inventé.
+  // Les plans CMS ("pricing_plans") portent leur prix en GNF (price_gnf) ;
+  // l'équivalent USD est dérivé à l'affichage. À défaut (lignes existantes
+  // non encore renseignées, ou "Sur devis"), on retombe sur le texte brut
+  // déjà stocké dans "price" plutôt que d'afficher un montant inventé.
   const pricingPlans = cmsPricing && cmsPricing.length > 0
     ? cmsPricing.map((p) => ({
         id: p.id,
         name: p.name,
-        priceUsd: p.price_usd ?? null,
+        priceGnf: p.price_gnf != null ? Number(p.price_gnf) : null,
         priceFallbackText: p.price,
         period: p.price_note || "À partir de",
         description: "",
@@ -58,7 +57,7 @@ const PricingFramework = () => {
         {/* Main Pricing Plans */}
         <div className="grid lg:grid-cols-3 gap-8 mb-16">
           {pricingPlans?.map((plan) => {
-            const dual = plan?.priceUsd != null ? formatDualPrice(plan.priceUsd) : null;
+            const dual = plan?.priceGnf != null ? formatDualPrice(plan.priceGnf) : null;
             const isQuote = !dual && !plan?.priceFallbackText?.match(/\d/); // "Sur devis" ou équivalent, sans chiffre
             return (
             <div
@@ -132,7 +131,7 @@ const PricingFramework = () => {
           </h3>
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {additionalServices?.map((service, index) => {
-              const dual = formatDualRange(service.priceMinUsd, service.priceMaxUsd);
+              const dual = formatDualRange(service.priceMinGnf, service.priceMaxGnf);
               return (
               <div
                 key={index}

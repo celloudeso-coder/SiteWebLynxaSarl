@@ -12,7 +12,7 @@ const STATIC_PATHWAYS = [
     icon: "Rocket",
     features: ["Développement MVP", "Plans de paiement flexibles", "Solutions axées sur la croissance", "Support de mentorat"],
     ideal_for: "Startups, Petites Entreprises, Entrepreneurs",
-    timeline: "2-8 semaines", budgetMinUsd: 700, budgetMaxUsd: 3000, color: "primary",
+    timeline: "2-8 semaines", budgetMinGnf: 6_500_000, budgetMaxGnf: 27_000_000, color: "primary",
   },
   {
     id: 2, sort_order: 2, title: "Solutions Entreprises",
@@ -23,7 +23,7 @@ const STATIC_PATHWAYS = [
     // comme d'ores et déjà acquis.
     features: ["Systèmes entreprises personnalisés", "Support prioritaire 24/7", "Chef de projet dédié", "SLA défini au contrat"],
     ideal_for: "Grandes Entreprises, Gouvernement, ONG",
-    timeline: "3-12 mois", budgetMinUsd: 3500, budgetMaxUsd: 10000, color: "accent",
+    timeline: "3-12 mois", budgetMinGnf: 31_500_000, budgetMaxGnf: 90_000_000, color: "accent",
   },
   {
     id: 3, sort_order: 3, title: "Collaboration Internationale",
@@ -31,7 +31,7 @@ const STATIC_PATHWAYS = [
     icon: "Globe",
     features: ["Adaptation culturelle", "Support multilingue", "Expertise marché local", "Assistance conformité"],
     ideal_for: "Entreprises Internationales, ONG Mondiales",
-    timeline: "4-16 semaines", budgetMinUsd: 15000, budgetMaxUsd: null, color: "primary",
+    timeline: "4-16 semaines", budgetMinGnf: 135_000_000, budgetMaxGnf: null, color: "primary",
   },
   {
     id: 4, sort_order: 4, title: "Réseau Technologique",

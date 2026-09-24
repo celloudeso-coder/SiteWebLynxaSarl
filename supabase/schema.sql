@@ -205,24 +205,24 @@ CREATE TABLE IF NOT EXISTS pricing_plans (
   active boolean DEFAULT true,
   name text NOT NULL,
   price text,
-  price_usd numeric,
+  price_gnf bigint,
   price_note text,
   is_popular boolean DEFAULT false,
   features jsonb DEFAULT '[]',
   cta_text text DEFAULT 'Demander un devis',
   updated_at timestamptz DEFAULT now()
 );
--- Colonne ajoutée après le premier déploiement : montant en dollars US, seule
--- source de vérité pour le double affichage GNF/USD (src/data/pricing.js).
--- "price" (texte) reste un repli d'affichage pour les plans sans montant
--- fixe ("Sur devis") ou du contenu déjà saisi avant l'ajout de cette colonne.
-ALTER TABLE pricing_plans ADD COLUMN IF NOT EXISTS price_usd numeric;
+-- Colonne ajoutée après le premier déploiement : prix en francs guinéens,
+-- valeur saisie et arrondie au palier commercial ; l'équivalent USD est
+-- dérivé à l'affichage (src/data/pricing.js). "price" (texte) reste un repli
+-- pour les plans sans montant fixe ("Sur devis").
+ALTER TABLE pricing_plans ADD COLUMN IF NOT EXISTS price_gnf bigint;
 
-INSERT INTO pricing_plans (sort_order, name, price, price_usd, price_note, is_popular, features, cta_text) VALUES
-  (1, 'Pack Startup', '$500', 500, 'prix de départ', false,
+INSERT INTO pricing_plans (sort_order, name, price, price_gnf, price_note, is_popular, features, cta_text) VALUES
+  (1, 'Pack Startup', '4 500 000 GNF', 4500000, 'prix de départ', false,
    '["Site web vitrine (5 pages)", "Design responsive mobile", "Formulaire de contact", "SEO de base", "1 mois de support"]',
    'Démarrer'),
-  (2, 'Suite Professionnelle', '$2 000', 2000, 'prix de départ', true,
+  (2, 'Suite Professionnelle', '18 000 000 GNF', 18000000, 'prix de départ', true,
    '["Application web complète", "Intégration base de données", "Panneau d''administration", "API REST", "Authentification utilisateurs", "Tests et déploiement", "3 mois de support", "Formation équipe"]',
    'Choisir ce plan'),
   (3, 'Solution Entreprise', 'Sur devis', NULL, '', false,
@@ -406,34 +406,34 @@ CREATE TABLE IF NOT EXISTS partnership_pathways (
   ideal_for text,
   timeline text,
   budget text,
-  budget_min_usd numeric,
-  budget_max_usd numeric,
+  budget_min_gnf bigint,
+  budget_max_gnf bigint,
   color text DEFAULT 'primary',
   updated_at timestamptz DEFAULT now()
 );
--- Colonnes ajoutées après le premier déploiement : bornes en dollars US pour
--- le double affichage GNF/USD (src/data/pricing.js). "budget" (texte) reste
--- le repli d'affichage pour les paliers sans fourchette chiffrée (ex. "Partage
--- de revenus") ou du contenu déjà saisi avant l'ajout de ces colonnes.
-ALTER TABLE partnership_pathways ADD COLUMN IF NOT EXISTS budget_min_usd numeric;
-ALTER TABLE partnership_pathways ADD COLUMN IF NOT EXISTS budget_max_usd numeric;
+-- Colonnes ajoutées après le premier déploiement : bornes en francs guinéens
+-- (valeurs saisies), équivalent USD dérivé à l'affichage. "budget" (texte)
+-- reste le repli pour les paliers sans fourchette chiffrée (ex. "Partage
+-- de revenus").
+ALTER TABLE partnership_pathways ADD COLUMN IF NOT EXISTS budget_min_gnf bigint;
+ALTER TABLE partnership_pathways ADD COLUMN IF NOT EXISTS budget_max_gnf bigint;
 
-INSERT INTO partnership_pathways (sort_order, title, description, icon, features, ideal_for, timeline, budget, budget_min_usd, budget_max_usd, color) VALUES
+INSERT INTO partnership_pathways (sort_order, title, description, icon, features, ideal_for, timeline, budget, budget_min_gnf, budget_max_gnf, color) VALUES
   (1, 'Partenariat Startup & PME',
    'Solutions sur mesure pour les entreprises en croissance avec des options de paiement flexibles et une technologie évolutive.',
    'Rocket',
    '["Développement MVP", "Plans de paiement flexibles", "Solutions axées sur la croissance", "Support de mentorat"]',
-   'Startups, Petites Entreprises, Entrepreneurs', '2-8 semaines', NULL, 700, 3000, 'primary'),
+   'Startups, Petites Entreprises, Entrepreneurs', '2-8 semaines', NULL, 6500000, 27000000, 'primary'),
   (2, 'Solutions Entreprises',
    'Partenariats technologiques complets pour les grandes organisations avec des besoins complexes.',
    'Building2',
    '["Systèmes entreprises personnalisés", "Support prioritaire 24/7", "Chef de projet dédié", "SLA défini au contrat"]',
-   'Grandes Entreprises, Gouvernement, ONG', '3-12 mois', NULL, 3500, 10000, 'accent'),
+   'Grandes Entreprises, Gouvernement, ONG', '3-12 mois', NULL, 31500000, 90000000, 'accent'),
   (3, 'Collaboration Internationale',
    'Partenariats transfrontaliers avec des organisations mondiales s''étendant sur les marchés africains.',
    'Globe',
    '["Adaptation culturelle", "Support multilingue", "Expertise marché local", "Assistance conformité"]',
-   'Entreprises Internationales, ONG Mondiales', '4-16 semaines', NULL, 15000, NULL, 'primary'),
+   'Entreprises Internationales, ONG Mondiales', '4-16 semaines', NULL, 135000000, NULL, 'primary'),
   (4, 'Réseau Technologique',
    'Alliances stratégiques avec d''autres entreprises tech pour une croissance et collaboration mutuelles.',
    'Network',

@@ -18,8 +18,7 @@ const PROJECT_TYPES = [
 ];
 
 // Même échelle que Contact/ContactForm.jsx — source unique :
-// src/data/pricing.js (BUDGET_BRACKETS). Comble l'écart qui existait entre
-// "3 500 $ – 10 000 $" et "15 000 $".
+// src/data/pricing.js (BUDGET_BRACKETS), contiguë par construction.
 const BUDGETS = BUDGET_BRACKETS;
 
 const TIMELINES = [

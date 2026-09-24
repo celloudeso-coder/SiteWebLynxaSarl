@@ -7,10 +7,9 @@ import { BUDGET_BRACKETS } from "../../../data/pricing";
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
-// budget_ranges par défaut : mêmes fourchettes que le formulaire public
-// (src/data/pricing.js), pour que ce qui est proposé à l'édition ici
-// corresponde à ce qui s'affiche réellement tant qu'aucune valeur CMS n'a
-// été enregistrée dans "site_settings".
+// Les fourchettes budgétaires ne sont pas éditables ici : elles dérivent de
+// la grille tarifaire (src/data/pricing.js) et le formulaire public ignore
+// toute valeur budget_ranges stockée dans site_settings.
 const STATIC_FORM_CONFIG = {
   inquiry_types: [
     { value: "new-project",  label: "Développement de nouveau projet" },
@@ -20,7 +19,6 @@ const STATIC_FORM_CONFIG = {
     { value: "consultation", label: "Consultation gratuite" },
     { value: "other",        label: "Autre" },
   ],
-  budget_ranges: BUDGET_BRACKETS.map(({ value, label }) => ({ value, label })),
   contact_methods: [
     { value: "email",    label: "Email" },
     { value: "phone",    label: "Appel téléphonique" },
@@ -116,7 +114,11 @@ function FormulaireTab() {
 
   useEffect(() => {
     getContactFormConfig()
-      .then((d) => { if (d) setConfig({ ...STATIC_FORM_CONFIG, ...d }); })
+      .then((d) => {
+        if (!d) return;
+        const { budget_ranges: _ignored, ...rest } = d;
+        setConfig({ ...STATIC_FORM_CONFIG, ...rest });
+      })
       .catch(() => {});
   }, []);
 
@@ -146,11 +148,18 @@ function FormulaireTab() {
         items={config.inquiry_types || []}
         onChange={(v) => updateList("inquiry_types", v)}
       />
-      <OptionListEditor
-        title="Fourchettes budgétaires"
-        items={config.budget_ranges || []}
-        onChange={(v) => updateList("budget_ranges", v)}
-      />
+      <div className="bg-gray-50 rounded-xl border border-gray-200 p-4 mb-4">
+        <p className="text-sm font-semibold text-gray-800 mb-1">Fourchettes budgétaires</p>
+        <p className="text-xs text-gray-500 mb-3">
+          Non modifiables ici : calculées depuis la grille tarifaire (src/data/pricing.js),
+          communes aux formulaires Contact et Partenariat.
+        </p>
+        <ul className="space-y-1">
+          {BUDGET_BRACKETS.map((b) => (
+            <li key={b.value} className="text-xs text-gray-700">{b.label}</li>
+          ))}
+        </ul>
+      </div>
       <OptionListEditor
         title="Modes de contact préférés"
         items={config.contact_methods || []}

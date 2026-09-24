@@ -14,8 +14,10 @@ const STATIC_INQUIRY_TYPES = [
 ];
 
 // Même échelle que Partnership/ProjectRequestForm.jsx — source unique :
-// src/data/pricing.js (BUDGET_BRACKETS), alignée sur la grille tarifaire.
-const STATIC_BUDGET_RANGES = BUDGET_BRACKETS;
+// src/data/pricing.js (BUDGET_BRACKETS). Volontairement NON surchargeable
+// par site_settings : une config CMS enregistrée une fois figerait
+// d'anciennes fourchettes et casserait l'alignement sur la grille tarifaire.
+const BUDGET_RANGES = BUDGET_BRACKETS;
 
 const STATIC_CONTACT_METHODS = [
   { value: "email",    label: "Email"              },
@@ -34,7 +36,7 @@ const ContactForm = () => {
   const [submitting, setSubmitting] = useState(false);
   const [status, setStatus]       = useState(null); // "success" | "error"
   const [inquiryTypes, setInquiryTypes]     = useState(STATIC_INQUIRY_TYPES);
-  const [budgetRanges, setBudgetRanges]     = useState(STATIC_BUDGET_RANGES);
+  const budgetRanges = BUDGET_RANGES;
   const [contactMethods, setContactMethods] = useState(STATIC_CONTACT_METHODS);
 
   useEffect(() => {
@@ -42,7 +44,6 @@ const ContactForm = () => {
       .then((cfg) => {
         if (!cfg) return;
         if (cfg.inquiry_types?.length)   setInquiryTypes(cfg.inquiry_types);
-        if (cfg.budget_ranges?.length)   setBudgetRanges(cfg.budget_ranges);
         if (cfg.contact_methods?.length) setContactMethods(cfg.contact_methods);
       })
       .catch(() => {});

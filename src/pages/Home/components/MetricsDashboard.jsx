@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import Icon from "../../../components/AppIcon";
 import { useMetrics } from "../../../hooks/useContent";
-import { formatDualPrice } from "../../../data/pricing";
+import { formatGNF, formatUSD, MAINTENANCE_MONTHLY } from "../../../data/pricing";
 
 const ICONS = ["Smartphone", "Network", "Globe", "Activity"];
 const COLORS = [
@@ -143,8 +143,8 @@ const MetricsDashboard = () => {
               // tenable.
               { value: "<3s", sub: null, size: "text-2xl", label: "Temps de chargement moyen" },
               {
-                value: `${formatDualPrice(100)?.primary} – ${formatDualPrice(500)?.primary}`,
-                sub: `${formatDualPrice(100)?.secondary} – ${formatDualPrice(500)?.secondary.replace("≈ ", "")}`,
+                value: `${formatGNF(MAINTENANCE_MONTHLY.minGnf)} – ${formatGNF(MAINTENANCE_MONTHLY.maxGnf)}`,
+                sub: `≈ ${formatUSD(MAINTENANCE_MONTHLY.minGnf)} – ${formatUSD(MAINTENANCE_MONTHLY.maxGnf)}`,
                 size: "text-base",
                 label: "Maintenance mensuelle",
               },
