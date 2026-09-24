@@ -2,11 +2,13 @@ import React from "react";
 import { motion } from "framer-motion";
 import Icon from "../../../components/AppIcon";
 
+// Alignées sur les mêmes chiffres réels que l'accueil (MetricsDashboard) et
+// le partenariat (Partnership/HeroSection) — plus de "20+ Projets Réussis" /
+// "98% Taux de Satisfaction" / "5+ Pays Impactés", invérifiables.
 const STATS = [
-  { icon: "CheckCircle", value: "20+", label: "Projets Réussis",      color: "text-emerald-500 bg-emerald-50" },
-  { icon: "Users",       value: "15+", label: "Clients Satisfaits",    color: "text-blue-500 bg-blue-50"      },
-  { icon: "Star",        value: "98%", label: "Taux de Satisfaction",   color: "text-amber-500 bg-amber-50"    },
-  { icon: "Globe",       value: "5+",  label: "Pays Impactés",          color: "text-purple-500 bg-purple-50"  },
+  { icon: "Rocket",    value: "4", label: "Plateformes Livrées",   color: "text-emerald-500 bg-emerald-50" },
+  { icon: "Building2", value: "3", label: "Secteurs Couverts",     color: "text-blue-500 bg-blue-50"       },
+  { icon: "Sparkles",  value: "1", label: "SaaS en Phase Pilote",  color: "text-purple-500 bg-purple-50"   },
 ];
 
 const ClientLogos = () => (
@@ -28,7 +30,7 @@ const ClientLogos = () => (
         </p>
       </motion.div>
 
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
         {STATS.map((s, i) => (
           <motion.div
             key={s.label}
