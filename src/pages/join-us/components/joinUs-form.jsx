@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import emailjs from "@emailjs/browser";
 import Icon from "../../../components/AppIcon";
@@ -30,11 +30,15 @@ async function uploadFile(file, folder) {
   return supabase.storage.from("Cv_lettredemotivation_joinus").getPublicUrl(data.path).data.publicUrl;
 }
 
+const FIELD_ORDER = ["name", "email", "phone", "gender", "education", "position", "contractType", "cv", "motivation"];
+
 const JoinUsForm = () => {
   const [form, setForm]         = useState(EMPTY);
   const [errors, setErrors]     = useState({});
   const [submitting, setSubmitting] = useState(false);
   const [status, setStatus]     = useState(null); // "success" | "error"
+
+  const fieldRefs = Object.fromEntries(FIELD_ORDER.map((field) => [field, useRef(null)]));
 
   const set = (field, value) => {
     setForm((p) => ({ ...p, [field]: value }));
@@ -55,6 +59,10 @@ const JoinUsForm = () => {
     if (!form.motivation.trim() || form.motivation.length < 20)
       e.motivation = "Votre message doit contenir au moins 20 caractères.";
     setErrors(e);
+    if (Object.keys(e).length > 0) {
+      const firstInvalidField = FIELD_ORDER.find((field) => e[field]);
+      fieldRefs[firstInvalidField]?.current?.focus();
+    }
     return Object.keys(e).length === 0;
   };
 
@@ -189,6 +197,7 @@ const JoinUsForm = () => {
           {status === "error" && (
             <motion.div
               key="err"
+              role="alert"
               initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
               className="mb-6 flex items-start gap-3 bg-red-50 border border-red-200 text-red-800 rounded-xl px-5 py-4"
             >
@@ -218,34 +227,58 @@ const JoinUsForm = () => {
             </h3>
             <div className="grid md:grid-cols-2 gap-5">
               {[
-                { field: "name",    label: "Nom complet",     type: "text",   ph: "Mamadou Diallo",         req: true  },
-                { field: "email",   label: "Adresse email",   type: "email",  ph: "vous@exemple.com",        req: true  },
-                { field: "phone",   label: "Téléphone",       type: "tel",    ph: "+224 XXX XXX XXX",        req: true  },
-                { field: "address", label: "Adresse",         type: "text",   ph: "Quartier, Conakry",       req: false },
-                { field: "age",     label: "Âge",             type: "number", ph: "25",                      req: false },
-              ].map((f) => (
+                { field: "name",    label: "Nom complet",     type: "text",   ph: "Mamadou Diallo",         req: true,  autoComplete: "name" },
+                { field: "email",   label: "Adresse email",   type: "email",  ph: "vous@exemple.com",        req: true,  autoComplete: "email" },
+                { field: "phone",   label: "Téléphone",       type: "tel",    ph: "+224 XXX XXX XXX",        req: true,  autoComplete: "tel" },
+                { field: "address", label: "Adresse",         type: "text",   ph: "Quartier, Conakry",       req: false, autoComplete: "address-level2" },
+                { field: "age",     label: "Âge",             type: "number", ph: "25",                      req: false, autoComplete: "off" },
+              ].map((f) => {
+                const id = `join-${f.field}`;
+                const errorId = `${id}-error`;
+                return (
                 <div key={f.field}>
-                  <label className="block text-sm font-medium text-secondary mb-1.5">
+                  <label htmlFor={id} className="block text-sm font-medium text-secondary mb-1.5">
                     {f.label} {f.req && <span className="text-red-500">*</span>}
                   </label>
                   <input
-                    type={f.type} required={f.req} placeholder={f.ph}
+                    id={id}
+                    name={f.field}
+                    type={f.type}
+                    required={f.req}
+                    aria-required={f.req || undefined}
+                    aria-invalid={Boolean(errors[f.field])}
+                    aria-describedby={errors[f.field] ? errorId : undefined}
+                    autoComplete={f.autoComplete}
+                    ref={fieldRefs[f.field]}
+                    placeholder={f.ph}
                     value={form[f.field]}
                     onChange={(e) => set(f.field, e.target.value)}
                     className={inp(errors[f.field])}
                   />
-                  {errors[f.field] && <p className="mt-1 text-xs text-red-500">{errors[f.field]}</p>}
+                  {errors[f.field] && <p id={errorId} role="alert" className="mt-1 text-xs text-red-500">{errors[f.field]}</p>}
                 </div>
-              ))}
+                );
+              })}
               <div>
-                <label className="block text-sm font-medium text-secondary mb-1.5">
+                <label htmlFor="join-gender" className="block text-sm font-medium text-secondary mb-1.5">
                   Genre <span className="text-red-500">*</span>
                 </label>
-                <select value={form.gender} onChange={(e) => set("gender", e.target.value)} className={sel} required>
+                <select
+                  id="join-gender"
+                  name="gender"
+                  value={form.gender}
+                  onChange={(e) => set("gender", e.target.value)}
+                  className={sel}
+                  required
+                  aria-required="true"
+                  aria-invalid={Boolean(errors.gender)}
+                  aria-describedby={errors.gender ? "join-gender-error" : undefined}
+                  ref={fieldRefs.gender}
+                >
                   <option value="">Sélectionner…</option>
                   {GENDERS.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
                 </select>
-                {errors.gender && <p className="mt-1 text-xs text-red-500">{errors.gender}</p>}
+                {errors.gender && <p id="join-gender-error" role="alert" className="mt-1 text-xs text-red-500">{errors.gender}</p>}
               </div>
             </div>
           </div>
@@ -258,47 +291,79 @@ const JoinUsForm = () => {
             </h3>
             <div className="grid md:grid-cols-2 gap-5">
               <div>
-                <label className="block text-sm font-medium text-secondary mb-1.5">
+                <label htmlFor="join-education" className="block text-sm font-medium text-secondary mb-1.5">
                   Niveau d'études <span className="text-red-500">*</span>
                 </label>
-                <select value={form.education} onChange={(e) => set("education", e.target.value)} className={sel} required>
+                <select
+                  id="join-education"
+                  name="education"
+                  value={form.education}
+                  onChange={(e) => set("education", e.target.value)}
+                  className={sel}
+                  required
+                  aria-required="true"
+                  aria-invalid={Boolean(errors.education)}
+                  aria-describedby={errors.education ? "join-education-error" : undefined}
+                  ref={fieldRefs.education}
+                >
                   <option value="">Sélectionner…</option>
                   {EDUCATIONS.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
                 </select>
-                {errors.education && <p className="mt-1 text-xs text-red-500">{errors.education}</p>}
+                {errors.education && <p id="join-education-error" role="alert" className="mt-1 text-xs text-red-500">{errors.education}</p>}
               </div>
               <div>
-                <label className="block text-sm font-medium text-secondary mb-1.5">
+                <label htmlFor="join-position" className="block text-sm font-medium text-secondary mb-1.5">
                   Poste souhaité <span className="text-red-500">*</span>
                 </label>
                 <input
-                  type="text" required placeholder="Ex : Développeur Mobile React Native"
+                  id="join-position"
+                  name="position"
+                  type="text"
+                  required
+                  aria-required="true"
+                  aria-invalid={Boolean(errors.position)}
+                  aria-describedby={errors.position ? "join-position-error" : undefined}
+                  ref={fieldRefs.position}
+                  placeholder="Ex : Développeur Mobile React Native"
                   value={form.position} onChange={(e) => set("position", e.target.value)}
                   className={inp(errors.position)}
                 />
-                {errors.position && <p className="mt-1 text-xs text-red-500">{errors.position}</p>}
+                {errors.position && <p id="join-position-error" role="alert" className="mt-1 text-xs text-red-500">{errors.position}</p>}
               </div>
               <div>
-                <label className="block text-sm font-medium text-secondary mb-1.5">Années d'expérience</label>
+                <label htmlFor="join-experience" className="block text-sm font-medium text-secondary mb-1.5">Années d'expérience</label>
                 <input
+                  id="join-experience"
+                  name="experience"
                   type="number" min={0} placeholder="0"
                   value={form.experience} onChange={(e) => set("experience", e.target.value)}
                   className={inp(false)}
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-secondary mb-1.5">
+                <label htmlFor="join-contract-type" className="block text-sm font-medium text-secondary mb-1.5">
                   Type de contrat <span className="text-red-500">*</span>
                 </label>
-                <select value={form.contractType} onChange={(e) => set("contractType", e.target.value)} className={sel} required>
+                <select
+                  id="join-contract-type"
+                  name="contractType"
+                  value={form.contractType}
+                  onChange={(e) => set("contractType", e.target.value)}
+                  className={sel}
+                  required
+                  aria-required="true"
+                  aria-invalid={Boolean(errors.contractType)}
+                  aria-describedby={errors.contractType ? "join-contract-type-error" : undefined}
+                  ref={fieldRefs.contractType}
+                >
                   <option value="">Sélectionner…</option>
                   {CONTRACTS.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
                 </select>
-                {errors.contractType && <p className="mt-1 text-xs text-red-500">{errors.contractType}</p>}
+                {errors.contractType && <p id="join-contract-type-error" role="alert" className="mt-1 text-xs text-red-500">{errors.contractType}</p>}
               </div>
               <div>
-                <label className="block text-sm font-medium text-secondary mb-1.5">Disponibilité</label>
-                <select value={form.availability} onChange={(e) => set("availability", e.target.value)} className={sel}>
+                <label htmlFor="join-availability" className="block text-sm font-medium text-secondary mb-1.5">Disponibilité</label>
+                <select id="join-availability" name="availability" value={form.availability} onChange={(e) => set("availability", e.target.value)} className={sel}>
                   <option value="">Sélectionner…</option>
                   {AVAILABILITIES.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
                 </select>
@@ -316,31 +381,46 @@ const JoinUsForm = () => {
             <div className="grid md:grid-cols-2 gap-5 mb-5">
               {/* CV */}
               <div>
-                <label className="block text-sm font-medium text-secondary mb-1.5">
+                <label htmlFor="join-cv" className="block text-sm font-medium text-secondary mb-1.5">
                   CV (PDF) <span className="text-red-500">*</span>
                 </label>
-                <label className={`flex items-center gap-3 cursor-pointer border-2 border-dashed rounded-xl px-4 py-3 transition-colors ${errors.cv ? "border-red-400 bg-red-50" : "border-border hover:border-primary bg-white"}`}>
+                <label className={`flex items-center gap-3 cursor-pointer border-2 border-dashed rounded-xl px-4 py-3 min-h-11 transition-colors ${errors.cv ? "border-red-400 bg-red-50" : "border-border hover:border-primary bg-white"}`}>
                   <Icon name="Upload" size={18} color="var(--color-primary)" />
                   <span className="text-sm text-muted-foreground">
                     {form.cv ? form.cv.name : "Choisir un fichier PDF…"}
                   </span>
-                  <input type="file" accept=".pdf" className="hidden"
+                  <input
+                    id="join-cv"
+                    name="cv"
+                    type="file"
+                    accept=".pdf"
+                    required
+                    aria-required="true"
+                    aria-invalid={Boolean(errors.cv)}
+                    aria-describedby={errors.cv ? "join-cv-error" : undefined}
+                    ref={fieldRefs.cv}
+                    className="hidden"
                     onChange={(e) => set("cv", e.target.files?.[0] || null)} />
                 </label>
-                {errors.cv && <p className="mt-1 text-xs text-red-500">{errors.cv}</p>}
+                {errors.cv && <p id="join-cv-error" role="alert" className="mt-1 text-xs text-red-500">{errors.cv}</p>}
               </div>
 
               {/* Lettre */}
               <div>
-                <label className="block text-sm font-medium text-secondary mb-1.5">
+                <label htmlFor="join-motivation-letter" className="block text-sm font-medium text-secondary mb-1.5">
                   Lettre de motivation (PDF) <span className="text-muted-foreground text-xs">(optionnel)</span>
                 </label>
-                <label className="flex items-center gap-3 cursor-pointer border-2 border-dashed border-border hover:border-primary rounded-xl px-4 py-3 bg-white transition-colors">
+                <label className="flex items-center gap-3 cursor-pointer border-2 border-dashed border-border hover:border-primary rounded-xl px-4 py-3 min-h-11 bg-white transition-colors">
                   <Icon name="Upload" size={18} color="var(--color-primary)" />
                   <span className="text-sm text-muted-foreground">
                     {form.motivationLetter ? form.motivationLetter.name : "Choisir un fichier PDF…"}
                   </span>
-                  <input type="file" accept=".pdf" className="hidden"
+                  <input
+                    id="join-motivation-letter"
+                    name="motivationLetter"
+                    type="file"
+                    accept=".pdf"
+                    className="hidden"
                     onChange={(e) => set("motivationLetter", e.target.files?.[0] || null)} />
                 </label>
               </div>
@@ -348,17 +428,24 @@ const JoinUsForm = () => {
 
             {/* Motivation texte */}
             <div>
-              <label className="block text-sm font-medium text-secondary mb-1.5">
+              <label htmlFor="join-motivation" className="block text-sm font-medium text-secondary mb-1.5">
                 Pourquoi souhaitez-vous nous rejoindre ? <span className="text-red-500">*</span>
               </label>
               <textarea
-                rows={5} required
+                id="join-motivation"
+                name="motivation"
+                required
+                aria-required="true"
+                aria-invalid={Boolean(errors.motivation)}
+                aria-describedby={errors.motivation ? "join-motivation-error" : undefined}
+                ref={fieldRefs.motivation}
+                rows={5}
                 placeholder="Expliquez vos motivations, vos compétences et ce que vous pouvez apporter à l'équipe…"
                 value={form.motivation}
                 onChange={(e) => set("motivation", e.target.value)}
                 className={`${inp(errors.motivation)} resize-none`}
               />
-              {errors.motivation && <p className="mt-1 text-xs text-red-500">{errors.motivation}</p>}
+              {errors.motivation && <p id="join-motivation-error" role="alert" className="mt-1 text-xs text-red-500">{errors.motivation}</p>}
             </div>
           </div>
 
@@ -373,7 +460,7 @@ const JoinUsForm = () => {
               disabled={submitting}
               whileHover={{ scale: submitting ? 1 : 1.03 }}
               whileTap={{ scale: 0.97 }}
-              className="inline-flex items-center gap-2 bg-primary hover:bg-primary/90 disabled:opacity-60 text-white font-semibold px-10 py-3.5 rounded-xl transition-all glow-orange min-w-[220px] justify-center"
+              className="inline-flex items-center gap-2 bg-primary hover:bg-primary/90 disabled:opacity-60 text-white font-semibold px-10 py-3.5 min-h-11 rounded-xl transition-all glow-orange min-w-[220px] justify-center"
             >
               {submitting ? (
                 <>

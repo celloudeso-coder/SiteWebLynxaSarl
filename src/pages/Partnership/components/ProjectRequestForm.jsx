@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import emailjs from "@emailjs/browser";
 import Icon from "../../../components/AppIcon";
@@ -62,12 +62,28 @@ const EMPTY = {
 const inputCls = "w-full px-4 py-3 border border-border rounded-xl text-sm bg-white focus:outline-none focus:ring-2 focus:ring-primary transition-colors";
 const selectCls = `${inputCls}`;
 
+const REQUIRED_FIELDS = [
+  ["projectType",   "Veuillez choisir un type de projet."],
+  ["budget",        "Veuillez choisir un budget estimé."],
+  ["timeline",      "Veuillez choisir un délai souhaité."],
+  ["companyName",   "Le nom de votre organisation est requis."],
+  ["contactName",   "Votre nom complet est requis."],
+  ["email",         "Votre adresse email est requise."],
+  ["projectDescription", "Merci de décrire votre projet (au moins 20 caractères)."],
+];
+
 const ProjectRequestForm = () => {
   const [form, setForm]         = useState(EMPTY);
+  const [errors, setErrors]     = useState({});
   const [submitting, setSubmitting] = useState(false);
   const [status, setStatus]     = useState(null); // "success" | "error"
 
-  const set = (field, value) => setForm((p) => ({ ...p, [field]: value }));
+  const fieldRefs = Object.fromEntries(REQUIRED_FIELDS.map(([field]) => [field, useRef(null)]));
+
+  const set = (field, value) => {
+    setForm((p) => ({ ...p, [field]: value }));
+    if (errors[field]) setErrors((p) => ({ ...p, [field]: "" }));
+  };
 
   const toggleReq = (req) =>
     set("requirements", form.requirements.includes(req)
@@ -75,8 +91,30 @@ const ProjectRequestForm = () => {
       : [...form.requirements, req]
     );
 
+  const validate = () => {
+    const e = {};
+    if (!form.email.trim()) e.email = "Votre adresse email est requise.";
+    else if (!/\S+@\S+\.\S+/.test(form.email)) e.email = "Adresse email invalide.";
+    for (const [field, message] of REQUIRED_FIELDS) {
+      if (field === "email") continue;
+      const value = form[field];
+      if (field === "projectDescription") {
+        if (!value.trim() || value.trim().length < 20) e[field] = message;
+      } else if (!value) {
+        e[field] = message;
+      }
+    }
+    setErrors(e);
+    if (Object.keys(e).length > 0) {
+      const firstInvalidField = REQUIRED_FIELDS.map(([f]) => f).find((f) => e[f]);
+      fieldRefs[firstInvalidField]?.current?.focus();
+    }
+    return Object.keys(e).length === 0;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!validate()) return;
     setSubmitting(true);
     try {
       await emailjs.send(
@@ -159,6 +197,7 @@ const ProjectRequestForm = () => {
           {status === "error" && (
             <motion.div
               key="err"
+              role="alert"
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0 }}
@@ -176,6 +215,7 @@ const ProjectRequestForm = () => {
         <motion.form
           onSubmit={handleSubmit}
           className="space-y-7"
+          noValidate
           initial={{ opacity: 0, y: 24 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
@@ -189,29 +229,50 @@ const ProjectRequestForm = () => {
             </h3>
             <div className="grid md:grid-cols-2 gap-5">
               <div>
-                <label className="block text-sm font-medium text-secondary mb-1.5">Type de projet <span className="text-red-500">*</span></label>
-                <select required value={form.projectType} onChange={(e) => set("projectType", e.target.value)} className={selectCls}>
+                <label htmlFor="prj-type" className="block text-sm font-medium text-secondary mb-1.5">Type de projet <span className="text-red-500">*</span></label>
+                <select
+                  id="prj-type" name="projectType" required aria-required="true"
+                  aria-invalid={Boolean(errors.projectType)}
+                  aria-describedby={errors.projectType ? "prj-type-error" : undefined}
+                  ref={fieldRefs.projectType}
+                  value={form.projectType} onChange={(e) => set("projectType", e.target.value)} className={selectCls}
+                >
                   <option value="">Sélectionner…</option>
                   {PROJECT_TYPES.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
                 </select>
+                {errors.projectType && <p id="prj-type-error" role="alert" className="mt-1 text-xs text-red-500">{errors.projectType}</p>}
               </div>
               <div>
-                <label className="block text-sm font-medium text-secondary mb-1.5">Budget estimé <span className="text-red-500">*</span></label>
-                <select required value={form.budget} onChange={(e) => set("budget", e.target.value)} className={selectCls}>
+                <label htmlFor="prj-budget" className="block text-sm font-medium text-secondary mb-1.5">Budget estimé <span className="text-red-500">*</span></label>
+                <select
+                  id="prj-budget" name="budget" required aria-required="true"
+                  aria-invalid={Boolean(errors.budget)}
+                  aria-describedby={errors.budget ? "prj-budget-error" : undefined}
+                  ref={fieldRefs.budget}
+                  value={form.budget} onChange={(e) => set("budget", e.target.value)} className={selectCls}
+                >
                   <option value="">Sélectionner…</option>
                   {BUDGETS.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
                 </select>
+                {errors.budget && <p id="prj-budget-error" role="alert" className="mt-1 text-xs text-red-500">{errors.budget}</p>}
               </div>
               <div>
-                <label className="block text-sm font-medium text-secondary mb-1.5">Délai souhaité <span className="text-red-500">*</span></label>
-                <select required value={form.timeline} onChange={(e) => set("timeline", e.target.value)} className={selectCls}>
+                <label htmlFor="prj-timeline" className="block text-sm font-medium text-secondary mb-1.5">Délai souhaité <span className="text-red-500">*</span></label>
+                <select
+                  id="prj-timeline" name="timeline" required aria-required="true"
+                  aria-invalid={Boolean(errors.timeline)}
+                  aria-describedby={errors.timeline ? "prj-timeline-error" : undefined}
+                  ref={fieldRefs.timeline}
+                  value={form.timeline} onChange={(e) => set("timeline", e.target.value)} className={selectCls}
+                >
                   <option value="">Sélectionner…</option>
                   {TIMELINES.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
                 </select>
+                {errors.timeline && <p id="prj-timeline-error" role="alert" className="mt-1 text-xs text-red-500">{errors.timeline}</p>}
               </div>
               <div>
-                <label className="block text-sm font-medium text-secondary mb-1.5">Contact préféré</label>
-                <select value={form.preferredContact} onChange={(e) => set("preferredContact", e.target.value)} className={selectCls}>
+                <label htmlFor="prj-contact-pref" className="block text-sm font-medium text-secondary mb-1.5">Contact préféré</label>
+                <select id="prj-contact-pref" name="preferredContact" value={form.preferredContact} onChange={(e) => set("preferredContact", e.target.value)} className={selectCls}>
                   <option value="">Sélectionner…</option>
                   {CONTACT_PREFS.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
                 </select>
@@ -227,25 +288,37 @@ const ProjectRequestForm = () => {
             </h3>
             <div className="grid md:grid-cols-2 gap-5">
               {[
-                { field: "companyName", label: "Entreprise / Organisation", type: "text", placeholder: "Nom de votre organisation", required: true },
-                { field: "contactName", label: "Nom du contact",             type: "text", placeholder: "Votre nom complet",          required: true },
-                { field: "email",       label: "Adresse email",              type: "email", placeholder: "vous@exemple.com",          required: true },
-                { field: "phone",       label: "Téléphone",                  type: "tel",  placeholder: "+224 XXX XXX XXX",            required: false },
-              ].map((f) => (
+                { field: "companyName", label: "Entreprise / Organisation", type: "text", placeholder: "Nom de votre organisation", required: true,  autoComplete: "organization" },
+                { field: "contactName", label: "Nom du contact",             type: "text", placeholder: "Votre nom complet",          required: true,  autoComplete: "name" },
+                { field: "email",       label: "Adresse email",              type: "email", placeholder: "vous@exemple.com",          required: true,  autoComplete: "email" },
+                { field: "phone",       label: "Téléphone",                  type: "tel",  placeholder: "+224 XXX XXX XXX",            required: false, autoComplete: "tel" },
+              ].map((f) => {
+                const id = `prj-${f.field}`;
+                const errorId = `${id}-error`;
+                return (
                 <div key={f.field}>
-                  <label className="block text-sm font-medium text-secondary mb-1.5">
+                  <label htmlFor={id} className="block text-sm font-medium text-secondary mb-1.5">
                     {f.label} {f.required && <span className="text-red-500">*</span>}
                   </label>
                   <input
+                    id={id}
+                    name={f.field}
                     type={f.type}
+                    autoComplete={f.autoComplete}
                     required={f.required}
+                    aria-required={f.required || undefined}
+                    aria-invalid={Boolean(errors[f.field])}
+                    aria-describedby={errors[f.field] ? errorId : undefined}
+                    ref={fieldRefs[f.field]}
                     placeholder={f.placeholder}
                     value={form[f.field]}
                     onChange={(e) => set(f.field, e.target.value)}
                     className={inputCls}
                   />
+                  {errors[f.field] && <p id={errorId} role="alert" className="mt-1 text-xs text-red-500">{errors[f.field]}</p>}
                 </div>
-              ))}
+                );
+              })}
             </div>
           </div>
 
@@ -255,39 +328,56 @@ const ProjectRequestForm = () => {
               <Icon name="Settings" size={20} color="var(--color-primary)" />
               Exigences du projet
             </h3>
-            <p className="text-sm text-muted-foreground mb-4">Sélectionnez tout ce qui s'applique :</p>
-            <div className="grid md:grid-cols-2 gap-3 mb-6">
-              {REQUIREMENTS.map((req) => (
-                <label key={req} className="flex items-center gap-3 cursor-pointer group">
-                  <div
-                    onClick={() => toggleReq(req)}
-                    className={`w-5 h-5 rounded border-2 flex items-center justify-center flex-shrink-0 transition-colors cursor-pointer ${
-                      form.requirements.includes(req)
-                        ? "bg-primary border-primary"
-                        : "border-border group-hover:border-primary"
-                    }`}
-                  >
-                    {form.requirements.includes(req) && (
-                      <Icon name="Check" size={12} color="white" />
-                    )}
-                  </div>
+            <p className="text-sm text-muted-foreground mb-4" id="prj-requirements-legend">Sélectionnez tout ce qui s'applique :</p>
+            <div className="grid md:grid-cols-2 gap-3 mb-6" role="group" aria-labelledby="prj-requirements-legend">
+              {REQUIREMENTS.map((req, i) => {
+                const id = `prj-requirement-${i}`;
+                return (
+                <label key={req} htmlFor={id} className="flex items-center gap-3 cursor-pointer group min-h-11">
+                  <span className="relative flex-shrink-0 w-5 h-5">
+                    <input
+                      id={id}
+                      type="checkbox"
+                      name="requirements"
+                      value={req}
+                      checked={form.requirements.includes(req)}
+                      onChange={() => toggleReq(req)}
+                      className="peer absolute inset-0 w-full h-full opacity-0 cursor-pointer before:absolute before:-inset-3 before:content-['']"
+                    />
+                    <span
+                      aria-hidden="true"
+                      className="pointer-events-none absolute inset-0 rounded border-2 flex items-center justify-center transition-colors border-border peer-checked:bg-primary peer-checked:border-primary group-hover:border-primary peer-focus-visible:ring-2 peer-focus-visible:ring-primary peer-focus-visible:ring-offset-2"
+                    >
+                      {form.requirements.includes(req) && (
+                        <Icon name="Check" size={12} color="white" />
+                      )}
+                    </span>
+                  </span>
                   <span className="text-sm text-secondary">{req}</span>
                 </label>
-              ))}
+                );
+              })}
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-secondary mb-2">
+              <label htmlFor="prj-description" className="block text-sm font-medium text-secondary mb-2">
                 Description du projet <span className="text-red-500">*</span>
               </label>
               <textarea
+                id="prj-description"
+                name="projectDescription"
                 required
+                aria-required="true"
+                aria-invalid={Boolean(errors.projectDescription)}
+                aria-describedby={errors.projectDescription ? "prj-description-error" : undefined}
+                ref={fieldRefs.projectDescription}
                 rows={5}
                 value={form.projectDescription}
                 onChange={(e) => set("projectDescription", e.target.value)}
                 placeholder="Décrivez votre projet en détail : objectifs, public cible, spécifications techniques, contexte…"
                 className={`${inputCls} resize-none`}
               />
+              {errors.projectDescription && <p id="prj-description-error" role="alert" className="mt-1 text-xs text-red-500">{errors.projectDescription}</p>}
             </div>
           </div>
 
@@ -298,7 +388,7 @@ const ProjectRequestForm = () => {
               disabled={submitting}
               whileHover={{ scale: submitting ? 1 : 1.03 }}
               whileTap={{ scale: 0.97 }}
-              className="inline-flex items-center gap-2 bg-primary hover:bg-primary/90 disabled:opacity-60 text-white font-semibold px-12 py-3.5 rounded-xl text-base transition-all glow-orange"
+              className="inline-flex items-center gap-2 bg-primary hover:bg-primary/90 disabled:opacity-60 text-white font-semibold px-12 py-3.5 min-h-11 rounded-xl text-base transition-all glow-orange"
             >
               {submitting ? (
                 <>
