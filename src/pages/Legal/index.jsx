@@ -1,12 +1,11 @@
 import React from "react";
-import { Helmet } from "react-helmet";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import Header from "../../components/ui/Header";
+import Seo from "../../components/Seo";
 import Icon from "../../components/AppIcon";
 import logoIco from "../../../public/LYNXA.ico";
 import { useSiteSettings } from "../../hooks/useContent";
-import { absoluteUrl } from "../../lib/seo";
 
 const LAST_UPDATED = "14 juillet 2026";
 
@@ -225,11 +224,11 @@ const LegalPage = ({ page }) => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <Helmet>
-        <title>{content.title} | Lynxa Tech Guinea</title>
-        <meta name="description" content={content.description} />
-        <link rel="canonical" href={absoluteUrl(`/${page}`)} />
-      </Helmet>
+      <Seo
+        title={`${content.title} | Lynxa Tech Guinea`}
+        description={content.description}
+        path={`/${page}`}
+      />
 
       <Header />
 

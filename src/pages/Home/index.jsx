@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { Helmet } from "react-helmet";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import Header from "../../components/ui/Header";
+import Seo from "../../components/Seo";
 import HeroSection from "./components/HeroSection";
 import MetricsDashboard from "./components/MetricsDashboard";
 import ServiceGalaxies from "./components/ServiceGalaxies";
@@ -11,7 +11,6 @@ import Icon from "../../components/AppIcon";
 import logoIco from "../../../public/LYNXA.ico";
 import { getHomeEngagements, getHomeWhyItems } from "../../lib/cms";
 import { useSiteSettings } from "../../hooks/useContent";
-import { absoluteUrl } from "../../lib/seo";
 
 const STATIC_COMMITMENTS = [
   { icon: "Flag",        label: "100 % Guinéen",       sub_label: "Ancré localement"       },
@@ -45,14 +44,13 @@ const Homepage = () => {
 
   return (
     <>
-      <Helmet>
-        <title>Lynxa Tech Guinée - Innovation Sans Frontières | Hub Technologique Africain</title>
-        <meta name="description" content="Solutions technologiques leader de la Guinée au monde. Développement mobile, cybersécurité, infrastructure réseau et solutions web avec une qualité mondiale et une compréhension locale." />
-        <meta name="keywords" content="technologie Guinée, innovation technologique africaine, développement mobile, cybersécurité, solutions réseau, développement web, Lynxa Tech Guinée" />
-        <meta property="og:title" content="Lynxa Tech Guinée - Innovation Sans Frontières" />
-        <meta property="og:type" content="website" />
-        <link rel="canonical" href={absoluteUrl("/")} />
-      </Helmet>
+      <Seo
+        title="Lynxa Tech Guinée - Innovation Sans Frontières | Hub Technologique Africain"
+        description="Solutions technologiques leader de la Guinée au monde. Développement mobile, cybersécurité, infrastructure réseau et solutions web avec une qualité mondiale et une compréhension locale."
+        keywords="technologie Guinée, innovation technologique africaine, développement mobile, cybersécurité, solutions réseau, développement web, Lynxa Tech Guinée"
+        path="/"
+        ogTitle="Lynxa Tech Guinée - Innovation Sans Frontières"
+      />
 
       <div className="min-h-screen bg-white">
         <Header />

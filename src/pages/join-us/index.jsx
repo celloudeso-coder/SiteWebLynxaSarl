@@ -1,13 +1,12 @@
 import React, { useEffect } from "react";
-import { Helmet } from "react-helmet";
 import Header from "../../components/ui/Header";
+import Seo from "../../components/Seo";
 import JoinUsHero from "./components/joinus-hero";
 import JoinUsProcess from "./components/joinus-process";
 import JoinUsOpenings from "./components/joinus-openings";
 import JoinUsForm from "./components/joinUs-form";
 import logoIco from "../../../public/LYNXA.ico";
 import { useSiteSettings } from "../../hooks/useContent";
-import { absoluteUrl } from "../../lib/seo";
 
 const JoinUsPage = () => {
   const { data: settings } = useSiteSettings();
@@ -18,21 +17,14 @@ const JoinUsPage = () => {
 
   return (
     <>
-      <Helmet>
-        <title>Rejoignez-nous | Lynxa Tech Guinée</title>
-        <meta
-          name="description"
-          content="Rejoignez l'équipe Lynxa Tech et participez à la construction du futur technologique africain. Postes ouverts à Conakry, Guinée."
-        />
-        <meta
-          name="keywords"
-          content="emploi tech guinée, recrutement lynxa tech, développeur mobile guinée, stage informatique conakry, carrière technologie afrique"
-        />
-        <meta property="og:title" content="Carrières | Lynxa Tech Guinée" />
-        <meta property="og:description" content="Faites partie d'une équipe qui façonne l'avenir technologique africain. Rejoignez Lynxa Tech à Conakry." />
-        <meta property="og:type" content="website" />
-        <link rel="canonical" href={absoluteUrl("/join-us")} />
-      </Helmet>
+      <Seo
+        title="Rejoignez-nous | Lynxa Tech Guinée"
+        description="Rejoignez l'équipe Lynxa Tech et participez à la construction du futur technologique africain. Postes ouverts à Conakry, Guinée."
+        keywords="emploi tech guinée, recrutement lynxa tech, développeur mobile guinée, stage informatique conakry, carrière technologie afrique"
+        path="/join-us"
+        ogTitle="Carrières | Lynxa Tech Guinée"
+        ogDescription="Faites partie d'une équipe qui façonne l'avenir technologique africain. Rejoignez Lynxa Tech à Conakry."
+      />
 
       <div className="min-h-screen bg-background">
         <Header />

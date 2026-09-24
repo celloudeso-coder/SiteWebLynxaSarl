@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
-import { Helmet } from "react-helmet";
 import Header from "../../components/ui/Header";
+import Seo from "../../components/Seo";
 import ContactHero from "./components/ContactHero";
 import QuickConnectCards from "./components/QuickConnectCards";
 import ContactForm from "./components/ContactForm";
@@ -8,7 +8,6 @@ import OfficeLocation from "./components/OfficeLocation";
 import SocialConnect from "./components/SocialConnect";
 import logoIco from "../../../public/LYNXA.ico";
 import { useSiteSettings } from "../../hooks/useContent";
-import { absoluteUrl } from "../../lib/seo";
 
 const ContactMultiChannelConnection = () => {
   const { data: settings } = useSiteSettings();
@@ -19,29 +18,14 @@ const ContactMultiChannelConnection = () => {
 
   return (
     <>
-      <Helmet>
-        <title>
-          Contactez-Nous - Connexion Multi-Canal | Lynxa Tech Guinée
-        </title>
-        <meta
-          name="description"
-          content="Connectez-vous avec Lynxa Tech Guinée via plusieurs canaux. WhatsApp, téléphone, email, ou visitez notre bureau de Conakry. Réponse rapide garantie pour toutes vos demandes de projets technologiques."
-        />
-        <meta
-          name="keywords"
-          content="contacter lynxa tech guinée, bureau conakry, whatsapp business, consultation technique, demande de projet, technologie guinée"
-        />
-        <meta
-          property="og:title"
-          content="Contactez Lynxa Tech Guinée - Votre Portail vers l'Innovation"
-        />
-        <meta
-          property="og:description"
-          content="Multiples façons de vous connecter avec le principal centre d'innovation technologique de Guinée. Contactez-nous pour votre prochain projet."
-        />
-        <meta property="og:type" content="website" />
-        <link rel="canonical" href={absoluteUrl("/contact")} />
-      </Helmet>
+      <Seo
+        title="Contactez-Nous - Connexion Multi-Canal | Lynxa Tech Guinée"
+        description="Connectez-vous avec Lynxa Tech Guinée via plusieurs canaux. WhatsApp, téléphone, email, ou visitez notre bureau de Conakry. Réponse rapide garantie pour toutes vos demandes de projets technologiques."
+        keywords="contacter lynxa tech guinée, bureau conakry, whatsapp business, consultation technique, demande de projet, technologie guinée"
+        path="/contact"
+        ogTitle="Contactez Lynxa Tech Guinée - Votre Portail vers l'Innovation"
+        ogDescription="Multiples façons de vous connecter avec le principal centre d'innovation technologique de Guinée. Contactez-nous pour votre prochain projet."
+      />
       <div className="min-h-screen bg-background">
         <Header />
         

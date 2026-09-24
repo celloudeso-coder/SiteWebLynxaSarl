@@ -1,8 +1,8 @@
 import React, { useState } from "react";
-import { Helmet } from "react-helmet";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link } from "react-router-dom";
 import Header from "../../components/ui/Header";
+import Seo from "../../components/Seo";
 import HeroSection from "./components/HeroSection";
 import FilterBar from "./components/FilterBar";
 import ProjectCard from "./components/ProjectCard";
@@ -10,7 +10,6 @@ import ProjectModal from "./components/ProjectModal";
 import InnovationLab from "./components/InnovationLab";
 import Icon from "../../components/AppIcon";
 import { useProjects } from "../../hooks/useContent";
-import { absoluteUrl } from "../../lib/seo";
 
 // ── Skeleton card shown while CMS data is loading ──────────────────────────
 const SkeletonCard = () => (
@@ -101,21 +100,14 @@ const PortfolioShowcase = () => {
 
   return (
     <>
-      <Helmet>
-        <title>Portfolio – Nos Réalisations | Lynxa Tech Guinée</title>
-        <meta
-          name="description"
-          content="Découvrez les projets réalisés par Lynxa Tech Guinée : applications mobiles, infrastructures réseau et plateformes web qui transforment des entreprises à travers l'Afrique de l'Ouest."
-        />
-        <meta
-          name="keywords"
-          content="portfolio lynxa tech, projets technologiques guinée, réalisations développement mobile, études de cas web afrique"
-        />
-        <meta property="og:title" content="Portfolio | Lynxa Tech Guinée" />
-        <meta property="og:description" content="Des histoires de succès inspirantes, des projets qui transforment des vies et propulsent des organisations." />
-        <meta property="og:type" content="website" />
-        <link rel="canonical" href={absoluteUrl("/portfolio")} />
-      </Helmet>
+      <Seo
+        title="Portfolio – Nos Réalisations | Lynxa Tech Guinée"
+        description="Découvrez les projets réalisés par Lynxa Tech Guinée : applications mobiles, infrastructures réseau et plateformes web qui transforment des entreprises à travers l'Afrique de l'Ouest."
+        keywords="portfolio lynxa tech, projets technologiques guinée, réalisations développement mobile, études de cas web afrique"
+        path="/portfolio"
+        ogTitle="Portfolio | Lynxa Tech Guinée"
+        ogDescription="Des histoires de succès inspirantes, des projets qui transforment des vies et propulsent des organisations."
+      />
 
     <div className="min-h-screen bg-background">
       <Header />

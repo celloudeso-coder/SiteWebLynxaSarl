@@ -1,8 +1,8 @@
 import React, { useEffect } from "react";
-import { Helmet } from "react-helmet";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import Header from "../../components/ui/Header";
+import Seo from "../../components/Seo";
 import FounderStory from "./components/FounderStory";
 import CompanyTimeline from "./components/CompanyTimeline";
 import TeamSpotlight from "./components/TeamSpotlight";
@@ -12,7 +12,6 @@ import VisionRoadmap from "./components/VisionRoadmap";
 import Icon from "../../components/AppIcon";
 import logoIco from "../../../public/LYNXA.ico";
 import { useSiteSettings } from "../../hooks/useContent";
-import { absoluteUrl } from "../../lib/seo";
 
 const AboutInnovationStoryVision = () => {
   const { data: settings } = useSiteSettings();
@@ -24,12 +23,11 @@ const AboutInnovationStoryVision = () => {
 
   return (
     <>
-      <Helmet>
-        <title>À propos - Histoire de l'Innovation & Vision | Lynxa Tech Guinée</title>
-        <meta name="description" content="Découvrez le parcours inspirant de Lynxa Tech, d'une petite startup guinéenne au principal hub d'innovation technologique en Afrique de l'Ouest." />
-        <meta property="og:type" content="website" />
-        <link rel="canonical" href={absoluteUrl("/about")} />
-      </Helmet>
+      <Seo
+        title="À propos - Histoire de l'Innovation & Vision | Lynxa Tech Guinée"
+        description="Découvrez le parcours inspirant de Lynxa Tech, d'une petite startup guinéenne au principal hub d'innovation technologique en Afrique de l'Ouest."
+        path="/about"
+      />
 
       <div className="min-h-screen bg-white">
         <Header />

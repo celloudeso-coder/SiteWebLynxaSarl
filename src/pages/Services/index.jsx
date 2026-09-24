@@ -1,8 +1,8 @@
 import React, { useState } from "react";
-import { Helmet } from "react-helmet";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link } from "react-router-dom";
 import Header from "../../components/ui/Header";
+import Seo from "../../components/Seo";
 import ServiceHero from "./components/ServiceHero";
 import ServiceCard from "./components/ServiceCard";
 import ServiceDetails from "./components/ServiceDetails";
@@ -12,7 +12,60 @@ import PricingFramework from "./components/PricingFramework";
 import Icon from "../../components/AppIcon";
 import { useServices } from "../../hooks/useContent";
 import logoIco from "../../../public/LYNXA.ico";
-import { absoluteUrl } from "../../lib/seo";
+
+// Statique plutôt que dérivé des services CMS (chargés en async) : reste
+// présent dès le premier rendu et pendant le prerendering au build, sans
+// dépendre du succès/de la vitesse de l'appel Supabase.
+const SERVICES_JSON_LD = {
+  "@context": "https://schema.org",
+  "@type": "ItemList",
+  itemListElement: [
+    {
+      "@type": "ListItem",
+      position: 1,
+      item: {
+        "@type": "Service",
+        name: "Développement Mobile",
+        description: "Applications iOS, Android, React Native, Flutter et Progressive Web Apps.",
+        provider: { "@type": "Organization", name: "Lynxa Tech Guinea" },
+        areaServed: "Afrique de l'Ouest",
+      },
+    },
+    {
+      "@type": "ListItem",
+      position: 2,
+      item: {
+        "@type": "Service",
+        name: "Infrastructure Réseau",
+        description: "Conception, déploiement, sécurité et supervision d'infrastructures réseau.",
+        provider: { "@type": "Organization", name: "Lynxa Tech Guinea" },
+        areaServed: "Afrique de l'Ouest",
+      },
+    },
+    {
+      "@type": "ListItem",
+      position: 3,
+      item: {
+        "@type": "Service",
+        name: "Développement Web",
+        description: "Sites vitrine, e-commerce, systèmes de gestion de contenu et optimisation SEO.",
+        provider: { "@type": "Organization", name: "Lynxa Tech Guinea" },
+        areaServed: "Afrique de l'Ouest",
+      },
+    },
+    {
+      "@type": "ListItem",
+      position: 4,
+      item: {
+        "@type": "Service",
+        name: "Cybersécurité",
+        description: "Audits, conformité et supervision des menaces.",
+        provider: { "@type": "Organization", name: "Lynxa Tech Guinea" },
+        areaServed: "Afrique de l'Ouest",
+      },
+    },
+  ],
+};
 
 // ── Skeleton while CMS loads ─────────────────────────────────────────────────
 const SkeletonTab = () => (
@@ -56,21 +109,15 @@ const ServicesPage = () => {
 
   return (
     <>
-      <Helmet>
-        <title>Services | Solutions Technologiques de Pointe | Lynxa Tech Guinée</title>
-        <meta
-          name="description"
-          content="Développement mobile, infrastructure réseau, développement web et cybersécurité : découvrez les services technologiques de Lynxa Tech Guinée, conçus pour l'Afrique de l'Ouest avec des standards internationaux."
-        />
-        <meta
-          name="keywords"
-          content="services technologiques guinée, développement mobile, infrastructure réseau, développement web, cybersécurité, lynxa tech"
-        />
-        <meta property="og:title" content="Services | Lynxa Tech Guinée" />
-        <meta property="og:description" content="Solutions technologiques de pointe pensées pour l'Afrique, compétitives à l'échelle mondiale." />
-        <meta property="og:type" content="website" />
-        <link rel="canonical" href={absoluteUrl("/service")} />
-      </Helmet>
+      <Seo
+        title="Services | Solutions Technologiques de Pointe | Lynxa Tech Guinée"
+        description="Développement mobile, infrastructure réseau, développement web et cybersécurité : découvrez les services technologiques de Lynxa Tech Guinée, conçus pour l'Afrique de l'Ouest avec des standards internationaux."
+        keywords="services technologiques guinée, développement mobile, infrastructure réseau, développement web, cybersécurité, lynxa tech"
+        path="/service"
+        ogTitle="Services | Lynxa Tech Guinée"
+        ogDescription="Solutions technologiques de pointe pensées pour l'Afrique, compétitives à l'échelle mondiale."
+        jsonLd={[SERVICES_JSON_LD]}
+      />
 
     <div className="min-h-screen bg-white">
       <Header />

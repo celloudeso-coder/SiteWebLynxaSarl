@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { Helmet } from "react-helmet";
 import Header from "../../components/ui/Header";
+import Seo from "../../components/Seo";
 import HeroSection from "./components/HeroSection";
 import BlogSection from "./components/BlogSection";
 import WhitepapersSection from "./components/WhitepapersSection";
@@ -9,7 +9,6 @@ import IndustryReportsSection from "./components/IndustryReportsSection";
 import NewsletterSection from "./components/NewsletterSection";
 import ContentFilters from "./components/ContentFilters";
 import { useSiteSettings } from "../../hooks/useContent";
-import { absoluteUrl } from "../../lib/seo";
 
 const InsightsKnowledgeLeadership = () => {
   const [activeCategory, setActiveCategory] = useState("all");
@@ -46,31 +45,14 @@ const InsightsKnowledgeLeadership = () => {
 
   return (
     <>
-      <Helmet>
-        <title>
-          Perspectives & Leadership en Connaissances | Lynxa Tech Guinée -
-          Innovation Technologique Africaine
-        </title>
-        <meta
-          name="description"
-          content="Restez à la pointe grâce aux perspectives sectorielles de Lynxa Tech, au contenu de leadership éclairé et aux analyses d’experts sur l’innovation technologique africaine, les tendances en cybersécurité et les meilleures pratiques en développement mobile."
-        />
-        <meta
-          name="keywords"
-          content="perspectives tech africaines, tendances technologiques Guinée, analyse cybersécurité, développement mobile, infrastructure réseau, leadership technologique, rapports d’innovation, transformation digitale Afrique de l’Ouest"
-        />
-        <meta
-          property="og:title"
-          content="Perspectives & Leadership en Connaissances | Lynxa Tech Guinée"
-        />
-        <meta
-          property="og:description"
-          content="Découvrez des perspectives de pointe et du contenu de leadership éclairé de Lynxa Tech Guinée. Analyses expertes sur les tendances technologiques africaines, la cybersécurité et l’innovation digitale."
-        />
-        <meta property="og:type" content="website" />
-        <meta property="og:url" content="/insights-knowledge-leadership" />
-        <link rel="canonical" href={absoluteUrl("/insights-knowledge-leadership")} />
-      </Helmet>
+      <Seo
+        title="Perspectives & Leadership en Connaissances | Lynxa Tech Guinée - Innovation Technologique Africaine"
+        description="Restez à la pointe grâce aux perspectives sectorielles de Lynxa Tech, au contenu de leadership éclairé et aux analyses d’experts sur l’innovation technologique africaine, les tendances en cybersécurité et les meilleures pratiques en développement mobile."
+        keywords="perspectives tech africaines, tendances technologiques Guinée, analyse cybersécurité, développement mobile, infrastructure réseau, leadership technologique, rapports d’innovation, transformation digitale Afrique de l’Ouest"
+        path="/insights-knowledge-leadership"
+        ogTitle="Perspectives & Leadership en Connaissances | Lynxa Tech Guinée"
+        ogDescription="Découvrez des perspectives de pointe et du contenu de leadership éclairé de Lynxa Tech Guinée. Analyses expertes sur les tendances technologiques africaines, la cybersécurité et l’innovation digitale."
+      />
 
       <div className="min-h-screen bg-white">
         {/* Header */}
