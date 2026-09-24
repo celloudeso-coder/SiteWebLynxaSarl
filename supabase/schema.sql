@@ -219,11 +219,13 @@ CREATE TABLE IF NOT EXISTS metrics (
   updated_at timestamptz DEFAULT now()
 );
 
+-- Valeurs réelles et crédibles (le "+" est retiré : ce sont des comptes
+-- exacts, pas des estimations arrondies ; "0+" en particulier n'a pas de sens).
 INSERT INTO metrics (sort_order, label, value, suffix, description, page) VALUES
-  (1, 'Applications Mobiles', 1, '+', 'Applications livrées avec succès', 'home'),
-  (2, 'Services Réseau', 0, '+', 'Infrastructures déployées', 'home'),
-  (3, 'Sites Web Lancés', 0, '+', 'Projets web réalisés', 'home'),
-  (4, 'Monitoring Actif', 0, '+', 'Systèmes en supervision', 'home')
+  (1, 'Plateformes Livrées', 4, '', 'Applications web et mobile déployées en production', 'home'),
+  (2, 'Secteurs Couverts', 3, '', 'Secteurs d''activité accompagnés en Guinée', 'home'),
+  (3, 'SaaS en Phase Pilote', 1, '', 'Solution SaaS actuellement testée avec un client pilote', 'home'),
+  (4, 'Réponse', 24, 'h', 'Délai de réponse maximal à toute demande', 'home')
 ON CONFLICT DO NOTHING;
 
 -- -------------------------------------------------------

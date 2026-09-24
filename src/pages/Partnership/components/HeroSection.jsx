@@ -4,11 +4,14 @@ import { Link } from "react-router-dom";
 import Icon from "../../../components/AppIcon";
 import { useHeroSection } from "../../../hooks/useContent";
 
+// Alignées sur les mêmes chiffres que le tableau de bord d'impact de
+// l'accueil (src/pages/Home/components/MetricsDashboard.jsx) : pas de "taux
+// de réussite" à 98%, cette mesure n'est pas mesurable en l'état.
 const STATS = [
-  { icon: "Rocket",     label: "Projets lancés",     value: "1+"  },
-  { icon: "Globe",      label: "Présence africaine",  value: "Africa"  },
-  { icon: "Award",      label: "Taux de réussite",    value: "98%" },
-  { icon: "Clock",      label: "Support",             value: "24/7"},
+  { icon: "Rocket",   label: "Plateformes livrées",  value: "4"    },
+  { icon: "Building2", label: "Secteurs couverts",    value: "3"    },
+  { icon: "Sparkles", label: "SaaS en phase pilote",  value: "1"    },
+  { icon: "Clock",    label: "Réponse",               value: "<24h" },
 ];
 
 const HeroSection = () => {
