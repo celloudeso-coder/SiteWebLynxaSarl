@@ -1,9 +1,8 @@
 import React, { useState } from "react";
-import Icon from "../../../components/AppIcon";
 import Input from "../../../components/ui/Input";
 import Button from "../../../components/ui/Button";
-import emailjs from "@emailjs/browser";
-import { logUnrecordedSubmission } from "../../../lib/cms";
+import { submitInquiry } from "../../../lib/inquiries";
+import { formatDualPrice } from "../../../data/pricing";
 import { useSiteSettings } from "../../../hooks/useContent";
 
 const PlanInquiryModal = ({ plan, onClose }) => {
@@ -28,35 +27,28 @@ const PlanInquiryModal = ({ plan, onClose }) => {
     e.preventDefault();
     if (submitting) return;
     setSubmitting(true);
-
-    // ⚠️ Identifiants EmailJS non configurés (placeholders) — cet envoi
-    // échoue systématiquement aujourd'hui. On journalise quand même la
-    // demande (voir /admin/unrecorded-submissions) pour ne pas la perdre
-    // tant que ces identifiants ne sont pas remplacés par les vrais.
-    const serviceId = "service_xxxxxx";
-    const templateId = "template_xxxxxx";
-    const publicKey = "your_public_key";
-
-    const payload = {
+    const dual = plan?.priceGnf != null ? formatDualPrice(plan.priceGnf) : null;
+    const priceLabel = dual ? `${dual.primary} (${dual.secondary})` : (plan?.priceFallbackText || "Sur devis");
+    const { received } = await submitInquiry({
+      source: "services_plan_inquiry",
+      sourceLabel: `Plan tarifaire : ${plan?.name || "—"}`,
+      inquiryType: "plan",
       name: formData.name,
       email: formData.email,
       phone: formData.phone,
-      message: formData.message,
-      plan_name: plan?.name,
-      plan_price: plan?.price,
-    };
-
-    try {
-      await emailjs.send(serviceId, templateId, { to_email: "lynxa@gmail.com", ...payload }, publicKey);
-      await logUnrecordedSubmission({ form: "services_plan_inquiry", payload, emailSent: true });
+      budget: priceLabel,
+      message: formData.message.trim() || `Demande d'information sur le plan « ${plan?.name} » (sans message).`,
+      details: {
+        planName: plan?.name,
+        budgetLabel: priceLabel,
+      },
+    });
+    setSubmitting(false);
+    if (received) {
       setStatus("success");
       setFormData({ name: "", email: "", phone: "", message: "" });
-    } catch (err) {
-      console.error("Envoi de la demande d'information échoué :", err);
-      await logUnrecordedSubmission({ form: "services_plan_inquiry", payload, dbError: String(err?.text || err?.message || err), emailSent: false });
+    } else {
       setStatus("error");
-    } finally {
-      setSubmitting(false);
     }
   };
 
@@ -136,13 +128,13 @@ const PlanInquiryModal = ({ plan, onClose }) => {
 
         {status === "success" && (
           <p className="text-green-600 text-center mt-4">
-            ✅ Message envoyé avec succès !
+            ✅ Demande reçue ! Nous vous recontactons sous 24 h.
           </p>
         )}
         {status === "error" && (
           <div className="text-center mt-4 text-sm">
             <p className="text-red-500 mb-2">
-              ❌ L'envoi automatique n'a pas abouti. Contactez-nous directement pour ne pas perdre votre demande :
+              Notre service est momentanément injoignable. Contactez-nous directement pour ne pas perdre votre demande :
             </p>
             <div className="flex flex-wrap justify-center gap-x-4 gap-y-1 font-medium">
               <a href={fallbackWhatsapp} target="_blank" rel="noopener noreferrer" className="text-primary underline hover:no-underline">

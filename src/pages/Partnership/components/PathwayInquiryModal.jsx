@@ -1,9 +1,7 @@
 import React, { useState } from "react";
-import emailjs from "@emailjs/browser";
-import Icon from "../../../components/AppIcon";
 import Button from "../../../components/ui/Button";
 import Input from "../../../components/ui/Input";
-import { logUnrecordedSubmission } from "../../../lib/cms";
+import { submitInquiry } from "../../../lib/inquiries";
 import { useSiteSettings } from "../../../hooks/useContent";
 import { formatPathwayBudget } from "../../../data/pricing";
 
@@ -30,35 +28,28 @@ const PathwayInquiryModal = ({ pathway, onClose }) => {
     e.preventDefault();
     if (submitting) return;
     setSubmitting(true);
-
-    // ⚠️ Identifiants EmailJS non configurés (placeholders "_xxxxx") — cet
-    // envoi échoue systématiquement aujourd'hui. On journalise quand même
-    // la demande (voir /admin/unrecorded-submissions) pour ne pas la perdre
-    // tant que ces identifiants ne sont pas remplacés par les vrais.
-    const serviceId = "service_xxxxx";
-    const templateId = "template_xxxxx";
-    const publicKey = "public_xxxxx";
-
-    const payload = {
-      pathway_title: pathway?.title,
-      pathway_budget: budget?.primary,
-      pathway_timeline: pathway?.timeline,
+    const budgetLabel = [budget?.primary, budget?.secondary && `(${budget.secondary})`].filter(Boolean).join(" ");
+    const { received } = await submitInquiry({
+      source: "partnership_pathway",
+      sourceLabel: `Voie de collaboration : ${pathway?.title || "—"}`,
+      inquiryType: "partnership",
       name: formData.name,
       email: formData.email,
       phone: formData.phone,
-      message: formData.message,
-    };
-
-    try {
-      await emailjs.send(serviceId, templateId, { to_email: "lynxa@gmail.com", ...payload }, publicKey);
-      await logUnrecordedSubmission({ form: "partnership_pathway", payload, emailSent: true });
+      budget: budgetLabel,
+      message: formData.message.trim() || `Intérêt pour la voie de collaboration « ${pathway?.title} » (sans message).`,
+      details: {
+        pathwayTitle: pathway?.title,
+        budgetLabel,
+        timeline: pathway?.timeline,
+      },
+    });
+    setSubmitting(false);
+    if (received) {
       setStatus("success");
-    } catch (err) {
-      console.error("Envoi de la demande de voie de collaboration échoué :", err);
-      await logUnrecordedSubmission({ form: "partnership_pathway", payload, dbError: String(err?.text || err?.message || err), emailSent: false });
+      setFormData({ name: "", email: "", phone: "", message: "" });
+    } else {
       setStatus("error");
-    } finally {
-      setSubmitting(false);
     }
   };
 
@@ -136,13 +127,13 @@ const PathwayInquiryModal = ({ pathway, onClose }) => {
 
         {status === "success" && (
           <p className="text-green-600 text-center mt-4">
-            ✅ Message envoyé avec succès !
+            ✅ Demande reçue ! Nous vous recontactons sous 24 h.
           </p>
         )}
         {status === "error" && (
           <div className="text-center mt-4 text-sm">
             <p className="text-red-500 mb-2">
-              ❌ L'envoi automatique n'a pas abouti. Contactez-nous directement pour ne pas perdre votre demande :
+              Notre service est momentanément injoignable. Contactez-nous directement pour ne pas perdre votre demande :
             </p>
             <div className="flex flex-wrap justify-center gap-x-4 gap-y-1 font-medium">
               <a href={fallbackWhatsapp} target="_blank" rel="noopener noreferrer" className="text-primary underline hover:no-underline">

@@ -496,8 +496,15 @@ CREATE TABLE IF NOT EXISTS contact_messages (
   message       text NOT NULL,
   status        text NOT NULL DEFAULT 'new',   -- new | read | replied | archived
   admin_notes   text,
+  source        text DEFAULT 'contact',      -- contact | partnership_project_request | partnership_pathway | services_plan_inquiry
+  details       jsonb DEFAULT '{}',          -- champs propres au formulaire d'origine
   submitted_at  timestamptz DEFAULT now()
 );
+-- Colonnes ajoutées après le premier déploiement : la table reçoit aussi les
+-- demandes Partenariat et Services (src/lib/inquiries.js), dont Supabase est
+-- le canal principal — l'email EmailJS n'est qu'une notification.
+ALTER TABLE contact_messages ADD COLUMN IF NOT EXISTS source text DEFAULT 'contact';
+ALTER TABLE contact_messages ADD COLUMN IF NOT EXISTS details jsonb DEFAULT '{}';
 
 ALTER TABLE contact_messages ENABLE ROW LEVEL SECURITY;
 
@@ -512,12 +519,10 @@ CREATE POLICY "admin_all" ON contact_messages
 -- -------------------------------------------------------
 -- 13bis. UNRECORDED SUBMISSIONS (filet de sécurité formulaires publics)
 -- -------------------------------------------------------
--- Trace toute soumission de formulaire public qui n'a laissé aucune ligne
--- exploitable dans sa table normale : l'insertion en base a échoué mais
--- l'email est parti (candidature "Rejoindre"), ou le formulaire n'a jamais
--- eu de persistance dédiée et repose uniquement sur EmailJS (demande de
--- projet Partenariat, modales d'intérêt Partenariat/Services). Sans cette
--- table, ces cas ne laissent aucune trace consultable côté admin.
+-- Filet de sécurité : reçoit une soumission de formulaire public quand
+-- l'insertion dans sa table normale (job_applications, contact_messages) a
+-- échoué. Insertion anonyme autorisée, lecture réservée aux administrateurs
+-- (ressource "messages") : la table contient des coordonnées de prospects.
 CREATE TABLE IF NOT EXISTS unrecorded_submissions (
   id           uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   form         text NOT NULL,   -- 'join_us' | 'partnership_project_request' | 'partnership_pathway' | 'services_plan_inquiry' | …

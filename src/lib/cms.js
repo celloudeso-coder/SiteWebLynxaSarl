@@ -422,6 +422,7 @@ export async function deleteContactMessage(id) {
 // Ne lève jamais : appelée depuis des formulaires publics après un échec (ou
 // une absence de persistance), elle ne doit jamais devenir elle-même une
 // nouvelle source d'erreur visible pour l'utilisateur.
+// Ne lève jamais : renvoie true si la trace a bien été enregistrée.
 export async function logUnrecordedSubmission({ form, payload, dbError, emailSent }) {
   try {
     const { error } = await supabase.from("unrecorded_submissions").insert({
@@ -430,9 +431,14 @@ export async function logUnrecordedSubmission({ form, payload, dbError, emailSen
       db_error: dbError ? String(dbError) : null,
       email_sent: Boolean(emailSent),
     });
-    if (error) console.error(`logUnrecordedSubmission(${form}) a échoué :`, error.message);
+    if (error) {
+      console.error(`logUnrecordedSubmission(${form}) a échoué :`, error.message);
+      return false;
+    }
+    return true;
   } catch (err) {
     console.error(`logUnrecordedSubmission(${form}) a échoué :`, err?.message || err);
+    return false;
   }
 }
 

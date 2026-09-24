@@ -22,6 +22,20 @@ const INQUIRY_LABELS = {
   "support":      "Support",
   "consultation": "Consultation",
   "other":        "Autre",
+  "project":      "Demande de projet",
+  "plan":         "Plan tarifaire",
+};
+
+// Libellés des champs structurés (colonne "details") des demandes venant
+// des formulaires Partenariat et Services (src/lib/inquiries.js).
+const DETAIL_LABELS = {
+  projectType:      "Type de projet",
+  budgetLabel:      "Budget",
+  timeline:         "Délai",
+  requirements:     "Besoins",
+  preferredContact: "Contact préféré",
+  pathwayTitle:     "Voie de collaboration",
+  planName:         "Plan",
 };
 
 // Anciennes valeurs ("under-5k"…) conservées pour l'affichage des messages
@@ -168,6 +182,20 @@ function MessageRow({ msg, onStatusChange, onDelete }) {
               <span>{formatDate(msg.submitted_at)}</span>
             </div>
           </div>
+
+          {/* Détails structurés (demandes Partenariat / Services) */}
+          {msg.details && Object.keys(msg.details).length > 0 && (
+            <dl className="grid sm:grid-cols-2 gap-x-6 gap-y-2 text-sm">
+              {Object.entries(msg.details)
+                .filter(([, v]) => (Array.isArray(v) ? v.length > 0 : Boolean(v)))
+                .map(([k, v]) => (
+                  <div key={k}>
+                    <dt className="text-xs text-gray-400">{DETAIL_LABELS[k] || k}</dt>
+                    <dd className="text-gray-700">{Array.isArray(v) ? v.join(", ") : String(v)}</dd>
+                  </div>
+                ))}
+            </dl>
+          )}
 
           {/* Message */}
           <div className="bg-gray-50 rounded-xl p-4">
