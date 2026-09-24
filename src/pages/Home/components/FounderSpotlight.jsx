@@ -26,7 +26,9 @@ const FounderSpotlight = () => {
       },
       {
         icon: "Users",
-        title: "50+ Membres d'Équipe",
+        // Aligné sur l'effectif réellement nommé sur la page À propos
+        // (TeamSpotlight.jsx : 4 membres) plutôt qu'un chiffre invérifiable.
+        title: "4 Membres d'Équipe",
         description: "Développement des talents technologiques en Guinée",
       },
       {

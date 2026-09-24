@@ -70,8 +70,12 @@ const STATIC_VISION_PILLARS = [
   { icon: "Handshake", title: "Partenariats Globaux",       description: "Former des alliances stratégiques avec des géants technologiques internationaux tout en conservant notre identité africaine." },
 ];
 
+// "current" aligné sur l'effectif réellement nommé et visible sur la page
+// (TeamSpotlight.jsx / table Supabase "team_members" : 4 membres) — pas de
+// valeur inventée pour les autres lignes (clients, pays, vies impactées),
+// laissées telles quelles faute de donnée vérifiable.
 const STATIC_IMPACT_METRICS = [
-  { current: "7+",  target: "25+",  label: "Membres de l'équipe", icon: "Users" },
+  { current: "4",   target: "25+",  label: "Membres de l'équipe", icon: "Users" },
   { current: "1",   target: "20+",  label: "Pays",                icon: "MapPin" },
   { current: "6+",  target: "500+", label: "Clients",             icon: "Briefcase" },
   { current: "0+",  target: "1K+",  label: "Vies impactées",      icon: "Heart" },
