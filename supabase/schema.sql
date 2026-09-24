@@ -180,7 +180,7 @@ INSERT INTO pricing_plans (sort_order, name, price, price_note, is_popular, feat
    '["Application web complète", "Intégration base de données", "Panneau d''administration", "API REST", "Authentification utilisateurs", "Tests et déploiement", "3 mois de support", "Formation équipe"]',
    'Choisir ce plan'),
   (3, 'Solution Entreprise', 'Sur devis', '', false,
-   '["Architecture système sur mesure", "Intégrations tierces illimitées", "Infrastructure dédiée", "SLA garanti 99.9%", "Support 24/7", "Chef de projet dédié", "Formation complète", "Maintenance évolutive"]',
+   '["Architecture système sur mesure", "Intégrations tierces illimitées", "Infrastructure dédiée", "SLA négocié au contrat", "Support 24/7", "Chef de projet dédié", "Formation complète", "Maintenance évolutive"]',
    'Nous contacter')
 ON CONFLICT DO NOTHING;
 
@@ -373,7 +373,7 @@ INSERT INTO partnership_pathways (sort_order, title, description, icon, features
   (2, 'Solutions Entreprises',
    'Partenariats technologiques complets pour les grandes organisations avec des besoins complexes.',
    'Building2',
-   '["Systèmes entreprises personnalisés", "Support prioritaire 24/7", "Chef de projet dédié", "Garanties SLA"]',
+   '["Systèmes entreprises personnalisés", "Support prioritaire 24/7", "Chef de projet dédié", "SLA défini au contrat"]',
    'Grandes Entreprises, Gouvernement, ONG', '3-12 mois', '3 500 $ – 10 000 $', 'accent'),
   (3, 'Collaboration Internationale',
    'Partenariats transfrontaliers avec des organisations mondiales s''étendant sur les marchés africains.',
@@ -792,8 +792,8 @@ INSERT INTO trust_security_items (sort_order, icon, title, description) VALUES
   (2, 'Code',      'Développement sécurisé',     'Respect des directives OWASP tout au long du cycle.'),
   (3, 'Search',    'Audits réguliers',            'Tests de pénétration trimestriels et évaluations.'),
   (4, 'UserCheck', 'Conformité RGPD',             'Gestion des données conforme aux normes mondiales.'),
-  (5, 'Database',  'Sauvegarde & récupération',  'Sauvegardes quotidiennes, garantie 99,9 %.'),
-  (6, 'Eye',       'Surveillance 24/7',           'Monitoring continu et détection des menaces.')
+  (5, 'Database',  'Sauvegarde & récupération',  'Sauvegardes régulières de nos environnements de travail (pratique interne, hors contrat de support).'),
+  (6, 'Eye',       'Monitoring continu',          'Suivi et détection des menaces sur nos propres systèmes (pratique interne, hors contrat de support).')
 ON CONFLICT DO NOTHING;
 ALTER TABLE trust_security_items ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "public_read" ON trust_security_items FOR SELECT USING (active = true);

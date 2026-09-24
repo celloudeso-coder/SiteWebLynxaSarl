@@ -35,7 +35,10 @@ const PricingFramework = () => {
     : [
       { id: "starter", name: "Pack Startup", price: "700 $", period: "À partir de", description: "Pour les startups et PME.", features: ["Site web vitrine (5 pages)", "Design responsive", "SEO de base", "1 mois de support"], popular: false, color: "gray" },
       { id: "professional", name: "Suite Professionnelle", price: "3 500 $", period: "À partir de", description: "Solution complète pour les entreprises en croissance.", features: ["Application web/mobile complète", "Base de données", "API REST", "Authentification", "3 mois de support"], popular: true, color: "primary" },
-      { id: "enterprise", name: "Solution Entreprise", price: "Sur devis", period: "Sur mesure", description: "Sur mesure pour les grandes organisations.", features: ["Architecture sur mesure", "Intégrations illimitées", "SLA 99.9%", "Support 24/7", "Chef de projet dédié"], popular: false, color: "accent" },
+      // "SLA 99.9%" → "SLA négocié au contrat" : un chiffre affiché en badge
+      // marketing lisait comme un acquis, alors que ce plan est "sur devis" —
+      // le niveau de service réel se fixe au contrat, pas par défaut.
+      { id: "enterprise", name: "Solution Entreprise", price: "Sur devis", period: "Sur mesure", description: "Sur mesure pour les grandes organisations.", features: ["Architecture sur mesure", "Intégrations illimitées", "SLA négocié au contrat", "Support 24/7", "Chef de projet dédié"], popular: false, color: "accent" },
     ];
 
   const additionalServices = [

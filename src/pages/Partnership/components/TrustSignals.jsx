@@ -8,8 +8,11 @@ const STATIC_SECURITY = [
   { icon: "Code",      title: "Développement sécurisé",      desc: "Respect des directives OWASP tout au long du cycle." },
   { icon: "Search",    title: "Audits réguliers",             desc: "Tests de pénétration trimestriels et évaluations." },
   { icon: "UserCheck", title: "Conformité RGPD",              desc: "Gestion des données conforme aux normes mondiales." },
-  { icon: "Database",  title: "Sauvegarde & récupération",   desc: "Sauvegardes quotidiennes, garantie 99,9 %." },
-  { icon: "Eye",       title: "Surveillance 24/7",            desc: "Monitoring continu et détection des menaces." },
+  // Reformulés en pratiques internes, sans chiffre ni "24/7" qui lisaient
+  // comme un engagement contractuel — aucune formule de maintenance
+  // (Services, 100-500 $/mois) ne le couvre.
+  { icon: "Database",  title: "Sauvegarde & récupération",   desc: "Sauvegardes régulières de nos environnements de travail (pratique interne, hors contrat de support)." },
+  { icon: "Eye",       title: "Monitoring continu",           desc: "Suivi et détection des menaces sur nos propres systèmes (pratique interne, hors contrat de support)." },
 ];
 
 const STATIC_COMMITMENTS = [

@@ -224,7 +224,9 @@ const OfficeLocation = () => {
                 <Icon name="Phone" size={16} />
                 <span className="font-medium">{office.phone}</span>
               </a>
-              <span className="text-muted-foreground text-sm">24/7 Available</span>
+              <span className="text-muted-foreground text-sm">
+                Lun–Ven 8h–18h, Sam 9h–14h · réponse sous 24h
+              </span>
             </div>
           </div>
         </div>
