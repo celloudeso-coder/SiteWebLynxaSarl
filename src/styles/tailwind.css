@@ -27,6 +27,9 @@
     /* Primary Colors */
     --color-primary: #FF8C00; /* orange-500 */
     --color-primary-foreground: #FFFFFF; /* white */
+    /* Même teinte, assombrie pour rester lisible (AA, 5.4:1) quand utilisée
+       comme texte sur fond clair — #FF8C00 en texte ne passe qu'à 2.33:1. */
+    --color-primary-strong: #A65400;
     
     /* Secondary Colors */
     --color-secondary: #0A0A0A; /* gray-950 */
