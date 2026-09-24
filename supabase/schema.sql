@@ -134,7 +134,7 @@ CREATE TABLE IF NOT EXISTS team_members (
 );
 
 INSERT INTO team_members (sort_order, name, role, image_url, expertise, description, achievements, social_links) VALUES
-  (1, 'Elhadj Sadou Barry', 'Mobile Development Lead', '/CellouK.png',
+  (1, 'Thierno Sadou Barry', 'Mobile Development Lead', '/CellouK.png',
    '["React Native", "Flutter", "iOS", "Android", "Firebase"]',
    'Expert en développement mobile avec une vision centrée sur l''utilisateur et une passion pour les solutions innovantes.',
    '["Lead technique sur 3 applications mobiles déployées", "Formateur React Native pour l''équipe", "Contributeur open source"]',

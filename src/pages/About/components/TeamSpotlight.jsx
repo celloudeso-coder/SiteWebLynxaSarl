@@ -7,7 +7,7 @@ import { useTeamMembers } from "../../../hooks/useContent";
 const STATIC_TEAM = [
   {
     id: 1,
-    name: "Elhadj Sadou Barry",
+    name: "Thierno Sadou Barry",
     role: "Responsable Développement Mobile",
     image: "/CellouK.png",
     expertise: ["Full-Stack", "Flutter", "Digital Forensics"],
