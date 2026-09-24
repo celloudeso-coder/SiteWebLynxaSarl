@@ -12,6 +12,7 @@ import VisionRoadmap from "./components/VisionRoadmap";
 import Icon from "../../components/AppIcon";
 import logoIco from "../../../public/LYNXA.ico";
 import { useSiteSettings } from "../../hooks/useContent";
+import { absoluteUrl } from "../../lib/seo";
 
 const AboutInnovationStoryVision = () => {
   const { data: settings } = useSiteSettings();
@@ -27,7 +28,7 @@ const AboutInnovationStoryVision = () => {
         <title>À propos - Histoire de l'Innovation & Vision | Lynxa Tech Guinée</title>
         <meta name="description" content="Découvrez le parcours inspirant de Lynxa Tech, d'une petite startup guinéenne au principal hub d'innovation technologique en Afrique de l'Ouest." />
         <meta property="og:type" content="website" />
-        <link rel="canonical" href="/about" />
+        <link rel="canonical" href={absoluteUrl("/about")} />
       </Helmet>
 
       <div className="min-h-screen bg-white">

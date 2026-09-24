@@ -8,6 +8,7 @@ import ProcessOverview from "./components/ProcessOverview";
 import TrustSignals from "./components/TrustSignals";
 import logoIco from "../../../public/LYNXA.ico";
 import { useSiteSettings } from "../../hooks/useContent";
+import { absoluteUrl } from "../../lib/seo";
 
 const PartnershipCollaborationGateway = () => {
   const { data: settings } = useSiteSettings();
@@ -31,7 +32,7 @@ const PartnershipCollaborationGateway = () => {
         <meta property="og:title" content="Partenariat | Lynxa Tech Guinée" />
         <meta property="og:description" content="Des voies de collaboration adaptées à chaque organisation. Démarrez votre projet avec Lynxa Tech." />
         <meta property="og:type" content="website" />
-        <link rel="canonical" href="/partnership" />
+        <link rel="canonical" href={absoluteUrl("/partnership")} />
       </Helmet>
 
       <div className="min-h-screen bg-background">

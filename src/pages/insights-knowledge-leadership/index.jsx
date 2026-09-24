@@ -9,6 +9,7 @@ import IndustryReportsSection from "./components/IndustryReportsSection";
 import NewsletterSection from "./components/NewsletterSection";
 import ContentFilters from "./components/ContentFilters";
 import { useSiteSettings } from "../../hooks/useContent";
+import { absoluteUrl } from "../../lib/seo";
 
 const InsightsKnowledgeLeadership = () => {
   const [activeCategory, setActiveCategory] = useState("all");
@@ -68,7 +69,7 @@ const InsightsKnowledgeLeadership = () => {
         />
         <meta property="og:type" content="website" />
         <meta property="og:url" content="/insights-knowledge-leadership" />
-        <link rel="canonical" href="/insights-knowledge-leadership" />
+        <link rel="canonical" href={absoluteUrl("/insights-knowledge-leadership")} />
       </Helmet>
 
       <div className="min-h-screen bg-white">

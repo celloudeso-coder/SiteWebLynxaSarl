@@ -11,6 +11,7 @@ import Icon from "../../components/AppIcon";
 import logoIco from "../../../public/LYNXA.ico";
 import { getHomeEngagements, getHomeWhyItems } from "../../lib/cms";
 import { useSiteSettings } from "../../hooks/useContent";
+import { absoluteUrl } from "../../lib/seo";
 
 const STATIC_COMMITMENTS = [
   { icon: "Flag",        label: "100 % Guinéen",       sub_label: "Ancré localement"       },
@@ -50,7 +51,7 @@ const Homepage = () => {
         <meta name="keywords" content="technologie Guinée, innovation technologique africaine, développement mobile, cybersécurité, solutions réseau, développement web, Lynxa Tech Guinée" />
         <meta property="og:title" content="Lynxa Tech Guinée - Innovation Sans Frontières" />
         <meta property="og:type" content="website" />
-        <link rel="canonical" href="/" />
+        <link rel="canonical" href={absoluteUrl("/")} />
       </Helmet>
 
       <div className="min-h-screen bg-white">

@@ -12,6 +12,7 @@ import PricingFramework from "./components/PricingFramework";
 import Icon from "../../components/AppIcon";
 import { useServices } from "../../hooks/useContent";
 import logoIco from "../../../public/LYNXA.ico";
+import { absoluteUrl } from "../../lib/seo";
 
 // ── Skeleton while CMS loads ─────────────────────────────────────────────────
 const SkeletonTab = () => (
@@ -68,7 +69,7 @@ const ServicesPage = () => {
         <meta property="og:title" content="Services | Lynxa Tech Guinée" />
         <meta property="og:description" content="Solutions technologiques de pointe pensées pour l'Afrique, compétitives à l'échelle mondiale." />
         <meta property="og:type" content="website" />
-        <link rel="canonical" href="/service" />
+        <link rel="canonical" href={absoluteUrl("/service")} />
       </Helmet>
 
     <div className="min-h-screen bg-white">

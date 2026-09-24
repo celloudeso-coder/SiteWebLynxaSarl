@@ -7,6 +7,7 @@ import JoinUsOpenings from "./components/joinus-openings";
 import JoinUsForm from "./components/joinUs-form";
 import logoIco from "../../../public/LYNXA.ico";
 import { useSiteSettings } from "../../hooks/useContent";
+import { absoluteUrl } from "../../lib/seo";
 
 const JoinUsPage = () => {
   const { data: settings } = useSiteSettings();
@@ -30,7 +31,7 @@ const JoinUsPage = () => {
         <meta property="og:title" content="Carrières | Lynxa Tech Guinée" />
         <meta property="og:description" content="Faites partie d'une équipe qui façonne l'avenir technologique africain. Rejoignez Lynxa Tech à Conakry." />
         <meta property="og:type" content="website" />
-        <link rel="canonical" href="/join-us" />
+        <link rel="canonical" href={absoluteUrl("/join-us")} />
       </Helmet>
 
       <div className="min-h-screen bg-background">

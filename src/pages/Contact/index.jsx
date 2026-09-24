@@ -8,6 +8,7 @@ import OfficeLocation from "./components/OfficeLocation";
 import SocialConnect from "./components/SocialConnect";
 import logoIco from "../../../public/LYNXA.ico";
 import { useSiteSettings } from "../../hooks/useContent";
+import { absoluteUrl } from "../../lib/seo";
 
 const ContactMultiChannelConnection = () => {
   const { data: settings } = useSiteSettings();
@@ -39,7 +40,7 @@ const ContactMultiChannelConnection = () => {
           content="Multiples façons de vous connecter avec le principal centre d'innovation technologique de Guinée. Contactez-nous pour votre prochain projet."
         />
         <meta property="og:type" content="website" />
-        <link rel="canonical" href="/contact" />
+        <link rel="canonical" href={absoluteUrl("/contact")} />
       </Helmet>
       <div className="min-h-screen bg-background">
         <Header />

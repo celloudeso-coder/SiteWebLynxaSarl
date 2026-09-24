@@ -6,6 +6,7 @@ import Header from "../../components/ui/Header";
 import Icon from "../../components/AppIcon";
 import logoIco from "../../../public/LYNXA.ico";
 import { useSiteSettings } from "../../hooks/useContent";
+import { absoluteUrl } from "../../lib/seo";
 
 const LAST_UPDATED = "14 juillet 2026";
 
@@ -227,7 +228,7 @@ const LegalPage = ({ page }) => {
       <Helmet>
         <title>{content.title} | Lynxa Tech Guinea</title>
         <meta name="description" content={content.description} />
-        <link rel="canonical" href={`/${page}`} />
+        <link rel="canonical" href={absoluteUrl(`/${page}`)} />
       </Helmet>
 
       <Header />

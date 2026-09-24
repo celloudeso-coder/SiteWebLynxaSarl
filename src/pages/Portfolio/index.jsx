@@ -10,6 +10,7 @@ import ProjectModal from "./components/ProjectModal";
 import InnovationLab from "./components/InnovationLab";
 import Icon from "../../components/AppIcon";
 import { useProjects } from "../../hooks/useContent";
+import { absoluteUrl } from "../../lib/seo";
 
 // ── Skeleton card shown while CMS data is loading ──────────────────────────
 const SkeletonCard = () => (
@@ -113,7 +114,7 @@ const PortfolioShowcase = () => {
         <meta property="og:title" content="Portfolio | Lynxa Tech Guinée" />
         <meta property="og:description" content="Des histoires de succès inspirantes, des projets qui transforment des vies et propulsent des organisations." />
         <meta property="og:type" content="website" />
-        <link rel="canonical" href="/portfolio" />
+        <link rel="canonical" href={absoluteUrl("/portfolio")} />
       </Helmet>
 
     <div className="min-h-screen bg-background">
