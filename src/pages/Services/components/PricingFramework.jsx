@@ -148,7 +148,7 @@ const PricingFramework = () => {
                     {plan?.name}
                   </h3>
                   <div className="mb-4">
-                    <span className="text-4xl font-bold text-primary">
+                    <span className="text-4xl font-bold text-primary-strong">
                       {plan?.price}
                     </span>
                     <span className="text-gray-500 ml-2">{plan?.period}</span>

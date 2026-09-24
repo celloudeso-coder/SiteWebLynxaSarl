@@ -127,8 +127,13 @@ const SocialConnect = () => {
             </p>
 
             <div className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
+              <label htmlFor="newsletter-email" className="sr-only">Adresse email</label>
               <input
+                id="newsletter-email"
+                name="email"
                 type="email"
+                autoComplete="email"
+                aria-describedby={subStatus ? "newsletter-status" : undefined}
                 value={email}
                 onChange={(e) => { setEmail(e.target.value); setSubStatus(null); }}
                 placeholder="Votre adresse email"
@@ -139,7 +144,7 @@ const SocialConnect = () => {
                 disabled={loading || !email}
                 whileHover={{ scale: 1.03 }}
                 whileTap={{ scale: 0.97 }}
-                className="bg-primary hover:bg-primary/90 disabled:opacity-50 text-white font-semibold px-6 py-3 rounded-xl transition-all duration-200 glow-orange flex items-center gap-2 justify-center"
+                className="bg-primary hover:bg-primary/90 disabled:opacity-50 text-white font-semibold px-6 py-3 min-h-11 rounded-xl transition-all duration-200 glow-orange flex items-center gap-2 justify-center"
               >
                 {loading ? (
                   <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
@@ -155,6 +160,8 @@ const SocialConnect = () => {
 
             {subStatus === "success" && (
               <motion.p
+                id="newsletter-status"
+                role="status"
                 initial={{ opacity: 0 }} animate={{ opacity: 1 }}
                 className="text-green-400 mt-4 text-sm"
               >
@@ -163,6 +170,8 @@ const SocialConnect = () => {
             )}
             {subStatus === "error" && (
               <motion.p
+                id="newsletter-status"
+                role="alert"
                 initial={{ opacity: 0 }} animate={{ opacity: 1 }}
                 className="text-red-400 mt-4 text-sm"
               >

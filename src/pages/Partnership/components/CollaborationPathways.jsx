@@ -165,7 +165,7 @@ const CollaborationPathways = () => {
             href="/contact"
             whileHover={{ scale: 1.03 }}
             whileTap={{ scale: 0.97 }}
-            className="inline-flex items-center gap-2 bg-primary hover:bg-primary/90 text-white px-7 py-3 rounded-xl font-semibold transition-all glow-orange"
+            className="inline-flex items-center gap-2 bg-primary hover:bg-primary/90 text-white px-7 py-3 min-h-11 rounded-xl font-semibold transition-all glow-orange"
           >
             <Icon name="MessageCircle" size={18} color="white" />
             Consultation personnalisée gratuite

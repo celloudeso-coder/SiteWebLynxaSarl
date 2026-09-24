@@ -95,7 +95,7 @@ const ServiceGalaxies = () => {
               <Icon name="Layers" size={28} className="text-primary" />
             </div>
             <h3 className="text-xl font-heading font-bold text-secondary mb-2">Services en cours de configuration</h3>
-            <p className="text-gray-400 text-sm mb-6">Rendez-vous sur l'admin pour ajouter vos services.</p>
+            <p className="text-gray-500 text-sm mb-6">Rendez-vous sur l'admin pour ajouter vos services.</p>
             <Link to="/admin/services" className="inline-flex items-center gap-2 border border-gray-200 text-secondary hover:border-primary hover:text-primary px-4 py-2 rounded-xl text-sm font-medium transition-all duration-200">
               <Icon name="Settings" size={14} />
               Gérer les services
@@ -155,7 +155,7 @@ const ServiceGalaxies = () => {
                             transition={{ delay: i * 0.15 + j * 0.08 + 0.3 }}
                           >
                             <div className="text-base font-heading font-bold text-secondary">{m.value}</div>
-                            <div className="text-xs text-gray-400 leading-snug mt-0.5">{m.label}</div>
+                            <div className="text-xs text-gray-500 leading-snug mt-0.5">{m.label}</div>
                           </motion.div>
                         ))}
                       </div>
@@ -172,7 +172,7 @@ const ServiceGalaxies = () => {
 
                     {service.technologies.length > 0 && (
                       <div className="mb-6">
-                        <p className="text-xs text-gray-400 mb-2">Technologies :</p>
+                        <p className="text-xs text-gray-500 mb-2">Technologies :</p>
                         <div className="flex flex-wrap gap-2">
                           {service.technologies.slice(0, 6).map((tech) => (
                             <span key={tech} className="px-2.5 py-1 bg-gray-100 text-xs text-secondary rounded-md">

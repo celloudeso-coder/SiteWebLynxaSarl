@@ -49,12 +49,15 @@ const FilterBar = ({
     <div className="mb-10 space-y-5">
       {/* Search */}
       <div className="relative max-w-lg">
+        <label htmlFor="portfolio-search" className="sr-only">Rechercher un projet</label>
         <Icon
           name="Search"
           size={18}
           className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground"
         />
         <input
+          id="portfolio-search"
+          name="search"
           type="text"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}

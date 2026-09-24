@@ -181,16 +181,16 @@ const AboutInnovationStoryVision = () => {
                   Construire l'avenir de la technologie depuis le cœur de l'Afrique de l'Ouest.
                 </p>
                 <div className="flex gap-3">
-                  <a href={social.linkedin || "https://www.linkedin.com/company/lynxatech"} target="_blank" rel="noopener noreferrer" className="w-9 h-9 bg-white/10 rounded-full flex items-center justify-center hover:bg-white/20 transition-colors duration-200">
+                  <a href={social.linkedin || "https://www.linkedin.com/company/lynxatech"} target="_blank" rel="noopener noreferrer" aria-label="Lynxa Tech sur LinkedIn" className="relative before:absolute before:-inset-1 before:content-[''] w-9 h-9 bg-white/10 rounded-full flex items-center justify-center hover:bg-white/20 transition-colors duration-200">
                     <Icon name="Linkedin" size={18} />
                   </a>
-                  <a href={social.twitter || "#"} target="_blank" rel="noopener noreferrer" className="w-9 h-9 bg-white/10 rounded-full flex items-center justify-center hover:bg-white/20 transition-colors duration-200">
+                  <a href={social.twitter || "#"} target="_blank" rel="noopener noreferrer" aria-label="Lynxa Tech sur Twitter" className="relative before:absolute before:-inset-1 before:content-[''] w-9 h-9 bg-white/10 rounded-full flex items-center justify-center hover:bg-white/20 transition-colors duration-200">
                     <Icon name="Twitter" size={18} />
                   </a>
-                  <a href={social.facebook || "#"} target="_blank" rel="noopener noreferrer" className="w-9 h-9 bg-white/10 rounded-full flex items-center justify-center hover:bg-white/20 transition-colors duration-200">
+                  <a href={social.facebook || "#"} target="_blank" rel="noopener noreferrer" aria-label="Lynxa Tech sur Facebook" className="relative before:absolute before:-inset-1 before:content-[''] w-9 h-9 bg-white/10 rounded-full flex items-center justify-center hover:bg-white/20 transition-colors duration-200">
                     <Icon name="Facebook" size={18} />
                   </a>
-                  <a href={`mailto:${contact.email || "contact@lynxatech.com"}`} className="w-9 h-9 bg-white/10 rounded-full flex items-center justify-center hover:bg-white/20 transition-colors duration-200">
+                  <a href={`mailto:${contact.email || "contact@lynxatech.com"}`} aria-label="Envoyer un email à Lynxa Tech" className="relative before:absolute before:-inset-1 before:content-[''] w-9 h-9 bg-white/10 rounded-full flex items-center justify-center hover:bg-white/20 transition-colors duration-200">
                     <Icon name="Mail" size={18} />
                   </a>
                 </div>
@@ -217,7 +217,7 @@ const AboutInnovationStoryVision = () => {
               </div>
             </div>
 
-            <div className="border-t border-white/10 mt-8 pt-8 text-center text-sm text-gray-500">
+            <div className="border-t border-white/10 mt-8 pt-8 text-center text-sm text-gray-400">
               <p>© {new Date().getFullYear()} Lynxa Tech Guinea. Tous droits réservés.</p>
             </div>
           </div>

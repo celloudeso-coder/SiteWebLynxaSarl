@@ -124,7 +124,7 @@ const PortfolioShowcase = () => {
               viewport={{ once: true }}
               transition={{ duration: 0.5 }}
             >
-              <div className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-2 rounded-full text-sm font-medium mb-4">
+              <div className="inline-flex items-center gap-2 bg-primary/10 text-primary-strong px-4 py-2 rounded-full text-sm font-medium mb-4">
                 <Icon name="Briefcase" size={16} />
                 <span>Nos Réalisations</span>
               </div>

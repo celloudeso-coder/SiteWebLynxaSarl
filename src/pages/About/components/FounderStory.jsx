@@ -37,7 +37,7 @@ const FounderStory = () => {
           viewport={{ once: true }}
           transition={{ duration: 0.5 }}
         >
-          <div className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-2 rounded-full text-sm font-medium mb-4">
+          <div className="inline-flex items-center gap-2 bg-primary/10 text-primary-strong px-4 py-2 rounded-full text-sm font-medium mb-4">
             <Icon name="User" size={16} />
             <span>Le fondateur</span>
           </div>
@@ -89,7 +89,7 @@ const FounderStory = () => {
           >
             <div>
               <h3 className="text-2xl font-heading font-bold text-secondary mb-1">{founderData.name}</h3>
-              <p className="text-primary font-medium mb-5">{founderData.title}</p>
+              <p className="text-primary-strong font-medium mb-5">{founderData.title}</p>
               <blockquote className="text-base text-gray-700 italic border-l-4 border-primary pl-5 leading-relaxed">
                 {founderData.quote}
               </blockquote>
@@ -112,7 +112,7 @@ const FounderStory = () => {
 
             <div className="flex flex-wrap gap-2">
               {(founderData.tags || []).map((tag, i) => (
-                <span key={i} className="px-3 py-1.5 bg-primary/10 text-primary text-xs rounded-full font-medium">
+                <span key={i} className="px-3 py-1.5 bg-primary/10 text-primary-strong text-xs rounded-full font-medium">
                   {tag}
                 </span>
               ))}

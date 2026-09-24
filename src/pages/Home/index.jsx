@@ -232,16 +232,16 @@ const Homepage = () => {
                   <span>Fièrement basé à {contact.address || "Conakry, Guinée"}</span>
                 </div>
                 <div className="flex gap-3">
-                  <a href={social.linkedin || "https://www.linkedin.com/company/lynxatech"} target="_blank" rel="noopener noreferrer" className="w-9 h-9 bg-white/10 rounded-full flex items-center justify-center hover:bg-primary transition-colors duration-200">
+                  <a href={social.linkedin || "https://www.linkedin.com/company/lynxatech"} target="_blank" rel="noopener noreferrer" aria-label="Lynxa Tech sur LinkedIn" className="relative before:absolute before:-inset-1 before:content-[''] w-9 h-9 bg-white/10 rounded-full flex items-center justify-center hover:bg-primary transition-colors duration-200">
                     <Icon name="Linkedin" size={16} />
                   </a>
-                  <a href={social.twitter || "#"} target="_blank" rel="noopener noreferrer" className="w-9 h-9 bg-white/10 rounded-full flex items-center justify-center hover:bg-primary transition-colors duration-200">
+                  <a href={social.twitter || "#"} target="_blank" rel="noopener noreferrer" aria-label="Lynxa Tech sur Twitter" className="relative before:absolute before:-inset-1 before:content-[''] w-9 h-9 bg-white/10 rounded-full flex items-center justify-center hover:bg-primary transition-colors duration-200">
                     <Icon name="Twitter" size={16} />
                   </a>
-                  <a href={social.facebook || "#"} target="_blank" rel="noopener noreferrer" className="w-9 h-9 bg-white/10 rounded-full flex items-center justify-center hover:bg-primary transition-colors duration-200">
+                  <a href={social.facebook || "#"} target="_blank" rel="noopener noreferrer" aria-label="Lynxa Tech sur Facebook" className="relative before:absolute before:-inset-1 before:content-[''] w-9 h-9 bg-white/10 rounded-full flex items-center justify-center hover:bg-primary transition-colors duration-200">
                     <Icon name="Facebook" size={16} />
                   </a>
-                  <a href={`mailto:${contact.email || "contact@lynxatech.com"}`} className="w-9 h-9 bg-white/10 rounded-full flex items-center justify-center hover:bg-primary transition-colors duration-200">
+                  <a href={`mailto:${contact.email || "contact@lynxatech.com"}`} aria-label="Envoyer un email à Lynxa Tech" className="relative before:absolute before:-inset-1 before:content-[''] w-9 h-9 bg-white/10 rounded-full flex items-center justify-center hover:bg-primary transition-colors duration-200">
                     <Icon name="Mail" size={16} />
                   </a>
                 </div>

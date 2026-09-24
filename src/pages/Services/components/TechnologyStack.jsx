@@ -153,7 +153,7 @@ const TechnologyStack = () => {
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
               <Link to="/contact">
-                <button className="flex items-center space-x-2 px-6 py-3 bg-white border-2 border-primary text-primary rounded-xl font-medium hover:bg-primary hover:text-white transition-all duration-300">
+                <button className="flex items-center space-x-2 px-6 py-3 bg-white border-2 border-primary text-primary-strong rounded-xl font-medium hover:bg-primary hover:text-white transition-all duration-300">
                   <Icon name="MessageCircle" size={20} />
                   <span>Discuter des Besoins</span>
                 </button>

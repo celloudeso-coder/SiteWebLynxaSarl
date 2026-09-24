@@ -156,7 +156,7 @@ const TrustSignals = () => {
           href="/contact"
           whileHover={{ scale: 1.04 }}
           whileTap={{ scale: 0.97 }}
-          className="inline-flex items-center gap-2 bg-white text-primary px-8 py-3 rounded-xl font-semibold hover:bg-gray-100 transition-colors"
+          className="inline-flex items-center gap-2 bg-white text-primary-strong px-8 py-3 min-h-11 rounded-xl font-semibold hover:bg-gray-100 transition-colors"
         >
           <Icon name="MessageCircle" size={18} color="var(--color-primary)" />
           En savoir plus

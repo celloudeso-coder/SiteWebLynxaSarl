@@ -191,10 +191,13 @@ const TeamSpotlight = () => {
               ref={scrollRef}
               className="flex overflow-x-auto cursor-grab select-none [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
             >
-              {[...teamMembers, ...teamMembers].map((member, index) => (
+              {[...teamMembers, ...teamMembers].map((member, index) => {
+                const isDuplicate = index >= teamMembers.length;
+                return (
                 <div
                   key={index}
-                  aria-hidden={index >= teamMembers.length}
+                  aria-hidden={isDuplicate}
+                  inert={isDuplicate ? "" : undefined}
                   className="bg-gray-50 rounded-2xl p-6 hover:shadow-medium hover:-translate-y-1 transition-all duration-300 flex-shrink-0 w-[280px] mr-6"
                 >
                   {/* Avatar */}
@@ -211,7 +214,7 @@ const TeamSpotlight = () => {
                   {/* Info */}
                   <div className="text-center mb-4">
                     <h3 className="text-base font-heading font-bold text-secondary mb-0.5">{member.name}</h3>
-                    <p className="text-primary font-medium text-xs mb-3">{member.role}</p>
+                    <p className="text-primary-strong font-medium text-xs mb-3">{member.role}</p>
                     <p className="text-xs text-gray-500 leading-relaxed">{member.description}</p>
                   </div>
 
@@ -219,7 +222,7 @@ const TeamSpotlight = () => {
                   <div className="mb-4">
                     <div className="flex flex-wrap gap-1.5 justify-center">
                       {member.expertise?.map((skill, i) => (
-                        <span key={i} className="px-2 py-1 bg-primary/10 text-primary text-xs rounded-full">
+                        <span key={i} className="px-2 py-1 bg-primary/10 text-primary-strong text-xs rounded-full">
                           {skill}
                         </span>
                       ))}
@@ -245,7 +248,9 @@ const TeamSpotlight = () => {
                         href={member.social_links?.linkedin || member.social?.linkedin}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-sm hover:bg-primary hover:text-white transition-colors duration-200"
+                        aria-label={`${member.name} sur LinkedIn`}
+                        tabIndex={isDuplicate ? -1 : undefined}
+                        className="relative before:absolute before:-inset-1.5 before:content-[''] w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-sm hover:bg-primary hover:text-white transition-colors duration-200"
                       >
                         <Icon name="Linkedin" size={14} />
                       </a>
@@ -255,14 +260,17 @@ const TeamSpotlight = () => {
                         href={member.social_links?.github || member.social?.github}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-sm hover:bg-primary hover:text-white transition-colors duration-200"
+                        aria-label={`${member.name} sur GitHub`}
+                        tabIndex={isDuplicate ? -1 : undefined}
+                        className="relative before:absolute before:-inset-1.5 before:content-[''] w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-sm hover:bg-primary hover:text-white transition-colors duration-200"
                       >
                         <Icon name="Github" size={14} />
                       </a>
                     )}
                   </div>
                 </div>
-              ))}
+                );
+              })}
             </div>
             <div className="pointer-events-none absolute inset-y-0 left-0 w-12 sm:w-20 bg-gradient-to-r from-white to-transparent" />
             <div className="pointer-events-none absolute inset-y-0 right-0 w-12 sm:w-20 bg-gradient-to-l from-white to-transparent" />
