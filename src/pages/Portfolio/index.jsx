@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
+import { Helmet } from "react-helmet";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link } from "react-router-dom";
 import Header from "../../components/ui/Header";
@@ -97,11 +98,24 @@ const PortfolioShowcase = () => {
     setVisibleProjects(6);
   };
 
-  useEffect(() => {
-    document.title = "Portfolio – Nos Réalisations | Lynxa Tech Guinea";
-  }, []);
-
   return (
+    <>
+      <Helmet>
+        <title>Portfolio – Nos Réalisations | Lynxa Tech Guinée</title>
+        <meta
+          name="description"
+          content="Découvrez les projets réalisés par Lynxa Tech Guinée : applications mobiles, infrastructures réseau et plateformes web qui transforment des entreprises à travers l'Afrique de l'Ouest."
+        />
+        <meta
+          name="keywords"
+          content="portfolio lynxa tech, projets technologiques guinée, réalisations développement mobile, études de cas web afrique"
+        />
+        <meta property="og:title" content="Portfolio | Lynxa Tech Guinée" />
+        <meta property="og:description" content="Des histoires de succès inspirantes, des projets qui transforment des vies et propulsent des organisations." />
+        <meta property="og:type" content="website" />
+        <link rel="canonical" href="/portfolio" />
+      </Helmet>
+
     <div className="min-h-screen bg-background">
       <Header />
       <main className="pt-16">
@@ -296,6 +310,7 @@ const PortfolioShowcase = () => {
         onClose={handleCloseModal}
       />
     </div>
+    </>
   );
 };
 

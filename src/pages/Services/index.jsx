@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
+import { Helmet } from "react-helmet";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link } from "react-router-dom";
 import Header from "../../components/ui/Header";
@@ -52,11 +53,24 @@ const ServicesPage = () => {
 
   const services = Array.isArray(cmsServices) ? cmsServices.map(normalize) : [];
 
-  useEffect(() => {
-    document.title = "Services | Lynxa Tech Guinea";
-  }, []);
-
   return (
+    <>
+      <Helmet>
+        <title>Services | Solutions Technologiques de Pointe | Lynxa Tech Guinée</title>
+        <meta
+          name="description"
+          content="Développement mobile, infrastructure réseau, développement web et cybersécurité : découvrez les services technologiques de Lynxa Tech Guinée, conçus pour l'Afrique de l'Ouest avec des standards internationaux."
+        />
+        <meta
+          name="keywords"
+          content="services technologiques guinée, développement mobile, infrastructure réseau, développement web, cybersécurité, lynxa tech"
+        />
+        <meta property="og:title" content="Services | Lynxa Tech Guinée" />
+        <meta property="og:description" content="Solutions technologiques de pointe pensées pour l'Afrique, compétitives à l'échelle mondiale." />
+        <meta property="og:type" content="website" />
+        <link rel="canonical" href="/service" />
+      </Helmet>
+
     <div className="min-h-screen bg-white">
       <Header />
 
@@ -269,6 +283,7 @@ const ServicesPage = () => {
         </div>
       </footer>
     </div>
+    </>
   );
 };
 
