@@ -13,8 +13,8 @@
 --   0. Garde-fou : tables préexistantes attendues
 --   1. Colonnes additives sur les tables existantes (+ contraintes)
 --   2. Table unrecorded_submissions, droits et RLS
---   3. Contenu : ligne "cybersecurity" (services) + remplissage des
---      nouvelles colonnes de prix GNF
+--   3. Contenu : remplissage des nouvelles colonnes de prix GNF
+--      (le domaine cybersécurité est dans un fichier séparé)
 --   4. Auto-vérification (annule tout si un point échoue)
 --   5. Rechargement du cache de schéma PostgREST
 -- =====================================================================
@@ -195,21 +195,10 @@ $$;
 -- 3. Contenu
 -- ---------------------------------------------------------------------
 
--- 4e domaine d'expertise. N'écrase jamais une ligne "cybersecurity" déjà créée.
--- Visible IMMÉDIATEMENT sur le site déjà en ligne (Accueil, Services) : pas de
--- métriques chiffrées tant qu'elles ne sont pas vérifiées (à saisir dans
--- /admin/services), et un seul projet lié, repris tel quel du contenu existant.
-INSERT INTO public.services
-  (sort_order, slug, title, subtitle, icon, description, highlights, technologies, metrics, projects, project_count)
-VALUES
-  (4, 'cybersecurity', 'Cybersécurité et Conformité', 'Protection, Résilience & Conformité des Données', 'Shield',
-   'Protégez vos systèmes, vos données et votre réputation avec une approche complète de la cybersécurité, de l''audit à la réponse à incident, en passant par la sensibilisation de vos équipes.',
-   '["Audit de vulnérabilités et test d''intrusion", "Durcissement d''infrastructure", "Réponse à incident et investigation", "Sensibilisation et formation des équipes", "Conformité et protection des données"]',
-   '["Nmap", "Metasploit", "Burp Suite", "Wireshark", "pfSense", "SIEM"]',
-   '[]',
-   '[{"name": "Sécurité Secteur Bancaire", "description": "Implémentation cybersécurité avancée pour institution financière majeure", "industry": "Finance"}]',
-   0)
-ON CONFLICT (slug) DO NOTHING;
+-- Le 4e domaine "cybersecurity" n'est PAS inséré ici : il s'afficherait
+-- aussitôt sur le site en ligne avec des sections vides. Voir
+-- supabase/seed-cybersecurity-domain.sql, à lancer une fois les vraies
+-- valeurs saisies.
 
 -- Prix GNF de la grille tarifaire (src/data/pricing.js). Ne remplit que la
 -- nouvelle colonne, et seulement si elle est encore vide : le texte "price"

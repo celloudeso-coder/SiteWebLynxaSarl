@@ -104,6 +104,8 @@ psql postgresql://postgres:postgres@127.0.0.1:54322/postgres -f supabase/schema.
 
 Sur une base **déjà en service** (la production), ne pas rejouer `schema.sql` : appliquer les fichiers de `supabase/migrations/`, dans l'ordre de leur horodatage (éditeur SQL Supabase, un fichier = un bloc). Chaque migration est idempotente, transactionnelle et s'auto-vérifie. `schema.sql` et les migrations doivent rester alignés : tout ajout de schéma passe par les deux.
 
+`supabase/seed-cybersecurity-domain.sql` (hors `migrations/`) ajoute le 4e domaine « Cybersécurité et Conformité ». La ligne s'affiche dès son insertion sur l'Accueil et Services : complétez d'abord ses métriques réelles en tête de fichier. Le script refuse de s'exécuter sans au moins 3 métriques complètes, car sans elles le rendu est dégradé.
+
 `supabase/content-corrections-2026-09-24.sql` (hors `migrations/`, optionnel) corrige en production les contenus déjà en base qui portent encore le texte d'origine des seeds ; il ne touche jamais une ligne retouchée dans l'admin.
 
 ### 4. Créer le premier compte propriétaire

@@ -88,14 +88,9 @@ INSERT INTO services (sort_order, slug, title, subtitle, icon, description, high
    '["React", "Vue.js", "Node.js", "PHP", "WordPress", "Shopify"]',
    '[{"label": "Vitesse de chargement", "value": "< 2s"}, {"label": "Score SEO", "value": "95/100"}, {"label": "Taux de conversion", "value": "+250%"}, {"label": "Optimisation mobile", "value": "100%"}]',
    '[{"name": "Portail Tourisme Guinée", "description": "Site officiel du tourisme avec système de réservation intégré", "industry": "Tourisme"}, {"name": "Plateforme Impact ONG", "description": "Système de suivi et reporting pour projets de développement", "industry": "ONG"}, {"name": "Marketplace E-Commerce", "description": "Plateforme multi-vendeurs pour artisans locaux et clients internationaux", "industry": "E-Commerce"}]',
-   0),
-  (4, 'cybersecurity', 'Cybersécurité et Conformité', 'Protection, Résilience & Conformité des Données', 'Shield',
-   'Protégez vos systèmes, vos données et votre réputation avec une approche complète de la cybersécurité, de l''audit à la réponse à incident, en passant par la sensibilisation de vos équipes.',
-   '["Audit de vulnérabilités et test d''intrusion", "Durcissement d''infrastructure", "Réponse à incident et investigation", "Sensibilisation et formation des équipes", "Conformité et protection des données"]',
-   '["Nmap", "Metasploit", "Burp Suite", "Wireshark", "pfSense", "SIEM"]',
-   '[]',
-   '[{"name": "Sécurité Secteur Bancaire", "description": "Implémentation cybersécurité avancée pour institution financière majeure", "industry": "Finance"}]',
    0)
+-- Le 4e domaine "cybersecurity" est dans supabase/seed-cybersecurity-domain.sql,
+-- à lancer une fois ses métriques réelles saisies (sans elles, rendu dégradé).
 ON CONFLICT (slug) DO NOTHING;
 
 -- -------------------------------------------------------
