@@ -348,7 +348,7 @@ function WhyGuineaSection() {
         <div className="space-y-3">
           {advantages.map((item) => (
             <div key={item.id} className="bg-white rounded-xl border border-gray-200 p-4">
-              <div className="grid sm:grid-cols-4 gap-3 mb-3">
+              <div className="grid sm:grid-cols-5 gap-3 mb-3">
                 <FormField label="Icône">
                   <IconPicker value={item.icon} onChange={(v) => updateAdv(item.id, "icon", v)} />
                 </FormField>
@@ -357,6 +357,9 @@ function WhyGuineaSection() {
                 </FormField>
                 <FormField label="Statistique">
                   <TextInput value={item.stats || ""} onChange={(v) => updateAdv(item.id, "stats", v)} placeholder="400M+ personnes" />
+                </FormField>
+                <FormField label="Source (si chiffre externe)">
+                  <TextInput value={item.source || ""} onChange={(v) => updateAdv(item.id, "source", v)} placeholder="ECOWAS, 2024" />
                 </FormField>
                 <FormField label="Ordre">
                   <input
@@ -389,7 +392,7 @@ function WhyGuineaSection() {
         <div className="flex items-center justify-between mb-4">
           <div>
             <h2 className="text-base font-bold text-gray-900">Statistiques écosystème</h2>
-            <p className="text-xs text-gray-500">4 indicateurs affichés en grille</p>
+            <p className="text-xs text-gray-500">Indicateurs affichés en grille — n'en garder que si une source réelle est citée</p>
           </div>
         </div>
         <div className="bg-white rounded-xl border border-gray-200 p-4 space-y-3">
@@ -404,8 +407,8 @@ function WhyGuineaSection() {
               <FormField label="Label">
                 <TextInput value={stat.label || ""} onChange={(v) => updateEcoStat(i, "label", v)} placeholder="Startups Technologiques" />
               </FormField>
-              <FormField label="Croissance">
-                <TextInput value={stat.growth || ""} onChange={(v) => updateEcoStat(i, "growth", v)} placeholder="2025" />
+              <FormField label="Source (affichée en petit sous le chiffre)">
+                <TextInput value={stat.source || ""} onChange={(v) => updateEcoStat(i, "source", v)} placeholder="DataReportal, Digital 2024" />
               </FormField>
             </div>
           ))}

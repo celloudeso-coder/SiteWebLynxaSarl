@@ -132,11 +132,15 @@ const MetricsDashboard = () => {
           viewport={{ once: true }}
           transition={{ duration: 0.6, delay: 0.2 }}
         >
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 text-center max-w-md mx-auto">
             {[
-              { value: "99.5%", label: "Garantie de disponibilité" },
-              { value: "<3s",   label: "Temps de chargement moyen" },
-              { value: "24/7",  label: "Couverture du support" },
+              // "99.5% de disponibilité" et "24/7" retirés : aucune formule
+              // de maintenance (Services, 100-500 $/mois) ne promet un SLA
+              // chiffré ni une couverture continue — la base est un support
+              // par email. On affiche l'offre réelle plutôt qu'une promesse
+              // non tenable.
+              { value: "<3s",         label: "Temps de chargement moyen" },
+              { value: "100–500 $",   label: "Maintenance mensuelle" },
             ].map((item, i) => (
               <motion.div
                 key={i}

@@ -5,20 +5,30 @@ import Icon from "../../../components/AppIcon";
 import Image from "../../../components/AppImage";
 import { getAboutAdvantages, getAboutEcosystemStats } from "../../../lib/cms";
 
+// Statistiques macro sourcées quand une source fiable existe ; sinon
+// retirées plutôt que laissées invérifiées (cf. commit de nettoyage des
+// chiffres). "Économie de 20–40%", "Fuseau horaire GMT+0" et "3+ langues
+// parlées" restent sans source : ce sont des faits/claims propres à Lynxa
+// (tarifs, géographie, compétences internes), pas des statistiques externes.
 const STATIC_ADVANTAGES = [
-  { icon: "MapPin",      title: "Emplacement Stratégique",  stats: "400M+ personnes dans la région CEDEAO", description: "La position de la Guinée en Afrique de l'Ouest donne accès à plus de 400 millions de personnes dans la région CEDEAO, en faisant un hub idéal pour l'expansion régionale." },
-  { icon: "Users",       title: "Réservoir de Talents",     stats: "60% de la population jeune", description: "Accueil d'esprits brillants désireux de se faire remarquer sur la scène mondiale. Nos développeurs combinent formation internationale et connaissance du marché local." },
+  { icon: "MapPin",      title: "Emplacement Stratégique",  stats: "400M+ personnes dans la région CEDEAO", source: "ECOWAS, 2024", description: "La position de la Guinée en Afrique de l'Ouest donne accès à plus de 400 millions de personnes dans la région CEDEAO, en faisant un hub idéal pour l'expansion régionale." },
+  { icon: "Users",       title: "Réservoir de Talents",     stats: "~60% de la population a moins de 25 ans", source: "ONU, Perspectives de la population mondiale, 2024", description: "Accueil d'esprits brillants désireux de se faire remarquer sur la scène mondiale. Nos développeurs combinent formation internationale et connaissance du marché local." },
   { icon: "Zap",         title: "Esprit d'Innovation",      stats: "Écosystème technologique en croissance", description: "Les Guinéens sont des résolveurs de problèmes naturels. Cette résilience se traduit par des solutions technologiques créatives et efficaces." },
   { icon: "DollarSign",  title: "Efficacité des Coûts",     stats: "Économie de 20–40%", description: "Fournir une qualité premium à des tarifs compétitifs. Nos coûts opérationnels nous permettent d'offrir une valeur exceptionnelle sans compromettre la qualité." },
   { icon: "Clock",       title: "Avantage Fuseau Horaire",  stats: "Fuseau horaire GMT+0", description: "Le fuseau GMT s'aligne parfaitement avec les heures de travail européennes tout en offrant une couverture étendue pour les clients américains." },
   { icon: "Globe",       title: "Pont Culturel",            stats: "3+ langues parlées", description: "Maîtrise du français et de l'anglais, plus la compréhension des cultures commerciales africaines et internationales." },
 ];
 
+// "Startups Technologiques" (150+) et "Croissance Paiements Numériques"
+// (15%) retirés : aucune source ne convergeait sur ces chiffres précis (les
+// décomptes de startups en Guinée varient de 6 à 261 selon la plateforme, et
+// la croissance des paiements numériques en Afrique se mesure très
+// différemment selon la métrique — 16 à 35% selon la source). "Taux de
+// Pénétration Internet" corrigé de 52% (chiffre non retrouvé) à 34%, la
+// valeur réellement publiée.
 const STATIC_ECOSYSTEM_STATS = [
-  { label: "Startups Technologiques", value: "150+", growth: "2025", icon: "TrendingUp" },
-  { label: "Taux de Pénétration Internet", value: "52%",  growth: "2025", icon: "Wifi" },
-  { label: "Utilisateurs Mobiles",         value: "14M",  growth: "2024", icon: "Smartphone" },
-  { label: "Croissance Paiements Numériques", value: "15%", growth: "Afrique 2024", icon: "CreditCard" },
+  { label: "Taux de Pénétration Internet", value: "34%", source: "DataReportal, Digital 2024: Guinée", icon: "Wifi" },
+  { label: "Utilisateurs Mobiles",         value: "14M", source: "DataReportal, Digital 2024: Guinée", icon: "Smartphone" },
 ];
 
 const WhyGuinea = () => {
@@ -96,6 +106,9 @@ const WhyGuinea = () => {
                 <div>
                   <h3 className="font-heading font-bold text-secondary text-sm">{advantage.title}</h3>
                   <p className="text-xs text-primary font-medium">{advantage.stats}</p>
+                  {advantage.source && (
+                    <p className="text-[10px] text-gray-400 mt-0.5">Source : {advantage.source}</p>
+                  )}
                 </div>
               </div>
               <p className="text-gray-500 text-sm leading-relaxed">{advantage.description}</p>
@@ -115,7 +128,7 @@ const WhyGuinea = () => {
             <h3 className="text-2xl font-heading font-bold text-secondary mb-2">L'écosystème technologique en pleine expansion</h3>
             <p className="text-gray-500 text-sm">Indicateurs clés de la transformation numérique en Guinée</p>
           </div>
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-2 gap-6 max-w-xl mx-auto">
             {ecosystemStats.map((stat, index) => (
               <motion.div
                 key={index}
@@ -130,7 +143,9 @@ const WhyGuinea = () => {
                 </div>
                 <div className="text-2xl font-bold text-secondary mb-1">{stat.value}</div>
                 <div className="text-xs text-gray-500 mb-1">{stat.label}</div>
-                <div className="text-xs text-emerald-500 font-medium">{stat.growth}</div>
+                {stat.source && (
+                  <div className="text-[10px] text-gray-400">Source : {stat.source}</div>
+                )}
               </motion.div>
             ))}
           </div>

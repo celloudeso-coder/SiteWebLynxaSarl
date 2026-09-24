@@ -541,16 +541,20 @@ CREATE TABLE IF NOT EXISTS about_advantages (
   icon text NOT NULL DEFAULT 'Star',
   title text NOT NULL DEFAULT '',
   stats text DEFAULT '',
+  source text DEFAULT '',
   description text DEFAULT '',
   updated_at timestamptz DEFAULT now()
 );
-INSERT INTO about_advantages (sort_order, icon, title, stats, description) VALUES
-  (1, 'MapPin',     'Emplacement Stratégique', '400M+ personnes dans la région CEDEAO', 'La position de la Guinée en Afrique de l''Ouest donne accès à plus de 400 millions de personnes dans la région CEDEAO.'),
-  (2, 'Users',      'Réservoir de Talents',    '60% de la population jeune',            'Accueil d''esprits brillants désireux de se faire remarquer sur la scène mondiale.'),
-  (3, 'Zap',        'Esprit d''Innovation',    'Écosystème technologique en croissance', 'Les Guinéens sont des résolveurs de problèmes naturels.'),
-  (4, 'DollarSign', 'Efficacité des Coûts',    'Économie de 20–40%',                    'Fournir une qualité premium à des tarifs compétitifs.'),
-  (5, 'Clock',      'Avantage Fuseau Horaire', 'Fuseau horaire GMT+0',                  'Le fuseau GMT s''aligne parfaitement avec les heures de travail européennes.'),
-  (6, 'Globe',      'Pont Culturel',           '3+ langues parlées',                    'Maîtrise du français et de l''anglais, plus la compréhension des cultures commerciales africaines.')
+-- Colonne ajoutée après le premier déploiement : mention de source (nom +
+-- année) affichée en petit sous les statistiques macro qui en ont une.
+ALTER TABLE about_advantages ADD COLUMN IF NOT EXISTS source text DEFAULT '';
+INSERT INTO about_advantages (sort_order, icon, title, stats, source, description) VALUES
+  (1, 'MapPin',     'Emplacement Stratégique', '400M+ personnes dans la région CEDEAO', 'ECOWAS, 2024', 'La position de la Guinée en Afrique de l''Ouest donne accès à plus de 400 millions de personnes dans la région CEDEAO.'),
+  (2, 'Users',      'Réservoir de Talents',    '~60% de la population a moins de 25 ans', 'ONU, Perspectives de la population mondiale, 2024', 'Accueil d''esprits brillants désireux de se faire remarquer sur la scène mondiale.'),
+  (3, 'Zap',        'Esprit d''Innovation',    'Écosystème technologique en croissance', '', 'Les Guinéens sont des résolveurs de problèmes naturels.'),
+  (4, 'DollarSign', 'Efficacité des Coûts',    'Économie de 20–40%',                    '', 'Fournir une qualité premium à des tarifs compétitifs.'),
+  (5, 'Clock',      'Avantage Fuseau Horaire', 'Fuseau horaire GMT+0',                  '', 'Le fuseau GMT s''aligne parfaitement avec les heures de travail européennes.'),
+  (6, 'Globe',      'Pont Culturel',           '3+ langues parlées',                    '', 'Maîtrise du français et de l''anglais, plus la compréhension des cultures commerciales africaines.')
 ON CONFLICT DO NOTHING;
 ALTER TABLE about_advantages ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "public_read" ON about_advantages FOR SELECT USING (active = true);
@@ -626,8 +630,11 @@ GRANT ALL    ON about_roadmap_phases TO authenticated;
 -- -------------------------------------------------------
 INSERT INTO site_settings (key, value) VALUES
   ('about_founder', '{"name":"Mamadou Cellou Kante","title":"Fondateur & CEO","image":"/Cellou.png","linkedinUrl":"https://www.linkedin.com/in/mamadou-cellou-kante","quote":"« Je m''appelle Mamadou Cellou Kante. J''aurais pu choisir la France, les États-Unis ou d''autres pays où l''informatique est plus avancée et davantage valorisée, comme l''ont fait beaucoup de mes promotionnaires. Mais j''ai décidé de rester en Guinée. Pourquoi ? Parce que je crois que la prochaine grande vague d''innovation viendra d''Afrique. »","story":["Né à Kamsar et diplômé en informatique à l''IPG-ISTI de Dakar. Administrateur réseaux et systèmes, certifié en cybersécurité, j''ai eu l''opportunité de travailler sur plusieurs projets d''infrastructure.","Ces expériences m''ont permis de constater une réalité frappante : malgré leur expertise et leur créativité, les talents africains restent trop souvent sous-évalués sur la scène internationale.","C''est de ce constat qu''est née cette vision. Avec LYNXA Tech, mon ambition est claire : créer un pont entre l''innovation africaine et les opportunités mondiales."],"tags":["Administrateur Réseaux & Systèmes","Certifié Cybersécurité","Entrepreneur Tech"]}'),
-  ('about_ecosystem_stats', '[{"label":"Startups Technologiques","value":"150+","growth":"2025","icon":"TrendingUp"},{"label":"Taux de Pénétration Internet","value":"52%","growth":"2025","icon":"Wifi"},{"label":"Utilisateurs Mobiles","value":"14M","growth":"2024","icon":"Smartphone"},{"label":"Croissance Paiements Numériques","value":"15%","growth":"Afrique 2024","icon":"CreditCard"}]'),
-  ('about_impact_metrics', '[{"current":"7+","target":"25+","label":"Membres de l''équipe","icon":"Users"},{"current":"1","target":"20+","label":"Pays","icon":"MapPin"},{"current":"6+","target":"500+","label":"Clients","icon":"Briefcase"},{"current":"0+","target":"1K+","label":"Vies impactées","icon":"Heart"}]')
+  -- "Startups Technologiques" (150+) et "Croissance Paiements Numériques" (15%)
+  -- retirés faute de source fiable ; "Taux de Pénétration Internet" corrigé de
+  -- 52% (introuvable) à 34% (DataReportal, Digital 2024: Guinée).
+  ('about_ecosystem_stats', '[{"label":"Taux de Pénétration Internet","value":"34%","source":"DataReportal, Digital 2024: Guinée","icon":"Wifi"},{"label":"Utilisateurs Mobiles","value":"14M","source":"DataReportal, Digital 2024: Guinée","icon":"Smartphone"}]'),
+  ('about_impact_metrics', '[{"current":"4","target":"25+","label":"Membres de l''équipe","icon":"Users"},{"current":"1","target":"20+","label":"Pays","icon":"MapPin"},{"current":"4","target":"500+","label":"Clients","icon":"Briefcase"}]')
 ON CONFLICT (key) DO NOTHING;
 
 -- -------------------------------------------------------

@@ -70,15 +70,14 @@ const STATIC_VISION_PILLARS = [
   { icon: "Handshake", title: "Partenariats Globaux",       description: "Former des alliances stratégiques avec des géants technologiques internationaux tout en conservant notre identité africaine." },
 ];
 
-// "current" aligné sur l'effectif réellement nommé et visible sur la page
-// (TeamSpotlight.jsx / table Supabase "team_members" : 4 membres) — pas de
-// valeur inventée pour les autres lignes (clients, pays, vies impactées),
-// laissées telles quelles faute de donnée vérifiable.
+// "current" aligné sur des données vérifiables : effectif réellement nommé
+// (TeamSpotlight.jsx / table "team_members" : 4 membres), nombre réel de
+// clients dans le portfolio (4). "Vies impactées" retiré : aucune mesure
+// réelle derrière ce chiffre, "0+" n'en était pas une.
 const STATIC_IMPACT_METRICS = [
   { current: "4",   target: "25+",  label: "Membres de l'équipe", icon: "Users" },
   { current: "1",   target: "20+",  label: "Pays",                icon: "MapPin" },
-  { current: "6+",  target: "500+", label: "Clients",             icon: "Briefcase" },
-  { current: "0+",  target: "1K+",  label: "Vies impactées",      icon: "Heart" },
+  { current: "4",   target: "500+", label: "Clients",             icon: "Briefcase" },
 ];
 
 function normalizePhase(p) {
@@ -249,7 +248,7 @@ const VisionRoadmap = () => {
             <h3 className="text-2xl font-heading font-bold text-secondary mb-2">Trajectoire de croissance</h3>
             <p className="text-gray-500 text-sm">De notre situation actuelle à nos ambitions pour 2027</p>
           </div>
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
             {impactMetrics.map((metric, index) => (
               <motion.div
                 key={index}

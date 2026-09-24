@@ -28,7 +28,9 @@ const HIGHLIGHT_VALUE = {
       title: "Collaboration Remote-First",
       description: "Livraison de projets fluide, peu importe la localisation",
       image: "/remotecolab.png",
-      metrics: "99,5 % de disponibilité",
+      // "99,5 % de disponibilité" retiré : aucune formule de maintenance
+      // (Services, 100-500 $/mois) ne promet un SLA chiffré.
+      metrics: "Maintenance dès 100 $/mois",
     },
   ],
   color: "bg-primary",
