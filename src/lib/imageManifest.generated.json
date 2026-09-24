@@ -1,0 +1,270 @@
+{
+  "/Cellou.png": {
+    "path": "/Cellou.png",
+    "width": 2150,
+    "height": 2560,
+    "variants": [
+      {
+        "w": 80,
+        "webp": "/generated-images/Cellou-80w.webp",
+        "fallback": "/generated-images/Cellou-80w.png"
+      },
+      {
+        "w": 160,
+        "webp": "/generated-images/Cellou-160w.webp",
+        "fallback": "/generated-images/Cellou-160w.png"
+      },
+      {
+        "w": 400,
+        "webp": "/generated-images/Cellou-400w.webp",
+        "fallback": "/generated-images/Cellou-400w.png"
+      },
+      {
+        "w": 800,
+        "webp": "/generated-images/Cellou-800w.webp",
+        "fallback": "/generated-images/Cellou-800w.png"
+      },
+      {
+        "w": 1600,
+        "webp": "/generated-images/Cellou-1600w.webp",
+        "fallback": "/generated-images/Cellou-1600w.png"
+      }
+    ]
+  },
+  "/aboutpole.png": {
+    "path": "/aboutpole.png",
+    "width": 2816,
+    "height": 1536,
+    "variants": [
+      {
+        "w": 80,
+        "webp": "/generated-images/aboutpole-80w.webp",
+        "fallback": "/generated-images/aboutpole-80w.png"
+      },
+      {
+        "w": 160,
+        "webp": "/generated-images/aboutpole-160w.webp",
+        "fallback": "/generated-images/aboutpole-160w.png"
+      },
+      {
+        "w": 400,
+        "webp": "/generated-images/aboutpole-400w.webp",
+        "fallback": "/generated-images/aboutpole-400w.png"
+      },
+      {
+        "w": 800,
+        "webp": "/generated-images/aboutpole-800w.webp",
+        "fallback": "/generated-images/aboutpole-800w.png"
+      },
+      {
+        "w": 1600,
+        "webp": "/generated-images/aboutpole-1600w.webp",
+        "fallback": "/generated-images/aboutpole-1600w.png"
+      }
+    ]
+  },
+  "/lxacontrasteBnWchaud.png": {
+    "path": "/lxacontrasteBnWchaud.png",
+    "width": 486,
+    "height": 457,
+    "variants": [
+      {
+        "w": 80,
+        "webp": "/generated-images/lxacontrasteBnWchaud-80w.webp",
+        "fallback": "/generated-images/lxacontrasteBnWchaud-80w.png"
+      },
+      {
+        "w": 160,
+        "webp": "/generated-images/lxacontrasteBnWchaud-160w.webp",
+        "fallback": "/generated-images/lxacontrasteBnWchaud-160w.png"
+      },
+      {
+        "w": 400,
+        "webp": "/generated-images/lxacontrasteBnWchaud-400w.webp",
+        "fallback": "/generated-images/lxacontrasteBnWchaud-400w.png"
+      },
+      {
+        "w": 486,
+        "webp": "/generated-images/lxacontrasteBnWchaud-486w.webp",
+        "fallback": "/generated-images/lxacontrasteBnWchaud-486w.png"
+      }
+    ]
+  },
+  "/lxacontrasteBnWeleve.png": {
+    "path": "/lxacontrasteBnWeleve.png",
+    "width": 486,
+    "height": 457,
+    "variants": [
+      {
+        "w": 80,
+        "webp": "/generated-images/lxacontrasteBnWeleve-80w.webp",
+        "fallback": "/generated-images/lxacontrasteBnWeleve-80w.png"
+      },
+      {
+        "w": 160,
+        "webp": "/generated-images/lxacontrasteBnWeleve-160w.webp",
+        "fallback": "/generated-images/lxacontrasteBnWeleve-160w.png"
+      },
+      {
+        "w": 400,
+        "webp": "/generated-images/lxacontrasteBnWeleve-400w.webp",
+        "fallback": "/generated-images/lxacontrasteBnWeleve-400w.png"
+      },
+      {
+        "w": 486,
+        "webp": "/generated-images/lxacontrasteBnWeleve-486w.webp",
+        "fallback": "/generated-images/lxacontrasteBnWeleve-486w.png"
+      }
+    ]
+  },
+  "/lxafroidvif.png": {
+    "path": "/lxafroidvif.png",
+    "width": 486,
+    "height": 457,
+    "variants": [
+      {
+        "w": 80,
+        "webp": "/generated-images/lxafroidvif-80w.webp",
+        "fallback": "/generated-images/lxafroidvif-80w.png"
+      },
+      {
+        "w": 160,
+        "webp": "/generated-images/lxafroidvif-160w.webp",
+        "fallback": "/generated-images/lxafroidvif-160w.png"
+      },
+      {
+        "w": 400,
+        "webp": "/generated-images/lxafroidvif-400w.webp",
+        "fallback": "/generated-images/lxafroidvif-400w.png"
+      },
+      {
+        "w": 486,
+        "webp": "/generated-images/lxafroidvif-486w.webp",
+        "fallback": "/generated-images/lxafroidvif-486w.png"
+      }
+    ]
+  },
+  "/lxaperforation.png": {
+    "path": "/lxaperforation.png",
+    "width": 486,
+    "height": 457,
+    "variants": [
+      {
+        "w": 80,
+        "webp": "/generated-images/lxaperforation-80w.webp",
+        "fallback": "/generated-images/lxaperforation-80w.png"
+      },
+      {
+        "w": 160,
+        "webp": "/generated-images/lxaperforation-160w.webp",
+        "fallback": "/generated-images/lxaperforation-160w.png"
+      },
+      {
+        "w": 400,
+        "webp": "/generated-images/lxaperforation-400w.webp",
+        "fallback": "/generated-images/lxaperforation-400w.png"
+      },
+      {
+        "w": 486,
+        "webp": "/generated-images/lxaperforation-486w.webp",
+        "fallback": "/generated-images/lxaperforation-486w.png"
+      }
+    ]
+  },
+  "/lynxa.jpg": {
+    "path": "/lynxa.jpg",
+    "width": 1024,
+    "height": 1024,
+    "variants": [
+      {
+        "w": 80,
+        "webp": "/generated-images/lynxa-80w.webp",
+        "fallback": "/generated-images/lynxa-80w.jpg"
+      },
+      {
+        "w": 160,
+        "webp": "/generated-images/lynxa-160w.webp",
+        "fallback": "/generated-images/lynxa-160w.jpg"
+      },
+      {
+        "w": 400,
+        "webp": "/generated-images/lynxa-400w.webp",
+        "fallback": "/generated-images/lynxa-400w.jpg"
+      },
+      {
+        "w": 800,
+        "webp": "/generated-images/lynxa-800w.webp",
+        "fallback": "/generated-images/lynxa-800w.jpg"
+      },
+      {
+        "w": 1024,
+        "webp": "/generated-images/lynxa-1024w.webp",
+        "fallback": "/generated-images/lynxa-1024w.jpg"
+      }
+    ]
+  },
+  "/portefeuilcli.png": {
+    "path": "/portefeuilcli.png",
+    "width": 1024,
+    "height": 689,
+    "variants": [
+      {
+        "w": 80,
+        "webp": "/generated-images/portefeuilcli-80w.webp",
+        "fallback": "/generated-images/portefeuilcli-80w.png"
+      },
+      {
+        "w": 160,
+        "webp": "/generated-images/portefeuilcli-160w.webp",
+        "fallback": "/generated-images/portefeuilcli-160w.png"
+      },
+      {
+        "w": 400,
+        "webp": "/generated-images/portefeuilcli-400w.webp",
+        "fallback": "/generated-images/portefeuilcli-400w.png"
+      },
+      {
+        "w": 800,
+        "webp": "/generated-images/portefeuilcli-800w.webp",
+        "fallback": "/generated-images/portefeuilcli-800w.png"
+      },
+      {
+        "w": 1024,
+        "webp": "/generated-images/portefeuilcli-1024w.webp",
+        "fallback": "/generated-images/portefeuilcli-1024w.png"
+      }
+    ]
+  },
+  "/remotecolab.png": {
+    "path": "/remotecolab.png",
+    "width": 1024,
+    "height": 647,
+    "variants": [
+      {
+        "w": 80,
+        "webp": "/generated-images/remotecolab-80w.webp",
+        "fallback": "/generated-images/remotecolab-80w.png"
+      },
+      {
+        "w": 160,
+        "webp": "/generated-images/remotecolab-160w.webp",
+        "fallback": "/generated-images/remotecolab-160w.png"
+      },
+      {
+        "w": 400,
+        "webp": "/generated-images/remotecolab-400w.webp",
+        "fallback": "/generated-images/remotecolab-400w.png"
+      },
+      {
+        "w": 800,
+        "webp": "/generated-images/remotecolab-800w.webp",
+        "fallback": "/generated-images/remotecolab-800w.png"
+      },
+      {
+        "w": 1024,
+        "webp": "/generated-images/remotecolab-1024w.webp",
+        "fallback": "/generated-images/remotecolab-1024w.png"
+      }
+    ]
+  }
+}

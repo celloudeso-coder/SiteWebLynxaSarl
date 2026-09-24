@@ -55,7 +55,12 @@ const HeroSection = () => {
               index === currentSlide ? "opacity-30" : "opacity-0"
             }`}
           >
-            <Image src={img} alt={`Tech background ${index + 1}`} className="w-full h-full object-cover" />
+            <Image
+              src={img}
+              alt={`Tech background ${index + 1}`}
+              className="w-full h-full object-cover"
+              priority={index === 0}
+            />
           </div>
         ))}
       </div>

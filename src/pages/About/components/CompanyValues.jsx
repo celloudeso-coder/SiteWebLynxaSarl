@@ -106,7 +106,12 @@ const CompanyValues = () => {
                 transition={{ type: "spring", stiffness: 300 }}
               >
                 <div className="aspect-video">
-                  <Image src={example.image} alt={example.title} className="w-full h-full object-cover" />
+                  <Image
+                    src={example.image}
+                    alt={example.title}
+                    className="w-full h-full object-cover"
+                    sizes="(min-width: 1024px) 50vw, 100vw"
+                  />
                 </div>
                 <div className="absolute inset-0 bg-gradient-to-t from-secondary/80 to-transparent flex items-end">
                   <div className="p-4 text-white">

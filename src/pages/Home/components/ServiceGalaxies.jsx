@@ -120,7 +120,12 @@ const ServiceGalaxies = () => {
                   onMouseLeave={() => setHoveredService(null)}
                 >
                   <div className="absolute inset-0 opacity-5 group-hover:opacity-10 transition-opacity duration-500">
-                    <Image src={service.image} alt={service.title} className="w-full h-full object-cover" />
+                    <Image
+                      src={service.image}
+                      alt={service.title}
+                      className="w-full h-full object-cover"
+                      sizes="(min-width: 1024px) 400px, (min-width: 640px) 50vw, 100vw"
+                    />
                   </div>
                   <div className={`absolute inset-0 bg-gradient-to-br ${service.gradient} opacity-0 group-hover:opacity-5 transition-opacity duration-500`} />
 

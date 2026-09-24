@@ -4,6 +4,13 @@ node_modules/
 # Build output
 dist/
 
+# Variantes d'images générées au build (scripts/generate-image-variants.mjs)
+# — binaires régénérés à chaque "npm run build", jamais committés. Le
+# manifeste JSON (src/lib/imageManifest.generated.json), lui, reste committé
+# comme placeholder "{}" pour que le serveur de dev résolve l'import même
+# sans avoir lancé le build ; il est réécrit (non committé) à chaque build.
+public/generated-images/
+
 # Environment variables (ne jamais committer les clés)
 .env
 .env.local

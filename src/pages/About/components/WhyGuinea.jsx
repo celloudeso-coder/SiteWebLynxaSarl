@@ -74,7 +74,12 @@ const WhyGuinea = () => {
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
         >
-          <Image src="/aboutpole.png" alt="Pôle d'innovation Conakry" className="w-full h-full object-cover" />
+          <Image
+            src="/aboutpole.png"
+            alt="Pôle d'innovation Conakry"
+            className="w-full h-full object-cover"
+            sizes="(min-width: 1280px) 1152px, 100vw"
+          />
           <div className="absolute inset-0 bg-gradient-to-r from-secondary/80 to-primary/60 flex items-center justify-center">
             <div className="text-center text-white px-4">
               <h3 className="text-2xl md:text-3xl font-heading font-bold mb-2">Pôle d'innovation de l'Afrique de l'Ouest</h3>

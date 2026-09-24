@@ -63,6 +63,7 @@ const FounderStory = () => {
                 src={founderData.image}
                 alt={founderData.name}
                 className="w-full h-full object-cover"
+                sizes="(min-width: 1024px) 384px, 100vw"
               />
             </div>
             <motion.div

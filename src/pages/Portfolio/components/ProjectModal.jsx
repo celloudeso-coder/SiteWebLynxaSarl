@@ -53,6 +53,7 @@ const ProjectModal = ({ project, isOpen, onClose }) => (
                   src={project?.image}
                   alt={project?.title}
                   className="w-full h-full object-cover"
+                  sizes="(min-width: 1024px) 896px, 100vw"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
               </div>

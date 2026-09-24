@@ -140,6 +140,7 @@ const TestimonialCarousel = () => {
                     src={t.avatar}
                     alt={t.name}
                     className="w-14 h-14 rounded-full object-cover ring-2 ring-primary/30"
+                    sizes="56px"
                   />
                   <div className="text-center">
                     <h4 className="font-heading font-bold text-secondary">{t.name}</h4>

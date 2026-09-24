@@ -53,6 +53,7 @@ const ProjectCard = ({ project, onViewDetails, index = 0 }) => {
           src={project?.image}
           alt={project?.title}
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+          sizes="(min-width: 1024px) 400px, (min-width: 768px) 50vw, 100vw"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
         <div className="absolute top-4 left-4">
