@@ -119,9 +119,14 @@ CREATE TABLE IF NOT EXISTS portfolio_projects (
   testimonial jsonb,
   duration text,
   image_url text,
+  gallery_urls jsonb DEFAULT '[]',
   project_url text,
   updated_at timestamptz DEFAULT now()
 );
+-- Colonne ajoutée après le premier déploiement : jusqu'à 2 captures d'écran
+-- supplémentaires pour l'étude de cas (image_url reste la photo principale,
+-- affichée en en-tête de la fiche projet).
+ALTER TABLE portfolio_projects ADD COLUMN IF NOT EXISTS gallery_urls jsonb DEFAULT '[]';
 
 -- -------------------------------------------------------
 -- 5. TEAM MEMBERS

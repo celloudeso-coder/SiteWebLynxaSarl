@@ -46,6 +46,7 @@ function normalize(p) {
     impact:         p.impact,
     description:    p.description,
     image:          p.image_url,
+    gallery:        Array.isArray(p.gallery_urls) ? p.gallery_urls.slice(0, 2) : [],
     duration:       p.duration,
     metrics,
     challenge:      p.challenge,

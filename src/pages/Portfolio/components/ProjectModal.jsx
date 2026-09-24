@@ -114,6 +114,28 @@ const ProjectModal = ({ project, isOpen, onClose }) => (
                 )}
               </div>
 
+              {/* Captures d'écran */}
+              {project?.gallery?.length > 0 && (
+                <div>
+                  <h3 className="text-xl font-heading font-bold text-secondary mb-3 flex items-center gap-2">
+                    <Icon name="Image" size={20} className="text-accent" />
+                    Aperçu
+                  </h3>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    {project.gallery.map((src, i) => (
+                      <div key={i} className="rounded-xl overflow-hidden border border-border">
+                        <Image
+                          src={src}
+                          alt={`${project?.title} — capture d'écran ${i + 1}`}
+                          className="w-full h-48 object-cover"
+                          sizes="(min-width: 640px) 424px, 100vw"
+                        />
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
               {/* Implementation */}
               {project?.implementation?.length > 0 && (
                 <div>

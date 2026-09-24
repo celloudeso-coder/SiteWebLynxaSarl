@@ -70,8 +70,17 @@ const emptyProject = {
   sort_order: 0, active: true, title: "", service_type: "", industry: "",
   scale: "", impact: "", description: "", challenge: "", solution: "",
   implementation_steps: [], technologies: [], metrics: [], testimonial: null,
-  duration: "", image_url: "", project_url: "",
+  duration: "", image_url: "", gallery_urls: [], project_url: "",
 };
+
+function updateGalleryUrl(galleryUrls, index, value) {
+  const next = Array.isArray(galleryUrls) ? [...galleryUrls] : [];
+  next[index] = value;
+  // Retire les emplacements vides en fin de tableau pour ne pas stocker
+  // des trous ("", null) au-delà de la dernière capture réellement fournie.
+  while (next.length > 0 && !next[next.length - 1]) next.pop();
+  return next;
+}
 
 export default function PortfolioAdmin() {
   const [projects, setProjects] = useState([]);
@@ -259,6 +268,24 @@ export default function PortfolioAdmin() {
                     folder="projects"
                   />
                 </FormField>
+
+                {/* Galerie — jusqu'à 2 captures d'écran affichées dans l'étude de cas */}
+                <div className="grid sm:grid-cols-2 gap-5">
+                  <FormField label="Capture d'écran 1" hint="Optionnelle — affichée dans la fiche projet détaillée.">
+                    <ImageField
+                      value={project.gallery_urls?.[0] || ""}
+                      onChange={(v) => update(project.id, "gallery_urls", updateGalleryUrl(project.gallery_urls, 0, v))}
+                      folder="projects"
+                    />
+                  </FormField>
+                  <FormField label="Capture d'écran 2" hint="Optionnelle — affichée dans la fiche projet détaillée.">
+                    <ImageField
+                      value={project.gallery_urls?.[1] || ""}
+                      onChange={(v) => update(project.id, "gallery_urls", updateGalleryUrl(project.gallery_urls, 1, v))}
+                      folder="projects"
+                    />
+                  </FormField>
+                </div>
 
                 {/* Project link */}
                 <FormField
