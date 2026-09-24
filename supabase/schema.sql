@@ -531,14 +531,23 @@ CREATE TABLE IF NOT EXISTS unrecorded_submissions (
   email_sent   boolean DEFAULT false,
   resolved     boolean DEFAULT false,
   admin_notes  text,
-  created_at   timestamptz DEFAULT now()
+  created_at   timestamptz DEFAULT now(),
+  CONSTRAINT unrecorded_submissions_form_len CHECK (char_length(form) BETWEEN 1 AND 64),
+  CONSTRAINT unrecorded_submissions_payload_size CHECK (octet_length(payload::text) <= 65536)
 );
+CREATE INDEX IF NOT EXISTS unrecorded_submissions_created_at_idx
+  ON unrecorded_submissions (created_at DESC);
 
 ALTER TABLE unrecorded_submissions ENABLE ROW LEVEL SECURITY;
+-- anon : INSERT uniquement, même au niveau des privilèges (défense en
+-- profondeur : aucune politique ajoutée plus tard ne pourra lui ouvrir la
+-- lecture). Les politiques admin sont posées plus bas via table_resources.
+REVOKE ALL ON unrecorded_submissions FROM anon;
+GRANT INSERT ON unrecorded_submissions TO anon;
+GRANT SELECT, INSERT, UPDATE, DELETE ON unrecorded_submissions TO authenticated;
+DROP POLICY IF EXISTS "public_insert" ON unrecorded_submissions;
 CREATE POLICY "public_insert" ON unrecorded_submissions
-  FOR INSERT TO anon WITH CHECK (true);
-CREATE POLICY "admin_all" ON unrecorded_submissions
-  FOR ALL TO authenticated USING (true) WITH CHECK (true);
+  FOR INSERT TO anon WITH CHECK (resolved IS NOT TRUE AND admin_notes IS NULL);
 
 -- -------------------------------------------------------
 -- 14. HOME ENGAGEMENTS (Bande Engagements — accueil)

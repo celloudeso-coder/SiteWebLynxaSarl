@@ -96,11 +96,15 @@ supabase start
 
 ### 3. Appliquer le schéma CMS
 
-Le schéma (tables + données initiales + RLS) est versionné dans `supabase/schema.sql`. Il n'y a pas de dossier `migrations/` : on l'applique directement en base.
+Le schéma complet (tables + données initiales + RLS) est versionné dans `supabase/schema.sql`, à appliquer tel quel sur une base **neuve** :
 
 ```bash
 psql postgresql://postgres:postgres@127.0.0.1:54322/postgres -f supabase/schema.sql
 ```
+
+Sur une base **déjà en service** (la production), ne pas rejouer `schema.sql` : appliquer les fichiers de `supabase/migrations/`, dans l'ordre de leur horodatage (éditeur SQL Supabase, un fichier = un bloc). Chaque migration est idempotente, transactionnelle et s'auto-vérifie. `schema.sql` et les migrations doivent rester alignés : tout ajout de schéma passe par les deux.
+
+`supabase/content-corrections-2026-09-24.sql` (hors `migrations/`, optionnel) corrige en production les contenus déjà en base qui portent encore le texte d'origine des seeds ; il ne touche jamais une ligne retouchée dans l'admin.
 
 ### 4. Créer le premier compte propriétaire
 
@@ -329,6 +333,16 @@ Cette compression est indépendante du pipeline de variantes WebP/srcset du site
 | `VITE_SUPABASE_ANON_KEY` | Clé locale (`sb_publishable_…`) | Clé publique cloud |
 
 > **Obligatoires dans les deux environnements** : `src/lib/supabase.js` n'a plus de valeurs de repli, l'application lève une erreur explicite (et le build échoue) si elles manquent.
+
+Notifications email des demandes commerciales (demande de projet, modales Partenariat et Services), **facultatives** :
+
+| Variable | Rôle |
+|---|---|
+| `VITE_EMAILJS_SERVICE_ID` | Service EmailJS |
+| `VITE_EMAILJS_INQUIRY_TEMPLATE_ID` | Template de notification |
+| `VITE_EMAILJS_PUBLIC_KEY` | Clé publique EmailJS |
+
+Sans ces variables, les identifiants déjà utilisés par la demande de projet s'appliquent. Supabase reste le canal principal (`src/lib/inquiries.js`) : chaque demande est enregistrée dans `contact_messages` et visible dans `/admin/messages`, que l'email parte ou non. Des identifiants absents ou factices désactivent simplement la notification, sans erreur pour le visiteur.
 
 ---
 
