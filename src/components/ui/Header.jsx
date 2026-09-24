@@ -100,9 +100,9 @@ const Header = () => {
               </div>
             </div>
             <div className="hidden sm:block">
-              <h1 className="text-xl font-heading font-bold text-secondary">
+              <span className="block text-xl font-heading font-bold text-secondary">
                 Lynxa Tech
-              </h1>
+              </span>
               <p className="text-xs text-muted-foreground -mt-1">Guinea</p>
             </div>
           </Link>
