@@ -93,8 +93,8 @@ INSERT INTO services (sort_order, slug, title, subtitle, icon, description, high
    'Protégez vos systèmes, vos données et votre réputation avec une approche complète de la cybersécurité, de l''audit à la réponse à incident, en passant par la sensibilisation de vos équipes.',
    '["Audit de vulnérabilités et test d''intrusion", "Durcissement d''infrastructure", "Réponse à incident et investigation", "Sensibilisation et formation des équipes", "Conformité et protection des données"]',
    '["Nmap", "Metasploit", "Burp Suite", "Wireshark", "pfSense", "SIEM"]',
-   '[{"label": "Vulnérabilités critiques corrigées", "value": "100%"}, {"label": "Temps de réponse incident", "value": "< 4h"}, {"label": "Équipes formées", "value": "+200 employés"}, {"label": "Systèmes durcis", "value": "0 compromission"}]',
-   '[{"name": "Sécurité Secteur Bancaire", "description": "Implémentation cybersécurité avancée pour institution financière majeure", "industry": "Finance"}, {"name": "Réseau Ministère Santé", "description": "Durcissement et supervision sécurité pour infrastructure nationale de santé", "industry": "Santé"}]',
+   '[]',
+   '[{"name": "Sécurité Secteur Bancaire", "description": "Implémentation cybersécurité avancée pour institution financière majeure", "industry": "Finance"}]',
    0)
 ON CONFLICT (slug) DO NOTHING;
 
