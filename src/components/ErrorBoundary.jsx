@@ -1,5 +1,10 @@
 import React from "react";
-import Icon from "./AppIcon";
+// Import direct et nommé (pas AppIcon, qui fait "import * as LucideIcons" et
+// embarquerait toute la bibliothèque d'icônes) : ErrorBoundary encadre
+// Suspense et doit rester statique, donc tout ce qu'il importe finit dans le
+// chunk d'entrée téléchargé par chaque visiteur, y compris avant le premier
+// rendu de page.
+import { ArrowLeft } from "lucide-react";
 
 class ErrorBoundary extends React.Component {
   constructor(props) {
@@ -41,7 +46,7 @@ class ErrorBoundary extends React.Component {
                 }}
                 className="bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded flex items-center gap-2 transition-colors duration-200 shadow-sm"
               >
-                <Icon name="ArrowLeft" size={18} color="#fff" />
+                <ArrowLeft size={18} color="#fff" />
                 Back
               </button>
             </div>
