@@ -24,7 +24,7 @@
 
 import { createServer } from "node:http";
 import { createReadStream } from "node:fs";
-import { mkdir, stat, writeFile } from "node:fs/promises";
+import { mkdir, readFile, stat, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -76,27 +76,42 @@ const MIME_TYPES = {
   ".map": "application/json",
 };
 
-function startStaticServer() {
+async function startStaticServer() {
+  // Capturée une seule fois, avant que la boucle de prerendering ne se mette
+  // à écraser dist/index.html avec le rendu de "/". Sans ça, la route
+  // traitée après "/" retomberait sur le HTML déjà rendu de Home au lieu de
+  // la coquille SPA vierge — le <script> de sélection du manifeste s'y
+  // exécuterait une seconde fois et dupliquerait le <link rel="manifest">.
+  const pristineIndexHtml = await readFile(path.join(DIST_DIR, "index.html"), "utf-8");
+
   const server = createServer(async (req, res) => {
     const urlPath = decodeURIComponent((req.url || "/").split("?")[0]);
-    let filePath = path.join(DIST_DIR, urlPath);
+    const filePath = path.join(DIST_DIR, urlPath);
 
+    let isRealFile = false;
     try {
       const info = await stat(filePath);
-      if (info.isDirectory()) filePath = path.join(filePath, "index.html");
+      isRealFile = info.isFile();
     } catch {
-      // Pas de fichier statique à ce chemin : on retombe sur index.html,
-      // exactement comme le rewrite SPA de Vercel (vercel.json).
-      filePath = path.join(DIST_DIR, "index.html");
+      isRealFile = false;
     }
 
-    res.setHeader("Content-Type", MIME_TYPES[path.extname(filePath)] || "application/octet-stream");
-    const stream = createReadStream(filePath);
-    stream.on("error", () => {
-      res.statusCode = 404;
-      res.end("Not found");
-    });
-    stream.pipe(res);
+    if (isRealFile) {
+      res.setHeader("Content-Type", MIME_TYPES[path.extname(filePath)] || "application/octet-stream");
+      const stream = createReadStream(filePath);
+      stream.on("error", () => {
+        res.statusCode = 404;
+        res.end("Not found");
+      });
+      stream.pipe(res);
+      return;
+    }
+
+    // Pas de fichier statique à ce chemin : on retombe sur la coquille SPA
+    // pristine, exactement comme le rewrite catch-all de Vercel
+    // (vercel.json) le ferait pour toute route non explicitement listée.
+    res.setHeader("Content-Type", "text/html; charset=utf-8");
+    res.end(pristineIndexHtml);
   });
 
   return new Promise((resolve, reject) => {
