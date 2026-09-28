@@ -39,23 +39,43 @@ async function sendNotification(params) {
 }
 
 // Paramètres envoyés au template EmailJS de la demande de projet
-// (template_jje294m), dont les variables sont les champs de ce formulaire :
-// les deux modales s'y projettent pour réutiliser le même template.
+// (template_jje294m), partagé par les trois formulaires commerciaux.
+// Les modales ne remplissent qu'une partie des champs : `summary` regroupe
+// les seuls champs renseignés, une ligne par champ, pour que le template
+// affiche {{summary}} au lieu d'une ligne (souvent vide) par variable.
+// Les variables individuelles restent envoyées pour compatibilité.
+// Règle de format : libellés lisibles dans l'email (le code brut va en
+// colonne, le libellé dans details).
 function toTemplateParams(inquiry, { recorded }) {
   const d = inquiry.details || {};
   const warning = recorded ? "" : "⚠️ NON ENREGISTRÉE EN BASE — à ressaisir dans l'admin.\n\n";
-  return {
-    source: inquiry.sourceLabel,
-    projectType: d.projectType || inquiry.sourceLabel,
+  const fields = {
+    projectType: d.projectType || "",
     budget: d.budgetLabel || "",
     timeline: d.timeline || "",
     companyName: inquiry.company || "",
+    requirements: Array.isArray(d.requirements) ? d.requirements.join(", ") : "",
+    preferredContact: d.preferredContact || "",
+  };
+  const summary = [
+    ["Type de projet", fields.projectType],
+    ["Budget", fields.budget],
+    ["Délai", fields.timeline],
+    ["Organisation", fields.companyName],
+    ["Besoins", fields.requirements],
+    ["Contact préféré", fields.preferredContact],
+  ]
+    .filter(([, value]) => value)
+    .map(([label, value]) => `${label} : ${value}`)
+    .join("\n");
+  return {
+    source: inquiry.sourceLabel,
+    ...fields,
+    summary,
     contactName: inquiry.name,
     email: inquiry.email,
     phone: inquiry.phone || "",
     projectDescription: warning + inquiry.message,
-    requirements: Array.isArray(d.requirements) ? d.requirements.join(", ") : "",
-    preferredContact: inquiry.contactMethod || "",
   };
 }
 

@@ -6,6 +6,18 @@ import { submitJobApplication, logUnrecordedSubmission } from "../../../lib/cms"
 import { supabase } from "../../../lib/supabase";
 import { useSiteSettings } from "../../../hooks/useContent";
 import { validatePdfFile } from "../../../lib/fileValidation";
+import { absoluteUrl } from "../../../lib/seo";
+
+// Identifiants EmailJS de la notification de candidature (compte distinct de
+// celui des demandes commerciales). Clé publique, visible dans le bundle par
+// conception. Surchargeables par variables d'environnement.
+const EMAILJS_JOINUS = {
+  serviceId: import.meta.env.VITE_EMAILJS_JOINUS_SERVICE_ID || "service_wj7gx89",
+  templateId: import.meta.env.VITE_EMAILJS_JOINUS_TEMPLATE_ID || "template_1hp49rv",
+  publicKey: import.meta.env.VITE_EMAILJS_JOINUS_PUBLIC_KEY || "lj6YHCTOjLzZ77Bwu",
+};
+
+const NOT_PROVIDED = "Non renseigné";
 
 const GENDERS      = [{ value: "male", label: "Homme" }, { value: "female", label: "Femme" }, { value: "other", label: "Autre" }];
 const EDUCATIONS   = [{ value: "highschool", label: "Lycée / Baccalauréat" }, { value: "bachelor", label: "Licence" }, { value: "master", label: "Master" }, { value: "phd", label: "Doctorat" }, { value: "other", label: "Autre" }];
@@ -21,6 +33,10 @@ const EMPTY = {
 const sel = "w-full px-4 py-3 border border-border rounded-xl text-sm bg-white focus:outline-none focus:ring-2 focus:ring-primary transition-colors";
 const inp = (err) => `w-full px-4 py-3 border rounded-xl text-sm bg-white focus:outline-none focus:ring-2 focus:ring-primary transition-colors ${err ? "border-red-400 bg-red-50" : "border-border"}`;
 
+const labelOf = (list, value) => list.find((o) => o.value === value)?.label || value;
+
+// Le bucket est privé : on enregistre le chemin de l'objet, jamais une URL.
+// L'admin génère une URL signée de courte durée au moment de l'ouverture.
 async function uploadFile(file, folder) {
   if (!file) return "";
   const ext  = file.name.split(".").pop();
@@ -29,7 +45,7 @@ async function uploadFile(file, folder) {
     .from("Cv_lettredemotivation_joinus")
     .upload(path, file, { contentType: file.type || "application/pdf" });
   if (error) throw error;
-  return supabase.storage.from("Cv_lettredemotivation_joinus").getPublicUrl(data.path).data.publicUrl;
+  return data.path;
 }
 
 const FIELD_ORDER = ["name", "email", "phone", "gender", "education", "position", "contractType", "cv", "motivation"];
@@ -104,15 +120,26 @@ const JoinUsForm = () => {
         return;
       }
 
-      // Lettre de motivation (optionnelle) — non bloquant
+      // Lettre de motivation (optionnelle) — mais si le candidat en a joint
+      // une, son échec d'envoi est signalé comme celui du CV : on ne transmet
+      // pas un dossier incomplet à son insu.
       let letterUrl = "";
       try {
         letterUrl = await uploadFile(form.motivationLetter, "letters");
       } catch (err) {
-        console.warn("Upload lettre échoué (optionnel) :", err.message);
+        console.error("Upload lettre échoué :", err.message);
+        setErrors((p) => ({ ...p, motivationLetter: "Échec de l'envoi de la lettre de motivation. Vérifiez le fichier (PDF, max 10 Mo) et réessayez." }));
+        setStatus("error");
+        setSubmitting(false);
+        return;
       }
 
+      // Identifiant généré ici (l'anonyme peut insérer mais pas relire la
+      // ligne) pour que l'email puisse pointer vers la fiche dans l'admin.
+      const applicationId = crypto.randomUUID();
+
       const payload = {
+        id:            applicationId,
         name:          form.name,
         email:         form.email,
         phone:         form.phone,
@@ -143,22 +170,38 @@ const JoinUsForm = () => {
       }
 
       // 3. Notification email — également attendue, indépendamment du résultat de l'étape 2.
+      // Dossier complet en libellés lisibles. Pas de lien vers les fichiers :
+      // le lien mène à la fiche admin, qui ouvre les pièces via URL signée.
+      // Si l'insertion a échoué, la fiche n'existera pas : le dossier est
+      // alors dans « Soumissions non enregistrées » (voir plus bas).
       let emailOk = true;
       try {
         await emailjs.send(
-          "service_wj7gx89",
-          "template_1hp49rv",
+          EMAILJS_JOINUS.serviceId,
+          EMAILJS_JOINUS.templateId,
           {
-            name:         form.name,
-            email:        form.email,
-            phone:        form.phone,
-            position:     form.position,
-            contractType: form.contractType,
-            motivation:   form.motivation,
-            cv_link:      cvUrl      || "Non fourni",
-            letter_link:  letterUrl  || "Non fournie",
+            name:          form.name,
+            email:         form.email,
+            phone:         form.phone,
+            address:       form.address.trim() || NOT_PROVIDED,
+            gender:        labelOf(GENDERS, form.gender),
+            age:           form.age ? `${form.age} ans` : NOT_PROVIDED,
+            education:     labelOf(EDUCATIONS, form.education),
+            position:      form.position,
+            experience:    form.experience !== "" ? `${form.experience} an(s)` : NOT_PROVIDED,
+            contractType:  labelOf(CONTRACTS, form.contractType),
+            availability:  form.availability ? labelOf(AVAILABILITIES, form.availability) : NOT_PROVIDED,
+            motivation:    form.motivation,
+            cv_status:     "Joint (PDF)",
+            letter_status: letterUrl ? "Jointe (PDF)" : "Non fournie",
+            admin_link:    dbOk
+              ? absoluteUrl(`/admin/join-us?application=${applicationId}`)
+              : absoluteUrl("/admin/unrecorded-submissions"),
+            time:          new Date().toLocaleString("fr-FR", {
+              timeZone: "Africa/Conakry", dateStyle: "full", timeStyle: "short",
+            }),
           },
-          "lj6YHCTOjLzZ77Bwu"
+          EMAILJS_JOINUS.publicKey
         );
       } catch (err) {
         emailOk = false;

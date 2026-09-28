@@ -1846,6 +1846,16 @@ CREATE POLICY "Suppression admin" ON storage.objects FOR DELETE TO authenticated
 CREATE POLICY "joinus_admin_delete" ON storage.objects FOR DELETE TO authenticated
   USING (bucket_id = 'Cv_lettredemotivation_joinus' AND (SELECT public.has_admin_permission('recruitment', 'delete')));
 
+-- CV et lettres de motivation : bucket privé, lecture réservée au recrutement
+-- (URL signée de courte durée générée par l'admin). Le dépôt anonyme
+-- (joinus_public_upload) reste autorisé pour le formulaire public.
+-- Voir migrations/20260928120000_private_joinus_bucket.sql.
+UPDATE storage.buckets SET public = false WHERE id = 'Cv_lettredemotivation_joinus';
+DROP POLICY IF EXISTS "joinus_public_read" ON storage.objects;
+DROP POLICY IF EXISTS "joinus_admin_read" ON storage.objects;
+CREATE POLICY "joinus_admin_read" ON storage.objects FOR SELECT TO authenticated
+  USING (bucket_id = 'Cv_lettredemotivation_joinus' AND (SELECT public.has_admin_permission('recruitment', 'view')));
+
 NOTIFY pgrst, 'reload schema';
 
 -- -------------------------------------------------------

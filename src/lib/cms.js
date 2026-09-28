@@ -328,6 +328,29 @@ export async function deleteJobApplication(id) {
   return deleteRow("job_applications", id);
 }
 
+// CV / lettre : le bucket est privé. cv_url et letter_url contiennent le
+// chemin de l'objet (nouvelles candidatures) ou l'ancienne URL publique
+// complète (candidatures antérieures au passage en privé) : on en extrait le
+// chemin et on génère une URL signée de courte durée, au moment du clic.
+const JOINUS_BUCKET = "Cv_lettredemotivation_joinus";
+const APPLICATION_DOCUMENT_TTL_SECONDS = 300;
+
+export function applicationDocumentPath(value) {
+  if (!value) return "";
+  const marker = `/${JOINUS_BUCKET}/`;
+  const i = value.indexOf(marker);
+  const path = i >= 0 ? value.slice(i + marker.length) : value;
+  return decodeURIComponent(path.split("?")[0]);
+}
+
+export async function getApplicationDocumentUrl(value) {
+  const { data, error } = await supabase.storage
+    .from(JOINUS_BUCKET)
+    .createSignedUrl(applicationDocumentPath(value), APPLICATION_DOCUMENT_TTL_SECONDS);
+  if (error) throw error;
+  return data.signedUrl;
+}
+
 // ─── Partnership Pathways ─────────────────────────────────────────────────────
 
 export async function getPartnershipPathways(activeOnly = true) {
