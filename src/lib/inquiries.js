@@ -76,6 +76,9 @@ function toTemplateParams(inquiry, { recorded }) {
     email: inquiry.email,
     phone: inquiry.phone || "",
     projectDescription: warning + inquiry.message,
+    time: new Date().toLocaleString("fr-FR", {
+      timeZone: "Africa/Conakry", dateStyle: "full", timeStyle: "short",
+    }),
   };
 }
 
