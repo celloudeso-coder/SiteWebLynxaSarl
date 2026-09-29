@@ -1,48 +1,18 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import Icon from "../../../components/AppIcon";
 import Image from "../../../components/AppImage";
-import { getAboutAdvantages, getAboutEcosystemStats } from "../../../lib/cms";
-
-// Statistiques macro sourcées quand une source fiable existe ; sinon
-// retirées plutôt que laissées invérifiées (cf. commit de nettoyage des
-// chiffres). "Économie de 20–40%", "Fuseau horaire GMT+0" et "3+ langues
-// parlées" restent sans source : ce sont des faits/claims propres à Lynxa
-// (tarifs, géographie, compétences internes), pas des statistiques externes.
-const STATIC_ADVANTAGES = [
-  { icon: "MapPin",      title: "Emplacement Stratégique",  stats: "400M+ personnes dans la région CEDEAO", source: "ECOWAS, 2024", description: "La position de la Guinée en Afrique de l'Ouest donne accès à plus de 400 millions de personnes dans la région CEDEAO, en faisant un hub idéal pour l'expansion régionale." },
-  { icon: "Users",       title: "Réservoir de Talents",     stats: "~60% de la population a moins de 25 ans", source: "ONU, Perspectives de la population mondiale, 2024", description: "Accueil d'esprits brillants désireux de se faire remarquer sur la scène mondiale. Nos développeurs combinent formation internationale et connaissance du marché local." },
-  { icon: "Zap",         title: "Esprit d'Innovation",      stats: "Écosystème technologique en croissance", description: "Les Guinéens sont des résolveurs de problèmes naturels. Cette résilience se traduit par des solutions technologiques créatives et efficaces." },
-  { icon: "DollarSign",  title: "Efficacité des Coûts",     stats: "Économie de 20–40%", description: "Fournir une qualité premium à des tarifs compétitifs. Nos coûts opérationnels nous permettent d'offrir une valeur exceptionnelle sans compromettre la qualité." },
-  { icon: "Clock",       title: "Avantage Fuseau Horaire",  stats: "Fuseau horaire GMT+0", description: "Le fuseau GMT s'aligne parfaitement avec les heures de travail européennes tout en offrant une couverture étendue pour les clients américains." },
-  { icon: "Globe",       title: "Pont Culturel",            stats: "3+ langues parlées", description: "Maîtrise du français et de l'anglais, plus la compréhension des cultures commerciales africaines et internationales." },
-];
-
-// "Startups Technologiques" (150+) et "Croissance Paiements Numériques"
-// (15%) retirés : aucune source ne convergeait sur ces chiffres précis (les
-// décomptes de startups en Guinée varient de 6 à 261 selon la plateforme, et
-// la croissance des paiements numériques en Afrique se mesure très
-// différemment selon la métrique — 16 à 35% selon la source). "Taux de
-// Pénétration Internet" corrigé de 52% (chiffre non retrouvé) à 34%, la
-// valeur réellement publiée.
-const STATIC_ECOSYSTEM_STATS = [
-  { label: "Taux de Pénétration Internet", value: "34%", source: "DataReportal, Digital 2024: Guinée", icon: "Wifi" },
-  { label: "Utilisateurs Mobiles",         value: "14M", source: "DataReportal, Digital 2024: Guinée", icon: "Smartphone" },
-];
+import SectionLoadError from "../../../components/SectionLoadError";
+import { useAboutAdvantages, useAboutEcosystemStats } from "../../../hooks/useContent";
 
 const WhyGuinea = () => {
-  const [advantages, setAdvantages]       = useState(STATIC_ADVANTAGES);
-  const [ecosystemStats, setEcosystemStats] = useState(STATIC_ECOSYSTEM_STATS);
-
-  useEffect(() => {
-    getAboutAdvantages()
-      .then((d) => { if (d?.length) setAdvantages(d); })
-      .catch(() => {});
-    getAboutEcosystemStats()
-      .then((d) => { if (d?.length) setEcosystemStats(d); })
-      .catch(() => {});
-  }, []);
+  // Avantages et statistiques : uniquement depuis le CMS. Bloc masqué si
+  // vide ; message honnête si le chargement échoue.
+  const advantagesState = useAboutAdvantages();
+  const statsState = useAboutEcosystemStats();
+  const advantages = advantagesState.data;
+  const ecosystemStats = statsState.data;
 
   return (
     <section className="py-20 bg-gray-50">
@@ -89,72 +59,78 @@ const WhyGuinea = () => {
         </motion.div>
 
         {/* Advantages grid */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-16">
-          {advantages.map((advantage, index) => (
-            <motion.div
-              key={advantage.id || index}
-              className="bg-white rounded-2xl p-6 hover:shadow-medium transition-shadow duration-300"
-              initial={{ opacity: 0, y: 24 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.4, delay: index * 0.07 }}
-              whileHover={{ y: -4 }}
-            >
-              <div className="flex items-center gap-4 mb-4">
-                <motion.div
-                  className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center flex-shrink-0"
-                  whileHover={{ scale: 1.1, rotate: 5 }}
-                  transition={{ type: "spring", stiffness: 300 }}
-                >
-                  <Icon name={advantage.icon} size={22} color="var(--color-primary)" />
-                </motion.div>
-                <div>
-                  <h3 className="font-heading font-bold text-secondary text-sm">{advantage.title}</h3>
-                  <p className="text-xs text-primary font-medium">{advantage.stats}</p>
-                  {advantage.source && (
-                    <p className="text-[10px] text-gray-400 mt-0.5">Source : {advantage.source}</p>
-                  )}
-                </div>
-              </div>
-              <p className="text-gray-500 text-sm leading-relaxed">{advantage.description}</p>
-            </motion.div>
-          ))}
-        </div>
-
-        {/* Ecosystem stats */}
-        <motion.div
-          className="bg-white rounded-2xl p-8 mb-16"
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5 }}
-        >
-          <div className="text-center mb-8">
-            <h3 className="text-2xl font-heading font-bold text-secondary mb-2">L'écosystème technologique en pleine expansion</h3>
-            <p className="text-gray-500 text-sm">Indicateurs clés de la transformation numérique en Guinée</p>
-          </div>
-          <div className="grid grid-cols-2 gap-6 max-w-xl mx-auto">
-            {ecosystemStats.map((stat, index) => (
+        {advantagesState.error && <SectionLoadError compact title="Pourquoi la Guinée ?" />}
+        {advantages.length > 0 && (
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-16">
+            {advantages.map((advantage, index) => (
               <motion.div
-                key={index}
-                className="text-center p-5 bg-gray-50 rounded-xl"
-                initial={{ opacity: 0, scale: 0.9 }}
-                whileInView={{ opacity: 1, scale: 1 }}
+                key={advantage.id || index}
+                className="bg-white rounded-2xl p-6 hover:shadow-medium transition-shadow duration-300"
+                initial={{ opacity: 0, y: 24 }}
+                whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ duration: 0.4, delay: index * 0.08 }}
+                transition={{ duration: 0.4, delay: index * 0.07 }}
+                whileHover={{ y: -4 }}
               >
-                <div className="w-11 h-11 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-3">
-                  <Icon name={stat.icon} size={20} color="var(--color-primary)" />
+                <div className="flex items-center gap-4 mb-4">
+                  <motion.div
+                    className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center flex-shrink-0"
+                    whileHover={{ scale: 1.1, rotate: 5 }}
+                    transition={{ type: "spring", stiffness: 300 }}
+                  >
+                    <Icon name={advantage.icon} size={22} color="var(--color-primary)" />
+                  </motion.div>
+                  <div>
+                    <h3 className="font-heading font-bold text-secondary text-sm">{advantage.title}</h3>
+                    <p className="text-xs text-primary font-medium">{advantage.stats}</p>
+                    {advantage.source && (
+                      <p className="text-[10px] text-gray-400 mt-0.5">Source : {advantage.source}</p>
+                    )}
+                  </div>
                 </div>
-                <div className="text-2xl font-bold text-secondary mb-1">{stat.value}</div>
-                <div className="text-xs text-gray-500 mb-1">{stat.label}</div>
-                {stat.source && (
-                  <div className="text-[10px] text-gray-400">Source : {stat.source}</div>
-                )}
+                <p className="text-gray-500 text-sm leading-relaxed">{advantage.description}</p>
               </motion.div>
             ))}
           </div>
-        </motion.div>
+        )}
+
+        {/* Ecosystem stats */}
+        {statsState.error && <SectionLoadError compact title="L'écosystème technologique en pleine expansion" />}
+        {ecosystemStats.length > 0 && (
+          <motion.div
+            className="bg-white rounded-2xl p-8 mb-16"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+          >
+            <div className="text-center mb-8">
+              <h3 className="text-2xl font-heading font-bold text-secondary mb-2">L'écosystème technologique en pleine expansion</h3>
+              <p className="text-gray-500 text-sm">Indicateurs clés de la transformation numérique en Guinée</p>
+            </div>
+            <div className="grid grid-cols-2 gap-6 max-w-xl mx-auto">
+              {ecosystemStats.map((stat, index) => (
+                <motion.div
+                  key={index}
+                  className="text-center p-5 bg-gray-50 rounded-xl"
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  whileInView={{ opacity: 1, scale: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.4, delay: index * 0.08 }}
+                >
+                  <div className="w-11 h-11 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-3">
+                    <Icon name={stat.icon} size={20} color="var(--color-primary)" />
+                  </div>
+                  <div className="text-2xl font-bold text-secondary mb-1">{stat.value}</div>
+                  <div className="text-xs text-gray-500 mb-1">{stat.label}</div>
+                  {stat.source && (
+                    <div className="text-[10px] text-gray-400">Source : {stat.source}</div>
+                  )}
+                </motion.div>
+              ))}
+            </div>
+          </motion.div>
+        )}
 
         {/* Map + text */}
         <div className="grid lg:grid-cols-2 gap-12 items-center mb-16">

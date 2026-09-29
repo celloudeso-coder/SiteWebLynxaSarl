@@ -1,44 +1,17 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import Icon from "../../../components/AppIcon";
-import { getPortfolioInnovations } from "../../../lib/cms";
-
-const STATIC_INNOVATIONS = [
-  {
-    icon: "Cpu",
-    title: "Optimisation Réseau par IA",
-    description: "Algorithmes d'apprentissage automatique pour optimiser automatiquement les performances réseau et prévenir les pannes.",
-    status: "En Développement",
-    status_color: "text-amber-600 bg-amber-50",
-    impact: "Réduction de 40% des interruptions réseau",
-  },
-  {
-    icon: "Lock",
-    title: "Identité Blockchain",
-    description: "Système d'identité décentralisé pour une authentification sécurisée et respectueuse de la vie privée.",
-    status: "Phase de Recherche",
-    status_color: "text-blue-600 bg-blue-50",
-    impact: "Sécurité pour +100 000 utilisateurs",
-  },
-  {
-    icon: "Leaf",
-    title: "Agriculture IoT",
-    description: "Capteurs IoT pour surveiller conditions du sol, météo et santé des cultures pour les agriculteurs guinéens.",
-    status: "Test Pilote",
-    status_color: "text-emerald-600 bg-emerald-50",
-    impact: "+20% de rendements agricoles",
-  },
-];
+import SectionLoadError from "../../../components/SectionLoadError";
+import { usePortfolioInnovations } from "../../../hooks/useContent";
 
 const InnovationLab = () => {
-  const [innovations, setInnovations] = useState(STATIC_INNOVATIONS);
+  // Projets menés : uniquement depuis le CMS. Vide → section masquée ;
+  // échec → message honnête.
+  const { data: innovations, loading, error } = usePortfolioInnovations();
 
-  useEffect(() => {
-    getPortfolioInnovations()
-      .then((d) => { if (d?.length) setInnovations(d); })
-      .catch(() => {});
-  }, []);
+  if (error) return <SectionLoadError title="Laboratoire d'Innovation" />;
+  if (loading || innovations.length === 0) return null;
 
   return (
     <section className="py-20 bg-muted">

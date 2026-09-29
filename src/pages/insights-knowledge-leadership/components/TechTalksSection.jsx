@@ -4,7 +4,7 @@ import Icon from "../../../components/AppIcon";
 import Image from "../../../components/AppImage";
 import Button from "../../../components/ui/Button";
 import { getTechTalks } from "../../../lib/cms";
-import SectionLoadError from "./SectionLoadError";
+import SectionLoadError from "../../../components/SectionLoadError";
 
 
 const TechTalksSection = ({ activeCategory, searchQuery }) => {

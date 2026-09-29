@@ -243,7 +243,6 @@ L'image multi-stage utilise `node:18-alpine` pour le build puis `nginx:alpine` p
 | `/cgu` | Conditions générales d'utilisation |
 | `/securite` | Sécurité et signalement responsable |
 | `/insights` | Insights & Knowledge *(alias `/insights-knowledge-leadership` ; lien menu masqué — sans contenu pour l'instant)* |
-| `/about/teamspotlight1` | Spotlight équipe |
 | `/admin/login` | Connexion admin CMS |
 | `/admin/subscriptions` | Tracker privé des abonnements clients |
 | `/admin/*` | Panel d'administration CMS |
@@ -309,7 +308,9 @@ Chaque page dispose aussi d'un éditeur de visibilité des sections via `/admin/
 
 - **`src/lib/cms.js`** — Fonctions CRUD (get/save/delete) pour chaque table
 - **`src/hooks/useContent.js`** — Hooks React (`useServices`, `useTeamMembers`, etc.)
-- Les composants chargent d'abord le contenu Supabase ; en l'absence de données, la plupart affichent un contenu statique (fallback). Les sections de la page **Insights** font autorité sur le CMS : vide en base ⇒ section masquée (le statique ne sert plus que de secours en cas d'erreur réseau)
+- Les composants chargent le contenu depuis Supabase. **Règle : un contenu de repli (fallback) dans le code ne doit jamais affirmer un fait.** Libellés, listes de choix et étapes de processus peuvent avoir un repli statique ; en revanche, tout ce qui dit qui travaille chez nous, quels projets nous menons, quels engagements, certifications ou conformités nous revendiquons, et tout chiffre, vient **uniquement du CMS** : table vide ⇒ section (ou bloc) masquée, échec de chargement ⇒ message « Ce contenu ne peut pas être chargé » (`src/components/SectionLoadError.jsx`). Sont concernés : équipe (`team_members`), sécurité et engagements (`trust_security_items`, `trust_commitment_items`), laboratoire d'innovation (`portfolio_innovations`), feuille de route, piliers, avantages de la Guinée (`about_roadmap_phases`, `about_vision_pillars`, `about_advantages`), chiffres d'impact et de l'écosystème (`site_settings` : `about_impact_metrics`, `about_ecosystem_stats`), et les sections de la page **Insights**
+- ⚠️ **Équipe : gardez toujours au moins un membre actif** dans `/admin/team`. Sans membre actif, la section « Rencontrez notre équipe » disparaît de la page À propos (aucune équipe de secours n'est codée en dur)
+- Seules les lignes **actives** sont visibles des visiteurs (politique RLS `active = true`). Un admin connecté voit aussi les lignes inactives sur le site public : pour vérifier ce qu'un visiteur voit, utilisez une fenêtre de navigation privée
 - Upload de médias via Supabase Storage : bucket `cms-media` (images / PDF gérés depuis l'admin — photos équipe, images, livres blancs, rapports) et bucket `Cv_lettredemotivation_joinus` (CV & lettres déposés via le formulaire public « Rejoindre », PDF ≤ 10 Mo)
 
 ### Images téléversées depuis l'admin

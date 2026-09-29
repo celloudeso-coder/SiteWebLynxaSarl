@@ -15,7 +15,6 @@ const NotFound = lazy(() => import("pages/NotFound"));
 // (./pages/Admin/*), qu'un visiteur du site public ne doit jamais recevoir.
 const ContactMultiChannelConnection = lazy(() => import("./pages/Contact"));
 const AboutInnovationStoryVision = lazy(() => import("./pages/About"));
-const TeamSpotlight1 = lazy(() => import("./pages/About/components/TeamSpotlight1"));
 const PartnershipCollaborationGateway = lazy(() => import("./pages/Partnership"));
 const ServicesPage = lazy(() => import("./pages/Services"));
 const Homepage = lazy(() => import("./pages/Home"));
@@ -43,7 +42,6 @@ const Routes = () => {
             <Route path="/home" element={<Homepage />} />
             <Route path="/contact" element={<ContactMultiChannelConnection />} />
             <Route path="/about" element={<AboutInnovationStoryVision />} />
-            <Route path="/about/teamspotlight1" element={<TeamSpotlight1 />} />
             <Route path="/partnership" element={<PartnershipCollaborationGateway />} />
             <Route path="/service" element={<ServicesPage />} />
             <Route path="/portfolio" element={<PortfolioShowcase />} />

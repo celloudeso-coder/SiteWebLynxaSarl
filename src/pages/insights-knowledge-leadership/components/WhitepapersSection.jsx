@@ -4,7 +4,7 @@ import Icon from "../../../components/AppIcon";
 import Image from "../../../components/AppImage";
 import Button from "../../../components/ui/Button";
 import { getWhitepapers } from "../../../lib/cms";
-import SectionLoadError from "./SectionLoadError";
+import SectionLoadError from "../../../components/SectionLoadError";
 
 
 const WhitepapersSection = ({ activeCategory, searchQuery }) => {
