@@ -35,10 +35,6 @@ const TrustSignals = () => {
         <h2 className="text-3xl md:text-4xl font-heading font-bold text-secondary mb-4">
           Votre confiance est notre priorité
         </h2>
-        <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-          Nous respectons les normes les plus élevées en matière de sécurité, de
-          conformité et d'intégrité professionnelle.
-        </p>
       </motion.div>
 
       {/* Sécurité */}
@@ -128,15 +124,15 @@ const TrustSignals = () => {
           whileHover={{ scale: 1.1, rotate: 10 }}
           transition={{ type: "spring", stiffness: 200 }}
         >
-          <Icon name="ShieldCheck" size={40} color="white" />
+          <Icon name="CheckCircle" size={40} color="white" />
         </motion.div>
         <h3 className="text-2xl md:text-3xl font-heading font-bold mb-4">
-          Garantie Satisfaction 100 %
+          Corrections incluses après livraison
         </h3>
         <p className="text-lg mb-7 opacity-90 max-w-2xl mx-auto">
-          Nous nous engageons à vos côtés : avec votre collaboration et nos efforts, nous
-          assurons des résultats à la hauteur de vos attentes. Si ce n'est pas le cas, nous
-          corrigeons immédiatement ou vous remboursons sous 30 jours.
+          Pendant 30 jours après la livraison, nous corrigeons sans frais les anomalies
+          constatées par rapport à ce qui a été convenu dans votre devis. Les demandes
+          d'évolution ou de nouvelles fonctionnalités font l'objet d'un devis séparé.
         </p>
         <motion.a
           href="/contact"
@@ -145,7 +141,7 @@ const TrustSignals = () => {
           className="inline-flex items-center gap-2 bg-white text-primary-strong px-8 py-3 min-h-11 rounded-xl font-semibold hover:bg-gray-100 transition-colors"
         >
           <Icon name="MessageCircle" size={18} color="var(--color-primary)" />
-          En savoir plus
+          Poser une question
         </motion.a>
       </motion.div>
     </div>
