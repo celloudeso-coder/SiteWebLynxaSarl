@@ -89,6 +89,8 @@ INSERT INTO services (sort_order, slug, title, subtitle, icon, description, high
    '[{"label": "Vitesse de chargement", "value": "< 2s"}, {"label": "Score SEO", "value": "95/100"}, {"label": "Taux de conversion", "value": "+250%"}, {"label": "Optimisation mobile", "value": "100%"}]',
    '[{"name": "Portail Tourisme Guinée", "description": "Site officiel du tourisme avec système de réservation intégré", "industry": "Tourisme"}, {"name": "Plateforme Impact ONG", "description": "Système de suivi et reporting pour projets de développement", "industry": "ONG"}, {"name": "Marketplace E-Commerce", "description": "Plateforme multi-vendeurs pour artisans locaux et clients internationaux", "industry": "E-Commerce"}]',
    0)
+-- Le 4e domaine "cybersecurity" est dans supabase/seed-cybersecurity-domain.sql,
+-- à lancer une fois ses métriques réelles saisies (sans elles, rendu dégradé).
 ON CONFLICT (slug) DO NOTHING;
 
 -- -------------------------------------------------------
@@ -112,9 +114,42 @@ CREATE TABLE IF NOT EXISTS portfolio_projects (
   testimonial jsonb,
   duration text,
   image_url text,
+  gallery_urls jsonb DEFAULT '[]',
   project_url text,
+  status text,
+  is_flagship_product boolean DEFAULT false,
+  product_slug text UNIQUE,
+  value_proposition text,
+  key_features jsonb DEFAULT '[]',
+  compliance_notes text,
+  demo_url text,
   updated_at timestamptz DEFAULT now()
 );
+-- Colonnes ajoutées après le premier déploiement :
+-- - gallery_urls : jusqu'à 2 captures d'écran supplémentaires pour l'étude
+--   de cas (image_url reste la photo principale, en en-tête de la fiche).
+-- - status : statut affiché de façon cohérente partout où le projet
+--   apparaît (ex. "Phase pilote", "En production") — remplace les mentions
+--   de statut auparavant possiblement divergentes entre pages.
+-- - is_flagship_product / product_slug / value_proposition / key_features /
+--   compliance_notes / demo_url : pour les produits qui méritent leur propre
+--   page dédiée (voir KONTA, point 4) au lieu de rester une simple étude de
+--   cas. product_slug pilote l'URL /produits/:slug (src/pages/Product).
+ALTER TABLE portfolio_projects ADD COLUMN IF NOT EXISTS gallery_urls jsonb DEFAULT '[]';
+ALTER TABLE portfolio_projects ADD COLUMN IF NOT EXISTS status text;
+ALTER TABLE portfolio_projects ADD COLUMN IF NOT EXISTS is_flagship_product boolean DEFAULT false;
+ALTER TABLE portfolio_projects ADD COLUMN IF NOT EXISTS product_slug text;
+ALTER TABLE portfolio_projects ADD COLUMN IF NOT EXISTS value_proposition text;
+ALTER TABLE portfolio_projects ADD COLUMN IF NOT EXISTS key_features jsonb DEFAULT '[]';
+ALTER TABLE portfolio_projects ADD COLUMN IF NOT EXISTS compliance_notes text;
+ALTER TABLE portfolio_projects ADD COLUMN IF NOT EXISTS demo_url text;
+DO $$ BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_constraint WHERE conname = 'portfolio_projects_product_slug_key'
+  ) THEN
+    ALTER TABLE portfolio_projects ADD CONSTRAINT portfolio_projects_product_slug_key UNIQUE (product_slug);
+  END IF;
+END $$;
 
 -- -------------------------------------------------------
 -- 5. TEAM MEMBERS
@@ -134,7 +169,7 @@ CREATE TABLE IF NOT EXISTS team_members (
 );
 
 INSERT INTO team_members (sort_order, name, role, image_url, expertise, description, achievements, social_links) VALUES
-  (1, 'Elhadj Sadou Barry', 'Mobile Development Lead', '/CellouK.png',
+  (1, 'Thierno Sadou Barry', 'Mobile Development Lead', '/CellouK.png',
    '["React Native", "Flutter", "iOS", "Android", "Firebase"]',
    'Expert en développement mobile avec une vision centrée sur l''utilisateur et une passion pour les solutions innovantes.',
    '["Lead technique sur 3 applications mobiles déployées", "Formateur React Native pour l''équipe", "Contributeur open source"]',
@@ -165,22 +200,28 @@ CREATE TABLE IF NOT EXISTS pricing_plans (
   active boolean DEFAULT true,
   name text NOT NULL,
   price text,
+  price_gnf bigint,
   price_note text,
   is_popular boolean DEFAULT false,
   features jsonb DEFAULT '[]',
   cta_text text DEFAULT 'Demander un devis',
   updated_at timestamptz DEFAULT now()
 );
+-- Colonne ajoutée après le premier déploiement : prix en francs guinéens,
+-- valeur saisie et arrondie au palier commercial ; l'équivalent USD est
+-- dérivé à l'affichage (src/data/pricing.js). "price" (texte) reste un repli
+-- pour les plans sans montant fixe ("Sur devis").
+ALTER TABLE pricing_plans ADD COLUMN IF NOT EXISTS price_gnf bigint;
 
-INSERT INTO pricing_plans (sort_order, name, price, price_note, is_popular, features, cta_text) VALUES
-  (1, 'Pack Startup', '$700', 'prix de départ', false,
+INSERT INTO pricing_plans (sort_order, name, price, price_gnf, price_note, is_popular, features, cta_text) VALUES
+  (1, 'Pack Startup', '4 500 000 GNF', 4500000, 'prix de départ', false,
    '["Site web vitrine (5 pages)", "Design responsive mobile", "Formulaire de contact", "SEO de base", "1 mois de support"]',
    'Démarrer'),
-  (2, 'Suite Professionnelle', '$3 500', 'prix de départ', true,
+  (2, 'Suite Professionnelle', '18 000 000 GNF', 18000000, 'prix de départ', true,
    '["Application web complète", "Intégration base de données", "Panneau d''administration", "API REST", "Authentification utilisateurs", "Tests et déploiement", "3 mois de support", "Formation équipe"]',
    'Choisir ce plan'),
-  (3, 'Solution Entreprise', 'Sur devis', '', false,
-   '["Architecture système sur mesure", "Intégrations tierces illimitées", "Infrastructure dédiée", "SLA garanti 99.9%", "Support 24/7", "Chef de projet dédié", "Formation complète", "Maintenance évolutive"]',
+  (3, 'Solution Entreprise', 'Sur devis', NULL, '', false,
+   '["Architecture système sur mesure", "Intégrations tierces illimitées", "Infrastructure dédiée", "SLA négocié au contrat", "Support 24/7", "Chef de projet dédié", "Formation complète", "Maintenance évolutive"]',
    'Nous contacter')
 ON CONFLICT DO NOTHING;
 
@@ -219,11 +260,13 @@ CREATE TABLE IF NOT EXISTS metrics (
   updated_at timestamptz DEFAULT now()
 );
 
+-- Valeurs réelles et crédibles (le "+" est retiré : ce sont des comptes
+-- exacts, pas des estimations arrondies ; "0+" en particulier n'a pas de sens).
 INSERT INTO metrics (sort_order, label, value, suffix, description, page) VALUES
-  (1, 'Applications Mobiles', 1, '+', 'Applications livrées avec succès', 'home'),
-  (2, 'Services Réseau', 0, '+', 'Infrastructures déployées', 'home'),
-  (3, 'Sites Web Lancés', 0, '+', 'Projets web réalisés', 'home'),
-  (4, 'Monitoring Actif', 0, '+', 'Systèmes en supervision', 'home')
+  (1, 'Plateformes Livrées', 4, '', 'Applications web et mobile déployées en production', 'home'),
+  (2, 'Secteurs Couverts', 3, '', 'Secteurs d''activité accompagnés en Guinée', 'home'),
+  (3, 'SaaS en Phase Pilote', 1, '', 'Solution SaaS actuellement testée avec un client pilote', 'home'),
+  (4, 'Réponse', 24, 'h', 'Délai de réponse maximal à toute demande', 'home')
 ON CONFLICT DO NOTHING;
 
 -- -------------------------------------------------------
@@ -358,31 +401,39 @@ CREATE TABLE IF NOT EXISTS partnership_pathways (
   ideal_for text,
   timeline text,
   budget text,
+  budget_min_gnf bigint,
+  budget_max_gnf bigint,
   color text DEFAULT 'primary',
   updated_at timestamptz DEFAULT now()
 );
+-- Colonnes ajoutées après le premier déploiement : bornes en francs guinéens
+-- (valeurs saisies), équivalent USD dérivé à l'affichage. "budget" (texte)
+-- reste le repli pour les paliers sans fourchette chiffrée (ex. "Partage
+-- de revenus").
+ALTER TABLE partnership_pathways ADD COLUMN IF NOT EXISTS budget_min_gnf bigint;
+ALTER TABLE partnership_pathways ADD COLUMN IF NOT EXISTS budget_max_gnf bigint;
 
-INSERT INTO partnership_pathways (sort_order, title, description, icon, features, ideal_for, timeline, budget, color) VALUES
+INSERT INTO partnership_pathways (sort_order, title, description, icon, features, ideal_for, timeline, budget, budget_min_gnf, budget_max_gnf, color) VALUES
   (1, 'Partenariat Startup & PME',
    'Solutions sur mesure pour les entreprises en croissance avec des options de paiement flexibles et une technologie évolutive.',
    'Rocket',
    '["Développement MVP", "Plans de paiement flexibles", "Solutions axées sur la croissance", "Support de mentorat"]',
-   'Startups, Petites Entreprises, Entrepreneurs', '2-8 semaines', '700 $ – 3 000 $', 'primary'),
+   'Startups, Petites Entreprises, Entrepreneurs', '2-8 semaines', NULL, 6500000, 27000000, 'primary'),
   (2, 'Solutions Entreprises',
    'Partenariats technologiques complets pour les grandes organisations avec des besoins complexes.',
    'Building2',
-   '["Systèmes entreprises personnalisés", "Support prioritaire 24/7", "Chef de projet dédié", "Garanties SLA"]',
-   'Grandes Entreprises, Gouvernement, ONG', '3-12 mois', '3 500 $ – 10 000 $', 'accent'),
+   '["Systèmes entreprises personnalisés", "Support prioritaire 24/7", "Chef de projet dédié", "SLA défini au contrat"]',
+   'Grandes Entreprises, Gouvernement, ONG', '3-12 mois', NULL, 31500000, 90000000, 'accent'),
   (3, 'Collaboration Internationale',
    'Partenariats transfrontaliers avec des organisations mondiales s''étendant sur les marchés africains.',
    'Globe',
    '["Adaptation culturelle", "Support multilingue", "Expertise marché local", "Assistance conformité"]',
-   'Entreprises Internationales, ONG Mondiales', '4-16 semaines', '15 000 $ et +', 'primary'),
+   'Entreprises Internationales, ONG Mondiales', '4-16 semaines', NULL, 135000000, NULL, 'primary'),
   (4, 'Réseau Technologique',
    'Alliances stratégiques avec d''autres entreprises tech pour une croissance et collaboration mutuelles.',
    'Network',
    '["Programmes de revente", "Intégration technologique", "Joint ventures", "Partage de connaissances"]',
-   'Entreprises Tech, Intégrateurs de Systèmes', 'En continu', 'Partage de revenus', 'accent')
+   'Entreprises Tech, Intégrateurs de Systèmes', 'En continu', 'Partage de revenus', NULL, NULL, 'accent')
 ON CONFLICT DO NOTHING;
 
 ALTER TABLE partnership_pathways ENABLE ROW LEVEL SECURITY;
@@ -440,8 +491,15 @@ CREATE TABLE IF NOT EXISTS contact_messages (
   message       text NOT NULL,
   status        text NOT NULL DEFAULT 'new',   -- new | read | replied | archived
   admin_notes   text,
+  source        text DEFAULT 'contact',      -- contact | partnership_project_request | partnership_pathway | services_plan_inquiry
+  details       jsonb DEFAULT '{}',          -- champs propres au formulaire d'origine
   submitted_at  timestamptz DEFAULT now()
 );
+-- Colonnes ajoutées après le premier déploiement : la table reçoit aussi les
+-- demandes Partenariat et Services (src/lib/inquiries.js), dont Supabase est
+-- le canal principal — l'email EmailJS n'est qu'une notification.
+ALTER TABLE contact_messages ADD COLUMN IF NOT EXISTS source text DEFAULT 'contact';
+ALTER TABLE contact_messages ADD COLUMN IF NOT EXISTS details jsonb DEFAULT '{}';
 
 ALTER TABLE contact_messages ENABLE ROW LEVEL SECURITY;
 
@@ -452,6 +510,39 @@ CREATE POLICY "public_insert" ON contact_messages
 -- Lecture et gestion réservées aux admins authentifiés
 CREATE POLICY "admin_all" ON contact_messages
   FOR ALL TO authenticated USING (true) WITH CHECK (true);
+
+-- -------------------------------------------------------
+-- 13bis. UNRECORDED SUBMISSIONS (filet de sécurité formulaires publics)
+-- -------------------------------------------------------
+-- Filet de sécurité : reçoit une soumission de formulaire public quand
+-- l'insertion dans sa table normale (job_applications, contact_messages) a
+-- échoué. Insertion anonyme autorisée, lecture réservée aux administrateurs
+-- (ressource "messages") : la table contient des coordonnées de prospects.
+CREATE TABLE IF NOT EXISTS unrecorded_submissions (
+  id           uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  form         text NOT NULL,   -- 'join_us' | 'partnership_project_request' | 'partnership_pathway' | 'services_plan_inquiry' | …
+  payload      jsonb NOT NULL,  -- données du formulaire, telles que soumises
+  db_error     text,            -- message d'erreur de l'insertion normale, si elle a été tentée
+  email_sent   boolean DEFAULT false,
+  resolved     boolean DEFAULT false,
+  admin_notes  text,
+  created_at   timestamptz DEFAULT now(),
+  CONSTRAINT unrecorded_submissions_form_len CHECK (char_length(form) BETWEEN 1 AND 64),
+  CONSTRAINT unrecorded_submissions_payload_size CHECK (octet_length(payload::text) <= 65536)
+);
+CREATE INDEX IF NOT EXISTS unrecorded_submissions_created_at_idx
+  ON unrecorded_submissions (created_at DESC);
+
+ALTER TABLE unrecorded_submissions ENABLE ROW LEVEL SECURITY;
+-- anon : INSERT uniquement, même au niveau des privilèges (défense en
+-- profondeur : aucune politique ajoutée plus tard ne pourra lui ouvrir la
+-- lecture). Les politiques admin sont posées plus bas via table_resources.
+REVOKE ALL ON unrecorded_submissions FROM anon;
+GRANT INSERT ON unrecorded_submissions TO anon;
+GRANT SELECT, INSERT, UPDATE, DELETE ON unrecorded_submissions TO authenticated;
+DROP POLICY IF EXISTS "public_insert" ON unrecorded_submissions;
+CREATE POLICY "public_insert" ON unrecorded_submissions
+  FOR INSERT TO anon WITH CHECK (resolved IS NOT TRUE AND admin_notes IS NULL);
 
 -- -------------------------------------------------------
 -- 14. HOME ENGAGEMENTS (Bande Engagements — accueil)
@@ -539,16 +630,20 @@ CREATE TABLE IF NOT EXISTS about_advantages (
   icon text NOT NULL DEFAULT 'Star',
   title text NOT NULL DEFAULT '',
   stats text DEFAULT '',
+  source text DEFAULT '',
   description text DEFAULT '',
   updated_at timestamptz DEFAULT now()
 );
-INSERT INTO about_advantages (sort_order, icon, title, stats, description) VALUES
-  (1, 'MapPin',     'Emplacement Stratégique', '400M+ personnes dans la région CEDEAO', 'La position de la Guinée en Afrique de l''Ouest donne accès à plus de 400 millions de personnes dans la région CEDEAO.'),
-  (2, 'Users',      'Réservoir de Talents',    '60% de la population jeune',            'Accueil d''esprits brillants désireux de se faire remarquer sur la scène mondiale.'),
-  (3, 'Zap',        'Esprit d''Innovation',    'Écosystème technologique en croissance', 'Les Guinéens sont des résolveurs de problèmes naturels.'),
-  (4, 'DollarSign', 'Efficacité des Coûts',    'Économie de 20–40%',                    'Fournir une qualité premium à des tarifs compétitifs.'),
-  (5, 'Clock',      'Avantage Fuseau Horaire', 'Fuseau horaire GMT+0',                  'Le fuseau GMT s''aligne parfaitement avec les heures de travail européennes.'),
-  (6, 'Globe',      'Pont Culturel',           '3+ langues parlées',                    'Maîtrise du français et de l''anglais, plus la compréhension des cultures commerciales africaines.')
+-- Colonne ajoutée après le premier déploiement : mention de source (nom +
+-- année) affichée en petit sous les statistiques macro qui en ont une.
+ALTER TABLE about_advantages ADD COLUMN IF NOT EXISTS source text DEFAULT '';
+INSERT INTO about_advantages (sort_order, icon, title, stats, source, description) VALUES
+  (1, 'MapPin',     'Emplacement Stratégique', '400M+ personnes dans la région CEDEAO', 'ECOWAS, 2024', 'La position de la Guinée en Afrique de l''Ouest donne accès à plus de 400 millions de personnes dans la région CEDEAO.'),
+  (2, 'Users',      'Réservoir de Talents',    '~60% de la population a moins de 25 ans', 'ONU, Perspectives de la population mondiale, 2024', 'Accueil d''esprits brillants désireux de se faire remarquer sur la scène mondiale.'),
+  (3, 'Zap',        'Esprit d''Innovation',    'Écosystème technologique en croissance', '', 'Les Guinéens sont des résolveurs de problèmes naturels.'),
+  (4, 'DollarSign', 'Efficacité des Coûts',    'Économie de 20–40%',                    '', 'Fournir une qualité premium à des tarifs compétitifs.'),
+  (5, 'Clock',      'Avantage Fuseau Horaire', 'Fuseau horaire GMT+0',                  '', 'Le fuseau GMT s''aligne parfaitement avec les heures de travail européennes.'),
+  (6, 'Globe',      'Pont Culturel',           '3+ langues parlées',                    '', 'Maîtrise du français et de l''anglais, plus la compréhension des cultures commerciales africaines.')
 ON CONFLICT DO NOTHING;
 ALTER TABLE about_advantages ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "public_read" ON about_advantages FOR SELECT USING (active = true);
@@ -624,8 +719,11 @@ GRANT ALL    ON about_roadmap_phases TO authenticated;
 -- -------------------------------------------------------
 INSERT INTO site_settings (key, value) VALUES
   ('about_founder', '{"name":"Mamadou Cellou Kante","title":"Fondateur & CEO","image":"/Cellou.png","linkedinUrl":"https://www.linkedin.com/in/mamadou-cellou-kante","quote":"« Je m''appelle Mamadou Cellou Kante. J''aurais pu choisir la France, les États-Unis ou d''autres pays où l''informatique est plus avancée et davantage valorisée, comme l''ont fait beaucoup de mes promotionnaires. Mais j''ai décidé de rester en Guinée. Pourquoi ? Parce que je crois que la prochaine grande vague d''innovation viendra d''Afrique. »","story":["Né à Kamsar et diplômé en informatique à l''IPG-ISTI de Dakar. Administrateur réseaux et systèmes, certifié en cybersécurité, j''ai eu l''opportunité de travailler sur plusieurs projets d''infrastructure.","Ces expériences m''ont permis de constater une réalité frappante : malgré leur expertise et leur créativité, les talents africains restent trop souvent sous-évalués sur la scène internationale.","C''est de ce constat qu''est née cette vision. Avec LYNXA Tech, mon ambition est claire : créer un pont entre l''innovation africaine et les opportunités mondiales."],"tags":["Administrateur Réseaux & Systèmes","Certifié Cybersécurité","Entrepreneur Tech"]}'),
-  ('about_ecosystem_stats', '[{"label":"Startups Technologiques","value":"150+","growth":"2025","icon":"TrendingUp"},{"label":"Taux de Pénétration Internet","value":"52%","growth":"2025","icon":"Wifi"},{"label":"Utilisateurs Mobiles","value":"14M","growth":"2024","icon":"Smartphone"},{"label":"Croissance Paiements Numériques","value":"15%","growth":"Afrique 2024","icon":"CreditCard"}]'),
-  ('about_impact_metrics', '[{"current":"7+","target":"25+","label":"Membres de l''équipe","icon":"Users"},{"current":"1","target":"20+","label":"Pays","icon":"MapPin"},{"current":"6+","target":"500+","label":"Clients","icon":"Briefcase"},{"current":"0+","target":"1K+","label":"Vies impactées","icon":"Heart"}]')
+  -- "Startups Technologiques" (150+) et "Croissance Paiements Numériques" (15%)
+  -- retirés faute de source fiable ; "Taux de Pénétration Internet" corrigé de
+  -- 52% (introuvable) à 34% (DataReportal, Digital 2024: Guinée).
+  ('about_ecosystem_stats', '[{"label":"Taux de Pénétration Internet","value":"34%","source":"DataReportal, Digital 2024: Guinée","icon":"Wifi"},{"label":"Utilisateurs Mobiles","value":"14M","source":"DataReportal, Digital 2024: Guinée","icon":"Smartphone"}]'),
+  ('about_impact_metrics', '[{"current":"4","target":"25+","label":"Membres de l''équipe","icon":"Users"},{"current":"1","target":"20+","label":"Pays","icon":"MapPin"},{"current":"4","target":"500+","label":"Clients","icon":"Briefcase"}]')
 ON CONFLICT (key) DO NOTHING;
 
 -- -------------------------------------------------------
@@ -783,8 +881,8 @@ INSERT INTO trust_security_items (sort_order, icon, title, description) VALUES
   (2, 'Code',      'Développement sécurisé',     'Respect des directives OWASP tout au long du cycle.'),
   (3, 'Search',    'Audits réguliers',            'Tests de pénétration trimestriels et évaluations.'),
   (4, 'UserCheck', 'Conformité RGPD',             'Gestion des données conforme aux normes mondiales.'),
-  (5, 'Database',  'Sauvegarde & récupération',  'Sauvegardes quotidiennes, garantie 99,9 %.'),
-  (6, 'Eye',       'Surveillance 24/7',           'Monitoring continu et détection des menaces.')
+  (5, 'Database',  'Sauvegarde & récupération',  'Sauvegardes régulières de nos environnements de travail (pratique interne, hors contrat de support).'),
+  (6, 'Eye',       'Monitoring continu',          'Suivi et détection des menaces sur nos propres systèmes (pratique interne, hors contrat de support).')
 ON CONFLICT DO NOTHING;
 ALTER TABLE trust_security_items ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "public_read" ON trust_security_items FOR SELECT USING (active = true);
@@ -1329,7 +1427,7 @@ DECLARE
   ];
   private_tables text[] := ARRAY[
     'job_applications', 'newsletter_subscriptions', 'contact_messages',
-    'subscription_tracker', 'subscription_payments'
+    'subscription_tracker', 'subscription_payments', 'unrecorded_submissions'
   ];
 BEGIN
   FOREACH table_name IN ARRAY content_tables || private_tables LOOP
@@ -1667,7 +1765,8 @@ DECLARE
     'tech_talks', 'insights',
     'industry_reports', 'insights',
     'contact_messages', 'messages',
-    'newsletter_subscriptions', 'newsletter'
+    'newsletter_subscriptions', 'newsletter',
+    'unrecorded_submissions', 'messages'
   );
 BEGIN
   FOR table_name, resource_name IN SELECT key, value #>> '{}' FROM jsonb_each(table_resources)
@@ -1746,6 +1845,16 @@ CREATE POLICY "Suppression admin" ON storage.objects FOR DELETE TO authenticated
   USING (bucket_id = 'cms-media' AND (SELECT public.has_any_admin_permission('delete')));
 CREATE POLICY "joinus_admin_delete" ON storage.objects FOR DELETE TO authenticated
   USING (bucket_id = 'Cv_lettredemotivation_joinus' AND (SELECT public.has_admin_permission('recruitment', 'delete')));
+
+-- CV et lettres de motivation : bucket privé, lecture réservée au recrutement
+-- (URL signée de courte durée générée par l'admin). Le dépôt anonyme
+-- (joinus_public_upload) reste autorisé pour le formulaire public.
+-- Voir migrations/20260928120000_private_joinus_bucket.sql.
+UPDATE storage.buckets SET public = false WHERE id = 'Cv_lettredemotivation_joinus';
+DROP POLICY IF EXISTS "joinus_public_read" ON storage.objects;
+DROP POLICY IF EXISTS "joinus_admin_read" ON storage.objects;
+CREATE POLICY "joinus_admin_read" ON storage.objects FOR SELECT TO authenticated
+  USING (bucket_id = 'Cv_lettredemotivation_joinus' AND (SELECT public.has_admin_permission('recruitment', 'view')));
 
 NOTIFY pgrst, 'reload schema';
 

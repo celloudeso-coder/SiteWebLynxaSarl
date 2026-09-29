@@ -100,9 +100,9 @@ const JoinUsOpenings = () => {
                     href="#candidature"
                     whileHover={{ scale: 1.04 }}
                     whileTap={{ scale: 0.97 }}
-                    className="inline-flex items-center gap-2 bg-primary hover:bg-primary/90 text-white px-5 py-2.5 rounded-xl text-sm font-semibold transition-all glow-orange flex-shrink-0 self-start"
+                    className="inline-flex items-center gap-2 bg-primary hover:bg-primary/90 text-primary-foreground px-5 py-2.5 rounded-xl text-sm font-semibold transition-all glow-orange flex-shrink-0 self-start"
                   >
-                    <Icon name="Send" size={14} color="white" />
+                    <Icon name="Send" size={14} color="var(--color-primary-foreground)" />
                     Postuler
                   </motion.a>
                 </div>

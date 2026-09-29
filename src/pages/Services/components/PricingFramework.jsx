@@ -3,6 +3,7 @@ import Icon from "../../../components/AppIcon";
 import Button from "../../../components/ui/Button";
 import PlanInquiryModal from "./PlanInquiryModal";
 import { usePricingPlans } from "../../../hooks/useContent";
+import { PRICING_PLANS, ADDITIONAL_SERVICES, formatDualPrice, formatDualRange } from "../../../data/pricing";
 
 const PricingFramework = () => {
   const [selectedPlan, setSelectedPlan] = useState(null);
@@ -20,94 +21,25 @@ const PricingFramework = () => {
     setPlanInfo(null);
   };
 
+  // Les plans CMS ("pricing_plans") portent leur prix en GNF (price_gnf) ;
+  // l'équivalent USD est dérivé à l'affichage. À défaut (lignes existantes
+  // non encore renseignées, ou "Sur devis"), on retombe sur le texte brut
+  // déjà stocké dans "price" plutôt que d'afficher un montant inventé.
   const pricingPlans = cmsPricing && cmsPricing.length > 0
     ? cmsPricing.map((p) => ({
         id: p.id,
         name: p.name,
-        price: p.price,
+        priceGnf: p.price_gnf != null ? Number(p.price_gnf) : null,
+        priceFallbackText: p.price,
         period: p.price_note || "À partir de",
         description: "",
         features: Array.isArray(p.features) ? p.features : [],
         popular: p.is_popular,
         color: p.is_popular ? "primary" : "gray",
-        cta_text: p.cta_text,
       }))
-    : [
-      { id: "starter", name: "Pack Startup", price: "700 $", period: "À partir de", description: "Pour les startups et PME.", features: ["Site web vitrine (5 pages)", "Design responsive", "SEO de base", "1 mois de support"], popular: false, color: "gray" },
-      { id: "professional", name: "Suite Professionnelle", price: "3 500 $", period: "À partir de", description: "Solution complète pour les entreprises en croissance.", features: ["Application web/mobile complète", "Base de données", "API REST", "Authentification", "3 mois de support"], popular: true, color: "primary" },
-      { id: "enterprise", name: "Solution Entreprise", price: "Sur devis", period: "Sur mesure", description: "Sur mesure pour les grandes organisations.", features: ["Architecture sur mesure", "Intégrations illimitées", "SLA 99.9%", "Support 24/7", "Chef de projet dédié"], popular: false, color: "accent" },
-    ];
+    : PRICING_PLANS;
 
-  const additionalServices = [
-    {
-      name: "Installation d'Infrastructure Réseau",
-      price: "1 500 $ - 5 000 $ ou plus",
-
-      el: [
-        "Câblage",
-        "Installation des équipements",
-        "Configuration",
-        "Documentation",
-      ],
-
-      icon: "Wifi",
-    },
-    {
-      name: "Mise en place d’un système complet de supervision et d’inventaire des équipements réseau",
-      price: "900 $ - 2 500 $",
-      el: [
-        "Détection proactive des vulnérabilités et anomalies réseau.",
-        "Recommandations techniques alignées sur vos priorités et votre budget.",
-        "Rapports détaillés, clairs et immédiatement exploitables par vos équipes.",
-        "",
-      ],
-      icon: "Activity",
-    },
-    {
-      name: "Migration de Système",
-      price: "1 250 $ - 4 000 $",
-      el: [
-        "Zéro perte de données.",
-        "Transition rapide et planifiée.",
-        "Formation pour faciliter l’adoption par vos équipes.",
-        "",
-      ],
-      icon: "ArrowRightLeft",
-    },
-    {
-      name: "Optimisation des Performances",
-      price: "500 $ - 2 000 $",
-      el: [
-        "Temps de réponse améliorés.",
-        "Moins de pannes et d’interruptions.",
-        "Meilleure productivité pour vos équipes.",
-        "",
-      ],
-      icon: "Zap",
-    },
-    {
-      name: "Programme de Formation du Personnel",
-      price: "350 $ - 1 500 $",
-      el: [
-        "Sessions adaptées à votre secteur.",
-        "Modules pratiques et interactifs.",
-        "Certificats de participation valorisants.",
-        "",
-      ],
-      icon: "GraduationCap",
-    },
-    {
-      name: "Maintenance Continue",
-      price: "100 $ - 500 $/mois",
-      el: [
-        "100 $ (support email + basic updates)",
-        "300 $ (monitoring + remote intervention)",
-        "500 $ (support complet + on-site intervention)",
-        "",
-      ],
-      icon: "Settings",
-    },
-  ];
+  const additionalServices = ADDITIONAL_SERVICES;
 
   return (
     <section className="py-16 bg-gradient-to-br from-gray-50 to-white">
@@ -124,7 +56,10 @@ const PricingFramework = () => {
 
         {/* Main Pricing Plans */}
         <div className="grid lg:grid-cols-3 gap-8 mb-16">
-          {pricingPlans?.map((plan) => (
+          {pricingPlans?.map((plan) => {
+            const dual = plan?.priceGnf != null ? formatDualPrice(plan.priceGnf) : null;
+            const isQuote = !dual && !plan?.priceFallbackText?.match(/\d/); // "Sur devis" ou équivalent, sans chiffre
+            return (
             <div
               key={plan?.id}
               className={`relative bg-white rounded-2xl shadow-lg border-2 transition-all duration-300 ${
@@ -136,7 +71,7 @@ const PricingFramework = () => {
             >
               {plan?.popular && (
                 <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
-                  <div className="bg-primary text-white px-6 py-2 rounded-full text-sm font-bold">
+                  <div className="bg-primary text-primary-foreground px-6 py-2 rounded-full text-sm font-bold">
                     Le Plus Populaire
                   </div>
                 </div>
@@ -148,10 +83,17 @@ const PricingFramework = () => {
                     {plan?.name}
                   </h3>
                   <div className="mb-4">
-                    <span className="text-4xl font-bold text-primary">
-                      {plan?.price}
-                    </span>
-                    <span className="text-gray-500 ml-2">{plan?.period}</span>
+                    {dual ? (
+                      <>
+                        <div className="text-3xl font-bold text-primary-strong">{dual.primary}</div>
+                        <div className="text-sm text-gray-500">{dual.secondary}</div>
+                      </>
+                    ) : (
+                      <span className="text-4xl font-bold text-primary-strong">
+                        {plan?.priceFallbackText || plan?.price || "Sur devis"}
+                      </span>
+                    )}
+                    <span className="text-gray-500 ml-2 block mt-1">{plan?.period}</span>
                   </div>
                   <p className="text-gray-600">{plan?.description}</p>
                 </div>
@@ -174,11 +116,12 @@ const PricingFramework = () => {
                   className={plan?.popular ? "glow-orange" : ""}
                   onClick={() => handleStart(plan)}
                 >
-                  {plan?.price === "Custom" ? "Obtenir un devis" : "Demarrer"}
+                  {isQuote ? "Obtenir un devis" : "Demarrer"}
                 </Button>
               </div>
             </div>
-          ))}
+            );
+          })}
         </div>
 
         {/* Additional Services */}
@@ -187,7 +130,9 @@ const PricingFramework = () => {
             Services Additionnels
           </h3>
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {additionalServices?.map((service, index) => (
+            {additionalServices?.map((service, index) => {
+              const dual = formatDualRange(service.priceMinGnf, service.priceMaxGnf);
+              return (
               <div
                 key={index}
                 className="flex items-center space-x-4 p-4 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors duration-200"
@@ -199,8 +144,10 @@ const PricingFramework = () => {
                   <h4 className="font-semibold text-secondary">
                     {service?.name}
                   </h4>
-                  <p className="text-sm text-gray-600">{service?.price}</p>
-                  {/* Affichage des éléments de el */}
+                  <p className="text-sm text-gray-600">
+                    {dual.primary}{service.priceNote ? ` ${service.priceNote}` : ""}
+                  </p>
+                  <p className="text-xs text-gray-400">{dual.secondary}</p>
                   {service?.el?.filter(Boolean).length > 0 && (
                     <ul className="list-disc list-inside mt-2 text-xs text-gray-500">
                       {service.el.filter(Boolean).map((item, i) => (
@@ -210,7 +157,8 @@ const PricingFramework = () => {
                   )}
                 </div>
               </div>
-            ))}
+              );
+            })}
           </div>
         </div>
 

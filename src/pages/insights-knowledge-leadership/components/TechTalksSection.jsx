@@ -203,11 +203,10 @@ const TechTalksSection = ({ activeCategory, searchQuery }) => {
 
                 {/* Play Button Overlay */}
                 <div className="absolute inset-0 bg-black/40 group-hover:bg-black/50 transition-all duration-300 flex items-center justify-center">
-                  <div className="w-16 h-16 bg-primary rounded-full flex items-center justify-center transform group-hover:scale-110 transition-transform duration-300 shadow-lg">
+                  <div className="w-16 h-16 bg-primary text-primary-foreground rounded-full flex items-center justify-center transform group-hover:scale-110 transition-transform duration-300 shadow-lg">
                     <Icon
                       name="Play"
                       size={24}
-                      color="white"
                       className="ml-1"
                     />
                   </div>
@@ -220,7 +219,7 @@ const TechTalksSection = ({ activeCategory, searchQuery }) => {
 
                 {/* Category Badge */}
                 <div className="absolute top-4 left-4">
-                  <span className="bg-primary text-white px-3 py-1 rounded-full text-xs font-semibold capitalize">
+                  <span className="bg-primary text-primary-foreground px-3 py-1 rounded-full text-xs font-semibold capitalize">
                     {talk?.category?.replace("-", " ")}
                   </span>
                 </div>

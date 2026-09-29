@@ -1,7 +1,15 @@
+html,
 body {
   margin: 0;
   padding: 0;
   font-family: Inter;
+  /* Garde-fou : certains blocs décoratifs (halos flous en position absolute)
+     sont positionnés partiellement hors de leur section pour un effet de
+     glow ; ils sont normalement clippés par overflow-hidden sur cette
+     section, mais on s'assure qu'aucun débordement horizontal ne peut
+     jamais atteindre le document (aucun changement visuel : ces blocs sont
+     déjà invisibles au-delà de leurs bords). */
+  overflow-x: hidden;
 }
 
 * {

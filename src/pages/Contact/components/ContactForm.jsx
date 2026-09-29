@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Icon from "../../../components/AppIcon";
 import { submitContactMessage, getContactFormConfig } from "../../../lib/cms";
+import { BUDGET_BRACKETS } from "../../../data/pricing";
 
 const STATIC_INQUIRY_TYPES = [
   { value: "new-project",   label: "Développement de nouveau projet" },
@@ -12,13 +13,11 @@ const STATIC_INQUIRY_TYPES = [
   { value: "other",         label: "Autre"                            },
 ];
 
-const STATIC_BUDGET_RANGES = [
-  { value: "under-5k",  label: "Moins de 5 000 $"    },
-  { value: "5k-15k",    label: "5 000 $ – 15 000 $"  },
-  { value: "15k-50k",   label: "15 000 $ – 50 000 $" },
-  { value: "over-50k",  label: "Plus de 50 000 $"     },
-  { value: "discuss",   label: "Préfère en discuter"  },
-];
+// Même échelle que Partnership/ProjectRequestForm.jsx — source unique :
+// src/data/pricing.js (BUDGET_BRACKETS). Volontairement NON surchargeable
+// par site_settings : une config CMS enregistrée une fois figerait
+// d'anciennes fourchettes et casserait l'alignement sur la grille tarifaire.
+const BUDGET_RANGES = BUDGET_BRACKETS;
 
 const STATIC_CONTACT_METHODS = [
   { value: "email",    label: "Email"              },
@@ -37,7 +36,7 @@ const ContactForm = () => {
   const [submitting, setSubmitting] = useState(false);
   const [status, setStatus]       = useState(null); // "success" | "error"
   const [inquiryTypes, setInquiryTypes]     = useState(STATIC_INQUIRY_TYPES);
-  const [budgetRanges, setBudgetRanges]     = useState(STATIC_BUDGET_RANGES);
+  const budgetRanges = BUDGET_RANGES;
   const [contactMethods, setContactMethods] = useState(STATIC_CONTACT_METHODS);
 
   useEffect(() => {
@@ -45,11 +44,20 @@ const ContactForm = () => {
       .then((cfg) => {
         if (!cfg) return;
         if (cfg.inquiry_types?.length)   setInquiryTypes(cfg.inquiry_types);
-        if (cfg.budget_ranges?.length)   setBudgetRanges(cfg.budget_ranges);
         if (cfg.contact_methods?.length) setContactMethods(cfg.contact_methods);
       })
       .catch(() => {});
   }, []);
+
+  const fieldRefs = {
+    name: useRef(null),
+    email: useRef(null),
+    inquiryType: useRef(null),
+    message: useRef(null),
+  };
+  // Ordre d'apparition dans le formulaire — détermine quel champ reçoit le
+  // focus en premier lorsque plusieurs sont en erreur à la soumission.
+  const FIELD_ORDER = ["name", "email", "inquiryType", "message"];
 
   const set = (field, value) => {
     setForm((p) => ({ ...p, [field]: value }));
@@ -66,6 +74,10 @@ const ContactForm = () => {
     if (!form.message.trim() || form.message.trim().length < 10)
       e.message = "Le message doit contenir au moins 10 caractères.";
     setErrors(e);
+    if (Object.keys(e).length > 0) {
+      const firstInvalidField = FIELD_ORDER.find((field) => e[field]);
+      fieldRefs[firstInvalidField]?.current?.focus();
+    }
     return Object.keys(e).length === 0;
   };
 
@@ -129,6 +141,7 @@ const ContactForm = () => {
             {status === "success" && (
               <motion.div
                 key="success"
+                role="status"
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0 }}
@@ -144,6 +157,7 @@ const ContactForm = () => {
             {status === "error" && (
               <motion.div
                 key="error"
+                role="alert"
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0 }}
@@ -162,39 +176,58 @@ const ContactForm = () => {
             {/* Row 1 */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
               <div>
-                <label className="block text-sm font-medium text-secondary mb-1.5">
+                <label htmlFor="contact-name" className="block text-sm font-medium text-secondary mb-1.5">
                   Nom complet <span className="text-red-500">*</span>
                 </label>
                 <input
+                  id="contact-name"
+                  name="name"
                   type="text"
+                  autoComplete="name"
+                  required
+                  aria-required="true"
+                  aria-invalid={Boolean(errors.name)}
+                  aria-describedby={errors.name ? "contact-name-error" : undefined}
+                  ref={fieldRefs.name}
                   placeholder="Mamadou Diallo"
                   value={form.name}
                   onChange={(e) => set("name", e.target.value)}
                   className={inputClass("name")}
                 />
-                {errors.name && <p className="mt-1 text-xs text-red-500">{errors.name}</p>}
+                {errors.name && <p id="contact-name-error" role="alert" className="mt-1 text-xs text-red-500">{errors.name}</p>}
               </div>
               <div>
-                <label className="block text-sm font-medium text-secondary mb-1.5">
+                <label htmlFor="contact-email" className="block text-sm font-medium text-secondary mb-1.5">
                   Adresse email <span className="text-red-500">*</span>
                 </label>
                 <input
+                  id="contact-email"
+                  name="email"
                   type="email"
+                  autoComplete="email"
+                  required
+                  aria-required="true"
+                  aria-invalid={Boolean(errors.email)}
+                  aria-describedby={errors.email ? "contact-email-error" : undefined}
+                  ref={fieldRefs.email}
                   placeholder="vous@exemple.com"
                   value={form.email}
                   onChange={(e) => set("email", e.target.value)}
                   className={inputClass("email")}
                 />
-                {errors.email && <p className="mt-1 text-xs text-red-500">{errors.email}</p>}
+                {errors.email && <p id="contact-email-error" role="alert" className="mt-1 text-xs text-red-500">{errors.email}</p>}
               </div>
             </div>
 
             {/* Row 2 */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
               <div>
-                <label className="block text-sm font-medium text-secondary mb-1.5">Téléphone</label>
+                <label htmlFor="contact-phone" className="block text-sm font-medium text-secondary mb-1.5">Téléphone</label>
                 <input
+                  id="contact-phone"
+                  name="phone"
                   type="tel"
+                  autoComplete="tel"
                   placeholder="+224 XXX XXX XXX"
                   value={form.phone}
                   onChange={(e) => set("phone", e.target.value)}
@@ -202,9 +235,12 @@ const ContactForm = () => {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-secondary mb-1.5">Entreprise / Organisation</label>
+                <label htmlFor="contact-company" className="block text-sm font-medium text-secondary mb-1.5">Entreprise / Organisation</label>
                 <input
+                  id="contact-company"
+                  name="company"
                   type="text"
+                  autoComplete="organization"
                   placeholder="Nom de votre organisation (optionnel)"
                   value={form.company}
                   onChange={(e) => set("company", e.target.value)}
@@ -216,10 +252,17 @@ const ContactForm = () => {
             {/* Row 3 */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
               <div>
-                <label className="block text-sm font-medium text-secondary mb-1.5">
+                <label htmlFor="contact-inquiry-type" className="block text-sm font-medium text-secondary mb-1.5">
                   Type de demande <span className="text-red-500">*</span>
                 </label>
                 <select
+                  id="contact-inquiry-type"
+                  name="inquiryType"
+                  required
+                  aria-required="true"
+                  aria-invalid={Boolean(errors.inquiryType)}
+                  aria-describedby={errors.inquiryType ? "contact-inquiry-type-error" : undefined}
+                  ref={fieldRefs.inquiryType}
                   value={form.inquiryType}
                   onChange={(e) => set("inquiryType", e.target.value)}
                   className={inputClass("inquiryType")}
@@ -229,11 +272,13 @@ const ContactForm = () => {
                     <option key={o.value} value={o.value}>{o.label}</option>
                   ))}
                 </select>
-                {errors.inquiryType && <p className="mt-1 text-xs text-red-500">{errors.inquiryType}</p>}
+                {errors.inquiryType && <p id="contact-inquiry-type-error" role="alert" className="mt-1 text-xs text-red-500">{errors.inquiryType}</p>}
               </div>
               <div>
-                <label className="block text-sm font-medium text-secondary mb-1.5">Mode de contact préféré</label>
+                <label htmlFor="contact-method" className="block text-sm font-medium text-secondary mb-1.5">Mode de contact préféré</label>
                 <select
+                  id="contact-method"
+                  name="contactMethod"
                   value={form.contactMethod}
                   onChange={(e) => set("contactMethod", e.target.value)}
                   className={inputClass("contactMethod")}
@@ -248,8 +293,10 @@ const ContactForm = () => {
 
             {/* Row 4 */}
             <div>
-              <label className="block text-sm font-medium text-secondary mb-1.5">Budget estimé</label>
+              <label htmlFor="contact-budget" className="block text-sm font-medium text-secondary mb-1.5">Budget estimé</label>
               <select
+                id="contact-budget"
+                name="budget"
                 value={form.budget}
                 onChange={(e) => set("budget", e.target.value)}
                 className={inputClass("budget")}
@@ -263,18 +310,25 @@ const ContactForm = () => {
 
             {/* Message */}
             <div>
-              <label className="block text-sm font-medium text-secondary mb-1.5">
+              <label htmlFor="contact-message" className="block text-sm font-medium text-secondary mb-1.5">
                 Détails du projet <span className="text-red-500">*</span>
               </label>
               <textarea
+                id="contact-message"
+                name="message"
+                required
+                aria-required="true"
+                aria-invalid={Boolean(errors.message)}
+                aria-describedby={errors.message ? "contact-message-error" : "contact-message-help"}
+                ref={fieldRefs.message}
                 rows={5}
                 placeholder="Décrivez vos besoins, objectifs, délais souhaités et toute contrainte technique…"
                 value={form.message}
                 onChange={(e) => set("message", e.target.value)}
                 className={`${inputClass("message")} resize-none`}
               />
-              {errors.message && <p className="mt-1 text-xs text-red-500">{errors.message}</p>}
-              <p className="mt-1.5 text-xs text-muted-foreground">
+              {errors.message && <p id="contact-message-error" role="alert" className="mt-1 text-xs text-red-500">{errors.message}</p>}
+              <p id="contact-message-help" className="mt-1.5 text-xs text-muted-foreground">
                 Minimum 10 caractères. Incluez les exigences techniques et le calendrier souhaité.
               </p>
             </div>
@@ -290,7 +344,7 @@ const ContactForm = () => {
                 disabled={submitting}
                 whileHover={{ scale: submitting ? 1 : 1.03 }}
                 whileTap={{ scale: 0.97 }}
-                className="inline-flex items-center gap-2 bg-primary hover:bg-primary/90 disabled:opacity-60 text-white font-semibold px-8 py-3 rounded-xl transition-all duration-200 glow-orange min-w-[200px] justify-center"
+                className="inline-flex items-center gap-2 bg-primary hover:bg-primary/90 disabled:opacity-60 text-primary-foreground font-semibold px-8 py-3 rounded-xl transition-all duration-200 glow-orange min-w-[200px] min-h-11 justify-center"
               >
                 {submitting ? (
                   <>

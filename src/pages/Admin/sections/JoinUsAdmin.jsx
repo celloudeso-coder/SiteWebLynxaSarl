@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
+import { useSearchParams } from "react-router-dom";
 import {
-  getJobApplications, updateApplicationStatus, deleteJobApplication,
+  getJobApplications, updateApplicationStatus, deleteJobApplication, getApplicationDocumentUrl,
   getJobOpenings, saveJobOpening, deleteJobOpening,
 } from "../../../lib/cms";
 import { FormField, TextInput, TextArea, Toggle } from "../components/FormField";
@@ -21,6 +22,22 @@ const STATUSES = {
 const CONTRACT_TYPES = ["Stage", "Temps plein", "Temps partiel", "Freelance"];
 const DEPARTMENTS    = ["Développement", "Infrastructure", "Design", "Business", "Support"];
 
+// Ouvre une pièce du dossier via une URL signée de courte durée. L'onglet est
+// ouvert avant l'appel réseau (sinon le bloqueur de fenêtres l'intercepte),
+// puis redirigé vers l'URL signée.
+async function openApplicationDocument(value) {
+  const win = window.open("", "_blank");
+  if (win) win.opener = null;
+  try {
+    const url = await getApplicationDocumentUrl(value);
+    if (win) win.location.href = url;
+    else window.location.href = url;
+  } catch (err) {
+    if (win) win.close();
+    alert(`Impossible d'ouvrir le document : ${err?.message || err}`);
+  }
+}
+
 const emptyOpening = {
   sort_order: 0, active: true, title: "", department: "", type: "Temps plein",
   location: "Conakry, Guinée", description: "", requirements: [], is_urgent: false,
@@ -35,6 +52,11 @@ function ApplicationsTab() {
   const [expanded, setExpanded] = useState(null);
   const [editNotes, setEditNotes] = useState({});
   const [saving, setSaving]     = useState(null);
+  // Lien reçu par email : /admin/join-us?application=<id> ouvre directement la fiche.
+  const [searchParams] = useSearchParams();
+  const requestedId = searchParams.get("application");
+  const [requestedMissing, setRequestedMissing] = useState(false);
+  const itemRefs = useRef({});
 
   useEffect(() => { load(); }, []);
 
@@ -43,6 +65,19 @@ function ApplicationsTab() {
     try { setItems(await getJobApplications()); }
     finally { setLoading(false); }
   }
+
+  useEffect(() => {
+    if (loading || !requestedId) return;
+    if (items.some((i) => i.id === requestedId)) {
+      setRequestedMissing(false);
+      setFilter("all");
+      setSearch("");
+      setExpanded(requestedId);
+      requestAnimationFrame(() => itemRefs.current[requestedId]?.scrollIntoView({ behavior: "smooth", block: "start" }));
+    } else {
+      setRequestedMissing(true);
+    }
+  }, [loading, requestedId, items]);
 
   async function changeStatus(id, status) {
     const notes = editNotes[id] ?? items.find((i) => i.id === id)?.admin_notes ?? "";
@@ -75,7 +110,7 @@ function ApplicationsTab() {
       i.contract_type || "", i.availability || "",
       STATUSES[i.status]?.label || i.status,
       new Date(i.submitted_at).toLocaleDateString("fr-FR"),
-      i.cv_url || "", i.letter_url || "",
+      i.cv_url ? "Oui" : "Non", i.letter_url ? "Oui" : "Non",
     ]);
     const csv = [
       ["Nom", "Email", "Téléphone", "Poste", "Contrat", "Disponibilité", "Statut", "Date", "CV", "Lettre"],
@@ -116,6 +151,13 @@ function ApplicationsTab() {
         ))}
       </div>
 
+      {requestedMissing && (
+        <div className="mb-5 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
+          La candidature demandée est introuvable. Elle a peut-être été supprimée, ou son enregistrement a échoué :
+          vérifiez les soumissions non enregistrées.
+        </div>
+      )}
+
       {/* Filtres */}
       <div className="flex flex-col sm:flex-row gap-3 mb-5">
         <input
@@ -154,7 +196,7 @@ function ApplicationsTab() {
       ) : (
         <div className="space-y-3">
           {filtered.map((item) => (
-            <div key={item.id} className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+            <div key={item.id} ref={(el) => { itemRefs.current[item.id] = el; }} className="bg-white rounded-xl border border-gray-200 overflow-hidden">
               {/* En-tête ligne */}
               <div className="flex items-center gap-3 px-5 py-4">
                 <button
@@ -209,16 +251,16 @@ function ApplicationsTab() {
 
                   <div className="flex gap-3 flex-wrap">
                     {item.cv_url && (
-                      <a href={item.cv_url} target="_blank" rel="noopener noreferrer"
+                      <button type="button" onClick={() => openApplicationDocument(item.cv_url)}
                         className="inline-flex items-center gap-1.5 text-xs text-blue-600 hover:underline border border-blue-200 rounded-lg px-3 py-1.5">
                         <ExternalLink size={12} /> Voir CV
-                      </a>
+                      </button>
                     )}
                     {item.letter_url && (
-                      <a href={item.letter_url} target="_blank" rel="noopener noreferrer"
+                      <button type="button" onClick={() => openApplicationDocument(item.letter_url)}
                         className="inline-flex items-center gap-1.5 text-xs text-blue-600 hover:underline border border-blue-200 rounded-lg px-3 py-1.5">
                         <ExternalLink size={12} /> Voir Lettre
-                      </a>
+                      </button>
                     )}
                   </div>
 

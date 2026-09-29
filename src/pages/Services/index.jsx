@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link } from "react-router-dom";
 import Header from "../../components/ui/Header";
+import Seo from "../../components/Seo";
 import ServiceHero from "./components/ServiceHero";
 import ServiceCard from "./components/ServiceCard";
 import ServiceDetails from "./components/ServiceDetails";
@@ -10,7 +11,60 @@ import TechnologyStack from "./components/TechnologyStack";
 import PricingFramework from "./components/PricingFramework";
 import Icon from "../../components/AppIcon";
 import { useServices } from "../../hooks/useContent";
-import logoIco from "../../../public/LYNXA.ico";
+
+// Statique plutôt que dérivé des services CMS (chargés en async) : reste
+// présent dès le premier rendu et pendant le prerendering au build, sans
+// dépendre du succès/de la vitesse de l'appel Supabase.
+const SERVICES_JSON_LD = {
+  "@context": "https://schema.org",
+  "@type": "ItemList",
+  itemListElement: [
+    {
+      "@type": "ListItem",
+      position: 1,
+      item: {
+        "@type": "Service",
+        name: "Développement Mobile",
+        description: "Applications iOS, Android, React Native, Flutter et Progressive Web Apps.",
+        provider: { "@type": "Organization", name: "Lynxa Tech Guinea" },
+        areaServed: "Afrique de l'Ouest",
+      },
+    },
+    {
+      "@type": "ListItem",
+      position: 2,
+      item: {
+        "@type": "Service",
+        name: "Infrastructure Réseau",
+        description: "Conception, déploiement, sécurité et supervision d'infrastructures réseau.",
+        provider: { "@type": "Organization", name: "Lynxa Tech Guinea" },
+        areaServed: "Afrique de l'Ouest",
+      },
+    },
+    {
+      "@type": "ListItem",
+      position: 3,
+      item: {
+        "@type": "Service",
+        name: "Développement Web",
+        description: "Sites vitrine, e-commerce, systèmes de gestion de contenu et optimisation SEO.",
+        provider: { "@type": "Organization", name: "Lynxa Tech Guinea" },
+        areaServed: "Afrique de l'Ouest",
+      },
+    },
+    {
+      "@type": "ListItem",
+      position: 4,
+      item: {
+        "@type": "Service",
+        name: "Cybersécurité",
+        description: "Audits, conformité et supervision des menaces.",
+        provider: { "@type": "Organization", name: "Lynxa Tech Guinea" },
+        areaServed: "Afrique de l'Ouest",
+      },
+    },
+  ],
+};
 
 // ── Skeleton while CMS loads ─────────────────────────────────────────────────
 const SkeletonTab = () => (
@@ -52,11 +106,18 @@ const ServicesPage = () => {
 
   const services = Array.isArray(cmsServices) ? cmsServices.map(normalize) : [];
 
-  useEffect(() => {
-    document.title = "Services | Lynxa Tech Guinea";
-  }, []);
-
   return (
+    <>
+      <Seo
+        title="Services | Solutions Technologiques de Pointe | Lynxa Tech Guinée"
+        description="Développement mobile, infrastructure réseau, développement web et cybersécurité : découvrez les services technologiques de Lynxa Tech Guinée, conçus pour l'Afrique de l'Ouest avec des standards internationaux."
+        keywords="services technologiques guinée, développement mobile, infrastructure réseau, développement web, cybersécurité, lynxa tech"
+        path="/service"
+        ogTitle="Services | Lynxa Tech Guinée"
+        ogDescription="Solutions technologiques de pointe pensées pour l'Afrique, compétitives à l'échelle mondiale."
+        jsonLd={[SERVICES_JSON_LD]}
+      />
+
     <div className="min-h-screen bg-white">
       <Header />
 
@@ -113,7 +174,7 @@ const ServicesPage = () => {
               <div className="flex flex-col sm:flex-row gap-3 justify-center">
                 <Link
                   to="/contact"
-                  className="inline-flex items-center gap-2 bg-primary hover:bg-primary/90 text-white font-semibold px-6 py-3 rounded-xl transition-all duration-200 glow-orange"
+                  className="inline-flex items-center gap-2 bg-primary hover:bg-primary/90 text-primary-foreground font-semibold px-6 py-3 rounded-xl transition-all duration-200 glow-orange"
                 >
                   <Icon name="MessageCircle" size={18} />
                   Nous contacter
@@ -229,7 +290,7 @@ const ServicesPage = () => {
             <div className="md:col-span-2">
               <div className="flex items-center gap-3 mb-4">
                 <div className="w-10 h-10 bg-black rounded-lg flex items-center justify-center overflow-hidden">
-                  <img src={logoIco} alt="Lynxa Tech" className="w-8 h-8 object-cover rounded-lg" />
+                  <img src="/icon-192.png" alt="Lynxa Tech" className="w-8 h-8 object-cover rounded-lg" />
                 </div>
                 <div>
                   <h3 className="text-xl font-heading font-bold">Lynxa Tech</h3>
@@ -269,6 +330,7 @@ const ServicesPage = () => {
         </div>
       </footer>
     </div>
+    </>
   );
 };
 

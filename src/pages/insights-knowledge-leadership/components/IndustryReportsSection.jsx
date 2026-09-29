@@ -226,7 +226,7 @@ const IndustryReportsSection = ({ activeCategory, searchQuery }) => {
                 <div className="md:w-3/5 p-6 flex flex-col">
                   {/* Category Badge */}
                   <div className="mb-3">
-                    <span className="bg-primary text-white px-3 py-1 rounded-full text-xs font-semibold capitalize">
+                    <span className="bg-primary text-primary-foreground px-3 py-1 rounded-full text-xs font-semibold capitalize">
                       {report?.category?.replace("-", " ")}
                     </span>
                   </div>
@@ -283,7 +283,7 @@ const IndustryReportsSection = ({ activeCategory, searchQuery }) => {
                       size="sm"
                       iconName="Eye"
                       iconPosition="left"
-                      className="flex-1 border-primary text-primary hover:bg-primary hover:text-white"
+                      className="flex-1 border-primary text-primary hover:bg-primary hover:text-primary-foreground"
                     >
                       Aperçu
                     </Button>

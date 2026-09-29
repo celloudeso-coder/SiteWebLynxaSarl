@@ -7,7 +7,7 @@ import {
   Settings, LogOut, Menu, X, ChevronRight, ChevronDown,
   Mail, Handshake, UserPlus, Home, Info, Layers, CalendarClock,
   Phone, LayoutGrid, Inbox, Sparkles, Newspaper,
-  ShieldCheck, Download, WifiOff, RefreshCw,
+  ShieldCheck, Download, WifiOff, RefreshCw, AlertTriangle,
 } from "lucide-react";
 import { ADMIN_ROLES, ROUTE_RESOURCES } from "../../../lib/adminUsers";
 import { useAdminAuth } from "./AdminAuthContext";
@@ -71,6 +71,7 @@ const NAV_GROUPS = [
     label: "Administration",
     items: [
       { to: "/admin/messages",   label: "Messages",    icon: Inbox, resource: "messages" },
+      { to: "/admin/unrecorded-submissions", label: "Soumissions à vérifier", icon: AlertTriangle, resource: "messages" },
       { to: "/admin/newsletter", label: "Newsletter",  icon: Mail, resource: "newsletter" },
       { to: "/admin/settings",   label: "Paramètres",  icon: Settings, resource: "settings" },
       { to: "/admin/users",      label: "Utilisateurs", icon: ShieldCheck, minRole: "owner" },

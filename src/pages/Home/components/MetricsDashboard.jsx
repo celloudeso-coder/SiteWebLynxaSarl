@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import Icon from "../../../components/AppIcon";
 import { useMetrics } from "../../../hooks/useContent";
+import { formatGNF, formatUSD, MAINTENANCE_MONTHLY } from "../../../data/pricing";
 
 const ICONS = ["Smartphone", "Network", "Globe", "Activity"];
 const COLORS = [
@@ -132,11 +133,21 @@ const MetricsDashboard = () => {
           viewport={{ once: true }}
           transition={{ duration: 0.6, delay: 0.2 }}
         >
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 text-center max-w-md mx-auto">
             {[
-              { value: "99.5%", label: "Garantie de disponibilité" },
-              { value: "<3s",   label: "Temps de chargement moyen" },
-              { value: "24/7",  label: "Couverture du support" },
+              // "99.5% de disponibilité" et "24/7" retirés : aucune formule
+              // de maintenance (voir ADDITIONAL_SERVICES "Maintenance
+              // Continue" dans src/data/pricing.js) ne promet un SLA chiffré
+              // ni une couverture continue — la base est un support par
+              // email. On affiche l'offre réelle plutôt qu'une promesse non
+              // tenable.
+              { value: "<3s", sub: null, size: "text-2xl", label: "Temps de chargement moyen" },
+              {
+                value: `${formatGNF(MAINTENANCE_MONTHLY.minGnf)} – ${formatGNF(MAINTENANCE_MONTHLY.maxGnf)}`,
+                sub: `≈ ${formatUSD(MAINTENANCE_MONTHLY.minGnf)} – ${formatUSD(MAINTENANCE_MONTHLY.maxGnf)}`,
+                size: "text-base",
+                label: "Maintenance mensuelle",
+              },
             ].map((item, i) => (
               <motion.div
                 key={i}
@@ -145,7 +156,8 @@ const MetricsDashboard = () => {
                 viewport={{ once: true }}
                 transition={{ duration: 0.4, delay: i * 0.1 }}
               >
-                <div className="text-2xl font-heading font-bold text-primary mb-2">{item.value}</div>
+                <div className={`${item.size} font-heading font-bold text-primary mb-1`}>{item.value}</div>
+                {item.sub && <div className="text-xs text-muted-foreground mb-1">{item.sub}</div>}
                 <p className="text-sm text-muted-foreground">{item.label}</p>
               </motion.div>
             ))}

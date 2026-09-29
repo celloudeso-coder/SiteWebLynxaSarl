@@ -1,11 +1,23 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { supabase } from "../../lib/supabase";
 import { Download, Loader2 } from "lucide-react";
 import { useAdminPwa } from "../../lib/adminPwa";
 
+// Retour vers la page admin demandée avant la connexion. Uniquement un chemin
+// interne sous /admin, pour ne pas ouvrir de redirection arbitraire.
+function returnPath(state) {
+  const from = state?.from;
+  if (typeof from !== "string" || !/^\/admin(\/|\?|$)/.test(from) || from.startsWith("/admin/login")) {
+    return "/admin";
+  }
+  return from;
+}
+
 export default function AdminLogin() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const target = returnPath(location.state);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -14,9 +26,9 @@ export default function AdminLogin() {
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session) navigate("/admin", { replace: true });
+      if (session) navigate(target, { replace: true });
     });
-  }, [navigate]);
+  }, [navigate, target]);
 
   async function handleLogin(e) {
     e.preventDefault();
@@ -27,7 +39,7 @@ export default function AdminLogin() {
       setError("Email ou mot de passe incorrect.");
       setLoading(false);
     } else {
-      navigate("/admin", { replace: true });
+      navigate(target, { replace: true });
     }
   }
 

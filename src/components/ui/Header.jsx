@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import Icon from "../AppIcon";
 import Button from "./Button";
-import logoIco from "../../../public/LYNXA.ico";
 
 
 
@@ -86,13 +85,13 @@ const Header = () => {
           {/* Logo */}
           <Link
             to="/home"
-            className="flex items-center space-x-3 group"
+            className="flex items-center space-x-3 group min-h-11"
           >
             <div className="relative">
               <div className="w-10 h-10 bg-black from-primary to-accent rounded-lg flex items-center justify-center glow-orange group-hover:scale-105 transition-transform duration-300">
 
                 <img
-                  src={logoIco}
+                  src="/icon-192.png"
                   alt="Lynxa Tech logo"
                   className="w-8 h-8 object-cover rounded-lg"
                 />
@@ -100,9 +99,9 @@ const Header = () => {
               </div>
             </div>
             <div className="hidden sm:block">
-              <h1 className="text-xl font-heading font-bold text-secondary">
+              <span className="block text-xl font-heading font-bold text-secondary">
                 Lynxa Tech
-              </h1>
+              </span>
               <p className="text-xs text-muted-foreground -mt-1">Guinea</p>
             </div>
           </Link>
@@ -118,6 +117,7 @@ const Header = () => {
                     ? "bg-primary text-primary-foreground shadow-glow-orange"
                     : "text-text-primary hover:bg-muted hover:text-primary"
                 }`}
+                aria-current={isActivePath(item?.path) ? "page" : undefined}
               >
                 <Icon name={item?.icon} size={16} />
                 <span>{item?.name}</span>
@@ -166,8 +166,10 @@ const Header = () => {
           {/* Mobile Menu Button */}
           <button
             onClick={toggleMenu}
-            className="lg:hidden p-2 rounded-lg hover:bg-muted transition-colors duration-200"
-            aria-label="Toggle menu"
+            className="lg:hidden p-2.5 rounded-lg hover:bg-muted transition-colors duration-200"
+            aria-label={isMenuOpen ? "Fermer le menu" : "Ouvrir le menu"}
+            aria-expanded={isMenuOpen}
+            aria-controls="mobile-nav"
           >
             <Icon name={isMenuOpen ? "X" : "Menu"} size={24} />
           </button>
@@ -175,6 +177,7 @@ const Header = () => {
 
         {/* Mobile Navigation */}
         <div
+          id="mobile-nav"
           className={`lg:hidden transition-all duration-300 overflow-hidden ${
             isMenuOpen ? "max-h-96 opacity-100" : "max-h-0 opacity-0"
           }`}
@@ -186,11 +189,12 @@ const Header = () => {
                   key={item?.path}
                   to={item?.path}
                   onClick={() => setIsMenuOpen(false)}
-                  className={`flex items-center space-x-3 px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200 ${
+                  className={`flex items-center space-x-3 px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200 min-h-11 ${
                     isActivePath(item?.path)
                       ? "bg-primary text-primary-foreground"
                       : "text-text-primary hover:bg-muted hover:text-primary"
                   }`}
+                  aria-current={isActivePath(item?.path) ? "page" : undefined}
                 >
                   <Icon name={item?.icon} size={20} /> {/* ← ici */}
                   <span>{item?.name}</span>

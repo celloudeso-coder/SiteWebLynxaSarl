@@ -3,9 +3,10 @@ import { getPricingPlans, savePricingPlan, deletePricingPlan } from "../../../li
 import { FormField, TextInput, Toggle, JsonArrayEditor } from "../components/FormField";
 import SaveButton from "../components/SaveButton";
 import { Plus, Trash2, ChevronDown, ChevronUp, Star } from "lucide-react";
+import { formatDualPrice, roundGnfToCommercialTier } from "../../../data/pricing";
 
 const emptyPlan = {
-  sort_order: 0, active: true, name: "", price: "", price_note: "",
+  sort_order: 0, active: true, name: "", price: "", price_gnf: null, price_note: "",
   is_popular: false, features: [], cta_text: "Demander un devis",
 };
 
@@ -45,7 +46,7 @@ export default function PricingAdmin() {
   async function save(plan) {
     setSaving(plan.id);
     try {
-      const updated = await savePricingPlan(plan);
+      const updated = await savePricingPlan({ ...plan, price_gnf: roundGnfToCommercialTier(plan.price_gnf) });
       setPlans((prev) => prev.map((p) => p.id === plan.id ? updated : p));
       setSaved(plan.id);
       setTimeout(() => setSaved(null), 2500);
@@ -93,7 +94,9 @@ export default function PricingAdmin() {
                 {plan.is_popular && <Star size={14} className="text-orange-400 fill-orange-400" />}
                 <div>
                   <p className="font-medium text-gray-900 text-sm">{plan.name || "Nouveau plan"}</p>
-                  <p className="text-xs text-gray-500">{plan.price} {plan.price_note}</p>
+                  <p className="text-xs text-gray-500">
+                    {plan.price_gnf != null ? formatDualPrice(Number(plan.price_gnf))?.primary : (plan.price || "—")} {plan.price_note}
+                  </p>
                 </div>
               </button>
               <Toggle checked={plan.active} onChange={(v) => toggleActive(plan, v)} />
@@ -108,8 +111,24 @@ export default function PricingAdmin() {
                   <FormField label="Nom du plan">
                     <TextInput value={plan.name} onChange={(v) => update(plan.id, "name", v)} placeholder="Pack Startup" />
                   </FormField>
-                  <FormField label="Prix">
-                    <TextInput value={plan.price} onChange={(v) => update(plan.id, "price", v)} placeholder="$700 ou Sur devis" />
+                  <FormField
+                    label="Prix (GNF)"
+                    hint="Arrondi à l'enregistrement : 100 000 GNF sous 5 M, 500 000 GNF au-dessus. L'équivalent USD est calculé. Vide = « Sur devis »."
+                  >
+                    <TextInput
+                      type="number"
+                      value={plan.price_gnf ?? ""}
+                      onChange={(v) => update(plan.id, "price_gnf", v === "" ? null : Number(v))}
+                      placeholder="4500000"
+                    />
+                    {plan.price_gnf != null && (
+                      <p className="text-xs text-gray-400 mt-1">
+                        Affiché : {formatDualPrice(roundGnfToCommercialTier(plan.price_gnf)).primary} ({formatDualPrice(roundGnfToCommercialTier(plan.price_gnf)).secondary})
+                      </p>
+                    )}
+                  </FormField>
+                  <FormField label="Prix (texte, repli)" hint="Affiché seulement si « Prix (GNF) » est vide, ex. Sur devis">
+                    <TextInput value={plan.price} onChange={(v) => update(plan.id, "price", v)} placeholder="Sur devis" />
                   </FormField>
                   <FormField label="Note de prix" hint="Ex: prix de départ, par mois…">
                     <TextInput value={plan.price_note} onChange={(v) => update(plan.id, "price_note", v)} />

@@ -155,7 +155,7 @@ const WhitepapersSection = ({ activeCategory, searchQuery }) => {
                 <div className="md:w-2/3 p-6">
                   {/* Category Badge */}
                   <div className="mb-3">
-                    <span className="bg-primary text-white px-3 py-1 rounded-full text-xs font-semibold capitalize">
+                    <span className="bg-primary text-primary-foreground px-3 py-1 rounded-full text-xs font-semibold capitalize">
                       {whitepaper?.category?.replace("-", " ")}
                     </span>
                   </div>

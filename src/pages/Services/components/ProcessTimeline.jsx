@@ -100,11 +100,11 @@ const ProcessTimeline = () => {
                   <div className="bg-white rounded-2xl shadow-soft hover:shadow-medium transition-shadow duration-300 p-8">
                     <div className="flex items-center gap-4 mb-5">
                       <motion.div
-                        className="w-12 h-12 bg-primary rounded-xl flex items-center justify-center glow-orange flex-shrink-0"
+                        className="w-12 h-12 bg-primary text-primary-foreground rounded-xl flex items-center justify-center glow-orange flex-shrink-0"
                         whileHover={{ scale: 1.1, rotate: 5 }}
                         transition={{ type: "spring", stiffness: 300 }}
                       >
-                        <Icon name={step.icon} size={22} color="white" />
+                        <Icon name={step.icon} size={22} />
                       </motion.div>
                       <div>
                         <h3 className="text-xl font-heading font-bold text-secondary">

@@ -3,6 +3,12 @@ import { motion } from "framer-motion";
 import Icon from "../../../components/AppIcon";
 import { getAboutRoadmapPhases, getAboutVisionPillars, getAboutImpactMetrics } from "../../../lib/cms";
 
+const PHASE_TEXT_COLORS = {
+  "bg-primary": "text-primary-foreground",
+  "bg-accent": "text-accent-foreground",
+  "bg-success": "text-success-foreground",
+};
+
 const STATIC_ROADMAP_PHASES = [
   {
     phase: "Phase 1",
@@ -64,11 +70,14 @@ const STATIC_VISION_PILLARS = [
   { icon: "Handshake", title: "Partenariats Globaux",       description: "Former des alliances stratégiques avec des géants technologiques internationaux tout en conservant notre identité africaine." },
 ];
 
+// "current" aligné sur des données vérifiables : effectif réellement nommé
+// (TeamSpotlight.jsx / table "team_members" : 4 membres), nombre réel de
+// clients dans le portfolio (4). "Vies impactées" retiré : aucune mesure
+// réelle derrière ce chiffre, "0+" n'en était pas une.
 const STATIC_IMPACT_METRICS = [
-  { current: "7+",  target: "25+",  label: "Membres de l'équipe", icon: "Users" },
+  { current: "4",   target: "25+",  label: "Membres de l'équipe", icon: "Users" },
   { current: "1",   target: "20+",  label: "Pays",                icon: "MapPin" },
-  { current: "6+",  target: "500+", label: "Clients",             icon: "Briefcase" },
-  { current: "0+",  target: "1K+",  label: "Vies impactées",      icon: "Heart" },
+  { current: "4",   target: "500+", label: "Clients",             icon: "Briefcase" },
 ];
 
 function normalizePhase(p) {
@@ -149,11 +158,11 @@ const VisionRoadmap = () => {
               {/* Icon */}
               <div className="flex-shrink-0 mb-4 lg:mb-0 relative z-10">
                 <motion.div
-                  className={`w-12 h-12 ${phase.color} rounded-full flex items-center justify-center shadow-lg`}
+                  className={`w-12 h-12 ${phase.color} ${PHASE_TEXT_COLORS[phase.color] || "text-white"} rounded-full flex items-center justify-center shadow-lg`}
                   whileHover={{ scale: 1.1 }}
                   transition={{ type: "spring", stiffness: 300 }}
                 >
-                  <Icon name={phase.icon} size={22} color="white" />
+                  <Icon name={phase.icon} size={22} />
                 </motion.div>
                 <div className="text-center mt-2">
                   <div className="text-xs font-semibold text-primary">{phase.phase}</div>
@@ -239,7 +248,7 @@ const VisionRoadmap = () => {
             <h3 className="text-2xl font-heading font-bold text-secondary mb-2">Trajectoire de croissance</h3>
             <p className="text-gray-500 text-sm">De notre situation actuelle à nos ambitions pour 2027</p>
           </div>
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
             {impactMetrics.map((metric, index) => (
               <motion.div
                 key={index}

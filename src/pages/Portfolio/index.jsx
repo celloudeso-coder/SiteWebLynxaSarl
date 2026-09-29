@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link } from "react-router-dom";
 import Header from "../../components/ui/Header";
+import Seo from "../../components/Seo";
 import HeroSection from "./components/HeroSection";
 import FilterBar from "./components/FilterBar";
 import ProjectCard from "./components/ProjectCard";
@@ -45,6 +46,7 @@ function normalize(p) {
     impact:         p.impact,
     description:    p.description,
     image:          p.image_url,
+    gallery:        Array.isArray(p.gallery_urls) ? p.gallery_urls.slice(0, 2) : [],
     duration:       p.duration,
     metrics,
     challenge:      p.challenge,
@@ -53,6 +55,9 @@ function normalize(p) {
     technologies:   Array.isArray(p.technologies) ? p.technologies : [],
     testimonial:    p.testimonial,
     projectUrl:     p.project_url,
+    status:         p.status,
+    isFlagship:     !!p.is_flagship_product,
+    productSlug:    p.product_slug,
   };
 }
 
@@ -97,11 +102,17 @@ const PortfolioShowcase = () => {
     setVisibleProjects(6);
   };
 
-  useEffect(() => {
-    document.title = "Portfolio – Nos Réalisations | Lynxa Tech Guinea";
-  }, []);
-
   return (
+    <>
+      <Seo
+        title="Portfolio – Nos Réalisations | Lynxa Tech Guinée"
+        description="Découvrez les projets réalisés par Lynxa Tech Guinée : applications mobiles, infrastructures réseau et plateformes web qui transforment des entreprises à travers l'Afrique de l'Ouest."
+        keywords="portfolio lynxa tech, projets technologiques guinée, réalisations développement mobile, études de cas web afrique"
+        path="/portfolio"
+        ogTitle="Portfolio | Lynxa Tech Guinée"
+        ogDescription="Des histoires de succès inspirantes, des projets qui transforment des vies et propulsent des organisations."
+      />
+
     <div className="min-h-screen bg-background">
       <Header />
       <main className="pt-16">
@@ -117,7 +128,7 @@ const PortfolioShowcase = () => {
               viewport={{ once: true }}
               transition={{ duration: 0.5 }}
             >
-              <div className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-2 rounded-full text-sm font-medium mb-4">
+              <div className="inline-flex items-center gap-2 bg-primary/10 text-primary-strong px-4 py-2 rounded-full text-sm font-medium mb-4">
                 <Icon name="Briefcase" size={16} />
                 <span>Nos Réalisations</span>
               </div>
@@ -158,7 +169,7 @@ const PortfolioShowcase = () => {
                 <div className="flex flex-col sm:flex-row gap-3 justify-center">
                   <Link
                     to="/contact"
-                    className="inline-flex items-center gap-2 bg-primary hover:bg-primary/90 text-white font-semibold px-6 py-3 rounded-xl transition-all duration-200 glow-orange"
+                    className="inline-flex items-center gap-2 bg-primary hover:bg-primary/90 text-primary-foreground font-semibold px-6 py-3 rounded-xl transition-all duration-200 glow-orange"
                   >
                     <Icon name="MessageCircle" size={18} />
                     Nous contacter
@@ -269,7 +280,7 @@ const PortfolioShowcase = () => {
                 <Link to="/contact">
                   <motion.span
                     whileHover={{ scale: 1.03 }}
-                    className="inline-flex items-center gap-2 bg-primary hover:bg-primary/90 text-white font-semibold px-7 py-3 rounded-xl transition-all duration-200 glow-orange"
+                    className="inline-flex items-center gap-2 bg-primary hover:bg-primary/90 text-primary-foreground font-semibold px-7 py-3 rounded-xl transition-all duration-200 glow-orange"
                   >
                     <Icon name="MessageCircle" size={18} />
                     Lancer Votre Projet
@@ -296,6 +307,7 @@ const PortfolioShowcase = () => {
         onClose={handleCloseModal}
       />
     </div>
+    </>
   );
 };
 

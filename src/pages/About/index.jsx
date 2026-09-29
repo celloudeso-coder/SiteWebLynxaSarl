@@ -1,8 +1,8 @@
 import React, { useEffect } from "react";
-import { Helmet } from "react-helmet";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import Header from "../../components/ui/Header";
+import Seo from "../../components/Seo";
 import FounderStory from "./components/FounderStory";
 import CompanyTimeline from "./components/CompanyTimeline";
 import TeamSpotlight from "./components/TeamSpotlight";
@@ -10,7 +10,6 @@ import WhyGuinea from "./components/WhyGuinea";
 import CompanyValues from "./components/CompanyValues";
 import VisionRoadmap from "./components/VisionRoadmap";
 import Icon from "../../components/AppIcon";
-import logoIco from "../../../public/LYNXA.ico";
 import { useSiteSettings } from "../../hooks/useContent";
 
 const AboutInnovationStoryVision = () => {
@@ -19,17 +18,15 @@ const AboutInnovationStoryVision = () => {
   const social  = settings?.social  || {};
   useEffect(() => {
     window.scrollTo(0, 0);
-    document.title = "À propos | Lynxa Tech Guinée";
   }, []);
 
   return (
     <>
-      <Helmet>
-        <title>À propos - Histoire de l'Innovation & Vision | Lynxa Tech Guinée</title>
-        <meta name="description" content="Découvrez le parcours inspirant de Lynxa Tech, d'une petite startup guinéenne au principal hub d'innovation technologique en Afrique de l'Ouest." />
-        <meta property="og:type" content="website" />
-        <link rel="canonical" href="/about" />
-      </Helmet>
+      <Seo
+        title="À propos - Histoire de l'Innovation & Vision | Lynxa Tech Guinée"
+        description="Découvrez le parcours inspirant de Lynxa Tech, d'une petite startup guinéenne au principal hub d'innovation technologique en Afrique de l'Ouest."
+        path="/about"
+      />
 
       <div className="min-h-screen bg-white">
         <Header />
@@ -145,7 +142,7 @@ const AboutInnovationStoryVision = () => {
                 <Link to="/service">
                   <motion.span
                     whileHover={{ scale: 1.04 }}
-                    className="inline-flex items-center gap-2 bg-primary hover:bg-primary/90 text-white font-semibold px-6 py-3 rounded-xl transition-all duration-200 glow-orange cursor-pointer"
+                    className="inline-flex items-center gap-2 bg-primary hover:bg-primary/90 text-primary-foreground font-semibold px-6 py-3 rounded-xl transition-all duration-200 glow-orange cursor-pointer"
                   >
                     <Icon name="ArrowRight" size={18} />
                     Découvrez nos services
@@ -172,7 +169,7 @@ const AboutInnovationStoryVision = () => {
               <div className="md:col-span-2">
                 <div className="flex items-center gap-3 mb-4">
                   <div className="w-10 h-10 bg-black rounded-lg flex items-center justify-center overflow-hidden">
-                    <img src={logoIco} alt="Lynxa Tech" className="w-8 h-8 object-cover rounded-lg" />
+                    <img src="/icon-192.png" alt="Lynxa Tech" className="w-8 h-8 object-cover rounded-lg" />
                   </div>
                   <div>
                     <h3 className="text-xl font-heading font-bold">Lynxa Tech</h3>
@@ -183,16 +180,16 @@ const AboutInnovationStoryVision = () => {
                   Construire l'avenir de la technologie depuis le cœur de l'Afrique de l'Ouest.
                 </p>
                 <div className="flex gap-3">
-                  <a href={social.linkedin || "https://www.linkedin.com/company/lynxatech"} target="_blank" rel="noopener noreferrer" className="w-9 h-9 bg-white/10 rounded-full flex items-center justify-center hover:bg-white/20 transition-colors duration-200">
+                  <a href={social.linkedin || "https://www.linkedin.com/company/lynxatech"} target="_blank" rel="noopener noreferrer" aria-label="Lynxa Tech sur LinkedIn" className="relative before:absolute before:-inset-1 before:content-[''] w-9 h-9 bg-white/10 rounded-full flex items-center justify-center hover:bg-white/20 transition-colors duration-200">
                     <Icon name="Linkedin" size={18} />
                   </a>
-                  <a href={social.twitter || "#"} target="_blank" rel="noopener noreferrer" className="w-9 h-9 bg-white/10 rounded-full flex items-center justify-center hover:bg-white/20 transition-colors duration-200">
+                  <a href={social.twitter || "#"} target="_blank" rel="noopener noreferrer" aria-label="Lynxa Tech sur Twitter" className="relative before:absolute before:-inset-1 before:content-[''] w-9 h-9 bg-white/10 rounded-full flex items-center justify-center hover:bg-white/20 transition-colors duration-200">
                     <Icon name="Twitter" size={18} />
                   </a>
-                  <a href={social.facebook || "#"} target="_blank" rel="noopener noreferrer" className="w-9 h-9 bg-white/10 rounded-full flex items-center justify-center hover:bg-white/20 transition-colors duration-200">
+                  <a href={social.facebook || "#"} target="_blank" rel="noopener noreferrer" aria-label="Lynxa Tech sur Facebook" className="relative before:absolute before:-inset-1 before:content-[''] w-9 h-9 bg-white/10 rounded-full flex items-center justify-center hover:bg-white/20 transition-colors duration-200">
                     <Icon name="Facebook" size={18} />
                   </a>
-                  <a href={`mailto:${contact.email || "contact@lynxatech.com"}`} className="w-9 h-9 bg-white/10 rounded-full flex items-center justify-center hover:bg-white/20 transition-colors duration-200">
+                  <a href={`mailto:${contact.email || "contact@lynxatech.com"}`} aria-label="Envoyer un email à Lynxa Tech" className="relative before:absolute before:-inset-1 before:content-[''] w-9 h-9 bg-white/10 rounded-full flex items-center justify-center hover:bg-white/20 transition-colors duration-200">
                     <Icon name="Mail" size={18} />
                   </a>
                 </div>
@@ -219,7 +216,7 @@ const AboutInnovationStoryVision = () => {
               </div>
             </div>
 
-            <div className="border-t border-white/10 mt-8 pt-8 text-center text-sm text-gray-500">
+            <div className="border-t border-white/10 mt-8 pt-8 text-center text-sm text-gray-400">
               <p>© {new Date().getFullYear()} Lynxa Tech Guinea. Tous droits réservés.</p>
             </div>
           </div>

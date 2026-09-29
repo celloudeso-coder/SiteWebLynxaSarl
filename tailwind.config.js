@@ -14,7 +14,8 @@ export default {
         foreground: 'var(--color-foreground)', /* gray-900 */
         primary: {
           DEFAULT: 'var(--color-primary)', /* orange-500 */
-          foreground: 'var(--color-primary-foreground)' /* white */
+          foreground: 'var(--color-primary-foreground)', /* white */
+          strong: 'var(--color-primary-strong)' /* orange assombri, lisible en texte (AA) */
         },
         secondary: {
           DEFAULT: 'var(--color-secondary)', /* gray-950 */

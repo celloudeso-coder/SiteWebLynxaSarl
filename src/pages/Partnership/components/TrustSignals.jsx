@@ -8,8 +8,11 @@ const STATIC_SECURITY = [
   { icon: "Code",      title: "Développement sécurisé",      desc: "Respect des directives OWASP tout au long du cycle." },
   { icon: "Search",    title: "Audits réguliers",             desc: "Tests de pénétration trimestriels et évaluations." },
   { icon: "UserCheck", title: "Conformité RGPD",              desc: "Gestion des données conforme aux normes mondiales." },
-  { icon: "Database",  title: "Sauvegarde & récupération",   desc: "Sauvegardes quotidiennes, garantie 99,9 %." },
-  { icon: "Eye",       title: "Surveillance 24/7",            desc: "Monitoring continu et détection des menaces." },
+  // Reformulés en pratiques internes, sans chiffre ni "24/7" qui lisaient
+  // comme un engagement contractuel — aucune formule de maintenance
+  // (Services, 100-500 $/mois) ne le couvre.
+  { icon: "Database",  title: "Sauvegarde & récupération",   desc: "Sauvegardes régulières de nos environnements de travail (pratique interne, hors contrat de support)." },
+  { icon: "Eye",       title: "Monitoring continu",           desc: "Suivi et détection des menaces sur nos propres systèmes (pratique interne, hors contrat de support)." },
 ];
 
 const STATIC_COMMITMENTS = [
@@ -156,7 +159,7 @@ const TrustSignals = () => {
           href="/contact"
           whileHover={{ scale: 1.04 }}
           whileTap={{ scale: 0.97 }}
-          className="inline-flex items-center gap-2 bg-white text-primary px-8 py-3 rounded-xl font-semibold hover:bg-gray-100 transition-colors"
+          className="inline-flex items-center gap-2 bg-white text-primary-strong px-8 py-3 min-h-11 rounded-xl font-semibold hover:bg-gray-100 transition-colors"
         >
           <Icon name="MessageCircle" size={18} color="var(--color-primary)" />
           En savoir plus

@@ -1,4 +1,5 @@
 import { supabase } from "./supabase";
+import { compressImageForUpload } from "./imageCompression";
 
 // ─── Generic helpers ────────────────────────────────────────────────────────
 
@@ -327,6 +328,29 @@ export async function deleteJobApplication(id) {
   return deleteRow("job_applications", id);
 }
 
+// CV / lettre : le bucket est privé. cv_url et letter_url contiennent le
+// chemin de l'objet (nouvelles candidatures) ou l'ancienne URL publique
+// complète (candidatures antérieures au passage en privé) : on en extrait le
+// chemin et on génère une URL signée de courte durée, au moment du clic.
+const JOINUS_BUCKET = "Cv_lettredemotivation_joinus";
+const APPLICATION_DOCUMENT_TTL_SECONDS = 300;
+
+export function applicationDocumentPath(value) {
+  if (!value) return "";
+  const marker = `/${JOINUS_BUCKET}/`;
+  const i = value.indexOf(marker);
+  const path = i >= 0 ? value.slice(i + marker.length) : value;
+  return decodeURIComponent(path.split("?")[0]);
+}
+
+export async function getApplicationDocumentUrl(value) {
+  const { data, error } = await supabase.storage
+    .from(JOINUS_BUCKET)
+    .createSignedUrl(applicationDocumentPath(value), APPLICATION_DOCUMENT_TTL_SECONDS);
+  if (error) throw error;
+  return data.signedUrl;
+}
+
 // ─── Partnership Pathways ─────────────────────────────────────────────────────
 
 export async function getPartnershipPathways(activeOnly = true) {
@@ -410,6 +434,61 @@ export async function updateMessageStatus(id, status, admin_notes) {
 
 export async function deleteContactMessage(id) {
   return deleteRow("contact_messages", id);
+}
+
+// ─── Unrecorded Submissions (filet de sécurité formulaires publics) ──────────
+// Voir supabase/schema.sql, section "UNRECORDED SUBMISSIONS", pour le rôle de
+// cette table : capter une soumission qui n'a laissé aucune ligne exploitable
+// dans sa table normale (insertion échouée mais email parti, ou formulaire
+// sans persistance dédiée reposant uniquement sur EmailJS).
+
+// Ne lève jamais : appelée depuis des formulaires publics après un échec (ou
+// une absence de persistance), elle ne doit jamais devenir elle-même une
+// nouvelle source d'erreur visible pour l'utilisateur.
+// Ne lève jamais : renvoie true si la trace a bien été enregistrée.
+export async function logUnrecordedSubmission({ form, payload, dbError, emailSent }) {
+  try {
+    const { error } = await supabase.from("unrecorded_submissions").insert({
+      form,
+      payload,
+      db_error: dbError ? String(dbError) : null,
+      email_sent: Boolean(emailSent),
+    });
+    if (error) {
+      console.error(`logUnrecordedSubmission(${form}) a échoué :`, error.message);
+      return false;
+    }
+    return true;
+  } catch (err) {
+    console.error(`logUnrecordedSubmission(${form}) a échoué :`, err?.message || err);
+    return false;
+  }
+}
+
+export async function getUnrecordedSubmissions() {
+  const { data, error } = await supabase
+    .from("unrecorded_submissions")
+    .select("*")
+    .order("created_at", { ascending: false });
+  if (error) throw error;
+  return data || [];
+}
+
+export async function resolveUnrecordedSubmission(id, resolved, admin_notes) {
+  const payload = { resolved };
+  if (admin_notes !== undefined) payload.admin_notes = admin_notes;
+  const { data, error } = await supabase
+    .from("unrecorded_submissions")
+    .update(payload)
+    .eq("id", id)
+    .select()
+    .single();
+  if (error) throw error;
+  return data;
+}
+
+export async function deleteUnrecordedSubmission(id) {
+  return deleteRow("unrecorded_submissions", id);
 }
 
 // ─── Media Upload ─────────────────────────────────────────────────────────────
@@ -654,6 +733,17 @@ export async function uploadMedia(file, path) {
   if (error) throw error;
   const { data: urlData } = supabase.storage.from("cms-media").getPublicUrl(data.path);
   return urlData.publicUrl;
+}
+
+// Redimensionne/compresse une image côté navigateur (voir imageCompression.js
+// et README, section CMS) avant de l'envoyer à uploadMedia(). Retourne l'URL
+// publique plus les tailles avant/après pour affichage dans l'admin.
+export async function uploadImage(file, folder) {
+  const result = await compressImageForUpload(file);
+  const ext = result.file.name.split(".").pop();
+  const path = `${folder}/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
+  const url = await uploadMedia(result.file, path);
+  return { url, ...result };
 }
 
 // ─── Portfolio — Filter Options ───────────────────────────────────────────────

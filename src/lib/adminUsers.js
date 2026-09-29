@@ -79,6 +79,7 @@ export const ROUTE_RESOURCES = {
   "/admin/timeline": "timeline",
   "/admin/services": "services",
   "/admin/messages": "messages",
+  "/admin/unrecorded-submissions": "messages",
   "/admin/settings": "settings",
   "/admin/pricing": "pricing",
   "/admin/metrics": "metrics",

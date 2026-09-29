@@ -96,11 +96,17 @@ supabase start
 
 ### 3. Appliquer le schéma CMS
 
-Le schéma (tables + données initiales + RLS) est versionné dans `supabase/schema.sql`. Il n'y a pas de dossier `migrations/` : on l'applique directement en base.
+Le schéma complet (tables + données initiales + RLS) est versionné dans `supabase/schema.sql`, à appliquer tel quel sur une base **neuve** :
 
 ```bash
 psql postgresql://postgres:postgres@127.0.0.1:54322/postgres -f supabase/schema.sql
 ```
+
+Sur une base **déjà en service** (la production), ne pas rejouer `schema.sql` : appliquer les fichiers de `supabase/migrations/`, dans l'ordre de leur horodatage (éditeur SQL Supabase, un fichier = un bloc). Chaque migration est idempotente, transactionnelle et s'auto-vérifie. `schema.sql` et les migrations doivent rester alignés : tout ajout de schéma passe par les deux.
+
+`supabase/seed-cybersecurity-domain.sql` (hors `migrations/`) ajoute le 4e domaine « Cybersécurité et Conformité ». La ligne s'affiche dès son insertion sur l'Accueil et Services : complétez d'abord ses métriques réelles en tête de fichier. Le script refuse de s'exécuter sans au moins 3 métriques complètes, car sans elles le rendu est dégradé.
+
+`supabase/content-corrections-2026-09-24.sql` (hors `migrations/`, optionnel) corrige en production les contenus déjà en base qui portent encore le texte d'origine des seeds ; il ne touche jamais une ligne retouchée dans l'admin.
 
 ### 4. Créer le premier compte propriétaire
 
@@ -306,6 +312,21 @@ Chaque page dispose aussi d'un éditeur de visibilité des sections via `/admin/
 - Les composants chargent d'abord le contenu Supabase ; en l'absence de données, la plupart affichent un contenu statique (fallback). Les sections de la page **Insights** font autorité sur le CMS : vide en base ⇒ section masquée (le statique ne sert plus que de secours en cas d'erreur réseau)
 - Upload de médias via Supabase Storage : bucket `cms-media` (images / PDF gérés depuis l'admin — photos équipe, images, livres blancs, rapports) et bucket `Cv_lettredemotivation_joinus` (CV & lettres déposés via le formulaire public « Rejoindre », PDF ≤ 10 Mo)
 
+### Images téléversées depuis l'admin
+
+Toute image envoyée via l'admin (photo d'équipe, illustration de projet, etc.) passe par `src/lib/imageCompression.js` **dans le navigateur, avant l'upload** vers le bucket `cms-media` — c'est ce qui a évité de reproduire le problème des photos d'équipe de plusieurs milliers de pixels de large affichées dans des vignettes de 80px.
+
+Règle appliquée (`compressImageForUpload()`) :
+
+1. **Fichier > 20 Mo** → rejeté avant même d'être décodé, avec un message d'erreur explicite (`UploadTooLargeError`) affiché dans l'admin.
+2. **Image déjà légère** (< 300 Ko **et** < 1600px de large) → envoyée telle quelle, aucun retraitement.
+3. **Sinon** → redimensionnée à 1600px de large maximum (jamais agrandie), puis réencodée en **WebP** (qualité 0.88 — pas de compression agressive) avec repli automatique en **JPEG** si le navigateur ne sait pas encoder de WebP (`canvas.toBlob` retombe sur un autre type dans ce cas).
+4. Si la compression ne réduit pas le poids du fichier (rare), l'original est conservé plutôt qu'un remplaçant plus lourd.
+
+Les champs d'upload de l'admin (`ImageUpload`, `ImageField` dans `src/pages/Admin/components/FormField.jsx`) affichent le poids avant → après (et les dimensions finales) une fois l'upload terminé, pour que l'équipe voie le gain directement.
+
+Cette compression est indépendante du pipeline de variantes WebP/srcset du site public (`scripts/generate-image-variants.mjs`, qui ne traite que les images statiques de `public/`) : les deux se complètent, l'un empêchant les fichiers surdimensionnés d'entrer dans le CMS, l'autre servant des tailles adaptées à chaque affichage pour les images déjà présentes dans le dépôt.
+
 ### Variables d'environnement
 
 | Variable | Dev (`.env.local`) | Prod (Vercel) |
@@ -314,6 +335,16 @@ Chaque page dispose aussi d'un éditeur de visibilité des sections via `/admin/
 | `VITE_SUPABASE_ANON_KEY` | Clé locale (`sb_publishable_…`) | Clé publique cloud |
 
 > **Obligatoires dans les deux environnements** : `src/lib/supabase.js` n'a plus de valeurs de repli, l'application lève une erreur explicite (et le build échoue) si elles manquent.
+
+Notifications email des demandes commerciales (demande de projet, modales Partenariat et Services), **facultatives** :
+
+| Variable | Rôle |
+|---|---|
+| `VITE_EMAILJS_SERVICE_ID` | Service EmailJS |
+| `VITE_EMAILJS_INQUIRY_TEMPLATE_ID` | Template de notification |
+| `VITE_EMAILJS_PUBLIC_KEY` | Clé publique EmailJS |
+
+Sans ces variables, les identifiants déjà utilisés par la demande de projet s'appliquent. Supabase reste le canal principal (`src/lib/inquiries.js`) : chaque demande est enregistrée dans `contact_messages` et visible dans `/admin/messages`, que l'email parte ou non. Des identifiants absents ou factices désactivent simplement la notification, sans erreur pour le visiteur.
 
 ---
 

@@ -53,6 +53,7 @@ const ProjectModal = ({ project, isOpen, onClose }) => (
                   src={project?.image}
                   alt={project?.title}
                   className="w-full h-full object-cover"
+                  sizes="(min-width: 1024px) 896px, 100vw"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
               </div>
@@ -73,6 +74,11 @@ const ProjectModal = ({ project, isOpen, onClose }) => (
                     <span className="text-primary font-medium text-sm">{project?.service}</span>
                     <span className="text-muted-foreground text-sm">·</span>
                     <span className="text-muted-foreground text-sm">{project?.industry}</span>
+                    {project?.status && (
+                      <span className="bg-secondary/10 text-secondary text-xs font-medium px-2 py-0.5 rounded-full">
+                        {project.status}
+                      </span>
+                    )}
                   </div>
                   <h2 className="text-2xl font-heading font-bold text-secondary">
                     {project?.title}
@@ -113,6 +119,28 @@ const ProjectModal = ({ project, isOpen, onClose }) => (
                 )}
               </div>
 
+              {/* Captures d'écran */}
+              {project?.gallery?.length > 0 && (
+                <div>
+                  <h3 className="text-xl font-heading font-bold text-secondary mb-3 flex items-center gap-2">
+                    <Icon name="Image" size={20} className="text-accent" />
+                    Aperçu
+                  </h3>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    {project.gallery.map((src, i) => (
+                      <div key={i} className="rounded-xl overflow-hidden border border-border">
+                        <Image
+                          src={src}
+                          alt={`${project?.title} — capture d'écran ${i + 1}`}
+                          className="w-full h-48 object-cover"
+                          sizes="(min-width: 640px) 424px, 100vw"
+                        />
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
               {/* Implementation */}
               {project?.implementation?.length > 0 && (
                 <div>
@@ -123,7 +151,7 @@ const ProjectModal = ({ project, isOpen, onClose }) => (
                   <div className="space-y-3">
                     {project.implementation.map((step, i) => (
                       <div key={i} className="flex items-start gap-3">
-                        <div className="flex-shrink-0 w-6 h-6 bg-primary rounded-full flex items-center justify-center text-white text-xs font-bold">
+                        <div className="flex-shrink-0 w-6 h-6 bg-primary rounded-full flex items-center justify-center text-primary-foreground text-xs font-bold">
                           {i + 1}
                         </div>
                         <p className="text-muted-foreground text-sm leading-relaxed">{step}</p>
@@ -205,6 +233,16 @@ const ProjectModal = ({ project, isOpen, onClose }) => (
                 Intéressé par un projet similaire ? Discutons de vos besoins.
               </p>
               <div className="flex flex-wrap gap-3">
+                {project?.isFlagship && project?.productSlug && (
+                  <Link
+                    to={`/produits/${project.productSlug}`}
+                    onClick={onClose}
+                    className="inline-flex items-center gap-2 border border-secondary text-secondary hover:bg-secondary hover:text-white font-semibold px-5 py-2.5 rounded-xl transition-all duration-200 text-sm whitespace-nowrap"
+                  >
+                    <Icon name="Rocket" size={16} />
+                    Voir la fiche produit
+                  </Link>
+                )}
                 {project?.projectUrl && (() => {
                   const meta = PROJECT_LINK_META[project.service] || { label: "Voir le projet", icon: "ExternalLink" };
                   return (
@@ -212,7 +250,7 @@ const ProjectModal = ({ project, isOpen, onClose }) => (
                       href={project.projectUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center gap-2 border border-primary text-primary hover:bg-primary hover:text-white font-semibold px-5 py-2.5 rounded-xl transition-all duration-200 text-sm whitespace-nowrap"
+                      className="inline-flex items-center gap-2 border border-primary text-primary hover:bg-primary hover:text-primary-foreground font-semibold px-5 py-2.5 rounded-xl transition-all duration-200 text-sm whitespace-nowrap"
                     >
                       <Icon name={meta.icon} size={16} />
                       {meta.label}
@@ -223,7 +261,7 @@ const ProjectModal = ({ project, isOpen, onClose }) => (
                 <Link
                   to="/contact"
                   onClick={onClose}
-                  className="inline-flex items-center gap-2 bg-primary hover:bg-primary/90 text-white font-semibold px-5 py-2.5 rounded-xl transition-all duration-200 glow-orange text-sm whitespace-nowrap"
+                  className="inline-flex items-center gap-2 bg-primary hover:bg-primary/90 text-primary-foreground font-semibold px-5 py-2.5 rounded-xl transition-all duration-200 glow-orange text-sm whitespace-nowrap"
                 >
                   <Icon name="MessageCircle" size={16} />
                   Commencer une Discussion

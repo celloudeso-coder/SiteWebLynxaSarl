@@ -2,41 +2,13 @@ import React, { useState } from "react";
 import Icon from "../../../components/AppIcon";
 import Input from "../../../components/ui/Input";
 import Button from "../../../components/ui/Button";
-import { Checkbox } from "../../../components/ui/Checkbox";
 import { subscribeNewsletter } from "../../../lib/cms";
 
 const NewsletterSection = () => {
   const [email, setEmail] = useState("");
-  const [name, setName] = useState("");
-  const [interests, setInterests] = useState([]);
   const [isSubscribed, setIsSubscribed] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [subError, setSubError] = useState(false);
-
-  const interestOptions = [
-    { id: "cybersecurity", label: "Cybersécurité", icon: "Shield" },
-    { id: "mobile", label: "Innovation Mobile", icon: "Smartphone" },
-    { id: "network", label: "Solutions Réseau", icon: "Network" },
-    { id: "ecosystem", label: "Écosystème Tech Africain", icon: "Globe" },
-    {
-      id: "investment",
-      label: "Investissement & Financement",
-      icon: "TrendingUp",
-    },
-    {
-      id: "policy",
-      label: "Politique & Réglementation Tech",
-      icon: "FileText",
-    },
-  ];
-
-  const handleInterestToggle = (interestId) => {
-    setInterests((prev) =>
-      prev?.includes(interestId)
-        ? prev?.filter((id) => id !== interestId)
-        : [...prev, interestId]
-    );
-  };
 
   const handleSubmit = async (e) => {
     e?.preventDefault();
@@ -52,8 +24,6 @@ const NewsletterSection = () => {
       await subscribeNewsletter(email.trim());
       setIsSubscribed(true);
       setEmail("");
-      setName("");
-      setInterests([]);
     } catch (error) {
       console.error("Newsletter subscription failed:", error);
       setSubError(true);
@@ -116,61 +86,19 @@ const NewsletterSection = () => {
 
           {/* Newsletter Form */}
           <form onSubmit={handleSubmit} className="space-y-6">
-            {/* Email and Name Inputs */}
-            <div className="grid md:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-white font-medium mb-2">
-                  Email *
-                </label>
-                <Input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e?.target?.value)}
-                  placeholder="your.email@example.com"
-                  required
-                  className="bg-white/20 border-white/30 text-white placeholder-white/60 focus:border-white focus:bg-white/30"
-                />
-              </div>
-
-              <div>
-                <label className="block text-white font-medium mb-2">
-                  Votre Nom (Optional)
-                </label>
-                <Input
-                  type="text"
-                  value={name}
-                  onChange={(e) => setName(e?.target?.value)}
-                  placeholder="John Doe"
-                  className="bg-white/20 border-white/30 text-white placeholder-white/60 focus:border-white focus:bg-white/30"
-                />
-              </div>
-            </div>
-
-            {/* Interest Selection */}
+            {/* Email */}
             <div>
-              <label className="block text-white font-medium mb-4">
-                Quels sujets vous intéressent le plus ? (Sélectionnez tout ce
-                qui s’applique)
+              <label className="block text-white font-medium mb-2">
+                Email *
               </label>
-
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                {interestOptions?.map((option) => (
-                  <label
-                    key={option?.id}
-                    className="flex items-center space-x-3 bg-white/10 rounded-lg p-3 cursor-pointer hover:bg-white/20 transition-all duration-200"
-                  >
-                    <Checkbox
-                      checked={interests?.includes(option?.id)}
-                      onChange={() => handleInterestToggle(option?.id)}
-                      className="text-white"
-                    />
-                    <Icon name={option?.icon} size={20} color="white" />
-                    <span className="text-white text-sm font-medium">
-                      {option?.label}
-                    </span>
-                  </label>
-                ))}
-              </div>
+              <Input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e?.target?.value)}
+                placeholder="your.email@example.com"
+                required
+                className="bg-white/20 border-white/30 text-white placeholder-white/60 focus:border-white focus:bg-white/30"
+              />
             </div>
 
             {/* Newsletter Benefits */}

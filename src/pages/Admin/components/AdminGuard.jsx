@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { Navigate } from "react-router-dom";
+import { Navigate, useLocation } from "react-router-dom";
 import { supabase } from "../../../lib/supabase";
 import { getCurrentAdminProfile } from "../../../lib/adminUsers";
 import { AdminAuthProvider } from "./AdminAuthContext";
 import { ShieldX } from "lucide-react";
 
 export default function AdminGuard({ children }) {
+  const location = useLocation();
   const [session, setSession] = useState(undefined);
   const [profile, setProfile] = useState(undefined);
   const [accessError, setAccessError] = useState("");
@@ -62,7 +63,9 @@ export default function AdminGuard({ children }) {
     );
   }
 
-  if (!session) return <Navigate to="/admin/login" replace />;
+  // Mémorise la page demandée (ex. lien vers une candidature reçu par email)
+  // pour y revenir après la connexion.
+  if (!session) return <Navigate to="/admin/login" replace state={{ from: `${location.pathname}${location.search}` }} />;
 
   if (!profile?.active) {
     return (

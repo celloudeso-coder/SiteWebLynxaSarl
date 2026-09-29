@@ -1,0 +1,130 @@
+{
+  "/Cellou.png": {
+    "path": "/Cellou.png",
+    "width": 2150,
+    "height": 2560,
+    "variants": [
+      {
+        "w": 80,
+        "webp": "/generated-images/Cellou-80w.webp",
+        "fallback": "/generated-images/Cellou-80w.png"
+      },
+      {
+        "w": 160,
+        "webp": "/generated-images/Cellou-160w.webp",
+        "fallback": "/generated-images/Cellou-160w.png"
+      },
+      {
+        "w": 400,
+        "webp": "/generated-images/Cellou-400w.webp",
+        "fallback": "/generated-images/Cellou-400w.png"
+      },
+      {
+        "w": 800,
+        "webp": "/generated-images/Cellou-800w.webp",
+        "fallback": "/generated-images/Cellou-800w.png"
+      },
+      {
+        "w": 1600,
+        "webp": "/generated-images/Cellou-1600w.webp",
+        "fallback": "/generated-images/Cellou-1600w.png"
+      }
+    ]
+  },
+  "/aboutpole.png": {
+    "path": "/aboutpole.png",
+    "width": 2816,
+    "height": 1536,
+    "variants": [
+      {
+        "w": 80,
+        "webp": "/generated-images/aboutpole-80w.webp",
+        "fallback": "/generated-images/aboutpole-80w.png"
+      },
+      {
+        "w": 160,
+        "webp": "/generated-images/aboutpole-160w.webp",
+        "fallback": "/generated-images/aboutpole-160w.png"
+      },
+      {
+        "w": 400,
+        "webp": "/generated-images/aboutpole-400w.webp",
+        "fallback": "/generated-images/aboutpole-400w.png"
+      },
+      {
+        "w": 800,
+        "webp": "/generated-images/aboutpole-800w.webp",
+        "fallback": "/generated-images/aboutpole-800w.png"
+      },
+      {
+        "w": 1600,
+        "webp": "/generated-images/aboutpole-1600w.webp",
+        "fallback": "/generated-images/aboutpole-1600w.png"
+      }
+    ]
+  },
+  "/portefeuilcli.png": {
+    "path": "/portefeuilcli.png",
+    "width": 1024,
+    "height": 689,
+    "variants": [
+      {
+        "w": 80,
+        "webp": "/generated-images/portefeuilcli-80w.webp",
+        "fallback": "/generated-images/portefeuilcli-80w.png"
+      },
+      {
+        "w": 160,
+        "webp": "/generated-images/portefeuilcli-160w.webp",
+        "fallback": "/generated-images/portefeuilcli-160w.png"
+      },
+      {
+        "w": 400,
+        "webp": "/generated-images/portefeuilcli-400w.webp",
+        "fallback": "/generated-images/portefeuilcli-400w.png"
+      },
+      {
+        "w": 800,
+        "webp": "/generated-images/portefeuilcli-800w.webp",
+        "fallback": "/generated-images/portefeuilcli-800w.png"
+      },
+      {
+        "w": 1024,
+        "webp": "/generated-images/portefeuilcli-1024w.webp",
+        "fallback": "/generated-images/portefeuilcli-1024w.png"
+      }
+    ]
+  },
+  "/remotecolab.png": {
+    "path": "/remotecolab.png",
+    "width": 1024,
+    "height": 647,
+    "variants": [
+      {
+        "w": 80,
+        "webp": "/generated-images/remotecolab-80w.webp",
+        "fallback": "/generated-images/remotecolab-80w.png"
+      },
+      {
+        "w": 160,
+        "webp": "/generated-images/remotecolab-160w.webp",
+        "fallback": "/generated-images/remotecolab-160w.png"
+      },
+      {
+        "w": 400,
+        "webp": "/generated-images/remotecolab-400w.webp",
+        "fallback": "/generated-images/remotecolab-400w.png"
+      },
+      {
+        "w": 800,
+        "webp": "/generated-images/remotecolab-800w.webp",
+        "fallback": "/generated-images/remotecolab-800w.png"
+      },
+      {
+        "w": 1024,
+        "webp": "/generated-images/remotecolab-1024w.webp",
+        "fallback": "/generated-images/remotecolab-1024w.png"
+      }
+    ]
+  }
+}

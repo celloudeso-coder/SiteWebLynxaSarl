@@ -115,7 +115,7 @@ const InnovationLab = () => {
             </p>
             <Link
               to="/contact"
-              className="inline-flex items-center gap-2 bg-primary hover:bg-primary/90 text-white font-semibold px-6 py-3 rounded-xl transition-all duration-200 glow-orange"
+              className="inline-flex items-center gap-2 bg-primary hover:bg-primary/90 text-primary-foreground font-semibold px-6 py-3 rounded-xl transition-all duration-200 glow-orange"
             >
               <Icon name="MessageCircle" size={18} />
               Discuter de Votre Idée

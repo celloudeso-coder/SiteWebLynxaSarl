@@ -6,7 +6,7 @@ import {
   ArrowRight, Handshake, UserPlus, Mail,
   Home, Info, Layers, Phone, LayoutGrid, Lock, CheckCircle2, Inbox,
   Newspaper, CalendarClock,
-  ShieldCheck,
+  ShieldCheck, AlertTriangle,
 } from "lucide-react";
 import { useAdminAuth } from "./components/AdminAuthContext";
 
@@ -22,6 +22,7 @@ const CONTENT_SECTIONS = [
   { to: "/admin/partnership", label: "Partenariat", desc: "Formulaires partenariat", icon: Handshake, color: "bg-rose-50 text-rose-600", resource: "partnership" },
   { to: "/admin/join-us", label: "Rejoindre", desc: "Candidatures et recrutement", icon: UserPlus, color: "bg-cyan-50 text-cyan-600", resource: "recruitment" },
   { to: "/admin/messages", label: "Messages", desc: "Soumissions du formulaire contact", icon: Inbox, color: "bg-sky-50 text-sky-600", resource: "messages" },
+  { to: "/admin/unrecorded-submissions", label: "Soumissions à vérifier", desc: "Formulaires non enregistrés automatiquement", icon: AlertTriangle, color: "bg-amber-50 text-amber-600", resource: "messages" },
   { to: "/admin/newsletter", label: "Newsletter", desc: "Abonnements et campagnes", icon: Mail, color: "bg-lime-50 text-lime-600", resource: "newsletter" },
   { to: "/admin/subscriptions", label: "Tracker", desc: "Échéances et abonnements clients", icon: CalendarClock, color: "bg-violet-50 text-violet-600", resource: "subscriptions" },
   { to: "/admin/settings", label: "Paramètres", desc: "Contact, réseaux sociaux, infos", icon: Settings, color: "bg-gray-100 text-gray-600", resource: "settings" },

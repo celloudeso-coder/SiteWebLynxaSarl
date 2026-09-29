@@ -107,12 +107,12 @@ const ProcessOverview = () => {
                     <div className="flex items-start justify-between mb-4">
                       <motion.div
                         className={`w-12 h-12 rounded-xl flex items-center justify-center ${
-                          step.color === "primary" ? "bg-primary" : "bg-accent"
+                          step.color === "primary" ? "bg-primary text-primary-foreground" : "bg-accent text-accent-foreground"
                         } glow-orange`}
                         whileHover={{ scale: 1.1, rotate: 5 }}
                         transition={{ type: "spring", stiffness: 300 }}
                       >
-                        <Icon name={step.icon} size={22} color="white" />
+                        <Icon name={step.icon} size={22} />
                       </motion.div>
                       <span className="text-xs text-muted-foreground bg-white border border-border px-2.5 py-1 rounded-full">
                         {step.duration}
@@ -176,9 +176,9 @@ const ProcessOverview = () => {
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <Link
             to="/contact"
-            className="inline-flex items-center gap-2 bg-primary hover:bg-primary/90 text-white px-8 py-3 rounded-xl font-semibold transition-all glow-orange"
+            className="inline-flex items-center gap-2 bg-primary hover:bg-primary/90 text-primary-foreground px-8 py-3 rounded-xl font-semibold transition-all glow-orange"
           >
-            <Icon name="MessageCircle" size={18} color="white" />
+            <Icon name="MessageCircle" size={18} color="var(--color-primary-foreground)" />
             Planifier une consultation
           </Link>
           <Link

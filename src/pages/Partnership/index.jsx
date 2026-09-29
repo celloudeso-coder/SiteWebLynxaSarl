@@ -1,12 +1,11 @@
 import React, { useEffect } from "react";
-import { Helmet } from "react-helmet";
 import Header from "../../components/ui/Header";
+import Seo from "../../components/Seo";
 import HeroSection from "./components/HeroSection";
 import CollaborationPathways from "./components/CollaborationPathways";
 import ProjectRequestForm from "./components/ProjectRequestForm";
 import ProcessOverview from "./components/ProcessOverview";
 import TrustSignals from "./components/TrustSignals";
-import logoIco from "../../../public/LYNXA.ico";
 import { useSiteSettings } from "../../hooks/useContent";
 
 const PartnershipCollaborationGateway = () => {
@@ -18,21 +17,14 @@ const PartnershipCollaborationGateway = () => {
 
   return (
     <>
-      <Helmet>
-        <title>Partenariat & Collaboration | Lynxa Tech Guinée</title>
-        <meta
-          name="description"
-          content="Collaborez avec Lynxa Tech Guinée. Startups, entreprises, organisations internationales — des cadres de partenariat sur mesure pour transformer votre vision en réalité."
-        />
-        <meta
-          name="keywords"
-          content="partenariat technologique guinée, collaboration startup, solutions entreprises guinée, lynxa tech partenaire"
-        />
-        <meta property="og:title" content="Partenariat | Lynxa Tech Guinée" />
-        <meta property="og:description" content="Des voies de collaboration adaptées à chaque organisation. Démarrez votre projet avec Lynxa Tech." />
-        <meta property="og:type" content="website" />
-        <link rel="canonical" href="/partnership" />
-      </Helmet>
+      <Seo
+        title="Partenariat & Collaboration | Lynxa Tech Guinée"
+        description="Collaborez avec Lynxa Tech Guinée. Startups, entreprises, organisations internationales — des cadres de partenariat sur mesure pour transformer votre vision en réalité."
+        keywords="partenariat technologique guinée, collaboration startup, solutions entreprises guinée, lynxa tech partenaire"
+        path="/partnership"
+        ogTitle="Partenariat | Lynxa Tech Guinée"
+        ogDescription="Des voies de collaboration adaptées à chaque organisation. Démarrez votre projet avec Lynxa Tech."
+      />
 
       <div className="min-h-screen bg-background">
         <Header />
@@ -50,7 +42,7 @@ const PartnershipCollaborationGateway = () => {
               <div>
                 <div className="flex items-center space-x-3 mb-4">
                   <div className="w-10 h-10 bg-black rounded-lg flex items-center justify-center">
-                    <img src={logoIco} alt="Lynxa Tech logo" className="w-8 h-8 object-cover rounded-lg" />
+                    <img src="/icon-192.png" alt="Lynxa Tech logo" className="w-8 h-8 object-cover rounded-lg" />
                   </div>
                   <div>
                     <h3 className="font-heading font-bold text-lg">Lynxa Tech</h3>

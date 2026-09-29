@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import Icon from "../../../components/AppIcon";
 import PathwayInquiryModal from "./PathwayInquiryModal";
 import { usePartnershipPathways } from "../../../hooks/useContent";
+import { formatPathwayBudget } from "../../../data/pricing";
 
 const STATIC_PATHWAYS = [
   {
@@ -11,15 +12,18 @@ const STATIC_PATHWAYS = [
     icon: "Rocket",
     features: ["Développement MVP", "Plans de paiement flexibles", "Solutions axées sur la croissance", "Support de mentorat"],
     ideal_for: "Startups, Petites Entreprises, Entrepreneurs",
-    timeline: "2-8 semaines", budget: "700 $ – 3 000 $", color: "primary",
+    timeline: "2-8 semaines", budgetMinGnf: 6_500_000, budgetMaxGnf: 27_000_000, color: "primary",
   },
   {
     id: 2, sort_order: 2, title: "Solutions Entreprises",
     description: "Partenariats technologiques complets pour les grandes organisations avec des besoins complexes.",
     icon: "Building2",
-    features: ["Systèmes entreprises personnalisés", "Support prioritaire 24/7", "Chef de projet dédié", "Garanties SLA"],
+    // "Garanties SLA" → "SLA défini au contrat" : palier "sur mesure", le
+    // niveau de service se négocie au contrat plutôt que d'être affiché
+    // comme d'ores et déjà acquis.
+    features: ["Systèmes entreprises personnalisés", "Support prioritaire 24/7", "Chef de projet dédié", "SLA défini au contrat"],
     ideal_for: "Grandes Entreprises, Gouvernement, ONG",
-    timeline: "3-12 mois", budget: "3 500 $ – 10 000 $", color: "accent",
+    timeline: "3-12 mois", budgetMinGnf: 31_500_000, budgetMaxGnf: 90_000_000, color: "accent",
   },
   {
     id: 3, sort_order: 3, title: "Collaboration Internationale",
@@ -27,7 +31,7 @@ const STATIC_PATHWAYS = [
     icon: "Globe",
     features: ["Adaptation culturelle", "Support multilingue", "Expertise marché local", "Assistance conformité"],
     ideal_for: "Entreprises Internationales, ONG Mondiales",
-    timeline: "4-16 semaines", budget: "15 000 $ et +", color: "primary",
+    timeline: "4-16 semaines", budgetMinGnf: 135_000_000, budgetMaxGnf: null, color: "primary",
   },
   {
     id: 4, sort_order: 4, title: "Réseau Technologique",
@@ -79,7 +83,9 @@ const CollaborationPathways = () => {
         </motion.div>
 
         <div className="grid lg:grid-cols-2 gap-8">
-          {pathways.map((pathway, i) => (
+          {pathways.map((pathway, i) => {
+            const budget = formatPathwayBudget(pathway);
+            return (
             <motion.div
               key={pathway.id}
               custom={i}
@@ -93,12 +99,12 @@ const CollaborationPathways = () => {
               <div className="flex items-start justify-between mb-6">
                 <motion.div
                   className={`w-14 h-14 rounded-xl flex items-center justify-center ${
-                    pathway.color === "primary" ? "bg-primary" : "bg-accent"
+                    pathway.color === "primary" ? "bg-primary text-primary-foreground" : "bg-accent text-accent-foreground"
                   } glow-orange`}
                   whileHover={{ scale: 1.1, rotate: 5 }}
                   transition={{ type: "spring", stiffness: 300 }}
                 >
-                  <Icon name={pathway.icon} size={26} color="white" />
+                  <Icon name={pathway.icon} size={26} />
                 </motion.div>
                 <div className="text-right">
                   <p className="text-xs text-muted-foreground mb-1">Durée estimée</p>
@@ -133,7 +139,8 @@ const CollaborationPathways = () => {
                   </div>
                   <div>
                     <p className="text-xs text-muted-foreground mb-1">Budget</p>
-                    <p className="text-xs font-medium text-secondary">{pathway.budget}</p>
+                    <p className="text-xs font-medium text-secondary">{budget?.primary}</p>
+                    {budget?.secondary && <p className="text-[10px] text-muted-foreground">{budget.secondary}</p>}
                   </div>
                 </div>
               </div>
@@ -142,13 +149,14 @@ const CollaborationPathways = () => {
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 onClick={() => setSelectedPathway(pathway)}
-                className="w-full flex items-center justify-center gap-2 border border-border text-secondary hover:bg-primary hover:text-white hover:border-primary text-sm font-medium py-2.5 px-4 rounded-xl transition-all duration-300"
+                className="w-full flex items-center justify-center gap-2 border border-border text-secondary hover:bg-primary hover:text-primary-foreground hover:border-primary text-sm font-medium py-2.5 px-4 rounded-xl transition-all duration-300"
               >
                 Explorer cette voie
                 <Icon name="ArrowRight" size={15} />
               </motion.button>
             </motion.div>
-          ))}
+            );
+          })}
         </div>
 
         <motion.div
@@ -165,9 +173,9 @@ const CollaborationPathways = () => {
             href="/contact"
             whileHover={{ scale: 1.03 }}
             whileTap={{ scale: 0.97 }}
-            className="inline-flex items-center gap-2 bg-primary hover:bg-primary/90 text-white px-7 py-3 rounded-xl font-semibold transition-all glow-orange"
+            className="inline-flex items-center gap-2 bg-primary hover:bg-primary/90 text-primary-foreground px-7 py-3 min-h-11 rounded-xl font-semibold transition-all glow-orange"
           >
-            <Icon name="MessageCircle" size={18} color="white" />
+            <Icon name="MessageCircle" size={18} color="var(--color-primary-foreground)" />
             Consultation personnalisée gratuite
           </motion.a>
         </motion.div>

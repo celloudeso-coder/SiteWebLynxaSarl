@@ -1,8 +1,9 @@
 import React, { useState } from "react";
-import Icon from "../../../components/AppIcon";
 import Input from "../../../components/ui/Input";
 import Button from "../../../components/ui/Button";
-import emailjs from "@emailjs/browser"; // 📧 à installer : npm install @emailjs/browser
+import { submitInquiry } from "../../../lib/inquiries";
+import { formatDualPrice } from "../../../data/pricing";
+import { useSiteSettings } from "../../../hooks/useContent";
 
 const PlanInquiryModal = ({ plan, onClose }) => {
   const [formData, setFormData] = useState({
@@ -12,35 +13,43 @@ const PlanInquiryModal = ({ plan, onClose }) => {
     message: "",
   });
   const [status, setStatus] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+  const { data: settings } = useSiteSettings();
+  const fallbackPhone = settings?.contact?.phone || "+224 621 724 657";
+  const fallbackEmail = settings?.contact?.email || "contact@lynxatech.com";
+  const fallbackWhatsapp = `https://wa.me/${fallbackPhone.replace(/\s/g, "").replace("+", "")}?text=${encodeURIComponent(`Bonjour, je suis intéressé par le plan : ${plan?.name || "vos services"}.`)}`;
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-
-    const serviceId = "service_xxxxxx";
-    const templateId = "template_xxxxxx";
-    const publicKey = "your_public_key";
-
-    const templateParams = {
-      to_email: "lynxa@gmail.com",
-      from_name: formData.name,
-      from_email: formData.email,
+    if (submitting) return;
+    setSubmitting(true);
+    const dual = plan?.priceGnf != null ? formatDualPrice(plan.priceGnf) : null;
+    const priceLabel = dual ? `${dual.primary} (${dual.secondary})` : (plan?.priceFallbackText || "Sur devis");
+    const { received } = await submitInquiry({
+      source: "services_plan_inquiry",
+      sourceLabel: `Plan tarifaire : ${plan?.name || "—"}`,
+      inquiryType: "plan",
+      name: formData.name,
+      email: formData.email,
       phone: formData.phone,
-      message: formData.message,
-      plan_name: plan?.name,
-      plan_price: plan?.price,
-    };
-
-    emailjs
-      .send(serviceId, templateId, templateParams, publicKey)
-      .then(() => {
-        setStatus("success");
-        setFormData({ name: "", email: "", phone: "", message: "" });
-      })
-      .catch(() => setStatus("error"));
+      budget: priceLabel,
+      message: formData.message.trim() || `Demande d'information sur le plan « ${plan?.name} » (sans message).`,
+      details: {
+        planName: plan?.name,
+        budgetLabel: priceLabel,
+      },
+    });
+    setSubmitting(false);
+    if (received) {
+      setStatus("success");
+      setFormData({ name: "", email: "", phone: "", message: "" });
+    } else {
+      setStatus("error");
+    }
   };
 
   return (
@@ -109,22 +118,33 @@ const PlanInquiryModal = ({ plan, onClose }) => {
 
             <Button
               type="submit"
-              className="w-full bg-primary text-white py-3 rounded-lg hover:bg-accent transition"
+              disabled={submitting}
+              className="w-full bg-primary text-primary-foreground py-3 rounded-lg hover:bg-accent transition disabled:opacity-60"
             >
-              Envoyer la demande
+              {submitting ? "Envoi en cours…" : "Envoyer la demande"}
             </Button>
           </form>
         </div>
 
         {status === "success" && (
           <p className="text-green-600 text-center mt-4">
-            ✅ Message envoyé avec succès !
+            ✅ Demande reçue ! Nous vous recontactons sous 24 h.
           </p>
         )}
         {status === "error" && (
-          <p className="text-red-500 text-center mt-4">
-            ❌ Une erreur s’est produite. Réessayez.
-          </p>
+          <div className="text-center mt-4 text-sm">
+            <p className="text-red-500 mb-2">
+              Notre service est momentanément injoignable. Contactez-nous directement pour ne pas perdre votre demande :
+            </p>
+            <div className="flex flex-wrap justify-center gap-x-4 gap-y-1 font-medium">
+              <a href={fallbackWhatsapp} target="_blank" rel="noopener noreferrer" className="text-primary underline hover:no-underline">
+                WhatsApp ({fallbackPhone})
+              </a>
+              <a href={`mailto:${fallbackEmail}`} className="text-primary underline hover:no-underline">
+                {fallbackEmail}
+              </a>
+            </div>
+          </div>
         )}
       </div>
     </div>

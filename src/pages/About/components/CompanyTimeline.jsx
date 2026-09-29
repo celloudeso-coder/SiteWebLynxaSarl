@@ -5,6 +5,12 @@ import { Link } from "react-router-dom";
 import { useTimelineEvents } from "../../../hooks/useContent";
 
 const TIMELINE_COLORS = ["bg-primary", "bg-accent", "bg-success", "bg-warning"];
+const TIMELINE_TEXT_COLORS = {
+  "bg-primary": "text-primary-foreground",
+  "bg-accent": "text-accent-foreground",
+  "bg-success": "text-success-foreground",
+  "bg-warning": "text-warning-foreground",
+};
 const TIMELINE_ICONS = ["Rocket", "Smartphone", "Trophy", "Users", "Globe", "Lightbulb"];
 
 const STATIC_EVENTS = [
@@ -100,8 +106,8 @@ const CompanyTimeline = () => {
                       viewport={{ once: true }}
                       transition={{ duration: 0.4, type: "spring", delay: 0.1 }}
                     >
-                      <div className={`w-8 h-8 ${event.color} rounded-full flex items-center justify-center shadow-lg`}>
-                        <Icon name={event.icon} size={16} color="white" />
+                      <div className={`w-8 h-8 ${event.color} ${TIMELINE_TEXT_COLORS[event.color] || "text-white"} rounded-full flex items-center justify-center shadow-lg`}>
+                        <Icon name={event.icon} size={16} />
                       </div>
                     </motion.div>
 
@@ -157,7 +163,7 @@ const CompanyTimeline = () => {
               <Link to="/join-us">
                 <motion.span
                   whileHover={{ scale: 1.04 }}
-                  className="inline-flex items-center gap-2 bg-primary hover:bg-primary/90 text-white font-semibold px-5 py-2.5 rounded-xl transition-all duration-200 glow-orange cursor-pointer text-sm"
+                  className="inline-flex items-center gap-2 bg-primary hover:bg-primary/90 text-primary-foreground font-semibold px-5 py-2.5 rounded-xl transition-all duration-200 glow-orange cursor-pointer text-sm"
                 >
                   <Icon name="Briefcase" size={16} />
                   Rejoignez notre équipe

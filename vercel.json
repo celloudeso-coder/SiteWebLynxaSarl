@@ -4,6 +4,11 @@
   "installCommand": "npm install",
   "framework": "vite",
   "rewrites": [
+    { "source": "/about", "destination": "/about/index.html" },
+    { "source": "/service", "destination": "/service/index.html" },
+    { "source": "/portfolio", "destination": "/portfolio/index.html" },
+    { "source": "/partnership", "destination": "/partnership/index.html" },
+    { "source": "/contact", "destination": "/contact/index.html" },
     { "source": "/(.*)", "destination": "/index.html" }
   ]
 }

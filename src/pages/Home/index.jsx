@@ -1,14 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { Helmet } from "react-helmet";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import Header from "../../components/ui/Header";
+import Seo from "../../components/Seo";
 import HeroSection from "./components/HeroSection";
 import MetricsDashboard from "./components/MetricsDashboard";
 import ServiceGalaxies from "./components/ServiceGalaxies";
 import TestimonialCarousel from "./components/TestimonialCarousel";
 import Icon from "../../components/AppIcon";
-import logoIco from "../../../public/LYNXA.ico";
 import { getHomeEngagements, getHomeWhyItems } from "../../lib/cms";
 import { useSiteSettings } from "../../hooks/useContent";
 
@@ -38,21 +37,19 @@ const Homepage = () => {
 
   useEffect(() => {
     window.scrollTo(0, 0);
-    document.title = "Lynxa Tech Guinée - Innovation Sans Frontières";
     getHomeEngagements().then((d) => { if (d?.length) setCommitments(d); }).catch(() => {});
     getHomeWhyItems().then((d)    => { if (d?.length) setWhyItems(d);    }).catch(() => {});
   }, []);
 
   return (
     <>
-      <Helmet>
-        <title>Lynxa Tech Guinée - Innovation Sans Frontières | Hub Technologique Africain</title>
-        <meta name="description" content="Solutions technologiques leader de la Guinée au monde. Développement mobile, cybersécurité, infrastructure réseau et solutions web avec une qualité mondiale et une compréhension locale." />
-        <meta name="keywords" content="technologie Guinée, innovation technologique africaine, développement mobile, cybersécurité, solutions réseau, développement web, Lynxa Tech Guinée" />
-        <meta property="og:title" content="Lynxa Tech Guinée - Innovation Sans Frontières" />
-        <meta property="og:type" content="website" />
-        <link rel="canonical" href="/" />
-      </Helmet>
+      <Seo
+        title="Lynxa Tech Guinée - Innovation Sans Frontières | Hub Technologique Africain"
+        description="Solutions technologiques leader de la Guinée au monde. Développement mobile, cybersécurité, infrastructure réseau et solutions web avec une qualité mondiale et une compréhension locale."
+        keywords="technologie Guinée, innovation technologique africaine, développement mobile, cybersécurité, solutions réseau, développement web, Lynxa Tech Guinée"
+        path="/"
+        ogTitle="Lynxa Tech Guinée - Innovation Sans Frontières"
+      />
 
       <div className="min-h-screen bg-white">
         <Header />
@@ -190,9 +187,9 @@ const Homepage = () => {
                     <motion.span
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.97 }}
-                      className="inline-flex items-center gap-2 bg-primary hover:bg-primary/90 text-white px-8 py-4 rounded-xl font-semibold text-lg transition-colors duration-300 glow-orange cursor-pointer"
+                      className="inline-flex items-center gap-2 bg-primary hover:bg-primary/90 text-primary-foreground px-8 py-4 rounded-xl font-semibold text-lg transition-colors duration-300 glow-orange cursor-pointer"
                     >
-                      <Icon name="MessageCircle" size={20} color="white" />
+                      <Icon name="MessageCircle" size={20} color="var(--color-primary-foreground)" />
                       Lancer votre projet
                     </motion.span>
                   </Link>
@@ -219,7 +216,7 @@ const Homepage = () => {
               <div className="md:col-span-2">
                 <div className="flex items-center gap-3 mb-5">
                   <div className="w-10 h-10 bg-black rounded-lg flex items-center justify-center overflow-hidden">
-                    <img src={logoIco} alt="Lynxa Tech logo" className="w-8 h-8 object-cover rounded-lg" />
+                    <img src="/icon-192.png" alt="Lynxa Tech logo" className="w-8 h-8 object-cover rounded-lg" />
                   </div>
                   <div>
                     <h3 className="text-xl font-heading font-bold">Lynxa Tech</h3>
@@ -234,16 +231,16 @@ const Homepage = () => {
                   <span>Fièrement basé à {contact.address || "Conakry, Guinée"}</span>
                 </div>
                 <div className="flex gap-3">
-                  <a href={social.linkedin || "https://www.linkedin.com/company/lynxatech"} target="_blank" rel="noopener noreferrer" className="w-9 h-9 bg-white/10 rounded-full flex items-center justify-center hover:bg-primary transition-colors duration-200">
+                  <a href={social.linkedin || "https://www.linkedin.com/company/lynxatech"} target="_blank" rel="noopener noreferrer" aria-label="Lynxa Tech sur LinkedIn" className="relative before:absolute before:-inset-1 before:content-[''] w-9 h-9 bg-white/10 rounded-full flex items-center justify-center hover:bg-primary transition-colors duration-200">
                     <Icon name="Linkedin" size={16} />
                   </a>
-                  <a href={social.twitter || "#"} target="_blank" rel="noopener noreferrer" className="w-9 h-9 bg-white/10 rounded-full flex items-center justify-center hover:bg-primary transition-colors duration-200">
+                  <a href={social.twitter || "#"} target="_blank" rel="noopener noreferrer" aria-label="Lynxa Tech sur Twitter" className="relative before:absolute before:-inset-1 before:content-[''] w-9 h-9 bg-white/10 rounded-full flex items-center justify-center hover:bg-primary transition-colors duration-200">
                     <Icon name="Twitter" size={16} />
                   </a>
-                  <a href={social.facebook || "#"} target="_blank" rel="noopener noreferrer" className="w-9 h-9 bg-white/10 rounded-full flex items-center justify-center hover:bg-primary transition-colors duration-200">
+                  <a href={social.facebook || "#"} target="_blank" rel="noopener noreferrer" aria-label="Lynxa Tech sur Facebook" className="relative before:absolute before:-inset-1 before:content-[''] w-9 h-9 bg-white/10 rounded-full flex items-center justify-center hover:bg-primary transition-colors duration-200">
                     <Icon name="Facebook" size={16} />
                   </a>
-                  <a href={`mailto:${contact.email || "contact@lynxatech.com"}`} className="w-9 h-9 bg-white/10 rounded-full flex items-center justify-center hover:bg-primary transition-colors duration-200">
+                  <a href={`mailto:${contact.email || "contact@lynxatech.com"}`} aria-label="Envoyer un email à Lynxa Tech" className="relative before:absolute before:-inset-1 before:content-[''] w-9 h-9 bg-white/10 rounded-full flex items-center justify-center hover:bg-primary transition-colors duration-200">
                     <Icon name="Mail" size={16} />
                   </a>
                 </div>

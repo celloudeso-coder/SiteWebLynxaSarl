@@ -86,8 +86,8 @@ const TestimonialCarousel = () => {
           <div className="bg-white rounded-3xl shadow-large p-8 lg:p-12 border border-gray-100 overflow-hidden min-h-[420px] flex flex-col justify-between">
             {/* Quote icon */}
             <div className="flex justify-center mb-6">
-              <div className="w-14 h-14 bg-gradient-to-br from-primary to-accent rounded-full flex items-center justify-center glow-orange">
-                <Icon name="Quote" size={24} color="white" />
+              <div className="w-14 h-14 bg-gradient-to-br from-primary to-accent text-primary-foreground rounded-full flex items-center justify-center glow-orange">
+                <Icon name="Quote" size={24} />
               </div>
             </div>
 
@@ -140,6 +140,7 @@ const TestimonialCarousel = () => {
                     src={t.avatar}
                     alt={t.name}
                     className="w-14 h-14 rounded-full object-cover ring-2 ring-primary/30"
+                    sizes="56px"
                   />
                   <div className="text-center">
                     <h4 className="font-heading font-bold text-secondary">{t.name}</h4>

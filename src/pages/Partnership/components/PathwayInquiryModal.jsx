@@ -1,8 +1,9 @@
 import React, { useState } from "react";
-import emailjs from "@emailjs/browser";
-import Icon from "../../../components/AppIcon";
 import Button from "../../../components/ui/Button";
 import Input from "../../../components/ui/Input";
+import { submitInquiry } from "../../../lib/inquiries";
+import { useSiteSettings } from "../../../hooks/useContent";
+import { formatPathwayBudget } from "../../../data/pricing";
 
 const PathwayInquiryModal = ({ pathway, onClose }) => {
   const [formData, setFormData] = useState({
@@ -12,33 +13,44 @@ const PathwayInquiryModal = ({ pathway, onClose }) => {
     message: "",
   });
   const [status, setStatus] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+  const { data: settings } = useSiteSettings();
+  const budget = formatPathwayBudget(pathway);
+  const fallbackPhone = settings?.contact?.phone || "+224 621 724 657";
+  const fallbackEmail = settings?.contact?.email || "contact@lynxatech.com";
+  const fallbackWhatsapp = `https://wa.me/${fallbackPhone.replace(/\s/g, "").replace("+", "")}?text=${encodeURIComponent(`Bonjour, je suis intéressé par : ${pathway?.title || "une voie de collaboration"}.`)}`;
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-
-    const serviceId = "service_xxxxx";
-    const templateId = "template_xxxxx";
-    const publicKey = "public_xxxxx";
-
-    const templateParams = {
-      to_email: "lynxa@gmail.com",
-      pathway_title: pathway?.title,
-      pathway_budget: pathway?.budget,
-      pathway_timeline: pathway?.timeline,
-      from_name: formData.name,
-      from_email: formData.email,
+    if (submitting) return;
+    setSubmitting(true);
+    const budgetLabel = [budget?.primary, budget?.secondary && `(${budget.secondary})`].filter(Boolean).join(" ");
+    const { received } = await submitInquiry({
+      source: "partnership_pathway",
+      sourceLabel: `Voie de collaboration : ${pathway?.title || "—"}`,
+      inquiryType: "partnership",
+      name: formData.name,
+      email: formData.email,
       phone: formData.phone,
-      message: formData.message,
-    };
-
-    emailjs
-      .send(serviceId, templateId, templateParams, publicKey)
-      .then(() => setStatus("success"))
-      .catch(() => setStatus("error"));
+      budget: budgetLabel,
+      message: formData.message.trim() || `Intérêt pour la voie de collaboration « ${pathway?.title} » (sans message).`,
+      details: {
+        pathwayTitle: pathway?.title,
+        budgetLabel,
+        timeline: pathway?.timeline,
+      },
+    });
+    setSubmitting(false);
+    if (received) {
+      setStatus("success");
+      setFormData({ name: "", email: "", phone: "", message: "" });
+    } else {
+      setStatus("error");
+    }
   };
 
   return (
@@ -56,7 +68,8 @@ const PathwayInquiryModal = ({ pathway, onClose }) => {
             Intéressé par : {pathway?.title}
           </h3>
           <p className="text-gray-500">
-            Budget estimé : <strong>{pathway?.budget}</strong> • Durée :{" "}
+            Budget estimé : <strong>{budget?.primary}</strong>
+            {budget?.secondary && <span className="text-xs"> ({budget.secondary})</span>} • Durée :{" "}
             <strong>{pathway?.timeline}</strong>
           </p>
         </div>
@@ -104,22 +117,33 @@ const PathwayInquiryModal = ({ pathway, onClose }) => {
 
             <Button
               type="submit"
-              className="w-full bg-primary text-white py-3 rounded-lg hover:bg-accent transition"
+              disabled={submitting}
+              className="w-full bg-primary text-primary-foreground py-3 rounded-lg hover:bg-accent transition disabled:opacity-60"
             >
-              Envoyer ma demande
+              {submitting ? "Envoi en cours…" : "Envoyer ma demande"}
             </Button>
           </form>
         </div>
 
         {status === "success" && (
           <p className="text-green-600 text-center mt-4">
-            ✅ Message envoyé avec succès !
+            ✅ Demande reçue ! Nous vous recontactons sous 24 h.
           </p>
         )}
         {status === "error" && (
-          <p className="text-red-500 text-center mt-4">
-            ❌ Erreur lors de l’envoi. Réessayez.
-          </p>
+          <div className="text-center mt-4 text-sm">
+            <p className="text-red-500 mb-2">
+              Notre service est momentanément injoignable. Contactez-nous directement pour ne pas perdre votre demande :
+            </p>
+            <div className="flex flex-wrap justify-center gap-x-4 gap-y-1 font-medium">
+              <a href={fallbackWhatsapp} target="_blank" rel="noopener noreferrer" className="text-primary underline hover:no-underline">
+                WhatsApp ({fallbackPhone})
+              </a>
+              <a href={`mailto:${fallbackEmail}`} className="text-primary underline hover:no-underline">
+                {fallbackEmail}
+              </a>
+            </div>
+          </div>
         )}
       </div>
     </div>

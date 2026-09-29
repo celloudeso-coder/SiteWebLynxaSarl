@@ -37,7 +37,7 @@ const FounderStory = () => {
           viewport={{ once: true }}
           transition={{ duration: 0.5 }}
         >
-          <div className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-2 rounded-full text-sm font-medium mb-4">
+          <div className="inline-flex items-center gap-2 bg-primary/10 text-primary-strong px-4 py-2 rounded-full text-sm font-medium mb-4">
             <Icon name="User" size={16} />
             <span>Le fondateur</span>
           </div>
@@ -63,10 +63,11 @@ const FounderStory = () => {
                 src={founderData.image}
                 alt={founderData.name}
                 className="w-full h-full object-cover"
+                sizes="(min-width: 1024px) 384px, 100vw"
               />
             </div>
             <motion.div
-              className="absolute -bottom-4 -right-4 lg:right-auto lg:-right-4 bg-primary text-white px-4 py-3 rounded-xl shadow-lg"
+              className="absolute -bottom-4 -right-4 lg:right-auto lg:-right-4 bg-primary text-primary-foreground px-4 py-3 rounded-xl shadow-lg"
               initial={{ opacity: 0, scale: 0.8 }}
               whileInView={{ opacity: 1, scale: 1 }}
               viewport={{ once: true }}
@@ -89,7 +90,7 @@ const FounderStory = () => {
           >
             <div>
               <h3 className="text-2xl font-heading font-bold text-secondary mb-1">{founderData.name}</h3>
-              <p className="text-primary font-medium mb-5">{founderData.title}</p>
+              <p className="text-primary-strong font-medium mb-5">{founderData.title}</p>
               <blockquote className="text-base text-gray-700 italic border-l-4 border-primary pl-5 leading-relaxed">
                 {founderData.quote}
               </blockquote>
@@ -112,7 +113,7 @@ const FounderStory = () => {
 
             <div className="flex flex-wrap gap-2">
               {(founderData.tags || []).map((tag, i) => (
-                <span key={i} className="px-3 py-1.5 bg-primary/10 text-primary text-xs rounded-full font-medium">
+                <span key={i} className="px-3 py-1.5 bg-primary/10 text-primary-strong text-xs rounded-full font-medium">
                   {tag}
                 </span>
               ))}
@@ -123,7 +124,7 @@ const FounderStory = () => {
                 href={founderData.linkedinUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 bg-primary hover:bg-primary/90 text-white font-semibold px-5 py-2.5 rounded-xl transition-all duration-200 text-sm glow-orange"
+                className="inline-flex items-center gap-2 bg-primary hover:bg-primary/90 text-primary-foreground font-semibold px-5 py-2.5 rounded-xl transition-all duration-200 text-sm glow-orange"
               >
                 <Icon name="Linkedin" size={16} />
                 Profil LinkedIn

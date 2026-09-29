@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import Icon from "../../../components/AppIcon";
 import Image from "../../../components/AppImage";
 import { getAboutCoreValues } from "../../../lib/cms";
+import { formatDualPrice, MAINTENANCE_MONTHLY } from "../../../data/pricing";
 
 const STATIC_CORE_VALUES = [
   { icon: "Lightbulb", title: "Innovation", description: "Repousser constamment les limites et explorer de nouvelles possibilités" },
@@ -28,7 +29,10 @@ const HIGHLIGHT_VALUE = {
       title: "Collaboration Remote-First",
       description: "Livraison de projets fluide, peu importe la localisation",
       image: "/remotecolab.png",
-      metrics: "99,5 % de disponibilité",
+      // "99,5 % de disponibilité" retiré : aucune formule de maintenance
+      // (voir ADDITIONAL_SERVICES "Maintenance Continue" dans
+      // src/data/pricing.js) ne promet un SLA chiffré.
+      metrics: `Maintenance dès ${formatDualPrice(MAINTENANCE_MONTHLY.minGnf).primary} (${formatDualPrice(MAINTENANCE_MONTHLY.minGnf).secondary}) /mois`,
     },
   ],
   color: "bg-primary",
@@ -75,8 +79,8 @@ const CompanyValues = () => {
         >
           <div className="lg:w-1/2 mb-8 lg:mb-0">
             <div className="flex items-center gap-4 mb-4">
-              <div className={`w-12 h-12 ${HIGHLIGHT_VALUE.color} rounded-xl flex items-center justify-center`}>
-                <Icon name={HIGHLIGHT_VALUE.icon} size={24} color="white" />
+              <div className={`w-12 h-12 ${HIGHLIGHT_VALUE.color} text-primary-foreground rounded-xl flex items-center justify-center`}>
+                <Icon name={HIGHLIGHT_VALUE.icon} size={24} />
               </div>
               <h3 className="text-2xl font-heading font-bold text-secondary">{HIGHLIGHT_VALUE.title}</h3>
             </div>
@@ -104,7 +108,12 @@ const CompanyValues = () => {
                 transition={{ type: "spring", stiffness: 300 }}
               >
                 <div className="aspect-video">
-                  <Image src={example.image} alt={example.title} className="w-full h-full object-cover" />
+                  <Image
+                    src={example.image}
+                    alt={example.title}
+                    className="w-full h-full object-cover"
+                    sizes="(min-width: 1024px) 50vw, 100vw"
+                  />
                 </div>
                 <div className="absolute inset-0 bg-gradient-to-t from-secondary/80 to-transparent flex items-end">
                   <div className="p-4 text-white">

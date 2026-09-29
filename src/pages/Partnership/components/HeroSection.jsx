@@ -4,11 +4,14 @@ import { Link } from "react-router-dom";
 import Icon from "../../../components/AppIcon";
 import { useHeroSection } from "../../../hooks/useContent";
 
+// Alignées sur les mêmes chiffres que le tableau de bord d'impact de
+// l'accueil (src/pages/Home/components/MetricsDashboard.jsx) : pas de "taux
+// de réussite" à 98%, cette mesure n'est pas mesurable en l'état.
 const STATS = [
-  { icon: "Rocket",     label: "Projets lancés",     value: "1+"  },
-  { icon: "Globe",      label: "Présence africaine",  value: "Africa"  },
-  { icon: "Award",      label: "Taux de réussite",    value: "98%" },
-  { icon: "Clock",      label: "Support",             value: "24/7"},
+  { icon: "Rocket",   label: "Plateformes livrées",  value: "4"    },
+  { icon: "Building2", label: "Secteurs couverts",    value: "3"    },
+  { icon: "Sparkles", label: "SaaS en phase pilote",  value: "1"    },
+  { icon: "Clock",    label: "Réponse",               value: "<24h" },
 ];
 
 const HeroSection = () => {
@@ -48,7 +51,7 @@ const HeroSection = () => {
               transition={{ delay: 0.2 }}
             >
               <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
-                <Icon name="Handshake" size={16} color="white" />
+                <Icon name="Handshake" size={16} color="var(--color-primary-foreground)" />
               </div>
               <span className="text-accent font-medium">Passerelle de Partenariat</span>
             </motion.div>
@@ -67,9 +70,9 @@ const HeroSection = () => {
                 href={cta1Link}
                 whileHover={{ scale: 1.04 }}
                 whileTap={{ scale: 0.97 }}
-                className="inline-flex items-center justify-center gap-2 bg-primary hover:bg-primary/90 text-white px-7 py-3.5 rounded-xl font-semibold transition-all glow-orange"
+                className="inline-flex items-center justify-center gap-2 bg-primary hover:bg-primary/90 text-primary-foreground px-7 py-3.5 rounded-xl font-semibold transition-all glow-orange"
               >
-                <Icon name="MessageSquare" size={18} color="white" />
+                <Icon name="MessageSquare" size={18} color="var(--color-primary-foreground)" />
                 {cta1Text}
               </motion.a>
               <motion.div whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }}>

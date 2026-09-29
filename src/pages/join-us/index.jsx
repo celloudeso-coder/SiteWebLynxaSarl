@@ -1,11 +1,10 @@
 import React, { useEffect } from "react";
-import { Helmet } from "react-helmet";
 import Header from "../../components/ui/Header";
+import Seo from "../../components/Seo";
 import JoinUsHero from "./components/joinus-hero";
 import JoinUsProcess from "./components/joinus-process";
 import JoinUsOpenings from "./components/joinus-openings";
 import JoinUsForm from "./components/joinUs-form";
-import logoIco from "../../../public/LYNXA.ico";
 import { useSiteSettings } from "../../hooks/useContent";
 
 const JoinUsPage = () => {
@@ -17,21 +16,14 @@ const JoinUsPage = () => {
 
   return (
     <>
-      <Helmet>
-        <title>Rejoignez-nous | Lynxa Tech Guinée</title>
-        <meta
-          name="description"
-          content="Rejoignez l'équipe Lynxa Tech et participez à la construction du futur technologique africain. Postes ouverts à Conakry, Guinée."
-        />
-        <meta
-          name="keywords"
-          content="emploi tech guinée, recrutement lynxa tech, développeur mobile guinée, stage informatique conakry, carrière technologie afrique"
-        />
-        <meta property="og:title" content="Carrières | Lynxa Tech Guinée" />
-        <meta property="og:description" content="Faites partie d'une équipe qui façonne l'avenir technologique africain. Rejoignez Lynxa Tech à Conakry." />
-        <meta property="og:type" content="website" />
-        <link rel="canonical" href="/join-us" />
-      </Helmet>
+      <Seo
+        title="Rejoignez-nous | Lynxa Tech Guinée"
+        description="Rejoignez l'équipe Lynxa Tech et participez à la construction du futur technologique africain. Postes ouverts à Conakry, Guinée."
+        keywords="emploi tech guinée, recrutement lynxa tech, développeur mobile guinée, stage informatique conakry, carrière technologie afrique"
+        path="/join-us"
+        ogTitle="Carrières | Lynxa Tech Guinée"
+        ogDescription="Faites partie d'une équipe qui façonne l'avenir technologique africain. Rejoignez Lynxa Tech à Conakry."
+      />
 
       <div className="min-h-screen bg-background">
         <Header />
@@ -48,7 +40,7 @@ const JoinUsPage = () => {
               <div className="md:col-span-2">
                 <div className="flex items-center space-x-3 mb-4">
                   <div className="w-10 h-10 bg-black rounded-lg flex items-center justify-center">
-                    <img src={logoIco} alt="Lynxa Tech logo" className="w-8 h-8 object-cover rounded-lg" />
+                    <img src="/icon-192.png" alt="Lynxa Tech logo" className="w-8 h-8 object-cover rounded-lg" />
                   </div>
                   <div>
                     <h3 className="text-xl font-heading font-bold">Lynxa Tech</h3>

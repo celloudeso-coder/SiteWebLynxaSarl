@@ -1,10 +1,9 @@
 import React from "react";
-import { Helmet } from "react-helmet";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import Header from "../../components/ui/Header";
+import Seo from "../../components/Seo";
 import Icon from "../../components/AppIcon";
-import logoIco from "../../../public/LYNXA.ico";
 import { useSiteSettings } from "../../hooks/useContent";
 
 const LAST_UPDATED = "14 juillet 2026";
@@ -224,11 +223,11 @@ const LegalPage = ({ page }) => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <Helmet>
-        <title>{content.title} | Lynxa Tech Guinea</title>
-        <meta name="description" content={content.description} />
-        <link rel="canonical" href={`/${page}`} />
-      </Helmet>
+      <Seo
+        title={`${content.title} | Lynxa Tech Guinea`}
+        description={content.description}
+        path={`/${page}`}
+      />
 
       <Header />
 
@@ -268,7 +267,7 @@ const LegalPage = ({ page }) => {
                       to={link.path}
                       aria-current={active ? "page" : undefined}
                       className={`flex items-center gap-3 rounded-xl px-3 py-3 text-sm font-semibold transition-colors ${
-                        active ? "bg-primary text-white" : "text-gray-600 hover:bg-gray-50 hover:text-primary"
+                        active ? "bg-primary text-primary-foreground" : "text-gray-600 hover:bg-gray-50 hover:text-primary"
                       }`}
                     >
                       <Icon name={link.icon} size={18} />
@@ -324,7 +323,7 @@ const LegalPage = ({ page }) => {
         <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-6 px-4 sm:px-6 md:flex-row lg:px-8">
           <Link to="/home" className="flex items-center gap-3">
             <span className="flex h-10 w-10 items-center justify-center overflow-hidden rounded-lg bg-black">
-              <img src={logoIco} alt="Lynxa Tech" className="h-8 w-8 rounded-lg object-cover" />
+              <img src="/icon-192.png" alt="Lynxa Tech" className="h-8 w-8 rounded-lg object-cover" />
             </span>
             <span>
               <span className="block font-heading font-bold">Lynxa Tech</span>
