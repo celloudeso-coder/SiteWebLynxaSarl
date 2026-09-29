@@ -4,82 +4,12 @@ import Icon from "../../../components/AppIcon";
 import Image from "../../../components/AppImage";
 import Button from "../../../components/ui/Button";
 import { getWhitepapers } from "../../../lib/cms";
+import SectionLoadError from "./SectionLoadError";
 
-const STATIC_WHITEPAPERS = [
-    {
-      id: 1,
-      title: "Cybersécurité pour les PME africaines : Guide complet",
-      description:
-        "Stratégies essentielles de cybersécurité et cadres de mise en œuvre spécialement conçus pour les petites et moyennes entreprises à travers l'Afrique.",
-      category: "cybersecurity",
-      pages: 42,
-      downloadCount: 1250,
-      publishDate: "2025-01-01",
-      image:
-        "https://images.unsplash.com/photo-1555949963-aa79dcee981c?auto=format&fit=crop&w=400&h=300",
-      tags: ["Cybersécurité", "PME", "Gestion des Risques", "Mise en œuvre"],
-    },
-    {
-      id: 2,
-      title:
-        "Développement Mobile-First dans des environnements à faible bande passante",
-      description:
-        "Meilleures pratiques et stratégies techniques pour créer des applications mobiles performantes dans des environnements à bande passante limitée.",
-      category: "mobile",
-      pages: 38,
-      downloadCount: 890,
-      publishDate: "2024-12-15",
-      image:
-        "https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?auto=format&fit=crop&w=400&h=300",
-      tags: [
-        "Développement Mobile",
-        "Bande Passante Limitée",
-        "Performance",
-        "Optimisation",
-      ],
-    },
-    {
-      id: 3,
-      title:
-        "Plan Directeur pour l’Infrastructure Numérique en Afrique de l’Ouest",
-      description:
-        "Feuille de route stratégique pour développer une infrastructure numérique durable dans les pays d'Afrique de l'Ouest, avec un focus sur l'évolutivité et l'accessibilité.",
-      category: "network",
-      pages: 56,
-      downloadCount: 675,
-      publishDate: "2024-11-30",
-      image:
-        "https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?auto=format&fit=crop&w=400&h=300",
-      tags: [
-        "Infrastructure",
-        "Stratégie Numérique",
-        "Afrique de l’Ouest",
-        "Évolutivité",
-      ],
-    },
-    {
-      id: 4,
-      title:
-        "Rapport sur l’Investissement dans l’Écosystème Tech Africain 2024",
-      description:
-        "Analyse complète des tendances d'investissement, des opportunités et de la dynamique du marché dans le secteur technologique en pleine évolution en Afrique.",
-      category: "ecosystem",
-      pages: 72,
-      downloadCount: 2100,
-      publishDate: "2024-10-20",
-      image:
-        "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=400&h=300",
-      tags: [
-        "Investissement",
-        "Analyse du Marché",
-        "Startups",
-        "Capital Risque",
-      ],
-    },
-];
 
 const WhitepapersSection = ({ activeCategory, searchQuery }) => {
   const [whitepapers, setWhitepapers] = useState([]);
+  const [loadError, setLoadError] = useState(false);
 
   useEffect(() => {
     getWhitepapers()
@@ -91,7 +21,7 @@ const WhitepapersSection = ({ activeCategory, searchQuery }) => {
           tags: Array.isArray(w.tags) ? w.tags : [],
         })));
       })
-      .catch(() => setWhitepapers(STATIC_WHITEPAPERS));
+      .catch(() => setLoadError(true));
   }, []);
 
   const filteredWhitepapers = whitepapers?.filter((whitepaper) => {
@@ -109,6 +39,8 @@ const WhitepapersSection = ({ activeCategory, searchQuery }) => {
 
     return matchesCategory && matchesSearch;
   });
+
+  if (loadError) return <SectionLoadError title="Whitepapers Experts" />;
 
   if (filteredWhitepapers?.length === 0) {
     return null;

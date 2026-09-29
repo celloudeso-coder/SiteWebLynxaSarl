@@ -4,124 +4,13 @@ import Icon from "../../../components/AppIcon";
 import Image from "../../../components/AppImage";
 import Button from "../../../components/ui/Button";
 import { getTechTalks } from "../../../lib/cms";
+import SectionLoadError from "./SectionLoadError";
 
-const STATIC_TECH_TALKS = [
-    {
-      id: 1,
-      title: "L'avenir de la cybersécurité en Afrique",
-      speaker: "Dr. Aminata Kone, CTO",
-      event: "Africa Tech Summit 2024",
-      duration: "28:45",
-      views: 15420,
-      category: "cybersecurity",
-      publishDate: "2024-12-10",
-      thumbnail:
-        "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=600&h=400",
-      videoId: "dQw4w9WgXcQ",
-      description:
-        "Exploration des menaces émergentes en cybersécurité et des stratégies de défense innovantes pour les entreprises africaines à l'ère numérique.",
-      tags: [
-        "Cybersécurité",
-        "Afrique",
-        "Transformation Numérique",
-        "Innovation",
-      ],
-    },
-    {
-      id: 2,
-      title: "Révolution des paiements mobiles en Afrique de l'Ouest",
-      speaker: "Ibrahima Diallo, Lead Developer",
-      event: "Fintech West Africa Conference",
-      duration: "32:18",
-      views: 22100,
-      category: "mobile",
-      publishDate: "2024-11-25",
-      thumbnail:
-        "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?auto=format&fit=crop&w=600&h=400",
-      videoId: "dQw4w9WgXcQ",
-      description:
-        "Analyse approfondie des systèmes de paiement mobile et de leur impact transformateur sur l'inclusion financière en Afrique de l'Ouest.",
-      tags: [
-        "Paiements Mobiles",
-        "Fintech",
-        "Inclusion Financière",
-        "Afrique de l'Ouest",
-      ],
-    },
-    {
-      id: 3,
-      title: "Construire une infrastructure réseau résiliente",
-      speaker: "Mohamed Bah, Network Architect",
-      event: "Infrastructure Africa Symposium",
-      duration: "25:30",
-      views: 8750,
-      category: "network",
-      publishDate: "2024-11-15",
-      thumbnail:
-        "https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?auto=format&fit=crop&w=600&h=400",
-      videoId: "dQw4w9WgXcQ",
-      description:
-        "Stratégies pour développer une infrastructure réseau robuste capable de relever les défis spécifiques aux marchés africains.",
-      tags: ["Infrastructure Réseau", "Résilience", "Scalabilité", "Afrique"],
-    },
-    {
-      id: 4,
-      title: "Croissance de l'écosystème startup en Guinée",
-      speaker: "Fatoumata Camara, Directrice Innovation",
-      event: "Guinea Digital Forum 2024",
-      duration: "35:12",
-      views: 12300,
-      category: "ecosystem",
-      publishDate: "2024-10-30",
-      thumbnail:
-        "https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=600&h=400",
-      videoId: "dQw4w9WgXcQ",
-      description:
-        "Analyse de la croissance rapide de l'écosystème startup en Guinée et des opportunités de collaboration internationale.",
-      tags: ["Startups", "Guinée", "Écosystème", "Innovation"],
-    },
-    {
-      id: 5,
-      title: "IA et apprentissage automatique dans la santé en Afrique",
-      speaker: "Dr. Aminata Kone, CTO",
-      event: "Digital Health Africa Summit",
-      duration: "42:15",
-      views: 18900,
-      category: "ecosystem",
-      publishDate: "2024-09-20",
-      thumbnail:
-        "https://images.unsplash.com/photo-1576091160399-112ba8d25d1f?auto=format&fit=crop&w=600&h=400",
-      videoId: "dQw4w9WgXcQ",
-      description:
-        "Exploration du potentiel des technologies d'IA et de ML pour transformer la prestation des soins de santé dans les communautés africaines.",
-      tags: ["IA", "Apprentissage Automatique", "Santé", "Santé Numérique"],
-    },
-    {
-      id: 6,
-      title: "Défis de mise en œuvre de la 5G dans les zones rurales",
-      speaker: "Mamadou Sow, Responsable Infrastructure",
-      event: "Telecommunications Africa Conference",
-      duration: "29:50",
-      views: 9200,
-      category: "network",
-      publishDate: "2024-08-15",
-      thumbnail:
-        "https://images.unsplash.com/photo-1573804633927-bfcbcd909acd?auto=format&fit=crop&w=600&h=400",
-      videoId: "dQw4w9WgXcQ",
-      description:
-        "Aborder les défis uniques du déploiement des réseaux 5G dans les communautés rurales africaines et proposer des solutions innovantes.",
-      tags: [
-        "5G",
-        "Connectivité Rurale",
-        "Télécommunications",
-        "Infrastructure",
-      ],
-    },
-];
 
 const TechTalksSection = ({ activeCategory, searchQuery }) => {
   const [selectedVideo, setSelectedVideo] = useState(null);
   const [techTalks, setTechTalks]         = useState([]);
+  const [loadError, setLoadError] = useState(false);
 
   useEffect(() => {
     getTechTalks()
@@ -133,7 +22,7 @@ const TechTalksSection = ({ activeCategory, searchQuery }) => {
           tags: Array.isArray(t.tags) ? t.tags : [],
         })));
       })
-      .catch(() => setTechTalks(STATIC_TECH_TALKS));
+      .catch(() => setLoadError(true));
   }, []);
 
   const filteredTechTalks = techTalks?.filter((talk) => {
@@ -150,6 +39,8 @@ const TechTalksSection = ({ activeCategory, searchQuery }) => {
 
     return matchesCategory && matchesSearch;
   });
+
+  if (loadError) return <SectionLoadError title="Tech Talks" />;
 
   if (filteredTechTalks?.length === 0) {
     return null;
