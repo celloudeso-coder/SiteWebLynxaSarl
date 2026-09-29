@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { getTeamMembers, saveTeamMember, deleteTeamMember } from "../../../lib/cms";
-import { FormField, TextInput, TextArea, Toggle, JsonArrayEditor, ImageUpload } from "../components/FormField";
+import { FormField, TextInput, TextArea, Toggle, JsonArrayEditor, ImageUpload, FocalPointPicker } from "../components/FormField";
 import SaveButton from "../components/SaveButton";
 import { Plus, Trash2, ChevronDown, ChevronUp } from "lucide-react";
 
@@ -98,7 +98,7 @@ export default function TeamAdmin() {
               >
                 {expanded === member.id ? <ChevronUp size={16} className="text-gray-400" /> : <ChevronDown size={16} className="text-gray-400" />}
                 {member.image_url && (
-                  <img src={member.image_url} alt={member.name} className="w-8 h-8 rounded-full object-cover" />
+                  <img src={member.image_url} alt={member.name} className="w-8 h-8 rounded-full object-cover" style={{ objectPosition: member.image_position || undefined }} />
                 )}
                 <div>
                   <p className="font-medium text-gray-900 text-sm">{member.name || "Nouveau membre"}</p>
@@ -123,6 +123,9 @@ export default function TeamAdmin() {
                 </div>
                 <FormField label="Photo">
                   <ImageUpload value={member.image_url} onChange={(v) => update(member.id, "image_url", v)} folder="team-members" />
+                </FormField>
+                <FormField label="Cadrage de la photo" hint="Cliquez sur le visage : ce point restera visible dans le cercle du site.">
+                  <FocalPointPicker src={member.image_url} value={member.image_position} onChange={(v) => update(member.id, "image_position", v)} />
                 </FormField>
                 <FormField label="Bio / Description">
                   <TextArea value={member.description} onChange={(v) => update(member.id, "description", v)} rows={3} />

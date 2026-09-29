@@ -57,8 +57,11 @@ const HeroSection = () => {
           >
             <Image
               src={img}
-              alt={`Tech background ${index + 1}`}
+              alt="" // image décorative : ignorée par les lecteurs d'écran
               className="w-full h-full object-cover"
+              // Fond à 30 % d'opacité sous un dégradé : au-delà d'environ
+              // 1,5x la largeur d'écran, la résolution ne se voit plus.
+              sizes="(max-width: 767px) 50vw, 100vw"
               priority={index === 0}
             />
           </div>

@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import Icon from "../../../components/AppIcon";
-import Image from "../../../components/AppImage";
 import { useServices } from "../../../hooks/useContent";
 
 const GRADIENTS = [
@@ -10,13 +9,6 @@ const GRADIENTS = [
   "from-green-500 to-teal-600",
   "from-orange-500 to-red-600",
   "from-red-500 to-pink-600",
-];
-
-const FALLBACK_IMAGES = [
-  "https://images.pexels.com/photos/607812/pexels-photo-607812.jpeg?auto=compress&cs=tinysrgb&w=800",
-  "https://images.pexels.com/photos/325229/pexels-photo-325229.jpeg?auto=compress&cs=tinysrgb&w=800",
-  "https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=800",
-  "https://images.pexels.com/photos/60504/security-protection-anti-virus-software-60504.jpeg?auto=compress&cs=tinysrgb&w=800",
 ];
 
 const SkeletonCard = () => (
@@ -47,7 +39,6 @@ const ServiceGalaxies = () => {
   const services = (cmsServices && cmsServices.length > 0 ? cmsServices : []).map((s, i) => ({
     ...s,
     gradient: GRADIENTS[i % GRADIENTS.length],
-    image: s.image_url || FALLBACK_IMAGES[i % FALLBACK_IMAGES.length],
     technologies: Array.isArray(s.technologies) ? s.technologies : [],
     metrics: Array.isArray(s.metrics) ? s.metrics : [],
   }));
@@ -119,14 +110,6 @@ const ServiceGalaxies = () => {
                   onMouseEnter={() => setHoveredService(service.id)}
                   onMouseLeave={() => setHoveredService(null)}
                 >
-                  <div className="absolute inset-0 opacity-5 group-hover:opacity-10 transition-opacity duration-500">
-                    <Image
-                      src={service.image}
-                      alt={service.title}
-                      className="w-full h-full object-cover"
-                      sizes="(min-width: 1024px) 400px, (min-width: 640px) 50vw, 100vw"
-                    />
-                  </div>
                   <div className={`absolute inset-0 bg-gradient-to-br ${service.gradient} opacity-0 group-hover:opacity-5 transition-opacity duration-500`} />
 
                   <div className="relative p-8">

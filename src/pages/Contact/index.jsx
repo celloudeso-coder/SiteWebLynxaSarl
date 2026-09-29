@@ -4,7 +4,6 @@ import Seo from "../../components/Seo";
 import ContactHero from "./components/ContactHero";
 import QuickConnectCards from "./components/QuickConnectCards";
 import ContactForm from "./components/ContactForm";
-import OfficeLocation from "./components/OfficeLocation";
 import SocialConnect from "./components/SocialConnect";
 import { useSiteSettings } from "../../hooks/useContent";
 

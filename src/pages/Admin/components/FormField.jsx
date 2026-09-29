@@ -351,3 +351,50 @@ export function FileUpload({ value, onChange, folder = "documents", accept = "ap
     </div>
   );
 }
+
+// Point focal d'une photo recadrée (portrait affiché en cercle, etc.) :
+// cliquer sur l'image place le point qui doit rester visible. La valeur est
+// une position CSS « X% Y% » (object-position), vide = centre.
+const POSITION_RE = /^(\d{1,3}(?:\.\d+)?)% (\d{1,3}(?:\.\d+)?)%$/;
+
+export function FocalPointPicker({ src, value, onChange, previewSize = 80 }) {
+  const match = POSITION_RE.exec(value || "");
+  const x = match ? Number(match[1]) : 50;
+  const y = match ? Number(match[2]) : 50;
+
+  if (!src) return <p className="text-xs text-gray-400">Ajoutez d'abord une photo.</p>;
+
+  function pick(e) {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const px = Math.round(((e.clientX - rect.left) / rect.width) * 100);
+    const py = Math.round(((e.clientY - rect.top) / rect.height) * 100);
+    onChange(`${Math.min(100, Math.max(0, px))}% ${Math.min(100, Math.max(0, py))}%`);
+  }
+
+  return (
+    <div className="flex flex-wrap items-start gap-5">
+      <div className="relative inline-block cursor-crosshair select-none" onClick={pick}>
+        <img src={src} alt="" className="block max-h-48 max-w-full rounded-lg" draggable={false} />
+        <span
+          className="pointer-events-none absolute h-4 w-4 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-white bg-orange-500 shadow"
+          style={{ left: `${x}%`, top: `${y}%` }}
+        />
+      </div>
+      <div className="space-y-2 text-center">
+        <div
+          className="mx-auto overflow-hidden rounded-full ring-4 ring-orange-200"
+          style={{ width: previewSize, height: previewSize }}
+        >
+          <img src={src} alt="" className="h-full w-full object-cover" style={{ objectPosition: `${x}% ${y}%` }} />
+        </div>
+        <p className="text-xs text-gray-500">Aperçu du cadrage</p>
+        <p className="text-xs text-gray-400">{match ? `${x}% ${y}%` : "Centre (par défaut)"}</p>
+        {match && (
+          <button type="button" onClick={() => onChange(null)} className="text-xs text-orange-600 hover:underline">
+            Revenir au centre
+          </button>
+        )}
+      </div>
+    </div>
+  );
+}

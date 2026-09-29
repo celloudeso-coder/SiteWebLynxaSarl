@@ -2,50 +2,8 @@ import React, { useRef, useEffect } from "react";
 import { motion } from "framer-motion";
 import Image from "../../../components/AppImage";
 import Icon from "../../../components/AppIcon";
+import SectionLoadError from "../../../components/SectionLoadError";
 import { useTeamMembers } from "../../../hooks/useContent";
-
-const STATIC_TEAM = [
-  {
-    id: 1,
-    name: "Thierno Sadou Barry",
-    role: "Responsable Développement Mobile",
-    image: "/CellouK.png",
-    expertise: ["Full-Stack", "Flutter", "Digital Forensics"],
-    description: "Développeur mobile spécialisé en solutions multiplateformes.",
-    achievements: ["Développeur Web Full-Stack", "Développeur Flutter"],
-    social_links: { linkedin: "#", github: "https://github.com/D4wn-Light" },
-  },
-  {
-    id: 2,
-    name: "Mamadou Cellou Kanté",
-    role: "CEO & Co-Fondateur",
-    image: "/Cellou.png",
-    expertise: ["Vision Produit", "Business Dev", "Stratégie Tech"],
-    description: "Pilote la stratégie technique de Lynxa Tech.",
-    achievements: ["Administrateur réseaux et systèmes", "Certifié Analyste Cybersécurité"],
-    social_links: { linkedin: "https://www.linkedin.com/in/mamadou-cellou-kante", github: "#" },
-  },
-  {
-    id: 3,
-    name: "Aissatou Lamarana Diallo",
-    role: "Responsable Solutions Digitales",
-    image: "/lamarana.png",
-    expertise: ["React", "Node.js", "Cloud"],
-    description: "Pilote la stratégie digitale de Lynxa Tech.",
-    achievements: ["Architecte Solutions AWS", "Expert React"],
-    social_links: { linkedin: "#" },
-  },
-  {
-    id: 4,
-    name: "Bandiougou Keita",
-    role: "Responsable Services Réseaux",
-    image: "/keita.jpg",
-    expertise: ["Cisco", "Cybersécurité", "VMware"],
-    description: "Supervise les infrastructures réseau clients.",
-    achievements: ["Administrateur réseaux", "Certifié CCNP"],
-    social_links: { linkedin: "#" },
-  },
-];
 
 const SkeletonCard = () => (
   <div className="bg-gray-50 rounded-2xl p-6 animate-pulse space-y-4 flex-shrink-0 w-[280px] snap-start">
@@ -60,12 +18,10 @@ const SkeletonCard = () => (
 );
 
 const TeamSpotlight = () => {
-  const { data: cmsTeam, loading } = useTeamMembers();
-  const allMembers =
-    cmsTeam && cmsTeam.length > 0
-      ? cmsTeam.map((m) => ({ ...m, image: m.image_url }))
-      : STATIC_TEAM;
-  const teamMembers = allMembers;
+  // Aucune personne nommée ne vient du code : l'équipe affichée est celle du
+  // CMS (membres actifs). Table vide → section masquée ; échec → message.
+  const { data: cmsTeam, loading, error } = useTeamMembers();
+  const teamMembers = (cmsTeam || []).map((m) => ({ ...m, image: m.image_url }));
 
   const scrollRef = useRef(null);
   const pausedRef = useRef(false);   // pause temporaire (survol / interaction)
@@ -157,6 +113,9 @@ const TeamSpotlight = () => {
     };
   }, [loading, teamMembers.length]);
 
+  if (error) return <SectionLoadError title="Rencontrez notre équipe d'experts" />;
+  if (!loading && teamMembers.length === 0) return null;
+
   return (
     <section className="py-20 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -207,6 +166,7 @@ const TeamSpotlight = () => {
                         src={member.image}
                         alt={member.name}
                         className="w-full h-full object-cover"
+                        style={{ objectPosition: member.image_position || undefined }}
                         sizes="80px"
                       />
                     </div>

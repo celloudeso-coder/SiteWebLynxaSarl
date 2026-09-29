@@ -1,5 +1,6 @@
 import React from 'react';
 import manifest from '../lib/imageManifest.generated.json';
+import { stockImage } from '../lib/stockImage';
 
 // En dev, le manifeste n'est pas régénéré à chaque sauvegarde (il n'est
 // produit qu'au build — scripts/generate-image-variants.mjs) : on sert donc
@@ -20,6 +21,10 @@ function Image({
   ...props
 }) {
   const resolvedLoading = loading || (priority ? "eager" : "lazy");
+  // Image au-dessus de la ligne de flottaison (souvent l'élément LCP) :
+  // téléchargée en priorité. Attribut en minuscules : React 18 ne connaît
+  // pas encore fetchPriority et transmet tel quel un attribut inconnu.
+  const fetchPriority = priority ? "high" : undefined;
   const onError = (e) => {
     e.target.onerror = null;
     e.target.src = "/assets/images/no_image.png";
@@ -43,11 +48,33 @@ function Image({
           width={width ?? entry.width}
           height={height ?? entry.height}
           loading={resolvedLoading}
+          fetchpriority={fetchPriority}
           decoding={decoding}
           onError={onError}
           {...props}
         />
       </picture>
+    );
+  }
+
+  // Photo Pexels / Unsplash : variantes servies par leur CDN.
+  const stock = stockImage(src);
+  if (stock) {
+    return (
+      <img
+        src={stock.src}
+        srcSet={stock.srcSet}
+        sizes={sizes || "100vw"}
+        alt={alt}
+        className={className}
+        width={width}
+        height={height}
+        loading={resolvedLoading}
+        fetchpriority={fetchPriority}
+        decoding={decoding}
+        onError={onError}
+        {...props}
+      />
     );
   }
 
@@ -64,6 +91,7 @@ function Image({
       width={width}
       height={height}
       loading={resolvedLoading}
+      fetchpriority={fetchPriority}
       decoding={decoding}
       onError={onError}
       {...props}

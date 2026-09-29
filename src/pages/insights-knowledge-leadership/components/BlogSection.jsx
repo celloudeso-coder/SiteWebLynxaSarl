@@ -4,151 +4,13 @@ import Icon from "../../../components/AppIcon";
 import Image from "../../../components/AppImage";
 import Button from "../../../components/ui/Button";
 import { getBlogPosts } from "../../../lib/cms";
+import SectionLoadError from "../../../components/SectionLoadError";
 
-const STATIC_BLOG_POSTS = [
-    {
-      id: 1,
-      title:
-        "Tendances de la Cybersécurité en Afrique de l'Ouest : Protéger les PME des Menaces Numériques",
-      excerpt:
-        "Explorez l'évolution du paysage de la cybersécurité en Afrique de l'Ouest et découvrez des stratégies pratiques pour que les petites et moyennes entreprises protègent leurs actifs numériques.",
-      category: "cybersecurity",
-      author: "Dr. Aminata Kone",
-      date: "2025-01-10",
-      readTime: "8 min de lecture",
-      image:
-        "https://images.unsplash.com/photo-1563986768494-4dee2763ff3f?auto=format&fit=crop&w=800&h=400",
-      tags: [
-        "Cybersécurité",
-        "PME",
-        "Afrique de l'Ouest",
-        "Protection Numérique",
-      ],
-    },
-    {
-      id: 2,
-      title:
-        "Meilleures Pratiques de Développement Mobile pour les Marchés Émergents",
-      excerpt:
-        "Apprenez à créer des applications mobiles robustes qui prospèrent dans des environnements à faible bande passante tout en offrant des expériences utilisateur exceptionnelles.",
-      category: "mobile",
-      author: "Ibrahima Diallo",
-      date: "2025-01-08",
-      readTime: "12 min de lecture",
-      image:
-        "https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?auto=format&fit=crop&w=800&h=400",
-      tags: [
-        "Développement Mobile",
-        "Marchés Émergents",
-        "Faible Bande Passante",
-        "Conception UX",
-      ],
-    },
-    {
-      id: 3,
-      title: "Transformation Numérique de la Guinée : Opportunités et Défis",
-      excerpt:
-        "Une analyse approfondie du parcours de la Guinée vers la transformation numérique, mettant en lumière les principales opportunités d'innovation et de croissance.",
-      category: "ecosystem",
-      author: "Fatoumata Camara",
-      date: "2025-01-05",
-      readTime: "15 min de lecture",
-      image:
-        "https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=800&h=400",
-      tags: [
-        "Transformation Numérique",
-        "Guinée",
-        "Innovation",
-        "Croissance Économique",
-      ],
-    },
-    {
-      id: 4,
-      title: "Défis des Infrastructures Réseau en Guinée Rurale",
-      excerpt:
-        "Répondre aux lacunes de connectivité et construire des infrastructures réseau résilientes pour combler la fracture numérique dans les communautés rurales.",
-      category: "network",
-      author: "Mohamed Bah",
-      date: "2025-01-03",
-      readTime: "10 min de lecture",
-      image:
-        "https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?auto=format&fit=crop&w=800&h=400",
-      tags: [
-        "Infrastructure Réseau",
-        "Connectivité Rurale",
-        "Fracture Numérique",
-        "Télécommunications",
-      ],
-    },
-    {
-      id: 5,
-      title:
-        "L'Essor de la Fintech en Afrique de l'Ouest : Mobile Money et Au-Delà",
-      excerpt:
-        "Exploration de la révolution fintech en Afrique de l'Ouest et comment les solutions de mobile money transforment l'inclusion financière.",
-      category: "mobile",
-      author: "Aissatou Barry",
-      date: "2024-12-28",
-      readTime: "9 min de lecture",
-      image:
-        "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?auto=format&fit=crop&w=800&h=400",
-      tags: [
-        "Fintech",
-        "Mobile Money",
-        "Inclusion Financière",
-        "Afrique de l'Ouest",
-      ],
-    },
-    {
-      id: 6,
-      title: "Développement d'API Sécurisées pour les Startups Africaines",
-      excerpt:
-        "Pratiques de sécurité essentielles et modèles architecturaux pour développer des API robustes qui évoluent avec votre startup africaine.",
-      category: "cybersecurity",
-      author: "Ousmane Dieng",
-      date: "2024-12-25",
-      readTime: "11 min de lecture",
-      image:
-        "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=800&h=400",
-      tags: ["Sécurité API", "Startups", "Architecture Logicielle", "Afrique"],
-    },
-    {
-      id: 7,
-      title:
-        "Feuille de Route pour l'Implémentation de la 5G dans le Secteur Télécom Guinéen",
-      excerpt:
-        "Perspectives stratégiques sur les défis et opportunités du déploiement de la 5G dans le paysage télécom de la Guinée.",
-      category: "network",
-      author: "Mamadou Sow",
-      date: "2024-12-22",
-      readTime: "13 min de lecture",
-      image:
-        "https://images.unsplash.com/photo-1573804633927-bfcbcd909acd?auto=format&fit=crop&w=800&h=400",
-      tags: ["5G", "Télécommunications", "Infrastructure", "Guinée"],
-    },
-    {
-      id: 8,
-      title: "Développement des Talents Tech en Afrique Sub-Saharienne",
-      excerpt:
-        "Stratégies pour construire et retenir les talents tech dans le secteur technologique en croissance rapide de l'Afrique Sub-Saharienne.",
-      category: "ecosystem",
-      author: "Kadiatou Conde",
-      date: "2024-12-20",
-      readTime: "14 min de lecture",
-      image:
-        "https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=800&h=400",
-      tags: [
-        "Développement des Talents",
-        "Éducation",
-        "Afrique Sub-Saharienne",
-        "Compétences Tech",
-      ],
-    },
-];
 
 const BlogSection = ({ activeCategory, searchQuery }) => {
   const [visiblePosts, setVisiblePosts] = useState(6);
   const [blogPosts, setBlogPosts]       = useState([]);
+  const [loadError, setLoadError] = useState(false);
 
   useEffect(() => {
     getBlogPosts()
@@ -159,7 +21,7 @@ const BlogSection = ({ activeCategory, searchQuery }) => {
           tags: Array.isArray(p.tags) ? p.tags : [],
         })));
       })
-      .catch(() => setBlogPosts(STATIC_BLOG_POSTS));
+      .catch(() => setLoadError(true));
   }, []);
 
   const filteredPosts = useMemo(() => {
@@ -190,6 +52,8 @@ const BlogSection = ({ activeCategory, searchQuery }) => {
   const loadMorePosts = () => {
     setVisiblePosts((prev) => prev + 6);
   };
+
+  if (loadError) return <SectionLoadError title="Dernières perspectives" />;
 
   // Aucun article en base → section masquée (le CMS fait autorité)
   if (blogPosts.length === 0) {
@@ -252,6 +116,7 @@ const BlogSection = ({ activeCategory, searchQuery }) => {
                   src={post?.image}
                   alt={post?.title}
                   className="w-full h-48 object-cover transition-transform duration-300 hover:scale-105"
+                  sizes="(min-width: 1024px) 384px, (min-width: 768px) 50vw, 100vw"
                 />
                 <div className="absolute top-4 left-4">
                   <span className="bg-primary text-primary-foreground px-3 py-1 rounded-full text-xs font-semibold capitalize">

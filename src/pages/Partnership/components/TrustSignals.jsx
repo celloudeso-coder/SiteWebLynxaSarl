@@ -1,26 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { motion } from "framer-motion";
 import Icon from "../../../components/AppIcon";
-import { getTrustSecurityItems, getTrustCommitmentItems } from "../../../lib/cms";
-
-const STATIC_SECURITY = [
-  { icon: "Key",       title: "Chiffrement bout-en-bout",    desc: "Toutes les transmissions chiffrées AES-256." },
-  { icon: "Code",      title: "Développement sécurisé",      desc: "Respect des directives OWASP tout au long du cycle." },
-  { icon: "Search",    title: "Audits réguliers",             desc: "Tests de pénétration trimestriels et évaluations." },
-  { icon: "UserCheck", title: "Conformité RGPD",              desc: "Gestion des données conforme aux normes mondiales." },
-  // Reformulés en pratiques internes, sans chiffre ni "24/7" qui lisaient
-  // comme un engagement contractuel — aucune formule de maintenance
-  // (Services, 100-500 $/mois) ne le couvre.
-  { icon: "Database",  title: "Sauvegarde & récupération",   desc: "Sauvegardes régulières de nos environnements de travail (pratique interne, hors contrat de support)." },
-  { icon: "Eye",       title: "Monitoring continu",           desc: "Suivi et détection des menaces sur nos propres systèmes (pratique interne, hors contrat de support)." },
-];
-
-const STATIC_COMMITMENTS = [
-  { icon: "FileText",  title: "Accord de confidentialité",   desc: "Protection complète des informations et de la propriété intellectuelle." },
-  { icon: "Clock",     title: "Contrat de niveau de service", desc: "Délais de réponse garantis avec clauses pénales." },
-  { icon: "Copyright", title: "Droits de propriété intel.",  desc: "Propriété claire et accords de licence sur les solutions développées." },
-  { icon: "Shield",    title: "Politique de confidentialité", desc: "Pratiques transparentes de collecte et protection des données." },
-];
+import SectionLoadError from "../../../components/SectionLoadError";
+import { useTrustSecurityItems, useTrustCommitmentItems } from "../../../hooks/useContent";
 
 const cardVariants = {
   hidden: { opacity: 0, y: 24 },
@@ -33,17 +15,12 @@ const cardVariants = {
 const normalize = (item) => ({ ...item, desc: item.description ?? item.desc ?? "" });
 
 const TrustSignals = () => {
-  const [security, setSecurity]       = useState(STATIC_SECURITY);
-  const [commitments, setCommitments] = useState(STATIC_COMMITMENTS);
-
-  useEffect(() => {
-    getTrustSecurityItems()
-      .then((data) => { if (data?.length) setSecurity(data.map(normalize)); })
-      .catch(() => {});
-    getTrustCommitmentItems()
-      .then((data) => { if (data?.length) setCommitments(data.map(normalize)); })
-      .catch(() => {});
-  }, []);
+  // Engagements de sécurité et contractuels : uniquement depuis le CMS.
+  // Bloc masqué si vide ; message honnête si le chargement échoue.
+  const securityState = useTrustSecurityItems();
+  const commitmentsState = useTrustCommitmentItems();
+  const security = securityState.data.map(normalize);
+  const commitments = commitmentsState.data.map(normalize);
 
   return (
   <section className="py-20 bg-surface">
@@ -58,79 +35,81 @@ const TrustSignals = () => {
         <h2 className="text-3xl md:text-4xl font-heading font-bold text-secondary mb-4">
           Votre confiance est notre priorité
         </h2>
-        <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-          Nous respectons les normes les plus élevées en matière de sécurité, de
-          conformité et d'intégrité professionnelle.
-        </p>
       </motion.div>
 
       {/* Sécurité */}
-      <div className="mb-14">
-        <motion.h3
-          className="text-xl font-heading font-bold text-secondary mb-8 text-center"
-          initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}
-        >
-          Sécurité & Protection des données
-        </motion.h3>
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
-          {security.map((item, i) => (
-            <motion.div
-              key={item.title}
-              custom={i}
-              variants={cardVariants}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true }}
-              whileHover={{ y: -4 }}
-              className="bg-white rounded-xl p-6 border border-border"
-            >
-              <div className="flex items-start gap-4">
-                <div className="w-11 h-11 bg-accent/10 rounded-lg flex items-center justify-center flex-shrink-0">
-                  <Icon name={item.icon} size={20} color="var(--color-accent)" />
+      {securityState.error && <SectionLoadError compact title="Sécurité & Protection des données" />}
+      {security.length > 0 && (
+        <div className="mb-14">
+          <motion.h3
+            className="text-xl font-heading font-bold text-secondary mb-8 text-center"
+            initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}
+          >
+            Sécurité & Protection des données
+          </motion.h3>
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
+            {security.map((item, i) => (
+              <motion.div
+                key={item.title}
+                custom={i}
+                variants={cardVariants}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true }}
+                whileHover={{ y: -4 }}
+                className="bg-white rounded-xl p-6 border border-border"
+              >
+                <div className="flex items-start gap-4">
+                  <div className="w-11 h-11 bg-accent/10 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <Icon name={item.icon} size={20} color="var(--color-accent)" />
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-secondary mb-1.5">{item.title}</h4>
+                    <p className="text-sm text-muted-foreground leading-relaxed">{item.desc}</p>
+                  </div>
                 </div>
-                <div>
-                  <h4 className="font-semibold text-secondary mb-1.5">{item.title}</h4>
-                  <p className="text-sm text-muted-foreground leading-relaxed">{item.desc}</p>
-                </div>
-              </div>
-            </motion.div>
-          ))}
+              </motion.div>
+            ))}
+          </div>
         </div>
-      </div>
+      )}
 
       {/* Engagements légaux */}
-      <div className="mb-14">
-        <motion.h3
-          className="text-xl font-heading font-bold text-secondary mb-8 text-center"
-          initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}
-        >
-          Engagements légaux & contractuels
-        </motion.h3>
-        <div className="grid md:grid-cols-2 gap-5">
-          {commitments.map((item, i) => (
-            <motion.div
-              key={item.title}
-              custom={i}
-              variants={cardVariants}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true }}
-              whileHover={{ y: -4 }}
-              className="bg-white rounded-xl p-6 border border-border"
-            >
-              <div className="flex items-start gap-4">
-                <div className="w-11 h-11 bg-primary/10 rounded-lg flex items-center justify-center flex-shrink-0">
-                  <Icon name={item.icon} size={20} color="var(--color-primary)" />
+      {commitmentsState.error && <SectionLoadError compact title="Engagements légaux & contractuels" />}
+      {commitments.length > 0 && (
+        <div className="mb-14">
+          <motion.h3
+            className="text-xl font-heading font-bold text-secondary mb-8 text-center"
+            initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}
+          >
+            Engagements légaux & contractuels
+          </motion.h3>
+          <div className="grid md:grid-cols-2 gap-5">
+            {commitments.map((item, i) => (
+              <motion.div
+                key={item.title}
+                custom={i}
+                variants={cardVariants}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true }}
+                whileHover={{ y: -4 }}
+                className="bg-white rounded-xl p-6 border border-border"
+              >
+                <div className="flex items-start gap-4">
+                  <div className="w-11 h-11 bg-primary/10 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <Icon name={item.icon} size={20} color="var(--color-primary)" />
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-secondary mb-1.5">{item.title}</h4>
+                    <p className="text-sm text-muted-foreground leading-relaxed">{item.desc}</p>
+                  </div>
                 </div>
-                <div>
-                  <h4 className="font-semibold text-secondary mb-1.5">{item.title}</h4>
-                  <p className="text-sm text-muted-foreground leading-relaxed">{item.desc}</p>
-                </div>
-              </div>
-            </motion.div>
-          ))}
+              </motion.div>
+            ))}
+          </div>
         </div>
-      </div>
+      )}
 
       {/* Garantie */}
       <motion.div
@@ -145,15 +124,15 @@ const TrustSignals = () => {
           whileHover={{ scale: 1.1, rotate: 10 }}
           transition={{ type: "spring", stiffness: 200 }}
         >
-          <Icon name="ShieldCheck" size={40} color="white" />
+          <Icon name="CheckCircle" size={40} color="white" />
         </motion.div>
         <h3 className="text-2xl md:text-3xl font-heading font-bold mb-4">
-          Garantie Satisfaction 100 %
+          Corrections incluses après livraison
         </h3>
         <p className="text-lg mb-7 opacity-90 max-w-2xl mx-auto">
-          Nous nous engageons à vos côtés : avec votre collaboration et nos efforts, nous
-          assurons des résultats à la hauteur de vos attentes. Si ce n'est pas le cas, nous
-          corrigeons immédiatement ou vous remboursons sous 30 jours.
+          Pendant 30 jours après la livraison, nous corrigeons sans frais les anomalies
+          constatées par rapport à ce qui a été convenu dans votre devis. Les demandes
+          d'évolution ou de nouvelles fonctionnalités font l'objet d'un devis séparé.
         </p>
         <motion.a
           href="/contact"
@@ -162,7 +141,7 @@ const TrustSignals = () => {
           className="inline-flex items-center gap-2 bg-white text-primary-strong px-8 py-3 min-h-11 rounded-xl font-semibold hover:bg-gray-100 transition-colors"
         >
           <Icon name="MessageCircle" size={18} color="var(--color-primary)" />
-          En savoir plus
+          Poser une question
         </motion.a>
       </motion.div>
     </div>

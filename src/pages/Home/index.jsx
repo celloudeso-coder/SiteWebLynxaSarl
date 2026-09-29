@@ -15,7 +15,7 @@ const STATIC_COMMITMENTS = [
   { icon: "Flag",        label: "100 % Guinéen",       sub_label: "Ancré localement"       },
   { icon: "Zap",         label: "Réponse en 24h",       sub_label: "Support ultra-réactif"  },
   { icon: "Globe",       label: "Standards mondiaux",   sub_label: "Qualité internationale" },
-  { icon: "ShieldCheck", label: "Sécurité by design",   sub_label: "Confiance garantie"     },
+  { icon: "ShieldCheck", label: "Sécurité by design" },
 ];
 
 const STATIC_WHY = [
@@ -75,7 +75,7 @@ const Homepage = () => {
                       <Icon name={c.icon} size={20} color="#FF8C00" />
                     </div>
                     <p className="text-white font-semibold text-sm">{c.label}</p>
-                    <p className="text-gray-400 text-xs">{c.sub_label}</p>
+                    {c.sub_label && <p className="text-gray-400 text-xs">{c.sub_label}</p>}
                   </motion.div>
                 ))}
               </div>

@@ -41,10 +41,22 @@ import { fileURLToPath } from "node:url";
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const DIST_DIR = path.resolve(__dirname, "..", "dist");
 const PORT = 4318;
+// Coquille SPA vierge (le index.html produit par Vite, avant prérendu).
+// Servie pour toute route non prérendue (réécriture générale de vercel.json,
+// nginx.conf, _redirects) : sans elle, ces routes recevraient dist/index.html,
+// c'est-à-dire l'accueil prérendu, avec son titre, sa description et sa
+// canonique — des doublons de l'accueil aux yeux des moteurs.
+const SPA_SHELL = "spa.html";
 
-// Les 6 routes publiques principales du site (voir la nav dans Header.jsx).
-// /admin/* reste hors prerendering.
-const ROUTES = ["/", "/about", "/service", "/portfolio", "/partnership", "/contact"];
+// Les 6 routes publiques principales du site (voir la nav dans Header.jsx),
+// plus les pages stables à indexer (recrutement, pages légales). Chaque route
+// ajoutée ici doit aussi avoir sa réécriture explicite dans vercel.json.
+// /admin/*, /insights (masquée, sans contenu) et /produits/:slug (contenu
+// CMS dynamique) restent servies par la coquille SPA.
+const ROUTES = [
+  "/", "/about", "/service", "/portfolio", "/partnership", "/contact",
+  "/join-us", "/cgu", "/confidentialite", "/securite",
+];
 
 // true sur un runner CI générique (GitHub Actions, etc.) ou sur Vercel.
 function isRunningOnCiOrVercel() {
@@ -92,7 +104,7 @@ async function startStaticServer() {
   // traitée après "/" retomberait sur le HTML déjà rendu de Home au lieu de
   // la coquille SPA vierge — le <script> de sélection du manifeste s'y
   // exécuterait une seconde fois et dupliquerait le <link rel="manifest">.
-  const pristineIndexHtml = await readFile(path.join(DIST_DIR, "index.html"), "utf-8");
+  const pristineIndexHtml = await readFile(path.join(DIST_DIR, SPA_SHELL), "utf-8");
 
   const server = createServer(async (req, res) => {
     const urlPath = decodeURIComponent((req.url || "/").split("?")[0]);
@@ -272,6 +284,14 @@ async function main() {
   if (!distInfo || !distInfo.isDirectory()) {
     console.warn("[prerender] dist/ introuvable — lancez d'abord \"vite build\". Étape ignorée.");
     return;
+  }
+
+  // Écrite avant tout prérendu (et même s'il échoue ensuite). Si elle existe
+  // déjà (prérendu relancé seul sur un dist/ déjà prérendu), on la garde :
+  // dist/index.html n'est alors plus vierge.
+  const shellPath = path.join(DIST_DIR, SPA_SHELL);
+  if (!(await stat(shellPath).catch(() => null))) {
+    await writeFile(shellPath, await readFile(path.join(DIST_DIR, "index.html"), "utf-8"), "utf-8");
   }
 
   try {

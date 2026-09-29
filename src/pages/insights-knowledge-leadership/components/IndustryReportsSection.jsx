@@ -4,141 +4,13 @@ import Icon from "../../../components/AppIcon";
 import Image from "../../../components/AppImage";
 import Button from "../../../components/ui/Button";
 import { getIndustryReports } from "../../../lib/cms";
+import SectionLoadError from "../../../components/SectionLoadError";
 
-const STATIC_INDUSTRY_REPORTS = [
-    {
-      id: 1,
-      title:
-        "Rapport sur la Croissance de l'Écosystème Technologique en Guinée 2024",
-      subtitle: "Analyse complète du développement du secteur technologique",
-      category: "ecosystem",
-      publishDate: "2024-12-01",
-      pages: 89,
-      downloads: 3250,
-      image:
-        "https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=600&h=400",
-      keyInsights: [
-        "Croissance de 45 % d'une année sur l'autre des startups technologiques",
-        "12,5 M$ d'investissements totaux levés en 2024",
-        "Augmentation de 78 % des téléchargements d'applications mobiles",
-        "32 nouvelles entreprises technologiques créées",
-      ],
-      executiveSummary:
-        "L'écosystème technologique de la Guinée a connu une croissance sans précédent en 2024, stimulée par l'adoption accrue du mobile, les initiatives gouvernementales numériques et l'intérêt croissant des investisseurs internationaux.",
-      sections: [
-        "Vue d'ensemble du marché",
-        "Paysage des startups",
-        "Analyse des investissements",
-        "Initiatives gouvernementales",
-        "Développement des infrastructures",
-        "Compétences et talents",
-        "Prévisions futures",
-      ],
-      tags: ["Analyse du Marché", "Startups", "Investissement", "Guinée"],
-    },
-    {
-      id: 2,
-      title: "Panorama des Menaces de Cybersécurité en Afrique de l'Ouest 2024",
-      subtitle: "Défis régionaux de sécurité et stratégies d'atténuation",
-      category: "cybersecurity",
-      publishDate: "2024-11-20",
-      pages: 67,
-      downloads: 2890,
-      image:
-        "https://images.unsplash.com/photo-1563986768494-4dee2763ff3f?auto=format&fit=crop&w=600&h=400",
-      keyInsights: [
-        "Augmentation de 67 % des attaques par ransomware",
-        "Menaces sur la banque mobile en hausse de 124 %",
-        "85 % des PME ne disposent pas d'une protection adéquate",
-        "Impact économique estimé à 2,3 milliards $",
-      ],
-      executiveSummary:
-        "L'Afrique de l'Ouest fait face à une augmentation des menaces de cybersécurité, avec des attaques sophistiquées ciblant les institutions financières, les agences gouvernementales et les infrastructures critiques de la région.",
-      sections: [
-        "Vue d'ensemble des menaces",
-        "Analyse des vecteurs d'attaque",
-        "Risques par secteur",
-        "Collaboration régionale",
-        "Stratégies d'atténuation",
-        "Recommandations politiques",
-        "Perspectives futures",
-      ],
-      tags: [
-        "Cybersécurité",
-        "Menaces",
-        "Évaluation des Risques",
-        "Afrique de l'Ouest",
-      ],
-    },
-    {
-      id: 3,
-      title: "Indice de l’Innovation Mobile : Afrique 2024",
-      subtitle: "Indicateurs principaux de l’avancement technologique mobile",
-      category: "mobile",
-      publishDate: "2024-10-15",
-      pages: 94,
-      downloads: 4120,
-      image:
-        "https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?auto=format&fit=crop&w=600&h=400",
-      keyInsights: [
-        "Le Nigeria domine le classement de l'innovation mobile",
-        "Taux d’adoption des paiements mobiles de 63 %",
-        "Couverture 5G dans 15 grandes villes",
-        "L’approche mobile-first représente 78 % des applications",
-      ],
-      executiveSummary:
-        "Le paysage de l'innovation mobile en Afrique continue d'évoluer rapidement, avec le Nigeria, le Kenya et l'Afrique du Sud en tête de l'avancement technologique et de l’adoption par les utilisateurs à travers le continent.",
-      sections: [
-        "Classement de l'innovation",
-        "Évolution des paiements mobiles",
-        "Déploiement de la 5G",
-        "Tendances du développement d'applications",
-        "Analyse du comportement des utilisateurs",
-        "Impact des infrastructures",
-        "Comparaison régionale",
-      ],
-      tags: ["Innovation Mobile", "Classements", "5G", "Paiements Mobiles"],
-    },
-    {
-      id: 4,
-      title: "Rapport sur les Investissements en Infrastructure Numérique 2024",
-      subtitle:
-        "Flux de capitaux et développement des infrastructures à travers l'Afrique",
-      category: "network",
-      publishDate: "2024-09-30",
-      pages: 112,
-      downloads: 1850,
-      image:
-        "https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?auto=format&fit=crop&w=600&h=400",
-      keyInsights: [
-        "8,7 milliards $ investis dans les infrastructures fibre",
-        "Amélioration de 23 % de la connectivité rurale",
-        "15 nouveaux centres de données opérationnels",
-        "Connectivité transfrontalière en hausse de 34 %",
-      ],
-      executiveSummary:
-        "D'importants investissements dans les infrastructures transforment le paysage numérique de l'Afrique, avec des améliorations significatives de la connectivité, de la capacité des centres de données et des infrastructures réseau transfrontalières.",
-      sections: [
-        "Vue d'ensemble des investissements",
-        "Expansion du réseau fibre",
-        "Développement des centres de données",
-        "Programmes de connectivité rurale",
-        "Infrastructure transfrontalière",
-        "Partenariats public-privé",
-        "Analyse du retour sur investissement",
-      ],
-      tags: [
-        "Infrastructure",
-        "Investissement",
-        "Connectivité",
-        "Centres de Données",
-      ],
-    },
-];
 
 const IndustryReportsSection = ({ activeCategory, searchQuery }) => {
   const [selectedReport, setSelectedReport] = useState(null);
   const [industryReports, setIndustryReports] = useState([]);
+  const [loadError, setLoadError] = useState(false);
 
   useEffect(() => {
     getIndustryReports()
@@ -152,7 +24,7 @@ const IndustryReportsSection = ({ activeCategory, searchQuery }) => {
           tags:     Array.isArray(r.tags)     ? r.tags     : [],
         })));
       })
-      .catch(() => setIndustryReports(STATIC_INDUSTRY_REPORTS));
+      .catch(() => setLoadError(true));
   }, []);
 
   const filteredReports = industryReports?.filter((report) => {
@@ -171,6 +43,8 @@ const IndustryReportsSection = ({ activeCategory, searchQuery }) => {
 
     return matchesCategory && matchesSearch;
   });
+
+  if (loadError) return <SectionLoadError title="Rapports Industrie" />;
 
   if (filteredReports?.length === 0) {
     return null;
@@ -219,6 +93,7 @@ const IndustryReportsSection = ({ activeCategory, searchQuery }) => {
                     src={report?.image}
                     alt={report?.title}
                     className="w-full h-48 md:h-full object-cover"
+                    sizes="(min-width: 1024px) 240px, (min-width: 768px) 40vw, 100vw"
                   />
                 </div>
 
