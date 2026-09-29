@@ -297,6 +297,17 @@ ALTER TABLE hero_sections ENABLE ROW LEVEL SECURITY;
 ALTER TABLE services ENABLE ROW LEVEL SECURITY;
 ALTER TABLE portfolio_projects ENABLE ROW LEVEL SECURITY;
 ALTER TABLE team_members ENABLE ROW LEVEL SECURITY;
+-- Point focal du portrait (object-position « X% Y% », NULL = centre).
+-- Voir migrations/20260929120000_team_image_position.sql.
+ALTER TABLE team_members ADD COLUMN IF NOT EXISTS image_position text;
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'team_members_image_position_format') THEN
+    ALTER TABLE team_members
+      ADD CONSTRAINT team_members_image_position_format
+      CHECK (image_position IS NULL OR image_position ~ '^[0-9]{1,3}(\.[0-9]+)?% [0-9]{1,3}(\.[0-9]+)?%$');
+  END IF;
+END $$;
 ALTER TABLE pricing_plans ENABLE ROW LEVEL SECURITY;
 ALTER TABLE timeline_events ENABLE ROW LEVEL SECURITY;
 ALTER TABLE metrics ENABLE ROW LEVEL SECURITY;

@@ -207,6 +207,7 @@ const TeamSpotlight = () => {
                         src={member.image}
                         alt={member.name}
                         className="w-full h-full object-cover"
+                        style={{ objectPosition: member.image_position || undefined }}
                         sizes="80px"
                       />
                     </div>

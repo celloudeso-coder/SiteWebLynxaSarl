@@ -20,6 +20,10 @@ function Image({
   ...props
 }) {
   const resolvedLoading = loading || (priority ? "eager" : "lazy");
+  // Image au-dessus de la ligne de flottaison (souvent l'élément LCP) :
+  // téléchargée en priorité. Attribut en minuscules : React 18 ne connaît
+  // pas encore fetchPriority et transmet tel quel un attribut inconnu.
+  const fetchPriority = priority ? "high" : undefined;
   const onError = (e) => {
     e.target.onerror = null;
     e.target.src = "/assets/images/no_image.png";
@@ -43,6 +47,7 @@ function Image({
           width={width ?? entry.width}
           height={height ?? entry.height}
           loading={resolvedLoading}
+          fetchpriority={fetchPriority}
           decoding={decoding}
           onError={onError}
           {...props}
@@ -64,6 +69,7 @@ function Image({
       width={width}
       height={height}
       loading={resolvedLoading}
+      fetchpriority={fetchPriority}
       decoding={decoding}
       onError={onError}
       {...props}

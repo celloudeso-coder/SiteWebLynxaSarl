@@ -50,6 +50,7 @@ const TeamSpotlight1 = () => {
           name: m.name,
           role: m.role,
           image: m.image_url,
+          image_position: m.image_position,
           description: m.description,
           expertise: Array.isArray(m.expertise) ? m.expertise : [],
           achievements: Array.isArray(m.achievements) ? m.achievements : [],
@@ -91,6 +92,7 @@ const TeamSpotlight1 = () => {
                     src={member.image}
                     alt={member.name}
                     className="w-full h-full object-cover"
+                    style={{ objectPosition: member.image_position || undefined }}
                     sizes="96px"
                   />
                 </div>
