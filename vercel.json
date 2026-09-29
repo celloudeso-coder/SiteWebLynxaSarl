@@ -10,6 +10,10 @@
     { "source": "/portfolio", "destination": "/portfolio/index.html" },
     { "source": "/partnership", "destination": "/partnership/index.html" },
     { "source": "/contact", "destination": "/contact/index.html" },
+    { "source": "/join-us", "destination": "/join-us/index.html" },
+    { "source": "/cgu", "destination": "/cgu/index.html" },
+    { "source": "/confidentialite", "destination": "/confidentialite/index.html" },
+    { "source": "/securite", "destination": "/securite/index.html" },
     { "source": "/(.*)", "destination": "/spa.html" }
   ]
 }

@@ -48,9 +48,15 @@ const PORT = 4318;
 // canonique — des doublons de l'accueil aux yeux des moteurs.
 const SPA_SHELL = "spa.html";
 
-// Les 6 routes publiques principales du site (voir la nav dans Header.jsx).
-// /admin/* reste hors prerendering.
-const ROUTES = ["/", "/about", "/service", "/portfolio", "/partnership", "/contact"];
+// Les 6 routes publiques principales du site (voir la nav dans Header.jsx),
+// plus les pages stables à indexer (recrutement, pages légales). Chaque route
+// ajoutée ici doit aussi avoir sa réécriture explicite dans vercel.json.
+// /admin/*, /insights (masquée, sans contenu) et /produits/:slug (contenu
+// CMS dynamique) restent servies par la coquille SPA.
+const ROUTES = [
+  "/", "/about", "/service", "/portfolio", "/partnership", "/contact",
+  "/join-us", "/cgu", "/confidentialite", "/securite",
+];
 
 // true sur un runner CI générique (GitHub Actions, etc.) ou sur Vercel.
 function isRunningOnCiOrVercel() {
