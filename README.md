@@ -367,6 +367,20 @@ Sans ces variables, les identifiants déjà utilisés par la demande de projet s
 
 ---
 
+## Défauts connus
+
+### Classes à opacité réduite sur les couleurs du thème (jamais fonctionnelles)
+
+Toutes les couleurs du thème (`primary`, `accent`, `secondary`, `muted`, `success`, `warning`, `error`…) sont définies dans `tailwind.config.js` par une variable CSS brute (`var(--color-primary)`, valeur hexadécimale dans `src/styles/tailwind.css`), sans `<alpha-value>`. Tailwind ne génère donc **aucune** classe à opacité réduite pour elles : `bg-primary/10`, `text-primary/60`, `border-accent/20`, `from-secondary/…`, etc. restent sans effet.
+
+- **Ampleur** (relevé du 2026-09-29) : **142 occurrences**, 43 classes distinctes, dans 47 fichiers ; aucune n'est présente dans le CSS généré.
+- **Depuis** : le premier commit (export Rocket, 2026-04-22) — ces classes n'ont **jamais** fonctionné ; le site a toujours été vu sans ces fonds, teintes et bordures.
+- **Correction décidée** : option `color-mix` dans `tailwind.config.js` uniquement, par exemple `color-mix(in srgb, var(--color-primary) calc(<alpha-value> * 100%), transparent)` — les variables hexadécimales et les 41 usages directs de `var(--color-…)` restent inchangés.
+- **Quand** : après la bascule DNS, **avec une revue visuelle page par page** (captures avant/après), car l'activation change l'apparence de 142 endroits d'un coup.
+- **D'ici là** : pour une teinte transparente sur une couleur du thème, utiliser la palette Tailwind standard (ex. `bg-orange-50`) plutôt que `bg-primary/10`.
+
+---
+
 ## Services proposés
 
 - **Développement mobile** — Applications iOS, Android, React Native, Flutter, PWA

@@ -124,7 +124,7 @@ export default function TeamAdmin() {
                 <FormField label="Photo">
                   <ImageUpload value={member.image_url} onChange={(v) => update(member.id, "image_url", v)} folder="team-members" />
                 </FormField>
-                <FormField label="Cadrage de la photo" hint="Cliquez sur le visage : ce point restera visible dans le cercle du site.">
+                <FormField label="Cadrage de la photo" hint="Cliquez sur le visage : ce point restera visible dans la photo du site (format portrait 4:5).">
                   <FocalPointPicker src={member.image_url} value={member.image_position} onChange={(v) => update(member.id, "image_position", v)} />
                 </FormField>
                 <FormField label="Bio / Description">

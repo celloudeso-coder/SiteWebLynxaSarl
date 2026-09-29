@@ -7,7 +7,7 @@ import { useTeamMembers } from "../../../hooks/useContent";
 
 const SkeletonCard = () => (
   <div className="bg-gray-50 rounded-2xl p-6 animate-pulse space-y-4 flex-shrink-0 w-[280px] snap-start">
-    <div className="w-20 h-20 bg-gray-200 rounded-full mx-auto" />
+    <div className="-mx-6 -mt-6 aspect-[4/5] bg-gray-200 rounded-t-2xl" />
     <div className="h-4 bg-gray-200 rounded-full w-3/4 mx-auto" />
     <div className="h-3 bg-gray-100 rounded-full w-1/2 mx-auto" />
     <div className="flex gap-2 justify-center flex-wrap">
@@ -16,6 +16,10 @@ const SkeletonCard = () => (
     </div>
   </div>
 );
+
+// Initiales affichées quand un membre n'a pas de photo.
+const initialsOf = (name = "") =>
+  name.split(/\s+/).filter(Boolean).slice(0, 2).map((w) => w[0].toUpperCase()).join("");
 
 const TeamSpotlight = () => {
   // Aucune personne nommée ne vient du code : l'équipe affichée est celle du
@@ -159,24 +163,34 @@ const TeamSpotlight = () => {
                   inert={isDuplicate ? "" : undefined}
                   className="bg-gray-50 rounded-2xl p-6 hover:shadow-medium hover:-translate-y-1 transition-all duration-300 flex-shrink-0 w-[280px] mr-6"
                 >
-                  {/* Avatar */}
-                  <div className="relative mb-5">
-                    <div className="w-20 h-20 mx-auto rounded-full overflow-hidden ring-4 ring-primary/20">
+                  {/* Photo : portrait 4:5 pleine largeur, collé aux bords de la
+                      carte (marges négatives = son padding), coins du haut
+                      arrondis comme la carte. Sans photo : initiales, même
+                      hauteur. */}
+                  <div className="-mx-6 -mt-6 mb-5 aspect-[4/5] overflow-hidden rounded-t-2xl bg-gray-100">
+                    {member.image ? (
                       <Image
                         src={member.image}
                         alt={member.name}
                         className="w-full h-full object-cover"
                         style={{ objectPosition: member.image_position || undefined }}
-                        sizes="80px"
+                        sizes="280px"
+                        draggable={false}
                       />
-                    </div>
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-orange-50 to-orange-100" aria-hidden="true">
+                        <span className="text-5xl font-heading font-bold text-primary-strong">{initialsOf(member.name)}</span>
+                      </div>
+                    )}
                   </div>
 
                   {/* Info */}
                   <div className="text-center mb-4">
                     <h3 className="text-base font-heading font-bold text-secondary mb-0.5">{member.name}</h3>
                     <p className="text-primary-strong font-medium text-xs mb-3">{member.role}</p>
-                    <p className="text-xs text-gray-500 leading-relaxed">{member.description}</p>
+                    {/* Mobile : 4 lignes max pour que la carte (photo 4:5 comprise)
+                        tienne dans l'écran sous le header ; bureau inchangé. */}
+                    <p className="text-xs text-gray-500 leading-relaxed line-clamp-4 sm:line-clamp-none">{member.description}</p>
                   </div>
 
                   {/* Expertise tags */}
@@ -194,7 +208,8 @@ const TeamSpotlight = () => {
                   {member.achievements?.length > 0 && (
                     <div className="mb-4 space-y-1">
                       {member.achievements.slice(0, 2).map((achievement, i) => (
-                        <div key={i} className="flex items-start gap-1.5">
+                        // Mobile : une seule réalisation (même raison que ci-dessus).
+                        <div key={i} className={`${i > 0 ? "hidden sm:flex" : "flex"} items-start gap-1.5`}>
                           <Icon name="Award" size={11} color="var(--color-primary)" className="mt-0.5 flex-shrink-0" />
                           <span className="text-xs text-gray-500 leading-snug">{achievement}</span>
                         </div>

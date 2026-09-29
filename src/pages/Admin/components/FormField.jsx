@@ -352,12 +352,14 @@ export function FileUpload({ value, onChange, folder = "documents", accept = "ap
   );
 }
 
-// Point focal d'une photo recadrée (portrait affiché en cercle, etc.) :
+// Point focal d'une photo recadrée (portrait d'équipe au format 4:5, etc.) :
 // cliquer sur l'image place le point qui doit rester visible. La valeur est
 // une position CSS « X% Y% » (object-position), vide = centre.
 const POSITION_RE = /^(\d{1,3}(?:\.\d+)?)% (\d{1,3}(?:\.\d+)?)%$/;
 
-export function FocalPointPicker({ src, value, onChange, previewSize = 80 }) {
+// `previewWidth` / `previewHeight` : format de l'aperçu, à aligner sur
+// l'affichage réel du site (carte d'équipe : 280×350, soit 4:5).
+export function FocalPointPicker({ src, value, onChange, previewWidth = 112, previewHeight = 140 }) {
   const match = POSITION_RE.exec(value || "");
   const x = match ? Number(match[1]) : 50;
   const y = match ? Number(match[2]) : 50;
@@ -382,8 +384,8 @@ export function FocalPointPicker({ src, value, onChange, previewSize = 80 }) {
       </div>
       <div className="space-y-2 text-center">
         <div
-          className="mx-auto overflow-hidden rounded-full ring-4 ring-orange-200"
-          style={{ width: previewSize, height: previewSize }}
+          className="mx-auto overflow-hidden rounded-t-xl ring-2 ring-orange-200"
+          style={{ width: previewWidth, height: previewHeight }}
         >
           <img src={src} alt="" className="h-full w-full object-cover" style={{ objectPosition: `${x}% ${y}%` }} />
         </div>
