@@ -191,6 +191,23 @@ npm run build     # sortie → dist/
 npm run serve     # prévisualiser le build
 ```
 
+### ⚠️ Pages prérendues : une modification du CMS n'atteint le HTML servi qu'au build suivant
+
+`npm run build` se termine par `scripts/prerender.mjs`, qui ouvre chaque page publique prérendue (`/`, `/about`, `/service`, `/portfolio`, `/partnership`, `/contact`, `/join-us`, `/cgu`, `/confidentialite`, `/securite`) dans Chromium et **fige dans le HTML le contenu du CMS tel qu'il est au moment du build**.
+
+Conséquence, contre-intuitive : après une modification dans l'admin (ajout, correction, désactivation, suppression),
+
+- un visiteur dont le navigateur exécute le JavaScript voit le nouveau contenu (la page interroge Supabase en direct et remplace l'instantané) ;
+- mais **le HTML servi garde l'ancien contenu jusqu'au prochain build** : c'est lui que lisent Google et les autres moteurs, les aperçus de liens (WhatsApp, LinkedIn, Facebook…), et ce qui s'affiche avant le chargement du JavaScript ou s'il échoue. Une affirmation retirée du CMS reste donc publiée tant qu'on n'a pas reconstruit le site.
+
+**Après toute modification du CMS qui compte** (surtout le retrait d'une affirmation, d'un chiffre ou d'une personne) : relancer un déploiement de production (Vercel → Deployments → Redeploy, ou un push sur `main`), puis vérifier le HTML servi, par exemple :
+
+```bash
+curl -s https://www.lynxatech.com/partnership | grep -c "Texte retiré"   # doit renvoyer 0
+```
+
+Les routes non prérendues (`/insights`, `/produits/:slug`, `/admin/*`) sont servies par la coquille `spa.html` et ne sont pas concernées. Un bouton « Publier les modifications » dans l'admin (déclenchant un deploy hook Vercel) est prévu après la bascule DNS.
+
 ---
 
 ## Déploiement
@@ -309,6 +326,7 @@ Chaque page dispose aussi d'un éditeur de visibilité des sections via `/admin/
 - **`src/lib/cms.js`** — Fonctions CRUD (get/save/delete) pour chaque table
 - **`src/hooks/useContent.js`** — Hooks React (`useServices`, `useTeamMembers`, etc.)
 - Les composants chargent le contenu depuis Supabase. **Règle : un contenu de repli (fallback) dans le code ne doit jamais affirmer un fait.** Libellés, listes de choix et étapes de processus peuvent avoir un repli statique ; en revanche, tout ce qui dit qui travaille chez nous, quels projets nous menons, quels engagements, certifications ou conformités nous revendiquons, et tout chiffre, vient **uniquement du CMS** : table vide ⇒ section (ou bloc) masquée, échec de chargement ⇒ message « Ce contenu ne peut pas être chargé » (`src/components/SectionLoadError.jsx`). Sont concernés : équipe (`team_members`), sécurité et engagements (`trust_security_items`, `trust_commitment_items`), laboratoire d'innovation (`portfolio_innovations`), feuille de route, piliers, avantages de la Guinée (`about_roadmap_phases`, `about_vision_pillars`, `about_advantages`), chiffres d'impact et de l'écosystème (`site_settings` : `about_impact_metrics`, `about_ecosystem_stats`), et les sections de la page **Insights**
+- ⚠️ **Une modification du CMS n'atteint le HTML des pages prérendues qu'au build suivant** : redéployer après toute modification qui compte (voir « Build de production »)
 - ⚠️ **Équipe : gardez toujours au moins un membre actif** dans `/admin/team`. Sans membre actif, la section « Rencontrez notre équipe » disparaît de la page À propos (aucune équipe de secours n'est codée en dur)
 - Seules les lignes **actives** sont visibles des visiteurs (politique RLS `active = true`). Un admin connecté voit aussi les lignes inactives sur le site public : pour vérifier ce qu'un visiteur voit, utilisez une fenêtre de navigation privée
 - Upload de médias via Supabase Storage : bucket `cms-media` (images / PDF gérés depuis l'admin — photos équipe, images, livres blancs, rapports) et bucket `Cv_lettredemotivation_joinus` (CV & lettres déposés via le formulaire public « Rejoindre », PDF ≤ 10 Mo)
