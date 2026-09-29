@@ -199,6 +199,7 @@ const TechTalksSection = ({ activeCategory, searchQuery }) => {
                   src={talk?.thumbnail}
                   alt={talk?.title}
                   className="w-full h-48 object-cover transition-transform duration-300 group-hover:scale-105"
+                  sizes="(min-width: 1024px) 384px, (min-width: 768px) 50vw, 100vw"
                 />
 
                 {/* Play Button Overlay */}

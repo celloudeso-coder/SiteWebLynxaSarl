@@ -150,18 +150,18 @@ const OfficeLocation = () => {
               <div className="grid grid-cols-2 gap-2 p-4">
                 <div className="space-y-2">
                   <div className="h-32 rounded-lg overflow-hidden">
-                    <Image src="https://images.unsplash.com/photo-1497366216548-37526070297c?w=400&h=300&fit=crop" alt="Modern office workspace" className="w-full h-full object-cover hover:scale-105 transition-transform duration-300" />
+                    <Image sizes="(min-width: 1024px) 290px, 50vw" src="https://images.unsplash.com/photo-1497366216548-37526070297c?w=400&h=300&fit=crop" alt="Modern office workspace" className="w-full h-full object-cover hover:scale-105 transition-transform duration-300" />
                   </div>
                   <div className="h-20 rounded-lg overflow-hidden">
-                    <Image src="https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=400&h=200&fit=crop" alt="Conference room" className="w-full h-full object-cover hover:scale-105 transition-transform duration-300" />
+                    <Image sizes="(min-width: 1024px) 290px, 50vw" src="https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=400&h=200&fit=crop" alt="Conference room" className="w-full h-full object-cover hover:scale-105 transition-transform duration-300" />
                   </div>
                 </div>
                 <div className="space-y-2">
                   <div className="h-20 rounded-lg overflow-hidden">
-                    <Image src="https://images.unsplash.com/photo-1542744173-8e7e53415bb0?w=400&h=200&fit=crop" alt="Team collaboration area" className="w-full h-full object-cover hover:scale-105 transition-transform duration-300" />
+                    <Image sizes="(min-width: 1024px) 290px, 50vw" src="https://images.unsplash.com/photo-1542744173-8e7e53415bb0?w=400&h=200&fit=crop" alt="Team collaboration area" className="w-full h-full object-cover hover:scale-105 transition-transform duration-300" />
                   </div>
                   <div className="h-32 rounded-lg overflow-hidden">
-                    <Image src="https://images.unsplash.com/photo-1556761175-4b46a572b786?w=400&h=300&fit=crop" alt="Reception area" className="w-full h-full object-cover hover:scale-105 transition-transform duration-300" />
+                    <Image sizes="(min-width: 1024px) 290px, 50vw" src="https://images.unsplash.com/photo-1556761175-4b46a572b786?w=400&h=300&fit=crop" alt="Reception area" className="w-full h-full object-cover hover:scale-105 transition-transform duration-300" />
                   </div>
                 </div>
               </div>

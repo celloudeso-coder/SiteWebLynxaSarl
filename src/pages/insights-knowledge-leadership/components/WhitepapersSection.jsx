@@ -148,6 +148,7 @@ const WhitepapersSection = ({ activeCategory, searchQuery }) => {
                     src={whitepaper?.image}
                     alt={whitepaper?.title}
                     className="w-full h-48 md:h-full object-cover"
+                    sizes="(min-width: 768px) 300px, 100vw"
                   />
                 </div>
 

@@ -1,5 +1,6 @@
 import React from 'react';
 import manifest from '../lib/imageManifest.generated.json';
+import { stockImage } from '../lib/stockImage';
 
 // En dev, le manifeste n'est pas régénéré à chaque sauvegarde (il n'est
 // produit qu'au build — scripts/generate-image-variants.mjs) : on sert donc
@@ -53,6 +54,27 @@ function Image({
           {...props}
         />
       </picture>
+    );
+  }
+
+  // Photo Pexels / Unsplash : variantes servies par leur CDN.
+  const stock = stockImage(src);
+  if (stock) {
+    return (
+      <img
+        src={stock.src}
+        srcSet={stock.srcSet}
+        sizes={sizes || "100vw"}
+        alt={alt}
+        className={className}
+        width={width}
+        height={height}
+        loading={resolvedLoading}
+        fetchpriority={fetchPriority}
+        decoding={decoding}
+        onError={onError}
+        {...props}
+      />
     );
   }
 

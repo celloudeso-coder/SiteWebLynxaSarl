@@ -219,6 +219,7 @@ const IndustryReportsSection = ({ activeCategory, searchQuery }) => {
                     src={report?.image}
                     alt={report?.title}
                     className="w-full h-48 md:h-full object-cover"
+                    sizes="(min-width: 1024px) 240px, (min-width: 768px) 40vw, 100vw"
                   />
                 </div>
 

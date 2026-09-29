@@ -252,6 +252,7 @@ const BlogSection = ({ activeCategory, searchQuery }) => {
                   src={post?.image}
                   alt={post?.title}
                   className="w-full h-48 object-cover transition-transform duration-300 hover:scale-105"
+                  sizes="(min-width: 1024px) 384px, (min-width: 768px) 50vw, 100vw"
                 />
                 <div className="absolute top-4 left-4">
                   <span className="bg-primary text-primary-foreground px-3 py-1 rounded-full text-xs font-semibold capitalize">
