@@ -15,12 +15,22 @@
 //
 // /admin/* est volontairement exclu (panneau privé, jamais indexé).
 //
+// Navigateur utilisé :
+//   - sur Vercel : @sparticuz/chromium. L'image de build Vercel n'embarque
+//     pas les bibliothèques système de Chrome (libnspr4, libnss3…) : le
+//     Chrome téléchargé par puppeteer y échoue au lancement (code 127).
+//     @sparticuz/chromium fournit un Chromium compilé pour Amazon Linux 2023
+//     avec ses propres bibliothèques, qu'il extrait dans /tmp ;
+//   - PUPPETEER_EXECUTABLE_PATH défini (image Docker) : ce binaire ;
+//   - sinon (développement local) : le Chrome téléchargé par puppeteer.
+//
 // En local et en préproduction (Vercel preview, ou CI sans cible de prod
 // explicite) : best-effort. Si Chromium ne peut pas être lancé, on logue un
 // avertissement et on sort en succès — le site se déploie comme avant (SPA
 // pure), sans régression. En revanche, sur un build CI/Vercel dont la
-// cible EST la production, un prerendering manquant est une régression SEO
-// silencieuse inacceptable : le build échoue avec un message explicite.
+// cible EST la production, un prerendering manquant ou incomplet (une route
+// restée sur le titre par défaut) est une régression SEO silencieuse
+// inacceptable : le build échoue avec un message explicite.
 
 import { createServer } from "node:http";
 import { createReadStream } from "node:fs";
@@ -167,25 +177,49 @@ async function outputPathFor(route) {
   return path.join(outDir, "index.html");
 }
 
+// Choisit le Chromium à lancer selon l'environnement (voir l'en-tête).
+// Imports différés : si une dépendance manque (install --production sans
+// devDependencies, par ex.), l'erreur est gérée par main() comme un échec
+// de lancement, pas comme un plantage du build.
+async function resolveLaunchOptions() {
+  if (process.env.PUPPETEER_EXECUTABLE_PATH) {
+    return {
+      source: `PUPPETEER_EXECUTABLE_PATH (${process.env.PUPPETEER_EXECUTABLE_PATH})`,
+      options: {
+        headless: true,
+        args: ["--no-sandbox", "--disable-setuid-sandbox"],
+        executablePath: process.env.PUPPETEER_EXECUTABLE_PATH,
+      },
+    };
+  }
+  if (process.env.VERCEL) {
+    const { default: chromium } = await import("@sparticuz/chromium");
+    const { default: puppeteer } = await import("puppeteer");
+    return {
+      source: "@sparticuz/chromium (Vercel)",
+      options: {
+        headless: "shell",
+        args: puppeteer.defaultArgs({ args: chromium.args, headless: "shell" }),
+        executablePath: await chromium.executablePath(),
+      },
+    };
+  }
+  return {
+    source: "Chrome de puppeteer (local)",
+    options: { headless: true, args: ["--no-sandbox", "--disable-setuid-sandbox"] },
+  };
+}
+
 async function prerender() {
-  // Import différé : si "puppeteer" n'est pas installé (install --production
-  // sans devDependencies, par ex.), on doit pouvoir sortir proprement plutôt
-  // que de faire planter tout le build.
   const { default: puppeteer } = await import("puppeteer");
+  const { source, options: launchOptions } = await resolveLaunchOptions();
 
   const server = await startStaticServer();
   console.log(`[prerender] Serveur statique de dist/ sur http://127.0.0.1:${PORT}`);
 
-  const launchOptions = {
-    headless: true,
-    args: ["--no-sandbox", "--disable-setuid-sandbox"],
-  };
-  if (process.env.PUPPETEER_EXECUTABLE_PATH) {
-    launchOptions.executablePath = process.env.PUPPETEER_EXECUTABLE_PATH;
-  }
-
   try {
     const browser = await puppeteer.launch(launchOptions);
+    console.log(`[prerender] Navigateur : ${source} — ${await browser.version()}`);
     const results = [];
     try {
       for (const route of ROUTES) {
@@ -197,11 +231,18 @@ async function prerender() {
           // tarder sans jamais devenir totalement inactifs. On synchronise
           // plutôt sur un signal explicite : le titre posé par react-helmet.
           await page.goto(url, { waitUntil: "domcontentloaded", timeout: 30000 });
-          await page.waitForFunction(
+          const titleReady = await page.waitForFunction(
             () => document.title && document.title !== "Lynxa Tech",
             { timeout: 15000 },
-          ).catch(() => {
+          ).then(() => true, () => {
             console.warn(`[prerender] ${route} : le titre par défaut n'a pas changé avant le timeout (capture quand même).`);
+            return false;
+          });
+          // Contenu chargé depuis Supabase après le montage : on attend que
+          // le réseau se calme (aucune requête pendant 500 ms), borné à 10 s
+          // pour ne pas bloquer sur une page qui ferait du polling.
+          await page.waitForNetworkIdle({ idleTime: 500, timeout: 10000 }).catch(() => {
+            console.warn(`[prerender] ${route} : réseau encore actif après 10 s (capture quand même).`);
           });
           // Laisse le temps au reste du <head> (description/OG/canonical,
           // posés dans le même bloc <Helmet>) et au premier rendu visible
@@ -211,7 +252,7 @@ async function prerender() {
           const html = dedupeStaticDescription(await page.content());
           const outFile = await outputPathFor(route);
           await writeFile(outFile, html, "utf-8");
-          results.push({ route, outFile, ok: true, summary: summarizeRoute(route, html) });
+          results.push({ route, outFile, titleReady, summary: summarizeRoute(route, html) });
           console.log(`[prerender] ✓ ${route} → ${path.relative(process.cwd(), outFile)}`);
         } finally {
           await page.close();
@@ -235,8 +276,14 @@ async function main() {
 
   try {
     const results = await prerender();
-    console.log(`[prerender] Terminé : ${results.length} route(s) prérendue(s).`);
     printRouteSummary(results.map((r) => r.summary));
+    // Une route restée sur le titre par défaut n'a pas été réellement
+    // rendue (React non monté, erreur JS…) : en production, c'est un échec.
+    const incomplete = results.filter((r) => !r.titleReady).map((r) => r.route);
+    if (incomplete.length > 0 && STRICT_MODE) {
+      throw new Error(`rendu incomplet (titre par défaut) sur : ${incomplete.join(", ")}`);
+    }
+    console.log(`[prerender] Terminé : ${results.length} route(s) prérendue(s).`);
   } catch (error) {
     if (STRICT_MODE) {
       // Build CI/Vercel ciblant la production : un prerendering manquant
@@ -245,8 +292,7 @@ async function main() {
       // plutôt que de le laisser passer discrètement.
       console.error("[prerender] ÉCHEC — build de production (CI/Vercel, VERCEL_ENV=production) sans prerendering.");
       console.error(`[prerender] Raison : ${error?.message || error}`);
-      console.error("[prerender] Corrigez l'environnement de build (Chromium indisponible ?) ou, en dernier recours,");
-      console.error("[prerender] forcez le mode best-effort avec PRERENDER_TARGET=preview.");
+      console.error("[prerender] Corrigez l'environnement de build (Chromium indisponible ? rendu React en erreur ?).");
       process.exitCode = 1;
       return;
     }
