@@ -39,7 +39,7 @@ const HeroSection = () => {
       <div className="absolute inset-0">
         <Image
           src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=1920&h=1080"
-          alt="African tech innovation and digital transformation"
+          alt=""
           className="w-full h-full object-cover opacity-40"
           sizes="(max-width: 767px) 50vw, 100vw"
         />

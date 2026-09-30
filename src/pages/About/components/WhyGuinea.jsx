@@ -179,7 +179,7 @@ const WhyGuinea = () => {
                 width="100%"
                 height="100%"
                 loading="lazy"
-                title="Guinea Location"
+                title="Carte de la Guinée"
                 referrerPolicy="no-referrer-when-downgrade"
                 src="https://www.google.com/maps?q=9.6412,-13.5784&z=8&output=embed"
                 className="border-0"

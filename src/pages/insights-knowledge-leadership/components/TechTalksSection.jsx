@@ -40,7 +40,7 @@ const TechTalksSection = ({ activeCategory, searchQuery }) => {
     return matchesCategory && matchesSearch;
   });
 
-  if (loadError) return <SectionLoadError title="Tech Talks" />;
+  if (loadError) return <SectionLoadError title="Conférences tech" />;
 
   if (filteredTechTalks?.length === 0) {
     return null;
@@ -60,7 +60,7 @@ const TechTalksSection = ({ activeCategory, searchQuery }) => {
         {/* Section Header */}
         <div className="text-center mb-12">
           <h2 className="text-3xl font-heading font-bold text-secondary mb-4">
-            Tech <span className="text-gradient-orange">Talks</span>
+            Conférences <span className="text-gradient-orange">tech</span>
           </h2>
           <p className="text-gray-600 max-w-2xl mx-auto">
             Regardez nos experts partager leurs analyses lors de conférences et

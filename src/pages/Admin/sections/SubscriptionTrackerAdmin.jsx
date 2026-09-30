@@ -8,6 +8,7 @@ import {
 import { FormField, TextArea, TextInput, Toggle } from "../components/FormField";
 import SaveButton from "../components/SaveButton";
 import SubscriptionPaymentsPanel from "./components/SubscriptionPaymentsPanel";
+import { adminErrorMessage } from "../../../lib/errorMessages";
 import {
   AlertCircle,
   AlertTriangle,
@@ -190,7 +191,7 @@ export default function SubscriptionTrackerAdmin() {
         setWarning("Les abonnements sont affichés, mais l’historique des paiements n’a pas pu être chargé. Réessayez dans quelques instants.");
       }
     } catch (err) {
-      setError(err?.message || "Impossible de charger les abonnements.");
+      setError(adminErrorMessage(err, "Impossible de charger les abonnements."));
     } finally {
       setLoading(false);
     }
@@ -337,7 +338,7 @@ export default function SubscriptionTrackerAdmin() {
       setSaved(updated.id);
       window.setTimeout(() => setSaved(null), 2500);
     } catch (err) {
-      setError(err?.message || "Échec de l’enregistrement dans Supabase.");
+      setError(adminErrorMessage(err, "Échec de l’enregistrement dans Supabase."));
     } finally {
       setSaving(null);
     }
@@ -356,7 +357,7 @@ export default function SubscriptionTrackerAdmin() {
       setSubscriptions((previous) => previous.filter((item) => item.id !== subscription.id));
       setPayments((previous) => previous.filter((payment) => payment.subscription_id !== subscription.id));
     } catch (err) {
-      setError(err?.message || "Impossible de supprimer cet abonnement.");
+      setError(adminErrorMessage(err, "Impossible de supprimer cet abonnement."));
     }
   }
 

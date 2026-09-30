@@ -95,7 +95,7 @@ const NewsletterSection = () => {
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e?.target?.value)}
-                placeholder="your.email@example.com"
+                placeholder="vous@exemple.com"
                 required
                 className="bg-white/20 border-white/30 text-white placeholder-white/60 focus:border-white focus:bg-white/30"
               />
@@ -187,7 +187,7 @@ const NewsletterSection = () => {
                 disabled={!email?.trim() || isLoading}
                 className="border-white text-white hover:bg-white hover:text-primary disabled:opacity-50 disabled:cursor-not-allowed min-w-[200px]"
               >
-                {isLoading ? "Subscribing..." : "Subscribe Now"}
+                {isLoading ? "Inscription…" : "S'abonner"}
               </Button>
             </div>
           </form>

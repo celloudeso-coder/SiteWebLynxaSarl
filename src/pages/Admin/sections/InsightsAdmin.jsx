@@ -334,7 +334,7 @@ function TechTalksSection() {
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
           <div className="w-7 h-7 bg-primary rounded-lg flex items-center justify-center"><Video size={14} color="white" /></div>
-          <h2 className="text-base font-bold text-gray-900">Tech Talks</h2>
+          <h2 className="text-base font-bold text-gray-900">Conférences tech</h2>
         </div>
         <AddButton onClick={addNew} />
       </div>
@@ -633,7 +633,7 @@ function CategoriesSection() {
 const TABS = [
   { id: "blog",        label: "Articles"      },
   { id: "whitepapers", label: "Livres Blancs" },
-  { id: "techtalks",   label: "Tech Talks"    },
+  { id: "techtalks",   label: "Conférences tech" },
   { id: "reports",     label: "Rapports"      },
   { id: "categories",  label: "Catégories"    },
 ];

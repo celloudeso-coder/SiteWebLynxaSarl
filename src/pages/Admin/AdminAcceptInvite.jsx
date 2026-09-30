@@ -3,6 +3,7 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { CheckCircle2, KeyRound, Loader2 } from "lucide-react";
 import { supabase } from "../../lib/supabase";
 import { acceptAdminInvitation } from "../../lib/adminUsers";
+import { adminErrorMessage } from "../../lib/errorMessages";
 
 export default function AdminAcceptInvite() {
   const navigate = useNavigate();
@@ -43,7 +44,7 @@ export default function AdminAcceptInvite() {
       await acceptAdminInvitation(token);
       navigate("/admin", { replace: true });
     } catch (acceptError) {
-      setError(acceptError?.message || "Cette invitation ne peut pas être acceptée.");
+      setError(adminErrorMessage(acceptError, "Cette invitation ne peut pas être acceptée."));
       setSaving(false);
     }
   }
@@ -59,7 +60,7 @@ export default function AdminAcceptInvite() {
       options: { emailRedirectTo: window.location.href },
     });
     setSaving(false);
-    if (resendError) return setError(resendError.message || "Impossible de renvoyer l’e-mail de confirmation.");
+    if (resendError) return setError(adminErrorMessage(resendError, "Impossible de renvoyer l’e-mail de confirmation."));
     setNotice("Un nouvel e-mail de confirmation vient d’être envoyé. Ouvrez le lien le plus récent.");
   }
 
@@ -79,7 +80,7 @@ export default function AdminAcceptInvite() {
       : await supabase.auth.signInWithPassword({ email: email.trim().toLowerCase(), password });
 
     if (result.error) {
-      setError(result.error.message || "Impossible de vous authentifier.");
+      setError(adminErrorMessage(result.error, "Impossible de vous authentifier."));
       setSaving(false);
       return;
     }
@@ -92,7 +93,7 @@ export default function AdminAcceptInvite() {
       await acceptAdminInvitation(token);
       navigate("/admin", { replace: true });
     } catch (acceptError) {
-      setError(acceptError?.message || "Cette invitation ne peut pas être acceptée.");
+      setError(adminErrorMessage(acceptError, "Cette invitation ne peut pas être acceptée."));
       setSaving(false);
     }
   }

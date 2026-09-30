@@ -89,7 +89,7 @@ export default function AdminDashboard() {
     <div className="space-y-10">
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
+        <h1 className="text-2xl font-bold text-gray-900">Tableau de bord</h1>
         <p className="text-gray-500 text-sm mt-1">
           Gérez tout le contenu du site Lynxa Tech depuis ce panneau.
         </p>

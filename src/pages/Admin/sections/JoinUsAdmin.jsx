@@ -6,6 +6,7 @@ import {
 } from "../../../lib/cms";
 import { FormField, TextInput, TextArea, Toggle } from "../components/FormField";
 import SaveButton from "../components/SaveButton";
+import { adminErrorMessage } from "../../../lib/errorMessages";
 import {
   Users, Briefcase, Download, RefreshCw, Trash2,
   ExternalLink, ChevronDown, ChevronUp, Plus,
@@ -34,7 +35,7 @@ async function openApplicationDocument(value) {
     else window.location.href = url;
   } catch (err) {
     if (win) win.close();
-    alert(`Impossible d'ouvrir le document : ${err?.message || err}`);
+    alert(adminErrorMessage(err, "Impossible d'ouvrir le document."));
   }
 }
 
