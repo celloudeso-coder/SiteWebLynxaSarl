@@ -89,7 +89,7 @@ const AboutInnovationStoryVision = () => {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.5, duration: 0.5 }}
               >
-                <a href="/assets/docs/Fiche_Entreprise_Lynxa_Tech.pdf" download>
+                <a href="/assets/docs/Fiche_Entreprise_Lynxa_Tech.pdf" download="Profil-entreprise-LYNXA.pdf">
                   <motion.span
                     whileHover={{ scale: 1.04 }}
                     whileTap={{ scale: 0.97 }}
