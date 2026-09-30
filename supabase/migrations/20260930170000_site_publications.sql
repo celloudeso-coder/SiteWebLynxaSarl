@@ -11,7 +11,9 @@
 --     (propriétaires toujours autorisés, cf. has_admin_permission) ;
 --   - au plus une publication (non échouée) toutes les 2 minutes, tous
 --     admins confondus ;
---   - au plus 20 publications (non échouées) par jour, heure de Conakry.
+--   - au plus 20 publications (non échouées) par jour, heure de Conakry ;
+--   - une demande restée plus de 10 minutes en 'requested' (fonction Edge
+--     interrompue) est close en 'failed' / 'stale' et ne compte plus.
 --
 -- À exécuter dans l'éditeur SQL Supabase. Idempotent.
 
@@ -71,6 +73,16 @@ BEGIN
   -- Sérialise les demandes concurrentes (deux clics simultanés ne doivent
   -- pas passer tous les deux le contrôle de fréquence).
   PERFORM pg_advisory_xact_lock(hashtext('public.site_publications'));
+
+  -- Demandes orphelines : la fonction Edge s'est arrêtée entre l'insertion
+  -- et le marquage (le hook lui-même expire en 15 s). Au-delà de 10 minutes
+  -- en 'requested', elles sont closes en 'failed' / 'stale' : elles ne
+  -- comptent plus ni dans le délai de 2 minutes ni dans le quota journalier,
+  -- et restent dans l'historique.
+  UPDATE public.site_publications
+  SET status = 'failed', error = 'stale'
+  WHERE status = 'requested'
+    AND requested_at < now() - interval '10 minutes';
 
   SELECT max(requested_at) INTO v_last
   FROM public.site_publications
