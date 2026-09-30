@@ -271,7 +271,7 @@ function FilterOptionsSection() {
 
 // ── Main ──────────────────────────────────────────────────────────────────────
 const TABS = [
-  { id: "lab",     label: "Lab Innovation" },
+  { id: "lab",     label: "Laboratoire d'innovation" },
   { id: "filters", label: "Filtres"        },
 ];
 

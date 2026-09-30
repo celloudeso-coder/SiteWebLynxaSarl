@@ -206,7 +206,7 @@ function WhitepapersSection() {
   async function addNew() {
     const created = await saveWhitepaper({
       sort_order: items.length + 1, active: true,
-      title: "Nouveau whitepaper", description: "Description...",
+      title: "Nouveau livre blanc", description: "Description...",
       category: "ecosystem", pages: 40, download_count: 0,
       publish_date: new Date().toISOString().slice(0, 10), image: "", tags: [],
     });
@@ -214,7 +214,7 @@ function WhitepapersSection() {
   }
 
   async function remove(id) {
-    if (!confirm("Supprimer ce whitepaper ?")) return;
+    if (!confirm("Supprimer ce livre blanc ?")) return;
     await deleteWhitepaper(id);
     setItems((prev) => prev.filter((m) => m.id !== id));
   }
@@ -281,7 +281,7 @@ function WhitepapersSection() {
             </div>
           </div>
         ))}
-        {items.length === 0 && <EmptyState message='Aucun whitepaper. Cliquez sur "Ajouter" pour commencer.' />}
+        {items.length === 0 && <EmptyState message='Aucun livre blanc. Cliquez sur "Ajouter" pour commencer.' />}
       </div>
     </div>
   );
@@ -315,7 +315,7 @@ function TechTalksSection() {
   async function addNew() {
     const created = await saveTechTalk({
       sort_order: items.length + 1, active: true,
-      title: "Nouveau tech talk", speaker: "Intervenant",
+      title: "Nouvelle conférence", speaker: "Intervenant",
       event: "Conférence", duration: "30:00", views: 0,
       category: "ecosystem", publish_date: new Date().toISOString().slice(0, 10),
       thumbnail: "", video_id: "", description: "", tags: [],
@@ -324,7 +324,7 @@ function TechTalksSection() {
   }
 
   async function remove(id) {
-    if (!confirm("Supprimer ce tech talk ?")) return;
+    if (!confirm("Supprimer cette conférence ?")) return;
     await deleteTechTalk(id);
     setItems((prev) => prev.filter((m) => m.id !== id));
   }
@@ -397,7 +397,7 @@ function TechTalksSection() {
             </div>
           </div>
         ))}
-        {items.length === 0 && <EmptyState message='Aucun tech talk. Cliquez sur "Ajouter" pour commencer.' />}
+        {items.length === 0 && <EmptyState message='Aucune conférence. Cliquez sur "Ajouter" pour commencer.' />}
       </div>
     </div>
   );
@@ -531,11 +531,11 @@ const ICON_OPTIONS = [
 ];
 
 const STATIC_CATEGORIES = [
-  { id: "all",          label: "All Content",            icon: "Grid"       },
-  { id: "cybersecurity",label: "Cybersecurity",          icon: "Shield"     },
-  { id: "mobile",       label: "Mobile Innovation",      icon: "Smartphone" },
-  { id: "network",      label: "Network Solutions",      icon: "Network"    },
-  { id: "ecosystem",    label: "African Tech Ecosystem", icon: "Globe"      },
+  { id: "all",          label: "Tous les contenus",      icon: "Grid"       },
+  { id: "cybersecurity",label: "Cybersécurité",          icon: "Shield"     },
+  { id: "mobile",       label: "Innovation mobile",      icon: "Smartphone" },
+  { id: "network",      label: "Solutions réseau",       icon: "Network"    },
+  { id: "ecosystem",    label: "Écosystème tech africain", icon: "Globe"      },
 ];
 
 function CategoriesSection() {
@@ -587,11 +587,11 @@ function CategoriesSection() {
       <div className="bg-white rounded-xl border border-gray-200 p-4 space-y-3">
         {cats.map((cat, i) => (
           <div key={i} className="grid sm:grid-cols-3 gap-3 items-end">
-            <FormField label="ID (slug)">
+            <FormField label="Identifiant (slug)">
               <TextInput value={cat.id} onChange={(v) => updateCat(i, "id", v)} placeholder="cybersecurity" />
             </FormField>
-            <FormField label="Label affiché">
-              <TextInput value={cat.label} onChange={(v) => updateCat(i, "label", v)} placeholder="Cybersecurity" />
+            <FormField label="Libellé affiché">
+              <TextInput value={cat.label} onChange={(v) => updateCat(i, "label", v)} placeholder="Cybersécurité" />
             </FormField>
             <div className="flex gap-2 items-end">
               <div className="flex-1">
@@ -644,7 +644,7 @@ export default function InsightsAdmin() {
   return (
     <div>
       <div className="mb-6">
-        <h1 className="text-xl font-bold text-gray-900">Insights & Knowledge</h1>
+        <h1 className="text-xl font-bold text-gray-900">Insights et ressources</h1>
         <p className="text-gray-500 text-sm mt-0.5">Contenu de la page Insights — articles, rapports, vidéos et catégories</p>
       </div>
 

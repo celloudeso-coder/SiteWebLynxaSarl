@@ -45,7 +45,7 @@ export default function HeroAdmin() {
     <div>
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-xl font-bold text-gray-900">Hero Sections</h1>
+          <h1 className="text-xl font-bold text-gray-900">En-têtes de page</h1>
           <p className="text-gray-500 text-sm mt-0.5">Titres et sous-titres d'introduction par page</p>
         </div>
         <SaveButton loading={saving} saved={saved} onClick={save} />

@@ -19,7 +19,7 @@ const PAGE_CONFIGS = {
     color: "bg-blue-500",
     description: "Page d'accueil principale du site Lynxa Tech",
     sections: [
-      { label: "Hero Section",       desc: "Titre, sous-titre, boutons d'action",        icon: Globe,         link: "/admin/hero",         cms: true  },
+      { label: "En-tête",       desc: "Titre, sous-titre, boutons d'action",        icon: Globe,         link: "/admin/hero",         cms: true  },
       { label: "Métriques",          desc: "Compteurs et indicateurs de performance",     icon: BarChart2,     link: "/admin/metrics",      cms: true  },
       { label: "Services",           desc: "Aperçu des services sur la page d'accueil",   icon: Briefcase,     link: "/admin/services",     cms: true  },
       { label: "Témoignages",        desc: "Citations et avis clients",                   icon: MessageSquare, link: "/admin/testimonials", cms: true  },
@@ -34,13 +34,13 @@ const PAGE_CONFIGS = {
     color: "bg-purple-500",
     description: "Page de présentation de l'entreprise et de l'équipe",
     sections: [
-      { label: "Hero Section",       desc: "Titre et description de la page",              icon: Globe,         link: "/admin/hero",         cms: true  },
+      { label: "En-tête",       desc: "Titre et description de la page",              icon: Globe,         link: "/admin/hero",         cms: true  },
       { label: "Équipe",             desc: "Membres et profils de l'équipe",               icon: Users,         link: "/admin/team",         cms: true  },
-      { label: "Timeline",           desc: "Historique et jalons de l'entreprise",         icon: Clock,         link: "/admin/timeline",     cms: true  },
+      { label: "Chronologie",           desc: "Historique et jalons de l'entreprise",         icon: Clock,         link: "/admin/timeline",     cms: true  },
       { label: "Histoire Fondateur", desc: "Story du fondateur — éditable via CMS",        icon: Sparkles,      link: "/admin/about-content", cms: true  },
       { label: "Valeurs",            desc: "Valeurs de l'entreprise — éditables via CMS",  icon: Sparkles,      link: "/admin/about-content", cms: true  },
       { label: "Pourquoi Guinée ?",  desc: "Avantages Guinée — éditable via CMS",          icon: Sparkles,      link: "/admin/about-content", cms: true  },
-      { label: "Vision & Roadmap",   desc: "Feuille de route — éditable via CMS",          icon: Sparkles,      link: "/admin/about-content", cms: true  },
+      { label: "Vision et feuille de route",   desc: "Feuille de route — éditable via CMS",          icon: Sparkles,      link: "/admin/about-content", cms: true  },
     ],
   },
   services: {
@@ -50,11 +50,11 @@ const PAGE_CONFIGS = {
     color: "bg-orange-500",
     description: "Page de présentation des services et tarifs",
     sections: [
-      { label: "Hero Section",      desc: "Titre et description de la page Services",     icon: Globe,      link: "/admin/hero",     cms: true  },
+      { label: "En-tête",      desc: "Titre et description de la page Services",     icon: Globe,      link: "/admin/hero",     cms: true  },
       { label: "Services",          desc: "Liste et détails de chaque service",            icon: Briefcase,  link: "/admin/services", cms: true  },
       { label: "Tarifs",            desc: "Plans et grilles tarifaires",                   icon: DollarSign, link: "/admin/pricing",  cms: true  },
       { label: "Processus",         desc: "Timeline du processus — éditable via CMS",      icon: Sparkles,   link: "/admin/services-content", cms: true  },
-      { label: "Stack Technique",   desc: "Technologies utilisées — éditable via CMS",     icon: Sparkles,   link: "/admin/services-content", cms: true  },
+      { label: "Technologies",   desc: "Technologies utilisées — éditable via CMS",     icon: Sparkles,   link: "/admin/services-content", cms: true  },
     ],
   },
   portfolio: {
@@ -64,9 +64,9 @@ const PAGE_CONFIGS = {
     color: "bg-teal-500",
     description: "Page de présentation des projets réalisés",
     sections: [
-      { label: "Hero Section",   desc: "Titre et description de la page Portfolio",        icon: Globe,      link: "/admin/hero",              cms: true  },
+      { label: "En-tête",   desc: "Titre et description de la page Portfolio",        icon: Globe,      link: "/admin/hero",              cms: true  },
       { label: "Projets",        desc: "Liste des projets et études de cas",               icon: FolderOpen, link: "/admin/portfolio",         cms: true  },
-      { label: "Lab Innovation", desc: "Section R&D — éditable via CMS",                  icon: Sparkles,   link: "/admin/portfolio-content", cms: true  },
+      { label: "Laboratoire d'innovation", desc: "Section R&D — éditable via CMS",                  icon: Sparkles,   link: "/admin/portfolio-content", cms: true  },
       { label: "Filtres",        desc: "Services & industries filtrables — éditable via CMS", icon: Briefcase, link: "/admin/portfolio-content", cms: true },
     ],
   },
@@ -77,7 +77,7 @@ const PAGE_CONFIGS = {
     color: "bg-green-500",
     description: "Page de contact et formulaire de prise de contact",
     sections: [
-      { label: "Hero Section",    desc: "Titre et description de la page Contact",         icon: Globe,    link: "/admin/hero",     cms: true  },
+      { label: "En-tête",    desc: "Titre et description de la page Contact",         icon: Globe,    link: "/admin/hero",     cms: true  },
       { label: "Paramètres",      desc: "Email, téléphone, adresse",                       icon: Settings, link: "/admin/settings", cms: true  },
       { label: "Formulaire",   desc: "Options du formulaire — éditable via CMS",        icon: Sparkles, link: "/admin/contact-content",     cms: true  },
       { label: "Localisation", desc: "Adresse, carte, horaires — éditable via CMS",       icon: Sparkles, link: "/admin/contact-content",     cms: true  },
@@ -90,7 +90,7 @@ const PAGE_CONFIGS = {
     color: "bg-indigo-500",
     description: "Page de présentation des opportunités de partenariat",
     sections: [
-      { label: "Hero Section",      desc: "Titre et description de la page Partenariat",   icon: Globe,     link: "/admin/hero",               cms: true  },
+      { label: "En-tête",      desc: "Titre et description de la page Partenariat",   icon: Globe,     link: "/admin/hero",               cms: true  },
       { label: "Partenariat",       desc: "Formulaire et options de partenariat",           icon: Handshake, link: "/admin/partnership",        cms: true  },
       { label: "Processus",         desc: "Étapes du processus — éditables via CMS",       icon: Sparkles,  link: "/admin/partnership-content", cms: true  },
       { label: "Signaux Confiance", desc: "Sécurité & engagements — éditables via CMS",    icon: Sparkles,  link: "/admin/partnership-content", cms: true  },
@@ -103,7 +103,7 @@ const PAGE_CONFIGS = {
     color: "bg-rose-500",
     description: "Page de recrutement et offres d'emploi",
     sections: [
-      { label: "Hero Section",        desc: "Titre et description de la page Rejoindre",   icon: Globe,     link: "/admin/hero",           cms: true  },
+      { label: "En-tête",        desc: "Titre et description de la page Rejoindre",   icon: Globe,     link: "/admin/hero",           cms: true  },
       { label: "Processus Recrutement", desc: "Étapes du processus — éditables via CMS",  icon: Sparkles,  link: "/admin/join-us-content", cms: true  },
       { label: "Offres d'emploi",     desc: "Postes disponibles",                          icon: Briefcase, link: "/admin/join-us",        cms: true  },
       { label: "Formulaire Candidature", desc: "Formulaire de candidature spontanée",      icon: Mail,      link: "/admin/join-us",        cms: true  },
@@ -116,7 +116,7 @@ const PAGE_CONFIGS = {
     color: "bg-cyan-500",
     description: "Page Articles, Livres Blancs, Conférences tech et Rapports",
     sections: [
-      { label: "Hero Section",      desc: "Titre et description de la page Insights",     icon: Globe,    link: "/admin/hero",            cms: true  },
+      { label: "En-tête",      desc: "Titre et description de la page Insights",     icon: Globe,    link: "/admin/hero",            cms: true  },
       { label: "Catégories",        desc: "Filtres par catégorie — éditables via CMS",    icon: Briefcase, link: "/admin/insights-content", cms: true  },
       { label: "Articles de Blog",  desc: "Articles publiés — éditables via CMS",         icon: BookOpen, link: "/admin/insights-content", cms: true  },
       { label: "Livres Blancs",     desc: "Livres blancs téléchargeables — éditables",      icon: Sparkles, link: "/admin/insights-content", cms: true  },

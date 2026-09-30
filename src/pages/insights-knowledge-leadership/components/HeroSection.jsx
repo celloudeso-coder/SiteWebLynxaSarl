@@ -89,10 +89,10 @@ const HeroSection = () => {
           {/* Key Topics */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-12 max-w-4xl mx-auto">
             {[
-              { icon: "Shield", label: "Cybersecurity" },
-              { icon: "Smartphone", label: "Mobile Innovation" },
-              { icon: "Network", label: "Network Solutions" },
-              { icon: "TrendingUp", label: "African Tech Ecosystem" },
+              { icon: "Shield", label: "Cybersécurité" },
+              { icon: "Smartphone", label: "Innovation mobile" },
+              { icon: "Network", label: "Solutions réseau" },
+              { icon: "TrendingUp", label: "Écosystème tech africain" },
             ]?.map((topic, i) => (
               <motion.div
                 key={topic?.label}

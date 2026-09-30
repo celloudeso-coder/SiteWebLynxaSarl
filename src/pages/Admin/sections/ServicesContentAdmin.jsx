@@ -220,7 +220,7 @@ function TechStackSection() {
             <Cpu size={14} color="white" />
           </div>
           <div>
-            <h2 className="text-base font-bold text-gray-900">Stack Technologique</h2>
+            <h2 className="text-base font-bold text-gray-900">Technologies</h2>
             <p className="text-xs text-gray-500">Technologies par catégorie avec onglets</p>
           </div>
         </div>
@@ -298,7 +298,7 @@ function TechStackSection() {
 // ── Main ──────────────────────────────────────────────────────────────────────
 const TABS = [
   { id: "process", label: "Processus"       },
-  { id: "tech",    label: "Stack Technique" },
+  { id: "tech",    label: "Technologies" },
 ];
 
 export default function ServicesContentAdmin() {
