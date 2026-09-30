@@ -14,6 +14,6 @@
     { "source": "/cgu", "destination": "/cgu/index.html" },
     { "source": "/confidentialite", "destination": "/confidentialite/index.html" },
     { "source": "/securite", "destination": "/securite/index.html" },
-    { "source": "/(.*)", "destination": "/spa.html" }
+    { "source": "/((?!assets/).*)", "destination": "/spa.html" }
   ]
 }
