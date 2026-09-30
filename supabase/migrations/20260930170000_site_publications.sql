@@ -21,8 +21,15 @@ CREATE TABLE IF NOT EXISTS public.site_publications (
   requested_at  timestamptz NOT NULL DEFAULT now(),
   status        text NOT NULL DEFAULT 'requested'
                 CHECK (status IN ('requested', 'dispatched', 'failed')),
-  vercel_job_id text,
+  vercel_job_id text
+                CHECK (vercel_job_id ~ '^[A-Za-z0-9_-]{1,64}$'),
+  -- Catégorie courte issue d'une liste fermée, jamais un message libre : les
+  -- erreurs réseau citent l'URL du hook, qui est un secret, et cette table
+  -- est lisible par les admins.
   error         text
+                CHECK (error IN ('hook_network_error', 'hook_http_4xx', 'hook_http_5xx',
+                                 'hook_timeout', 'hook_bad_response', 'hook_not_configured',
+                                 'stale'))
 );
 
 CREATE INDEX IF NOT EXISTS site_publications_requested_at_idx
@@ -96,8 +103,10 @@ END;
 $$;
 
 -- Résultat de l'appel au deploy hook : 'dispatched' (avec l'id du job
--- Vercel) ou 'failed' (avec le message d'erreur). Uniquement sur une
--- demande de l'appelant encore à l'état 'requested'.
+-- Vercel) ou 'failed' (avec une catégorie d'erreur de la liste fermée).
+-- Uniquement sur une demande de l'appelant encore à l'état 'requested'.
+-- Tout autre contenu de p_error ou p_job est rejeté (22023) : même un bug de
+-- la fonction Edge ne peut pas écrire l'URL du hook dans cette table.
 CREATE OR REPLACE FUNCTION public.mark_site_publication(
   p_id     uuid,
   p_status text,
@@ -114,14 +123,25 @@ BEGIN
     RAISE EXCEPTION 'forbidden' USING ERRCODE = '42501';
   END IF;
 
-  IF p_status NOT IN ('dispatched', 'failed') THEN
+  IF p_status = 'dispatched' THEN
+    IF p_error IS NOT NULL OR p_job IS NULL OR p_job !~ '^[A-Za-z0-9_-]{1,64}$' THEN
+      RAISE EXCEPTION 'invalid_dispatch' USING ERRCODE = '22023';
+    END IF;
+  ELSIF p_status = 'failed' THEN
+    IF p_job IS NOT NULL OR p_error IS NULL OR p_error NOT IN (
+      'hook_network_error', 'hook_http_4xx', 'hook_http_5xx',
+      'hook_timeout', 'hook_bad_response', 'hook_not_configured'
+    ) THEN
+      RAISE EXCEPTION 'invalid_error' USING ERRCODE = '22023';
+    END IF;
+  ELSE
     RAISE EXCEPTION 'invalid_status' USING ERRCODE = '22023';
   END IF;
 
   UPDATE public.site_publications
   SET status        = p_status,
       vercel_job_id = p_job,
-      error         = left(p_error, 500)
+      error         = p_error
   WHERE id = p_id
     AND requested_by = auth.uid()
     AND status = 'requested';

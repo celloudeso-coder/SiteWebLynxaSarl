@@ -54,26 +54,46 @@ function json(body: unknown, status: number, cors: Record<string, string>, extra
   });
 }
 
-// Appel du deploy hook. Ne renvoie jamais l'URL ni un message qui pourrait
-// la contenir : seulement un statut HTTP ou une catégorie d'erreur.
-async function callDeployHook(hookUrl: string): Promise<{ jobId: string | null; error: string | null }> {
+// Catégories d'erreur écrites dans site_publications.error : liste fermée,
+// identique à celle que mark_site_publication accepte (migration
+// 20260930170000_site_publications.sql). Jamais de message d'exception,
+// de toString() ni de contenu de réponse : les erreurs réseau de Deno citent
+// l'URL appelée, c'est-à-dire le secret.
+type HookError =
+  | "hook_network_error"
+  | "hook_http_4xx"
+  | "hook_http_5xx"
+  | "hook_timeout"
+  | "hook_bad_response"
+  | "hook_not_configured";
+
+// Identifiant de job Vercel attendu ; tout autre contenu est refusé.
+const JOB_ID_PATTERN = /^[A-Za-z0-9_-]{1,64}$/;
+
+// Appel du deploy hook. Ne renvoie que l'id du job (validé) ou une
+// catégorie de la liste fermée ci-dessus.
+async function callDeployHook(hookUrl: string): Promise<{ jobId: string | null; error: HookError | null }> {
   let res: Response;
   try {
     res = await fetch(hookUrl, { method: "POST", signal: AbortSignal.timeout(HOOK_TIMEOUT_MS) });
   } catch (err) {
-    const name = err instanceof Error ? err.name : "";
-    return { jobId: null, error: name === "TimeoutError" ? "hook_timeout" : "hook_network_error" };
+    const timedOut = err instanceof Error && err.name === "TimeoutError";
+    return { jobId: null, error: timedOut ? "hook_timeout" : "hook_network_error" };
   }
   if (!res.ok) {
     await res.body?.cancel();
-    return { jobId: null, error: `hook_http_${res.status}` };
+    if (res.status >= 400 && res.status < 500) return { jobId: null, error: "hook_http_4xx" };
+    if (res.status >= 500 && res.status < 600) return { jobId: null, error: "hook_http_5xx" };
+    return { jobId: null, error: "hook_bad_response" };
   }
   try {
     const body = await res.json();
-    const jobId = typeof body?.job?.id === "string" ? body.job.id : null;
-    return jobId ? { jobId, error: null } : { jobId: null, error: "hook_no_job_id" };
+    const jobId = body?.job?.id;
+    return typeof jobId === "string" && JOB_ID_PATTERN.test(jobId)
+      ? { jobId, error: null }
+      : { jobId: null, error: "hook_bad_response" };
   } catch {
-    return { jobId: null, error: "hook_invalid_response" };
+    return { jobId: null, error: "hook_bad_response" };
   }
 }
 
@@ -124,11 +144,12 @@ Deno.serve(async (req) => {
 
   // 2. Appel du deploy hook.
   const hookUrl = Deno.env.get("VERCEL_DEPLOY_HOOK_URL");
-  const { jobId, error: hookError } = hookUrl
+  const { jobId, error: hookError }: { jobId: string | null; error: HookError | null } = hookUrl
     ? await callDeployHook(hookUrl)
     : { jobId: null, error: "hook_not_configured" };
 
-  // 3. Résultat consigné dans la base.
+  // 3. Résultat consigné dans la base. p_error est de type HookError | null :
+  // uniquement une valeur de la liste fermée (revérifiée par la base).
   const { error: markError } = await supabase.rpc("mark_site_publication", {
     p_id: publicationId,
     p_status: hookError ? "failed" : "dispatched",
