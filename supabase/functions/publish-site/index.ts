@@ -14,31 +14,24 @@
 //     (request_site_publication / mark_site_publication, cf. migration
 //     20260930170000_site_publications.sql).
 //
-// Secrets :
-//   VERCEL_DEPLOY_HOOK_URL   obligatoire
-//   PUBLISH_ALLOW_LOCALHOST  facultatif ; « true » autorise l'admin servi en
-//                            développement (http://localhost:4038) à appeler
-//                            la fonction. Désactivé par défaut.
+// Secret : VERCEL_DEPLOY_HOOK_URL (obligatoire).
+//
+// CORS : uniquement l'origine du site public, en dur. Aucune origine de
+// développement, ni par défaut ni par configuration : publier déclenche un
+// build de production, cela se fait depuis l'admin en ligne.
 //
 // Déploiement : supabase functions deploy publish-site
 // (vérification du JWT par la passerelle Supabase laissée active).
 
 import { createClient } from "npm:@supabase/supabase-js@2";
 
-const SITE_ORIGINS = ["https://www.lynxatech.com", "https://lynxatech.com"];
-const DEV_ORIGINS = ["http://localhost:4038", "http://127.0.0.1:4038"];
+const ALLOWED_ORIGINS = ["https://www.lynxatech.com", "https://lynxatech.com"];
 
 const HOOK_TIMEOUT_MS = 15_000;
 
-function allowedOrigins(): string[] {
-  return Deno.env.get("PUBLISH_ALLOW_LOCALHOST") === "true"
-    ? [...SITE_ORIGINS, ...DEV_ORIGINS]
-    : SITE_ORIGINS;
-}
-
 function corsHeaders(origin: string | null): Record<string, string> {
   const headers: Record<string, string> = { Vary: "Origin" };
-  if (origin && allowedOrigins().includes(origin)) {
+  if (origin && ALLOWED_ORIGINS.includes(origin)) {
     headers["Access-Control-Allow-Origin"] = origin;
     headers["Access-Control-Allow-Headers"] = "authorization, x-client-info, apikey, content-type";
     headers["Access-Control-Allow-Methods"] = "POST, OPTIONS";
