@@ -40,7 +40,7 @@ const WhitepapersSection = ({ activeCategory, searchQuery }) => {
     return matchesCategory && matchesSearch;
   });
 
-  if (loadError) return <SectionLoadError title="Livres blancs d'experts" />;
+  if (loadError) return <SectionLoadError title="Livres blancs" />;
 
   if (filteredWhitepapers?.length === 0) {
     return null;
@@ -52,7 +52,7 @@ const WhitepapersSection = ({ activeCategory, searchQuery }) => {
         {/* Section Header */}
         <div className="text-center mb-12">
           <h2 className="text-3xl font-heading font-bold text-secondary mb-4">
-            Livres blancs <span className="text-gradient-orange">d'experts</span>
+            Livres <span className="text-gradient-orange">blancs</span>
           </h2>
           <p className="text-gray-600 max-w-2xl mx-auto">
             Téléchargez des guides complets et des rapports de recherche pour
