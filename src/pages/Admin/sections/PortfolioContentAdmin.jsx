@@ -226,48 +226,13 @@ function CategoryListEditor({ items, onChange }) {
   );
 }
 
-function StringListEditor({ items, onChange, placeholder }) {
-  function updateItem(index, value) {
-    const next = [...items];
-    next[index] = value;
-    onChange(next);
-  }
-  function removeItem(index) {
-    onChange(items.filter((_, i) => i !== index));
-  }
-  function addItem() {
-    onChange([...items, ""]);
-  }
-  return (
-    <div className="space-y-2">
-      {items.map((item, i) => (
-        <div key={i} className="flex gap-2">
-          <input
-            type="text"
-            value={item}
-            onChange={(e) => updateItem(i, e.target.value)}
-            placeholder={placeholder}
-            className="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-400"
-          />
-          <button onClick={() => removeItem(i)} className="text-red-400 hover:text-red-600 p-2">
-            <Trash2 size={14} />
-          </button>
-        </div>
-      ))}
-      <button
-        onClick={addItem}
-        className="inline-flex items-center gap-1.5 text-sm text-orange-500 hover:text-orange-600 font-medium"
-      >
-        <Plus size={14} /> Ajouter
-      </button>
-    </div>
-  );
-}
-
 function FilterOptionsSection() {
   const [services, setServices]     = useState(DEFAULT_SERVICE_CATEGORIES);
   const [error, setError]           = useState("");
-  const [industries, setIndustries] = useState(["Tous", "Financial Services", "Healthcare", "Government", "NGO", "Education", "Retail"]);
+  // Filtre par secteur retiré du site (trop peu de projets) : la liste
+  // existante est conservée telle quelle à l'enregistrement, pour le jour où
+  // il reviendra avec le modèle clé + libellé.
+  const [industries, setIndustries] = useState([]);
   const [saving, setSaving]         = useState(false);
   const [saved, setSaved]           = useState(false);
 
@@ -317,9 +282,6 @@ function FilterOptionsSection() {
           <CategoryListEditor items={services} onChange={setServices} />
         </FormField>
 
-        <FormField label="Industries">
-          <StringListEditor items={industries} onChange={setIndustries} placeholder="Nom de l'industrie..." />
-        </FormField>
 
         <div className="pt-2 border-t border-gray-100">
           {error && <p className="text-xs text-red-600 mr-auto" role="alert">{error}</p>}

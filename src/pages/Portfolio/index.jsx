@@ -68,7 +68,6 @@ const PortfolioShowcase = () => {
   const [selectedProject, setSelectedProject] = useState(null);
   const [isModalOpen, setIsModalOpen]         = useState(false);
   const [activeService, setActiveService]     = useState(ALL_SERVICES);
-  const [activeIndustry, setActiveIndustry]   = useState("Tous");
   const [searchTerm, setSearchTerm]           = useState("");
   const [visibleProjects, setVisibleProjects] = useState(6);
 
@@ -79,16 +78,15 @@ const PortfolioShowcase = () => {
 
   const filteredProjects = projects.filter((p) => {
     const matchService  = activeService  === ALL_SERVICES || p.service === activeService;
-    const matchIndustry = activeIndustry === "Tous" || p.industry === activeIndustry;
     const matchSearch   = !searchTerm
       || p.title?.toLowerCase().includes(searchTerm.toLowerCase())
       || p.description?.toLowerCase().includes(searchTerm.toLowerCase())
       || p.serviceLabel?.toLowerCase().includes(searchTerm.toLowerCase());
-    return matchService && matchIndustry && matchSearch;
+    return matchService && matchSearch;
   });
 
   const hasActiveFilters =
-    activeService !== ALL_SERVICES || activeIndustry !== "Tous" || !!searchTerm;
+    activeService !== ALL_SERVICES || !!searchTerm;
 
   const handleViewDetails = (project) => {
     setSelectedProject(project);
@@ -102,7 +100,6 @@ const PortfolioShowcase = () => {
 
   const handleClearFilters = () => {
     setActiveService(ALL_SERVICES);
-    setActiveIndustry("Tous");
     setSearchTerm("");
     setVisibleProjects(6);
   };
@@ -195,11 +192,8 @@ const PortfolioShowcase = () => {
               <>
                 <FilterBar
                   serviceCategories={serviceCategories}
-                  industryOptions={filterOptions?.industries}
                   activeService={activeService}
                   setActiveService={(v) => { setActiveService(v); setVisibleProjects(6); }}
-                  activeIndustry={activeIndustry}
-                  setActiveIndustry={(v) => { setActiveIndustry(v); setVisibleProjects(6); }}
                   searchTerm={searchTerm}
                   setSearchTerm={(v) => { setSearchTerm(v); setVisibleProjects(6); }}
                   onClearFilters={handleClearFilters}

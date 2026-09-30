@@ -3,23 +3,10 @@ import { motion, AnimatePresence } from "framer-motion";
 import Icon from "../../../components/AppIcon";
 import { ALL_SERVICES } from "../../../lib/portfolioCategories";
 
-const STATIC_INDUSTRIES = [
-  "Tous",
-  "Financial Services",
-  "Healthcare",
-  "Government",
-  "NGO",
-  "Education",
-  "Retail",
-];
-
 const FilterBar = ({
   serviceCategories = [],
-  industryOptions,
   activeService,
   setActiveService,
-  activeIndustry,
-  setActiveIndustry,
   searchTerm,
   setSearchTerm,
   onClearFilters,
@@ -27,10 +14,9 @@ const FilterBar = ({
   // Options chargées une seule fois par la page Portfolio. Services :
   // { key, label } (la clé filtre, le libellé s'affiche), précédés de « Tous ».
   const services = [{ key: ALL_SERVICES, label: "Tous" }, ...serviceCategories];
-  const industries = industryOptions?.length ? industryOptions : STATIC_INDUSTRIES;
 
   const hasActive =
-    activeService !== ALL_SERVICES || activeIndustry !== "Tous" || searchTerm;
+    activeService !== ALL_SERVICES || searchTerm;
 
   return (
     <div className="mb-10 space-y-5">
@@ -73,31 +59,6 @@ const FilterBar = ({
                 }`}
             >
               {s.label}
-            </motion.button>
-          ))}
-        </div>
-      </div>
-
-      {/* Industry tabs */}
-      <div>
-        <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">
-          Industrie
-        </p>
-        <div className="flex flex-wrap gap-2">
-          {industries.map((ind) => (
-            <motion.button
-              key={ind}
-              onClick={() => setActiveIndustry(ind)}
-              whileHover={{ scale: 1.03 }}
-              whileTap={{ scale: 0.97 }}
-              className={`px-4 py-2 rounded-full text-sm font-medium transition-colors duration-200 border
-                ${
-                  activeIndustry === ind
-                    ? "bg-secondary text-white border-secondary"
-                    : "bg-white text-secondary border-border hover:border-secondary/50"
-                }`}
-            >
-              {ind}
             </motion.button>
           ))}
         </div>
