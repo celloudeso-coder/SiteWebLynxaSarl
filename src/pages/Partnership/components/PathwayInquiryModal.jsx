@@ -16,7 +16,7 @@ const PathwayInquiryModal = ({ pathway, onClose }) => {
   const [submitting, setSubmitting] = useState(false);
   const { data: settings } = useSiteSettings();
   const budget = formatPathwayBudget(pathway);
-  const fallbackPhone = settings?.contact?.phone || "+224 621 724 657";
+  const fallbackPhone = settings?.contact?.phone || "+224 614 666 680";
   const fallbackEmail = settings?.contact?.email || "contact@lynxatech.com";
   const fallbackWhatsapp = `https://wa.me/${fallbackPhone.replace(/\s/g, "").replace("+", "")}?text=${encodeURIComponent(`Bonjour, je suis intéressé par : ${pathway?.title || "une voie de collaboration"}.`)}`;
 

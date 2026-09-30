@@ -5,7 +5,7 @@ import { useSiteSettings } from "../../../hooks/useContent";
 
 const QuickConnectCards = () => {
   const { data: settings } = useSiteSettings();
-  const phone   = settings?.contact?.phone   || "+224 621 724 657";
+  const phone   = settings?.contact?.phone   || "+224 614 666 680";
   const email   = settings?.contact?.email   || "contact@lynxatech.com";
   const rawPhone = phone.replace(/\s/g, "");
 

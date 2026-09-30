@@ -66,7 +66,7 @@ export default function SettingsAdmin() {
         <h2 className="font-semibold text-gray-800">Informations de contact</h2>
         <div className="grid sm:grid-cols-2 gap-5">
           <FormField label="Téléphone">
-            <TextInput value={contact.phone} onChange={(v) => setContact((p) => ({ ...p, phone: v }))} placeholder="+224 621 724 657" />
+            <TextInput value={contact.phone} onChange={(v) => setContact((p) => ({ ...p, phone: v }))} placeholder="+224 614 666 680" />
           </FormField>
           <FormField label="Email">
             <TextInput value={contact.email} onChange={(v) => setContact((p) => ({ ...p, email: v }))} placeholder="contact@lynxatech.com" />
@@ -97,7 +97,7 @@ export default function SettingsAdmin() {
             <TextInput value={social.facebook} onChange={(v) => setSocial((p) => ({ ...p, facebook: v }))} placeholder="https://facebook.com/LynxaTechGuinea" />
           </FormField>
           <FormField label="WhatsApp">
-            <TextInput value={social.whatsapp} onChange={(v) => setSocial((p) => ({ ...p, whatsapp: v }))} placeholder="https://wa.me/224621724657" />
+            <TextInput value={social.whatsapp} onChange={(v) => setSocial((p) => ({ ...p, whatsapp: v }))} placeholder="https://wa.me/224614666680" />
           </FormField>
         </div>
         <div className="flex justify-end">

@@ -15,7 +15,7 @@ CREATE TABLE IF NOT EXISTS site_settings (
 
 -- Données initiales
 INSERT INTO site_settings (key, value) VALUES
-  ('contact', '{"phone": "+224 621 724 657", "email": "contact@lynxatech.com", "address": "Conakry, République de Guinée", "hours": "Lun-Ven 8h-18h, Sam 9h-14h"}'),
+  ('contact', '{"phone": "+224 614 666 680", "email": "contact@lynxatech.com", "address": "Conakry, République de Guinée", "hours": "Lun-Ven 8h-18h, Sam 9h-14h"}'),
   ('social', '{"linkedin": "https://linkedin.com/company/lynxatech", "twitter": "https://twitter.com/LynxaTechGuinea", "facebook": "https://facebook.com/LynxaTechGuinea"}'),
   ('company', '{"name": "Lynxa Tech Guinea", "tagline": "Innovation Sans Frontières", "description": "Construire l''avenir technologique de la Guinée vers le monde."}')
 ON CONFLICT (key) DO NOTHING;

@@ -78,7 +78,7 @@ const PartnershipCollaborationGateway = () => {
                 <h4 className="font-semibold mb-4">Contact</h4>
                 <ul className="space-y-2 text-sm text-gray-400">
                   <li>{contact.email || "contact@lynxatech.com"}</li>
-                  <li>{contact.phone || "+224 621 724 657"}</li>
+                  <li>{contact.phone || "+224 614 666 680"}</li>
                   <li>{contact.address || "Conakry, Guinée"} 🇬🇳</li>
                 </ul>
               </div>

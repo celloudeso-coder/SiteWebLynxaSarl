@@ -75,7 +75,7 @@ const ProjectRequestForm = () => {
   const [submitting, setSubmitting] = useState(false);
   const [status, setStatus]     = useState(null); // "success" | "error"
   const { data: settings } = useSiteSettings();
-  const fallbackPhone = settings?.contact?.phone || "+224 621 724 657";
+  const fallbackPhone = settings?.contact?.phone || "+224 614 666 680";
   const fallbackEmail = settings?.contact?.email || "contact@lynxatech.com";
   const fallbackWhatsapp = `https://wa.me/${fallbackPhone.replace(/\s/g, "").replace("+", "")}?text=${encodeURIComponent("Bonjour, je viens d'essayer de soumettre une demande de projet sur le site mais l'envoi a échoué.")}`;
 
