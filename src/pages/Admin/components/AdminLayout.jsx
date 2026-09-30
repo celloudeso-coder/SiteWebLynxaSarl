@@ -12,6 +12,7 @@ import {
 import { ADMIN_ROLES, ROUTE_RESOURCES } from "../../../lib/adminUsers";
 import { useAdminAuth } from "./AdminAuthContext";
 import { useAdminPwa } from "../../../lib/adminPwa";
+import PublishSiteButton from "./PublishSiteButton";
 
 // ── Nav structure ─────────────────────────────────────────────────────────────
 const NAV_GROUPS = [
@@ -284,6 +285,7 @@ export default function AdminLayout({ children }) {
               <Download size={14} /> <span className="hidden md:inline">Installer l’app</span>
             </button>
           )}
+          <PublishSiteButton />
           <a
             href="/"
             target="_blank"
