@@ -3,28 +3,7 @@ import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import Icon from "../../../components/AppIcon";
 import Image from "../../../components/AppImage";
-
-const SERVICE_ICONS = {
-  "Mobile Development": "Smartphone",
-  "Network Infrastructure": "Network",
-  "Web Development": "Globe",
-  "Cybersecurity": "Shield",
-  "Développement Mobile": "Smartphone",
-  "Infrastructure Réseau": "Network",
-  "Développement Web": "Globe",
-  "Cybersécurité": "Shield",
-};
-
-const PROJECT_LINK_META = {
-  "Mobile Development":    { label: "Voir l'application", icon: "Smartphone" },
-  "Développement Mobile":  { label: "Voir l'application", icon: "Smartphone" },
-  "Web Development":       { label: "Voir le site",       icon: "Globe"       },
-  "Développement Web":     { label: "Voir le site",       icon: "Globe"       },
-  "Network Infrastructure":{ label: "Voir le rapport",    icon: "FileText"    },
-  "Infrastructure Réseau": { label: "Voir le rapport",    icon: "FileText"    },
-  "Cybersecurity":         { label: "Voir le rapport",    icon: "ShieldCheck" },
-  "Cybersécurité":         { label: "Voir le rapport",    icon: "ShieldCheck" },
-};
+import { categoryMeta } from "../../../lib/portfolioCategories";
 
 const IMPACT_STYLES = {
   High:   "text-emerald-700 bg-emerald-50 border border-emerald-200",
@@ -35,9 +14,10 @@ const IMPACT_STYLES = {
 const IMPACT_LABELS = { High: "Impact Élevé", Medium: "Impact Moyen", Low: "Impact Faible" };
 
 const ProjectCard = ({ project, onViewDetails, index = 0 }) => {
-  const iconName    = SERVICE_ICONS[project?.service] || "Code";
+  const meta        = categoryMeta(project?.service);
+  const iconName    = meta.icon;
   const impactStyle = IMPACT_STYLES[project?.impact]  || "text-gray-500 bg-gray-100 border border-gray-200";
-  const linkMeta    = PROJECT_LINK_META[project?.service] || { label: "Voir le projet", icon: "ExternalLink" };
+  const linkMeta    = { label: meta.linkLabel, icon: meta.linkIcon };
 
   return (
     <motion.div
@@ -77,7 +57,7 @@ const ProjectCard = ({ project, onViewDetails, index = 0 }) => {
       {/* Content */}
       <div className="p-6 flex flex-col flex-1">
         <div className="flex items-center justify-between mb-3">
-          <span className="text-sm text-primary font-medium">{project?.service}</span>
+          <span className="text-sm text-primary font-medium">{project?.serviceLabel}</span>
           <span className="text-xs text-muted-foreground bg-muted px-2 py-1 rounded-full">
             {project?.industry}
           </span>

@@ -39,7 +39,7 @@ const HeroSection = () => {
       <div className="absolute inset-0">
         <Image
           src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=1920&h=1080"
-          alt="African tech innovation and digital transformation"
+          alt=""
           className="w-full h-full object-cover opacity-40"
           sizes="(max-width: 767px) 50vw, 100vw"
         />
@@ -89,10 +89,10 @@ const HeroSection = () => {
           {/* Key Topics */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-12 max-w-4xl mx-auto">
             {[
-              { icon: "Shield", label: "Cybersecurity" },
-              { icon: "Smartphone", label: "Mobile Innovation" },
-              { icon: "Network", label: "Network Solutions" },
-              { icon: "TrendingUp", label: "African Tech Ecosystem" },
+              { icon: "Shield", label: "Cybersécurité" },
+              { icon: "Smartphone", label: "Innovation mobile" },
+              { icon: "Network", label: "Solutions réseau" },
+              { icon: "TrendingUp", label: "Écosystème tech africain" },
             ]?.map((topic, i) => (
               <motion.div
                 key={topic?.label}

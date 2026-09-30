@@ -4,7 +4,7 @@ import Icon from "../../../components/AppIcon";
 import { useSiteSettings, useHeroSection } from "../../../hooks/useContent";
 
 const FALLBACK = {
-  phone: "+224 621 724 657",
+  phone: "+224 614 666 680",
   email: "contact@lynxatech.com",
   address: "Conakry, République de Guinée",
   hours: "Lun-Ven 8h-18h · Sam 9h-14h",

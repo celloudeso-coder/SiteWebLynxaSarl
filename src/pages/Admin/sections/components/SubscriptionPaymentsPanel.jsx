@@ -1,4 +1,5 @@
 import React, { useMemo, useState } from "react";
+import { adminErrorMessage } from "../../../../lib/errorMessages";
 import {
   deleteSubscriptionPayment,
   saveSubscriptionPayment,
@@ -88,7 +89,7 @@ export default function SubscriptionPaymentsPanel({
       onUpsert(created);
       setShowForm(false);
     } catch (error) {
-      onError(error?.code === "23505" ? "Un paiement existe déjà pour cette échéance." : (error?.message || "Impossible d’enregistrer le paiement."));
+      onError(error?.code === "23505" ? "Un paiement existe déjà pour cette échéance." : (adminErrorMessage(error, "Impossible d’enregistrer le paiement.")));
     } finally {
       setSaving(false);
     }
@@ -100,7 +101,7 @@ export default function SubscriptionPaymentsPanel({
       const updated = await saveSubscriptionPayment({ ...payment, status: "paid", paid_at: todayValue() });
       onUpsert(updated);
     } catch (error) {
-      onError(error?.message || "Impossible de marquer ce paiement comme payé.");
+      onError(adminErrorMessage(error, "Impossible de marquer ce paiement comme payé."));
     } finally {
       setBusyId(null);
     }
@@ -113,7 +114,7 @@ export default function SubscriptionPaymentsPanel({
       await deleteSubscriptionPayment(payment.id);
       onDelete(payment.id);
     } catch (error) {
-      onError(error?.message || "Impossible de supprimer ce paiement.");
+      onError(adminErrorMessage(error, "Impossible de supprimer ce paiement."));
     } finally {
       setBusyId(null);
     }

@@ -6,6 +6,7 @@ import {
 import { FormField, TextInput, TextArea, Toggle } from "../components/FormField";
 import SaveButton from "../components/SaveButton";
 import { Plus, Trash2, FlaskConical, Filter } from "lucide-react";
+import { DEFAULT_SERVICE_CATEGORIES, normalizeCategories } from "../../../lib/portfolioCategories";
 
 const ICON_OPTIONS = [
   "Cpu","Lock","Leaf","Rocket","Star","Zap","Globe","Shield","Award","Lightbulb",
@@ -176,63 +177,87 @@ function InnovationLabSection() {
 }
 
 // ── Filter Options Section ────────────────────────────────────────────────────
-function StringListEditor({ items, onChange, placeholder }) {
-  function updateItem(index, value) {
-    const next = [...items];
-    next[index] = value;
-    onChange(next);
-  }
-  function removeItem(index) {
-    onChange(items.filter((_, i) => i !== index));
-  }
-  function addItem() {
-    onChange([...items, ""]);
+// Catégories de service : la clé est stable (stockée dans chaque projet et
+// comparée par le code), le libellé est ce que voit le visiteur. Une clé
+// existante n'est pas modifiable ; pour une nouvelle catégorie, laissée
+// vide, elle est déduite du libellé.
+const slugify = (text) =>
+  text.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/&/g, " ").replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
+
+function CategoryListEditor({ items, onChange }) {
+  function update(index, field, value) {
+    onChange(items.map((item, i) => (i === index ? { ...item, [field]: value } : item)));
   }
   return (
     <div className="space-y-2">
+      <div className="grid grid-cols-[1fr_1fr_auto] gap-2 text-xs text-gray-500">
+        <span>Libellé affiché</span><span>Clé (stable, invisible)</span><span />
+      </div>
       {items.map((item, i) => (
-        <div key={i} className="flex gap-2">
+        <div key={i} className="grid grid-cols-[1fr_1fr_auto] gap-2">
           <input
             type="text"
-            value={item}
-            onChange={(e) => updateItem(i, e.target.value)}
-            placeholder={placeholder}
-            className="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-400"
+            value={item.label}
+            onChange={(e) => update(i, "label", e.target.value)}
+            placeholder="Ex : Cybersécurité"
+            className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-400"
           />
-          <button onClick={() => removeItem(i)} className="text-red-400 hover:text-red-600 p-2">
+          <input
+            type="text"
+            value={item.key}
+            onChange={(e) => update(i, "key", e.target.value)}
+            disabled={!item.isNew}
+            placeholder={item.isNew ? slugify(item.label || "") || "cybersecurity" : ""}
+            title={item.isNew ? "Laisser vide pour la déduire du libellé" : "La clé d'une catégorie existante ne se modifie pas"}
+            className="border border-gray-300 rounded-lg px-3 py-2 text-sm font-mono disabled:bg-gray-50 disabled:text-gray-500 focus:outline-none focus:ring-2 focus:ring-orange-400"
+          />
+          <button onClick={() => onChange(items.filter((_, j) => j !== i))} className="text-red-400 hover:text-red-600 p-2" aria-label={`Supprimer ${item.label || "cette catégorie"}`}>
             <Trash2 size={14} />
           </button>
         </div>
       ))}
       <button
-        onClick={addItem}
+        onClick={() => onChange([...items, { key: "", label: "", isNew: true }])}
         className="inline-flex items-center gap-1.5 text-sm text-orange-500 hover:text-orange-600 font-medium"
       >
-        <Plus size={14} /> Ajouter
+        <Plus size={14} /> Ajouter une catégorie
       </button>
     </div>
   );
 }
 
 function FilterOptionsSection() {
-  const [services, setServices]     = useState(["Tous", "Mobile Development", "Network Infrastructure", "Web Development", "Cybersecurity"]);
-  const [industries, setIndustries] = useState(["Tous", "Financial Services", "Healthcare", "Government", "NGO", "Education", "Retail"]);
+  const [services, setServices]     = useState(DEFAULT_SERVICE_CATEGORIES);
+  const [error, setError]           = useState("");
+  // Filtre par secteur retiré du site (trop peu de projets) : la liste
+  // existante est conservée telle quelle à l'enregistrement, pour le jour où
+  // il reviendra avec le modèle clé + libellé.
+  const [industries, setIndustries] = useState([]);
   const [saving, setSaving]         = useState(false);
   const [saved, setSaved]           = useState(false);
 
   useEffect(() => {
     getPortfolioFilterOptions()
       .then((opts) => {
-        if (opts?.services?.length)   setServices(opts.services);
+        if (opts?.services?.length)   setServices(normalizeCategories(opts.services));
         if (opts?.industries?.length) setIndustries(opts.industries);
       })
       .catch(() => {});
   }, []);
 
   async function save() {
+    const cleaned = services
+      .map((c) => ({ key: (c.key || slugify(c.label || "")).trim(), label: (c.label || "").trim() }))
+      .filter((c) => c.key || c.label);
+    const invalid = cleaned.find((c) => !c.label || !/^[a-z0-9-]+$/.test(c.key));
+    const keys = cleaned.map((c) => c.key);
+    if (invalid) { setError("Chaque catégorie doit avoir un libellé et une clé en minuscules, chiffres et tirets."); return; }
+    if (new Set(keys).size !== keys.length) { setError("Deux catégories ont la même clé."); return; }
+    setError("");
     setSaving(true);
     try {
-      await savePortfolioFilterOptions({ services, industries });
+      await savePortfolioFilterOptions({ services: cleaned, industries });
+      setServices(cleaned);
       setSaved(true);
       setTimeout(() => setSaved(false), 2500);
     } finally {
@@ -253,15 +278,13 @@ function FilterOptionsSection() {
       </div>
 
       <div className="bg-white rounded-xl border border-gray-200 p-4 space-y-6">
-        <FormField label="Services">
-          <StringListEditor items={services} onChange={setServices} placeholder="Nom du service..." />
+        <FormField label="Catégories de service" hint="Le libellé s'affiche sur le site et se modifie librement ; la clé relie les projets à leur catégorie et ne change pas.">
+          <CategoryListEditor items={services} onChange={setServices} />
         </FormField>
 
-        <FormField label="Industries">
-          <StringListEditor items={industries} onChange={setIndustries} placeholder="Nom de l'industrie..." />
-        </FormField>
 
         <div className="pt-2 border-t border-gray-100">
+          {error && <p className="text-xs text-red-600 mr-auto" role="alert">{error}</p>}
           <SaveButton loading={saving} saved={saved} onClick={save} label="Sauvegarder les filtres" />
         </div>
       </div>
@@ -271,7 +294,7 @@ function FilterOptionsSection() {
 
 // ── Main ──────────────────────────────────────────────────────────────────────
 const TABS = [
-  { id: "lab",     label: "Lab Innovation" },
+  { id: "lab",     label: "Laboratoire d'innovation" },
   { id: "filters", label: "Filtres"        },
 ];
 

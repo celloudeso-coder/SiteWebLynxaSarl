@@ -11,12 +11,12 @@ import {
 import { useAdminAuth } from "./components/AdminAuthContext";
 
 const CONTENT_SECTIONS = [
-  { to: "/admin/hero", label: "Hero Sections", desc: "Titres et descriptions des pages", icon: Globe, color: "bg-blue-50 text-blue-600", resource: "hero" },
+  { to: "/admin/hero", label: "En-têtes de page", desc: "Titres et descriptions des pages", icon: Globe, color: "bg-blue-50 text-blue-600", resource: "hero" },
   { to: "/admin/services", label: "Services", desc: "Offres et détails techniques", icon: Briefcase, color: "bg-orange-50 text-orange-600", resource: "services" },
   { to: "/admin/portfolio", label: "Portfolio", desc: "Projets et études de cas", icon: FolderOpen, color: "bg-purple-50 text-purple-600", resource: "portfolio" },
   { to: "/admin/team", label: "Équipe", desc: "Membres et profils", icon: Users, color: "bg-green-50 text-green-600", resource: "team" },
   { to: "/admin/pricing", label: "Tarifs", desc: "Plans et grilles tarifaires", icon: DollarSign, color: "bg-yellow-50 text-yellow-600", resource: "pricing" },
-  { to: "/admin/timeline", label: "Timeline", desc: "Historique de l'entreprise", icon: Clock, color: "bg-pink-50 text-pink-600", resource: "timeline" },
+  { to: "/admin/timeline", label: "Chronologie", desc: "Historique de l'entreprise", icon: Clock, color: "bg-pink-50 text-pink-600", resource: "timeline" },
   { to: "/admin/metrics", label: "Métriques", desc: "Compteurs et statistiques", icon: BarChart2, color: "bg-teal-50 text-teal-600", resource: "metrics" },
   { to: "/admin/testimonials", label: "Témoignages", desc: "Citations et avis clients", icon: MessageSquare, color: "bg-indigo-50 text-indigo-600", resource: "testimonials" },
   { to: "/admin/partnership", label: "Partenariat", desc: "Formulaires partenariat", icon: Handshake, color: "bg-rose-50 text-rose-600", resource: "partnership" },
@@ -24,7 +24,7 @@ const CONTENT_SECTIONS = [
   { to: "/admin/messages", label: "Messages", desc: "Soumissions du formulaire contact", icon: Inbox, color: "bg-sky-50 text-sky-600", resource: "messages" },
   { to: "/admin/unrecorded-submissions", label: "Soumissions à vérifier", desc: "Formulaires non enregistrés automatiquement", icon: AlertTriangle, color: "bg-amber-50 text-amber-600", resource: "messages" },
   { to: "/admin/newsletter", label: "Newsletter", desc: "Abonnements et campagnes", icon: Mail, color: "bg-lime-50 text-lime-600", resource: "newsletter" },
-  { to: "/admin/subscriptions", label: "Tracker", desc: "Échéances et abonnements clients", icon: CalendarClock, color: "bg-violet-50 text-violet-600", resource: "subscriptions" },
+  { to: "/admin/subscriptions", label: "Suivi des abonnements", desc: "Échéances et abonnements clients", icon: CalendarClock, color: "bg-violet-50 text-violet-600", resource: "subscriptions" },
   { to: "/admin/settings", label: "Paramètres", desc: "Contact, réseaux sociaux, infos", icon: Settings, color: "bg-gray-100 text-gray-600", resource: "settings" },
 ];
 
@@ -89,7 +89,7 @@ export default function AdminDashboard() {
     <div className="space-y-10">
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
+        <h1 className="text-2xl font-bold text-gray-900">Tableau de bord</h1>
         <p className="text-gray-500 text-sm mt-1">
           Gérez tout le contenu du site Lynxa Tech depuis ce panneau.
         </p>
@@ -140,7 +140,7 @@ export default function AdminDashboard() {
         <h2 className="font-semibold text-orange-900 text-sm mb-2">Premiers pas</h2>
         <ol className="text-sm text-orange-800 space-y-1 list-decimal list-inside">
           <li>Exécutez <code className="bg-orange-100 px-1 rounded">supabase/schema.sql</code> dans l'éditeur SQL Supabase</li>
-          <li>Modifiez les sections Hero de chaque page via <strong>Hero Sections</strong></li>
+          <li>Modifiez l'en-tête de chaque page via <strong>En-têtes de page</strong></li>
           <li>Mettez à jour vos services, tarifs et membres d'équipe</li>
           <li>Utilisez <strong>Sections des Pages</strong> pour un aperçu par page</li>
         </ol>

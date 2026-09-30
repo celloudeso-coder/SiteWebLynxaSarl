@@ -212,7 +212,7 @@ export default function ServicesAdmin() {
                     <TextInput value={service.slug} onChange={(v) => update(service.id, "slug", v)} placeholder="mobile-development" />
                   </FormField>
                   <FormField label="Sous-titre">
-                    <TextInput value={service.subtitle} onChange={(v) => update(service.id, "subtitle", v)} placeholder="Native & Cross-Platform" />
+                    <TextInput value={service.subtitle} onChange={(v) => update(service.id, "subtitle", v)} placeholder="Natif et multiplateforme" />
                   </FormField>
                   <FormField label="Icône Lucide">
                     <select

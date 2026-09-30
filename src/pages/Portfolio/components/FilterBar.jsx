@@ -1,49 +1,22 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Icon from "../../../components/AppIcon";
-import { getPortfolioFilterOptions } from "../../../lib/cms";
-
-const STATIC_SERVICES = [
-  "Tous",
-  "Mobile Development",
-  "Network Infrastructure",
-  "Web Development",
-  "Cybersecurity",
-];
-
-const STATIC_INDUSTRIES = [
-  "Tous",
-  "Financial Services",
-  "Healthcare",
-  "Government",
-  "NGO",
-  "Education",
-  "Retail",
-];
+import { ALL_SERVICES } from "../../../lib/portfolioCategories";
 
 const FilterBar = ({
+  serviceCategories = [],
   activeService,
   setActiveService,
-  activeIndustry,
-  setActiveIndustry,
   searchTerm,
   setSearchTerm,
   onClearFilters,
 }) => {
-  const [services, setServices]     = useState(STATIC_SERVICES);
-  const [industries, setIndustries] = useState(STATIC_INDUSTRIES);
-
-  useEffect(() => {
-    getPortfolioFilterOptions()
-      .then((opts) => {
-        if (opts?.services?.length)   setServices(opts.services);
-        if (opts?.industries?.length) setIndustries(opts.industries);
-      })
-      .catch(() => {});
-  }, []);
+  // Options chargées une seule fois par la page Portfolio. Services :
+  // { key, label } (la clé filtre, le libellé s'affiche), précédés de « Tous ».
+  const services = [{ key: ALL_SERVICES, label: "Tous" }, ...serviceCategories];
 
   const hasActive =
-    activeService !== "Tous" || activeIndustry !== "Tous" || searchTerm;
+    activeService !== ALL_SERVICES || searchTerm;
 
   return (
     <div className="mb-10 space-y-5">
@@ -74,43 +47,18 @@ const FilterBar = ({
         <div className="flex flex-wrap gap-2">
           {services.map((s) => (
             <motion.button
-              key={s}
-              onClick={() => setActiveService(s)}
+              key={s.key}
+              onClick={() => setActiveService(s.key)}
               whileHover={{ scale: 1.03 }}
               whileTap={{ scale: 0.97 }}
               className={`px-4 py-2 rounded-full text-sm font-medium transition-colors duration-200 border
                 ${
-                  activeService === s
+                  activeService === s.key
                     ? "bg-primary text-primary-foreground border-primary"
                     : "bg-white text-secondary border-border hover:border-primary/50"
                 }`}
             >
-              {s}
-            </motion.button>
-          ))}
-        </div>
-      </div>
-
-      {/* Industry tabs */}
-      <div>
-        <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">
-          Industrie
-        </p>
-        <div className="flex flex-wrap gap-2">
-          {industries.map((ind) => (
-            <motion.button
-              key={ind}
-              onClick={() => setActiveIndustry(ind)}
-              whileHover={{ scale: 1.03 }}
-              whileTap={{ scale: 0.97 }}
-              className={`px-4 py-2 rounded-full text-sm font-medium transition-colors duration-200 border
-                ${
-                  activeIndustry === ind
-                    ? "bg-secondary text-white border-secondary"
-                    : "bg-white text-secondary border-border hover:border-secondary/50"
-                }`}
-            >
-              {ind}
+              {s.label}
             </motion.button>
           ))}
         </div>

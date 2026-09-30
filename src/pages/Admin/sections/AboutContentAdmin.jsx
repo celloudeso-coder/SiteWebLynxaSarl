@@ -404,7 +404,7 @@ function WhyGuineaSection() {
               <FormField label="Valeur">
                 <TextInput value={stat.value || ""} onChange={(v) => updateEcoStat(i, "value", v)} placeholder="150+" />
               </FormField>
-              <FormField label="Label">
+              <FormField label="Libellé">
                 <TextInput value={stat.label || ""} onChange={(v) => updateEcoStat(i, "label", v)} placeholder="Startups Technologiques" />
               </FormField>
               <FormField label="Source (affichée en petit sous le chiffre)">
@@ -421,7 +421,7 @@ function WhyGuineaSection() {
   );
 }
 
-// ── Vision & Roadmap ──────────────────────────────────────────────────────────
+// ── Vision et feuille de route ──────────────────────────────────────────────────────────
 function VisionSection() {
   const [phases, setPhases]           = useState([]);
   const [savingP, setSavingP]         = useState(null);
@@ -561,7 +561,7 @@ function VisionSection() {
                 <FormField label="Phase (ex: Phase 1)">
                   <TextInput value={item.phase || ""} onChange={(v) => updatePhase(item.id, "phase", v)} placeholder="Phase 1" />
                 </FormField>
-                <FormField label="Timeline">
+                <FormField label="Période">
                   <TextInput value={item.timeline || ""} onChange={(v) => updatePhase(item.id, "timeline", v)} placeholder="2025 – 2027" />
                 </FormField>
                 <FormField label="Titre">
@@ -687,7 +687,7 @@ function VisionSection() {
               <FormField label="Objectif 2027">
                 <TextInput value={m.target || ""} onChange={(v) => updateMetric(i, "target", v)} placeholder="25+" />
               </FormField>
-              <FormField label="Label">
+              <FormField label="Libellé">
                 <TextInput value={m.label || ""} onChange={(v) => updateMetric(i, "label", v)} placeholder="Membres de l'équipe" />
               </FormField>
             </div>
@@ -706,7 +706,7 @@ const TABS = [
   { id: "founder",    label: "Fondateur"        },
   { id: "values",     label: "Valeurs"           },
   { id: "guinea",     label: "Pourquoi Guinée ?" },
-  { id: "vision",     label: "Vision & Roadmap"  },
+  { id: "vision",     label: "Vision et feuille de route" },
 ];
 
 export default function AboutContentAdmin() {

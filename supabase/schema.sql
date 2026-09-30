@@ -15,7 +15,7 @@ CREATE TABLE IF NOT EXISTS site_settings (
 
 -- Données initiales
 INSERT INTO site_settings (key, value) VALUES
-  ('contact', '{"phone": "+224 621 724 657", "email": "contact@lynxatech.com", "address": "Conakry, République de Guinée", "hours": "Lun-Ven 8h-18h, Sam 9h-14h"}'),
+  ('contact', '{"phone": "+224 614 666 680", "email": "contact@lynxatech.com", "address": "Conakry, République de Guinée", "hours": "Lun-Ven 8h-18h, Sam 9h-14h"}'),
   ('social', '{"linkedin": "https://linkedin.com/company/lynxatech", "twitter": "https://twitter.com/LynxaTechGuinea", "facebook": "https://facebook.com/LynxaTechGuinea"}'),
   ('company', '{"name": "Lynxa Tech Guinea", "tagline": "Innovation Sans Frontières", "description": "Construire l''avenir technologique de la Guinée vers le monde."}')
 ON CONFLICT (key) DO NOTHING;
@@ -1133,8 +1133,8 @@ GRANT ALL    ON industry_reports TO authenticated;
 -- Site settings seeds for Portfolio filters & Insights categories
 -- -------------------------------------------------------
 INSERT INTO site_settings (key, value) VALUES
-  ('portfolio_filter_options', '{"services":["Tous","Mobile Development","Network Infrastructure","Web Development","Cybersecurity"],"industries":["Tous","Financial Services","Healthcare","Government","NGO","Education","Retail"]}'),
-  ('insights_categories', '[{"id":"all","label":"All Content","icon":"Grid"},{"id":"cybersecurity","label":"Cybersecurity","icon":"Shield"},{"id":"mobile","label":"Mobile Innovation","icon":"Smartphone"},{"id":"network","label":"Network Solutions","icon":"Network"},{"id":"ecosystem","label":"African Tech Ecosystem","icon":"Globe"}]')
+  ('portfolio_filter_options', '{"services":[{"key":"mobile-development","label":"Développement mobile"},{"key":"network-infrastructure","label":"Infrastructure réseau"},{"key":"web-development","label":"Développement web"},{"key":"cybersecurity","label":"Cybersécurité"}],"industries":["Tous","Financial Services","Healthcare","Government","NGO","Education","Retail"]}'),
+  ('insights_categories', '[{"id":"all","label":"Tous les contenus","icon":"Grid"},{"id":"cybersecurity","label":"Cybersécurité","icon":"Shield"},{"id":"mobile","label":"Innovation mobile","icon":"Smartphone"},{"id":"network","label":"Solutions réseau","icon":"Network"},{"id":"ecosystem","label":"Écosystème tech africain","icon":"Globe"}]')
 ON CONFLICT (key) DO NOTHING;
 
 -- -------------------------------------------------------

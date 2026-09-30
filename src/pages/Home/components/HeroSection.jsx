@@ -17,14 +17,6 @@ const TAGLINES = [
   "Innovation locale, impact global",
 ];
 
-const PARTICLES = Array.from({ length: 18 }, (_, i) => ({
-  left: `${((i * 37 + 11) % 97)}%`,
-  top: `${((i * 53 + 7) % 93)}%`,
-  delay: (i * 0.3) % 3,
-  duration: 2 + (i % 3),
-  size: i % 3 === 0 ? 12 : 8,
-}));
-
 const HeroSection = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [taglineIdx, setTaglineIdx] = useState(0);
@@ -71,18 +63,20 @@ const HeroSection = () => {
       {/* Gradient overlay */}
       <div className="absolute inset-0 bg-gradient-to-r from-primary/20 via-transparent to-accent/20" />
 
-      {/* Animated particles */}
-      <div className="absolute inset-0 pointer-events-none">
-        {PARTICLES.map((p, i) => (
-          <motion.div
-            key={i}
-            className="absolute bg-primary rounded-full opacity-50"
-            style={{ left: p.left, top: p.top, width: p.size, height: p.size }}
-            animate={{ scale: [1, 1.4, 1], opacity: [0.3, 0.7, 0.3] }}
-            transition={{ duration: p.duration, delay: p.delay, repeat: Infinity, ease: "easeInOut" }}
-          />
-        ))}
-      </div>
+      {/* Filigrane : le lynx LYNXA en blanc à 8 %, dans le quart inférieur
+          droit, coupé par les bords, sans passer derrière le texte ni les
+          boutons (taille vérifiée de 1024×768 à 1920×1080 : 520 px en lg,
+          640 px dès xl). Masqué sous lg : en mobile et sur tablette, le
+          contenu occupe toute la hauteur. */}
+      <img
+        src="/icon-512.png"
+        alt=""
+        aria-hidden="true"
+        loading="lazy"
+        decoding="async"
+        draggable={false}
+        className="hidden lg:block absolute pointer-events-none select-none opacity-[0.08] brightness-0 invert w-[520px] h-[520px] -right-[160px] -bottom-[300px] xl:w-[640px] xl:h-[640px] xl:-right-[200px] xl:-bottom-[340px]"
+      />
 
       {/* Content */}
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">

@@ -19,10 +19,10 @@ const NAV_GROUPS = [
     id: "contenu",
     label: "Contenu principal",
     items: [
-      { to: "/admin/hero",         label: "Hero Sections", icon: Globe, resource: "hero" },
+      { to: "/admin/hero",         label: "En-têtes de page", icon: Globe, resource: "hero" },
       { to: "/admin/services",     label: "Services",      icon: Briefcase, resource: "services" },
       { to: "/admin/portfolio",    label: "Portfolio",     icon: FolderOpen, resource: "portfolio" },
-      { to: "/admin/timeline",     label: "Timeline",      icon: Clock, resource: "timeline" },
+      { to: "/admin/timeline",     label: "Chronologie",   icon: Clock, resource: "timeline" },
       { to: "/admin/testimonials", label: "Témoignages",   icon: MessageSquare, resource: "testimonials" },
     ],
   },

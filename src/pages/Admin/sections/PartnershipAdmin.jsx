@@ -152,7 +152,7 @@ export default function PartnershipAdmin() {
                         onChange={(e) => update(item.id, "color", e.target.value)}
                         className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-400"
                       >
-                        <option value="primary">Orange (primary)</option>
+                        <option value="primary">Orange (principale)</option>
                         <option value="accent">Accent</option>
                       </select>
                     </FormField>

@@ -4,6 +4,7 @@ import { supabase } from "../../../lib/supabase";
 import { getCurrentAdminProfile } from "../../../lib/adminUsers";
 import { AdminAuthProvider } from "./AdminAuthContext";
 import { ShieldX } from "lucide-react";
+import { adminErrorMessage } from "../../../lib/errorMessages";
 
 export default function AdminGuard({ children }) {
   const location = useLocation();
@@ -39,7 +40,7 @@ export default function AdminGuard({ children }) {
           }
         }
         if (active) {
-          setAccessError(error?.message || "Impossible de vérifier vos droits d’accès.");
+          setAccessError(adminErrorMessage(error, "Impossible de vérifier vos droits d’accès."));
           setProfile(null);
         }
       }

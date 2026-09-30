@@ -26,6 +26,7 @@ import {
   updateAdminUser,
 } from "../../../lib/adminUsers";
 import { useAdminAuth } from "../components/AdminAuthContext";
+import { adminErrorMessage } from "../../../lib/errorMessages";
 
 const inputClass = "w-full rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none transition focus:border-orange-400 focus:ring-2 focus:ring-orange-100";
 
@@ -116,7 +117,7 @@ export default function AdminUsersAdmin() {
     try {
       setUsers(await getAdminUsers());
     } catch (loadError) {
-      setError(loadError?.message || "Impossible de charger les utilisateurs.");
+      setError(adminErrorMessage(loadError, "Impossible de charger les utilisateurs."));
     } finally {
       setLoading(false);
     }
@@ -140,7 +141,7 @@ export default function AdminUsersAdmin() {
       setInvite({ fullName: "", email: "", role: "editor", resources: [] });
       setSuccess(`Lien d’invitation créé pour ${invite.email}. Il reste valide pendant 7 jours.`);
     } catch (inviteError) {
-      setError(inviteError?.message || "L’invitation n’a pas pu être envoyée.");
+      setError(adminErrorMessage(inviteError, "L’invitation n’a pas pu être envoyée."));
     } finally {
       setSaving("");
     }
@@ -169,7 +170,7 @@ export default function AdminUsersAdmin() {
         : entry));
       setSuccess(`Les sections accessibles à ${item.full_name || item.email} ont été enregistrées.`);
     } catch (permissionError) {
-      setError(permissionError?.message || "Impossible d’enregistrer ces permissions.");
+      setError(adminErrorMessage(permissionError, "Impossible d’enregistrer ces permissions."));
     } finally {
       setSaving("");
     }
@@ -184,7 +185,7 @@ export default function AdminUsersAdmin() {
       setUsers((current) => current.map((entry) => entry.user_id === updated.user_id ? { ...entry, ...updated } : entry));
       setSuccess("Les droits de l’utilisateur ont été mis à jour.");
     } catch (updateError) {
-      setError(updateError?.message || "Impossible de modifier cet utilisateur.");
+      setError(adminErrorMessage(updateError, "Impossible de modifier cet utilisateur."));
     } finally {
       setSaving("");
     }

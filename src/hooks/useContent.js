@@ -107,3 +107,7 @@ export function useAboutAdvantages() {
 export function useAboutEcosystemStats() {
   return useAsync(() => cms.getAboutEcosystemStats(), []);
 }
+
+export function usePortfolioFilterOptions() {
+  return useAsync(() => cms.getPortfolioFilterOptions(), null);
+}

@@ -14,8 +14,8 @@ const ICON_OPTIONS = [
 ];
 
 const COLOR_OPTIONS = [
-  { label: "Orange (Primary)",   value: "bg-primary"   },
-  { label: "Sombre (Accent)",    value: "bg-accent"    },
+  { label: "Orange (principale)",   value: "bg-primary"   },
+  { label: "Sombre (accent)",    value: "bg-accent"    },
   { label: "Secondaire",         value: "bg-secondary" },
 ];
 

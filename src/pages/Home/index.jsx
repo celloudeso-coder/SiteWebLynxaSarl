@@ -272,7 +272,7 @@ const Homepage = () => {
                   </li>
                   <li className="flex items-center gap-2">
                     <Icon name="Phone" size={14} className="text-primary flex-shrink-0" />
-                    {contact.phone || "+224 621 724 657"}
+                    {contact.phone || "+224 614 666 680"}
                   </li>
                   <li className="flex items-center gap-2">
                     <Icon name="Mail" size={14} className="text-primary flex-shrink-0" />

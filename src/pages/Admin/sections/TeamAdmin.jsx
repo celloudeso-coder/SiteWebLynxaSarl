@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { getTeamMembers, saveTeamMember, deleteTeamMember } from "../../../lib/cms";
+import { getTeamMembers, saveTeamMember, saveTeamMemberOrder, deleteTeamMember } from "../../../lib/cms";
 import { FormField, TextInput, TextArea, Toggle, JsonArrayEditor, ImageUpload, FocalPointPicker } from "../components/FormField";
 import SaveButton from "../components/SaveButton";
-import { Plus, Trash2, ChevronDown, ChevronUp } from "lucide-react";
+import { Plus, Trash2, ChevronDown, ChevronUp, ArrowUp, ArrowDown } from "lucide-react";
 
 const emptyMember = {
   sort_order: 0, active: true, name: "", role: "", image_url: "",
@@ -61,6 +61,25 @@ export default function TeamAdmin() {
     }
   }
 
+  // Déplace un membre d'un cran (ordre d'affichage sur le site) puis
+  // renumérote toute la liste 1…n ; en cas d'échec, on recharge l'état réel.
+  async function move(index, direction) {
+    const target = index + direction;
+    if (target < 0 || target >= members.length) return;
+    const next = [...members];
+    [next[index], next[target]] = [next[target], next[index]];
+    setMembers(next.map((m, i) => ({ ...m, sort_order: i + 1 })));
+    setSaving("order");
+    try {
+      await saveTeamMemberOrder(next.map((m) => m.id));
+    } catch (e) {
+      alert("Échec de l'enregistrement de l'ordre. Vérifiez la connexion à Supabase.");
+      await load();
+    } finally {
+      setSaving(null);
+    }
+  }
+
   async function addNew() {
     const created = await saveTeamMember({ ...emptyMember, sort_order: members.length + 1 });
     setMembers((prev) => [...prev, created]);
@@ -89,7 +108,7 @@ export default function TeamAdmin() {
       </div>
 
       <div className="space-y-3">
-        {members.map((member) => (
+        {members.map((member, index) => (
           <div key={member.id} className="bg-white rounded-xl border border-gray-200 overflow-hidden">
             <div className="flex items-center gap-3 px-5 py-4">
               <button
@@ -105,6 +124,28 @@ export default function TeamAdmin() {
                   <p className="text-xs text-gray-500">{member.role}</p>
                 </div>
               </button>
+              <div className="flex flex-col">
+                <button
+                  type="button"
+                  onClick={() => move(index, -1)}
+                  disabled={index === 0 || saving === "order"}
+                  aria-label={`Monter ${member.name || "ce membre"} d'une place`}
+                  title="Monter"
+                  className="p-1 text-gray-400 hover:text-gray-700 disabled:opacity-30 disabled:cursor-not-allowed"
+                >
+                  <ArrowUp size={14} />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => move(index, 1)}
+                  disabled={index === members.length - 1 || saving === "order"}
+                  aria-label={`Descendre ${member.name || "ce membre"} d'une place`}
+                  title="Descendre"
+                  className="p-1 text-gray-400 hover:text-gray-700 disabled:opacity-30 disabled:cursor-not-allowed"
+                >
+                  <ArrowDown size={14} />
+                </button>
+              </div>
               <Toggle checked={member.active} onChange={(v) => toggleActive(member, v)} />
               <button onClick={() => remove(member.id)} className="text-red-400 hover:text-red-600 ml-2">
                 <Trash2 size={16} />

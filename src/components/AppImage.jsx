@@ -10,7 +10,7 @@ const USE_MANIFEST = import.meta.env.PROD;
 
 function Image({
   src,
-  alt = "Image Name",
+  alt = "",
   className = "",
   width,
   height,

@@ -76,7 +76,7 @@ const TechnologyStack = () => {
         {/* Header */}
         <div className="text-center mb-12">
           <h2 className="text-3xl md:text-4xl font-heading font-bold text-secondary mb-4">
-            Stack Technologique
+            Nos technologies
           </h2>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
             Nous utilisons des technologies de pointe pour créer des solutions

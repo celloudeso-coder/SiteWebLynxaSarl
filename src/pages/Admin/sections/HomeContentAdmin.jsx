@@ -103,10 +103,10 @@ function EngagementsSection() {
               <FormField label="Icône">
                 <IconPicker value={item.icon} onChange={(v) => update(item.id, "icon", v)} />
               </FormField>
-              <FormField label="Label principal">
+              <FormField label="Libellé principal">
                 <TextInput value={item.label} onChange={(v) => update(item.id, "label", v)} placeholder="100 % Guinéen" />
               </FormField>
-              <FormField label="Sous-label">
+              <FormField label="Sous-libellé">
                 <TextInput value={item.sub_label} onChange={(v) => update(item.id, "sub_label", v)} placeholder="Ancré localement" />
               </FormField>
               <FormField label="Ordre">
