@@ -1133,8 +1133,8 @@ GRANT ALL    ON industry_reports TO authenticated;
 -- Site settings seeds for Portfolio filters & Insights categories
 -- -------------------------------------------------------
 INSERT INTO site_settings (key, value) VALUES
-  ('portfolio_filter_options', '{"services":["Tous","Mobile Development","Network Infrastructure","Web Development","Cybersecurity"],"industries":["Tous","Financial Services","Healthcare","Government","NGO","Education","Retail"]}'),
-  ('insights_categories', '[{"id":"all","label":"All Content","icon":"Grid"},{"id":"cybersecurity","label":"Cybersecurity","icon":"Shield"},{"id":"mobile","label":"Mobile Innovation","icon":"Smartphone"},{"id":"network","label":"Network Solutions","icon":"Network"},{"id":"ecosystem","label":"African Tech Ecosystem","icon":"Globe"}]')
+  ('portfolio_filter_options', '{"services":[{"key":"mobile-development","label":"Développement mobile"},{"key":"network-infrastructure","label":"Infrastructure réseau"},{"key":"web-development","label":"Développement web"},{"key":"cybersecurity","label":"Cybersécurité"}],"industries":["Tous","Financial Services","Healthcare","Government","NGO","Education","Retail"]}'),
+  ('insights_categories', '[{"id":"all","label":"Tous les contenus","icon":"Grid"},{"id":"cybersecurity","label":"Cybersécurité","icon":"Shield"},{"id":"mobile","label":"Innovation mobile","icon":"Smartphone"},{"id":"network","label":"Solutions réseau","icon":"Network"},{"id":"ecosystem","label":"Écosystème tech africain","icon":"Globe"}]')
 ON CONFLICT (key) DO NOTHING;
 
 -- -------------------------------------------------------

@@ -1,15 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Icon from "../../../components/AppIcon";
-import { getPortfolioFilterOptions } from "../../../lib/cms";
-
-const STATIC_SERVICES = [
-  "Tous",
-  "Mobile Development",
-  "Network Infrastructure",
-  "Web Development",
-  "Cybersecurity",
-];
+import { ALL_SERVICES } from "../../../lib/portfolioCategories";
 
 const STATIC_INDUSTRIES = [
   "Tous",
@@ -22,6 +14,8 @@ const STATIC_INDUSTRIES = [
 ];
 
 const FilterBar = ({
+  serviceCategories = [],
+  industryOptions,
   activeService,
   setActiveService,
   activeIndustry,
@@ -30,20 +24,13 @@ const FilterBar = ({
   setSearchTerm,
   onClearFilters,
 }) => {
-  const [services, setServices]     = useState(STATIC_SERVICES);
-  const [industries, setIndustries] = useState(STATIC_INDUSTRIES);
-
-  useEffect(() => {
-    getPortfolioFilterOptions()
-      .then((opts) => {
-        if (opts?.services?.length)   setServices(opts.services);
-        if (opts?.industries?.length) setIndustries(opts.industries);
-      })
-      .catch(() => {});
-  }, []);
+  // Options chargées une seule fois par la page Portfolio. Services :
+  // { key, label } (la clé filtre, le libellé s'affiche), précédés de « Tous ».
+  const services = [{ key: ALL_SERVICES, label: "Tous" }, ...serviceCategories];
+  const industries = industryOptions?.length ? industryOptions : STATIC_INDUSTRIES;
 
   const hasActive =
-    activeService !== "Tous" || activeIndustry !== "Tous" || searchTerm;
+    activeService !== ALL_SERVICES || activeIndustry !== "Tous" || searchTerm;
 
   return (
     <div className="mb-10 space-y-5">
@@ -74,18 +61,18 @@ const FilterBar = ({
         <div className="flex flex-wrap gap-2">
           {services.map((s) => (
             <motion.button
-              key={s}
-              onClick={() => setActiveService(s)}
+              key={s.key}
+              onClick={() => setActiveService(s.key)}
               whileHover={{ scale: 1.03 }}
               whileTap={{ scale: 0.97 }}
               className={`px-4 py-2 rounded-full text-sm font-medium transition-colors duration-200 border
                 ${
-                  activeService === s
+                  activeService === s.key
                     ? "bg-primary text-primary-foreground border-primary"
                     : "bg-white text-secondary border-border hover:border-primary/50"
                 }`}
             >
-              {s}
+              {s.label}
             </motion.button>
           ))}
         </div>

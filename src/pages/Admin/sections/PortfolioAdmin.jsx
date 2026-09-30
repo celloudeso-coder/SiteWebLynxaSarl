@@ -1,15 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { getProjects, saveProject, deleteProject } from "../../../lib/cms";
+import { getProjects, saveProject, deleteProject, getPortfolioFilterOptions } from "../../../lib/cms";
+import { DEFAULT_SERVICE_CATEGORIES, categoryKey, categoryLabel, normalizeCategories } from "../../../lib/portfolioCategories";
 import { FormField, TextInput, TextArea, Toggle, JsonArrayEditor, ImageField } from "../components/FormField";
 import SaveButton from "../components/SaveButton";
 import { Plus, Trash2, ChevronDown, ChevronUp } from "lucide-react";
 
 const IMPACT_OPTIONS = ["High", "Medium", "Low"];
 const SCALE_OPTIONS  = ["Enterprise", "Medium", "Small", "National", "International"];
-const SERVICE_OPTIONS = [
-  "Mobile Development", "Network Infrastructure", "Web Development",
-  "Cybersecurity", "Cloud & DevOps", "Data & Analytics",
-];
 
 function MetricsEditor({ value = [], onChange }) {
   const items = Array.isArray(value) ? value : [];
@@ -88,6 +85,8 @@ function updateGalleryUrl(galleryUrls, index, value) {
 
 export default function PortfolioAdmin() {
   const [projects, setProjects] = useState([]);
+  // Catégories de service (clé + libellé), réglées dans Portfolio+ › Filtres.
+  const [categories, setCategories] = useState(DEFAULT_SERVICE_CATEGORIES);
   const [expanded, setExpanded] = useState(null);
   const [saving, setSaving]     = useState(null);
   const [saved, setSaved]       = useState(null);
@@ -95,6 +94,9 @@ export default function PortfolioAdmin() {
   useEffect(() => { load(); }, []);
 
   async function load() {
+    getPortfolioFilterOptions()
+      .then((opts) => setCategories(normalizeCategories(opts?.services)))
+      .catch(() => {});
     const data = await getProjects(false);
     setProjects(data || []);
   }
@@ -186,7 +188,7 @@ export default function PortfolioAdmin() {
                     )}
                   </p>
                   <p className="text-xs text-gray-500">
-                    {[project.service_type, project.industry, project.status, project.duration].filter(Boolean).join(" · ")}
+                    {[project.service_type && categoryLabel(categories, categoryKey(project.service_type)), project.industry, project.status, project.duration].filter(Boolean).join(" · ")}
                   </p>
                 </div>
               </button>
@@ -205,12 +207,15 @@ export default function PortfolioAdmin() {
                   </FormField>
                   <FormField label="Type de service">
                     <select
-                      value={project.service_type || ""}
+                      value={categoryKey(project.service_type) || ""}
                       onChange={(e) => update(project.id, "service_type", e.target.value)}
                       className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-400"
                     >
                       <option value="">— Choisir —</option>
-                      {SERVICE_OPTIONS.map((s) => <option key={s}>{s}</option>)}
+                      {categories.map((c) => <option key={c.key} value={c.key}>{c.label}</option>)}
+                      {project.service_type && !categories.some((c) => c.key === categoryKey(project.service_type)) && (
+                        <option value={categoryKey(project.service_type)}>{project.service_type} (ancienne valeur)</option>
+                      )}
                     </select>
                   </FormField>
                   <FormField label="Industrie">

@@ -3,28 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Link } from "react-router-dom";
 import Icon from "../../../components/AppIcon";
 import Image from "../../../components/AppImage";
-
-const SERVICE_ICONS = {
-  "Mobile Development":    "Smartphone",
-  "Network Infrastructure":"Network",
-  "Web Development":       "Globe",
-  "Cybersecurity":         "Shield",
-  "Développement Mobile":  "Smartphone",
-  "Infrastructure Réseau": "Network",
-  "Développement Web":     "Globe",
-  "Cybersécurité":         "Shield",
-};
-
-const PROJECT_LINK_META = {
-  "Mobile Development":    { label: "Voir l'application", icon: "Smartphone"  },
-  "Développement Mobile":  { label: "Voir l'application", icon: "Smartphone"  },
-  "Web Development":       { label: "Voir le site",       icon: "Globe"        },
-  "Développement Web":     { label: "Voir le site",       icon: "Globe"        },
-  "Network Infrastructure":{ label: "Voir le rapport",    icon: "FileText"     },
-  "Infrastructure Réseau": { label: "Voir le rapport",    icon: "FileText"     },
-  "Cybersecurity":         { label: "Voir le rapport",    icon: "ShieldCheck"  },
-  "Cybersécurité":         { label: "Voir le rapport",    icon: "ShieldCheck"  },
-};
+import { categoryMeta } from "../../../lib/portfolioCategories";
 
 const ProjectModal = ({ project, isOpen, onClose }) => (
   <AnimatePresence>
@@ -67,11 +46,11 @@ const ProjectModal = ({ project, isOpen, onClose }) => (
                 <div className="bg-white/95 backdrop-blur-sm rounded-xl p-4">
                   <div className="flex items-center gap-3 mb-2">
                     <Icon
-                      name={SERVICE_ICONS[project?.service] || "Code"}
+                      name={categoryMeta(project?.service).icon}
                       size={22}
                       className="text-primary"
                     />
-                    <span className="text-primary font-medium text-sm">{project?.service}</span>
+                    <span className="text-primary font-medium text-sm">{project?.serviceLabel}</span>
                     <span className="text-muted-foreground text-sm">·</span>
                     <span className="text-muted-foreground text-sm">{project?.industry}</span>
                     {project?.status && (
@@ -244,7 +223,8 @@ const ProjectModal = ({ project, isOpen, onClose }) => (
                   </Link>
                 )}
                 {project?.projectUrl && (() => {
-                  const meta = PROJECT_LINK_META[project.service] || { label: "Voir le projet", icon: "ExternalLink" };
+                  const { linkLabel, linkIcon } = categoryMeta(project.service);
+                  const meta = { label: linkLabel, icon: linkIcon };
                   return (
                     <a
                       href={project.projectUrl}
