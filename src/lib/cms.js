@@ -104,6 +104,18 @@ export async function saveTeamMember(member) {
   return upsertRow("team_members", member);
 }
 
+// Réordonnancement : n'écrit que sort_order, pour ne jamais enregistrer au
+// passage une modification en cours sur un autre champ de la fiche.
+export async function saveTeamMemberOrder(orderedIds) {
+  const results = await Promise.all(
+    orderedIds.map((id, i) =>
+      supabase.from("team_members").update({ sort_order: i + 1 }).eq("id", id)
+    )
+  );
+  const failed = results.find((r) => r.error);
+  if (failed) throw failed.error;
+}
+
 export async function deleteTeamMember(id) {
   return deleteRow("team_members", id);
 }

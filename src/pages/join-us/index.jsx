@@ -60,8 +60,16 @@ const JoinUsPage = () => {
               <div>
                 <h4 className="font-semibold mb-4">Contact Rapide</h4>
                 <div className="space-y-2 text-sm text-white/80">
-                  <div>{contact.phone || "+224 621 724 657"}</div>
-                  <div>{contact.email || "contact@lynxatech.com"}</div>
+                  <div>
+                    <a href={`tel:${(contact.phone || "+224 614 666 680").replace(/\s/g, "")}`} className="hover:text-white hover:underline">
+                      {contact.phone || "+224 614 666 680"}
+                    </a>
+                  </div>
+                  <div>
+                    <a href={`mailto:${contact.email || "contact@lynxatech.com"}`} className="hover:text-white hover:underline">
+                      {contact.email || "contact@lynxatech.com"}
+                    </a>
+                  </div>
                 </div>
               </div>
 
