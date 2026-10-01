@@ -4,6 +4,7 @@ import { FormField, TextInput, TextArea } from "../components/FormField";
 import SaveButton from "../components/SaveButton";
 import { Plus, Trash2, Phone, FileText, MapPin } from "lucide-react";
 import { BUDGET_BRACKETS } from "../../../data/pricing";
+import { alertAdminError } from "../../../lib/errorMessages";
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -133,6 +134,8 @@ function FormulaireTab() {
       await saveContactFormConfig(config);
       setSaved(true);
       setTimeout(() => setSaved(false), 2500);
+    } catch (err) {
+      alertAdminError(err, "Échec de l'enregistrement. Vos modifications n'ont pas été sauvegardées.");
     } finally {
       setSaving(false);
     }
@@ -233,6 +236,8 @@ function LocalisationTab() {
       await saveOfficeDetails(office);
       setSaved(true);
       setTimeout(() => setSaved(false), 2500);
+    } catch (err) {
+      alertAdminError(err, "Échec de l'enregistrement. Vos modifications n'ont pas été sauvegardées.");
     } finally {
       setSaving(false);
     }

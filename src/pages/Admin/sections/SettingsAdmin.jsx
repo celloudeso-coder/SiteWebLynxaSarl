@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { getSettings, saveSetting } from "../../../lib/cms";
 import { FormField, TextInput, TextArea } from "../components/FormField";
 import SaveButton from "../components/SaveButton";
+import { alertAdminError } from "../../../lib/errorMessages";
 
 export default function SettingsAdmin() {
   const [contact, setContact] = useState({});
@@ -25,6 +26,8 @@ export default function SettingsAdmin() {
       await saveSetting(key, value);
       setSaved(key);
       setTimeout(() => setSaved(null), 2500);
+    } catch (err) {
+      alertAdminError(err, "Échec de l'enregistrement. Vos modifications n'ont pas été sauvegardées.");
     } finally {
       setSaving(null);
     }

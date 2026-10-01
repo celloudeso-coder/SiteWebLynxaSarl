@@ -3,6 +3,7 @@ import { getTimelineEvents, saveTimelineEvent, deleteTimelineEvent } from "../..
 import { FormField, TextInput, TextArea, Toggle, JsonArrayEditor } from "../components/FormField";
 import SaveButton from "../components/SaveButton";
 import { Plus, Trash2, ChevronDown, ChevronUp } from "lucide-react";
+import { alertAdminError } from "../../../lib/errorMessages";
 
 const emptyEvent = {
   sort_order: 0, active: true, year: "", title: "", description: "", achievements: [],
@@ -48,6 +49,8 @@ export default function TimelineAdmin() {
       setEvents((prev) => prev.map((e) => e.id === event.id ? updated : e));
       setSaved(event.id);
       setTimeout(() => setSaved(null), 2500);
+    } catch (err) {
+      alertAdminError(err, "Échec de l'enregistrement. Vos modifications n'ont pas été sauvegardées.");
     } finally {
       setSaving(null);
     }

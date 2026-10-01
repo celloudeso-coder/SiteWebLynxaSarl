@@ -7,6 +7,7 @@ import {
 import { FormField, TextInput, TextArea, Toggle } from "../components/FormField";
 import SaveButton from "../components/SaveButton";
 import { Plus, Trash2, Workflow, ShieldCheck } from "lucide-react";
+import { alertAdminError } from "../../../lib/errorMessages";
 
 // ── Icon options ──────────────────────────────────────────────────────────────
 
@@ -62,6 +63,8 @@ function ProcessusTab() {
       } : m));
       setSaved(item.id);
       setTimeout(() => setSaved(null), 2500);
+    } catch (err) {
+      alertAdminError(err, "Échec de l'enregistrement. Vos modifications n'ont pas été sauvegardées.");
     } finally {
       setSaving(null);
     }
@@ -263,6 +266,8 @@ function SignauxConfianceTab() {
       const updated = await saveTrustSecurityItem(item);
       setSecurity((p) => p.map((m) => m.id === item.id ? updated : m));
       setSaved(item.id); setTimeout(() => setSaved(null), 2500);
+    } catch (err) {
+      alertAdminError(err, "Échec de l'enregistrement. Vos modifications n'ont pas été sauvegardées.");
     } finally { setSaving(null); }
   }
 
@@ -272,6 +277,8 @@ function SignauxConfianceTab() {
       const updated = await saveTrustCommitmentItem(item);
       setCommitments((p) => p.map((m) => m.id === item.id ? updated : m));
       setSaved(item.id); setTimeout(() => setSaved(null), 2500);
+    } catch (err) {
+      alertAdminError(err, "Échec de l'enregistrement. Vos modifications n'ont pas été sauvegardées.");
     } finally { setSaving(null); }
   }
 

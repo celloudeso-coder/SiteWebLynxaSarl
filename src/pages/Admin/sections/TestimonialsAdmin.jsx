@@ -3,6 +3,7 @@ import { getTestimonials, saveTestimonial, deleteTestimonial } from "../../../li
 import { FormField, TextInput, TextArea, Toggle } from "../components/FormField";
 import SaveButton from "../components/SaveButton";
 import { Plus, Trash2, ChevronDown, ChevronUp } from "lucide-react";
+import { alertAdminError } from "../../../lib/errorMessages";
 
 const emptyTestimonial = {
   sort_order: 0, active: true, quote: "", author_name: "",
@@ -50,6 +51,8 @@ export default function TestimonialsAdmin() {
       setItems((prev) => prev.map((t) => t.id === item.id ? updated : t));
       setSaved(item.id);
       setTimeout(() => setSaved(null), 2500);
+    } catch (err) {
+      alertAdminError(err, "Échec de l'enregistrement. Vos modifications n'ont pas été sauvegardées.");
     } finally {
       setSaving(null);
     }

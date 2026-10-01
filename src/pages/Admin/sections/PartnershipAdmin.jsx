@@ -4,6 +4,7 @@ import { FormField, TextInput, TextArea, Toggle } from "../components/FormField"
 import SaveButton from "../components/SaveButton";
 import { Plus, Trash2, ChevronDown, ChevronUp } from "lucide-react";
 import { formatPathwayBudget, roundGnfToCommercialTier } from "../../../data/pricing";
+import { alertAdminError } from "../../../lib/errorMessages";
 
 const ICONS = ["Rocket", "Building2", "Globe", "Network", "Handshake", "Star", "Zap", "Users", "Award", "Briefcase"];
 
@@ -72,6 +73,8 @@ export default function PartnershipAdmin() {
       setItems((prev) => prev.map((p) => p.id === item.id ? updated : p));
       setSaved(item.id);
       setTimeout(() => setSaved(null), 2500);
+    } catch (err) {
+      alertAdminError(err, "Échec de l'enregistrement. Vos modifications n'ont pas été sauvegardées.");
     } finally {
       setSaving(null);
     }

@@ -6,6 +6,7 @@ import {
 import { FormField, TextInput, TextArea, Toggle } from "../components/FormField";
 import SaveButton from "../components/SaveButton";
 import { Plus, Trash2, Flag, Sparkles } from "lucide-react";
+import { alertAdminError } from "../../../lib/errorMessages";
 
 // Common lucide icon names available in the site
 const ICON_OPTIONS = [
@@ -57,6 +58,8 @@ function EngagementsSection() {
       setItems((prev) => prev.map((m) => m.id === item.id ? updated : m));
       setSaved(item.id);
       setTimeout(() => setSaved(null), 2500);
+    } catch (err) {
+      alertAdminError(err, "Échec de l'enregistrement. Vos modifications n'ont pas été sauvegardées.");
     } finally {
       setSaving(null);
     }
@@ -164,6 +167,8 @@ function WhySection() {
       setItems((prev) => prev.map((m) => m.id === item.id ? updated : m));
       setSaved(item.id);
       setTimeout(() => setSaved(null), 2500);
+    } catch (err) {
+      alertAdminError(err, "Échec de l'enregistrement. Vos modifications n'ont pas été sauvegardées.");
     } finally {
       setSaving(null);
     }

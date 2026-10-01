@@ -4,6 +4,7 @@ import { DEFAULT_SERVICE_CATEGORIES, categoryKey, categoryLabel, normalizeCatego
 import { FormField, TextInput, TextArea, Toggle, JsonArrayEditor, ImageField } from "../components/FormField";
 import SaveButton from "../components/SaveButton";
 import { Plus, Trash2, ChevronDown, ChevronUp } from "lucide-react";
+import { alertAdminError } from "../../../lib/errorMessages";
 
 const IMPACT_OPTIONS = ["High", "Medium", "Low"];
 const SCALE_OPTIONS  = ["Enterprise", "Medium", "Small", "National", "International"];
@@ -135,6 +136,8 @@ export default function PortfolioAdmin() {
       setProjects((prev) => prev.map((p) => p.id === project.id ? updated : p));
       setSaved(project.id);
       setTimeout(() => setSaved(null), 2500);
+    } catch (err) {
+      alertAdminError(err, "Échec de l'enregistrement. Vos modifications n'ont pas été sauvegardées.");
     } finally {
       setSaving(null);
     }

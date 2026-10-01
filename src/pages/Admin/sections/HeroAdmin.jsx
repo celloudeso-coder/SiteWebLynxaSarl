@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { getAllHeroSections, saveHeroSection } from "../../../lib/cms";
 import { FormField, TextInput, TextArea } from "../components/FormField";
 import SaveButton from "../components/SaveButton";
+import { alertAdminError } from "../../../lib/errorMessages";
 
 const PAGES = ["home", "about", "services", "portfolio", "partnership", "contact", "join-us", "insights"];
 
@@ -36,6 +37,8 @@ export default function HeroAdmin() {
       setSections((prev) => ({ ...prev, [activePage]: saved }));
       setSaved(true);
       setTimeout(() => setSaved(false), 2500);
+    } catch (err) {
+      alertAdminError(err, "Échec de l'enregistrement. Vos modifications n'ont pas été sauvegardées.");
     } finally {
       setSaving(false);
     }

@@ -3,6 +3,7 @@ import { getServices, saveService, deleteService } from "../../../lib/cms";
 import { FormField, TextInput, TextArea, Toggle, JsonArrayEditor } from "../components/FormField";
 import SaveButton from "../components/SaveButton";
 import { Plus, Trash2, ChevronDown, ChevronUp } from "lucide-react";
+import { alertAdminError } from "../../../lib/errorMessages";
 
 const ICON_OPTIONS = [
   "Smartphone", "Wifi", "Globe", "Shield", "Cloud", "Code", "Database",
@@ -145,6 +146,8 @@ export default function ServicesAdmin() {
       setServices((prev) => prev.map((s) => s.id === service.id ? updated : s));
       setSaved(service.id);
       setTimeout(() => setSaved(null), 2500);
+    } catch (err) {
+      alertAdminError(err, "Échec de l'enregistrement. Vos modifications n'ont pas été sauvegardées.");
     } finally {
       setSaving(null);
     }

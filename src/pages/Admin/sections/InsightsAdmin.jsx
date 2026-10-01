@@ -9,6 +9,7 @@ import {
 import { FormField, TextInput, TextArea, Toggle, FileUpload } from "../components/FormField";
 import SaveButton from "../components/SaveButton";
 import { Plus, Trash2, BookOpen, FileText, Video, BarChart2, Grid } from "lucide-react";
+import { alertAdminError } from "../../../lib/errorMessages";
 
 const CATEGORY_OPTIONS = ["cybersecurity","mobile","network","ecosystem"];
 
@@ -91,6 +92,8 @@ function BlogSection() {
       setItems((prev) => prev.map((m) => m.id === item.id ? updated : m));
       setSaved(item.id);
       setTimeout(() => setSaved(null), 2500);
+    } catch (err) {
+      alertAdminError(err, "Échec de l'enregistrement. Vos modifications n'ont pas été sauvegardées.");
     } finally { setSaving(null); }
   }
 
@@ -200,6 +203,8 @@ function WhitepapersSection() {
       setItems((prev) => prev.map((m) => m.id === item.id ? updated : m));
       setSaved(item.id);
       setTimeout(() => setSaved(null), 2500);
+    } catch (err) {
+      alertAdminError(err, "Échec de l'enregistrement. Vos modifications n'ont pas été sauvegardées.");
     } finally { setSaving(null); }
   }
 
@@ -309,6 +314,8 @@ function TechTalksSection() {
       setItems((prev) => prev.map((m) => m.id === item.id ? updated : m));
       setSaved(item.id);
       setTimeout(() => setSaved(null), 2500);
+    } catch (err) {
+      alertAdminError(err, "Échec de l'enregistrement. Vos modifications n'ont pas été sauvegardées.");
     } finally { setSaving(null); }
   }
 
@@ -425,6 +432,8 @@ function ReportsSection() {
       setItems((prev) => prev.map((m) => m.id === item.id ? updated : m));
       setSaved(item.id);
       setTimeout(() => setSaved(null), 2500);
+    } catch (err) {
+      alertAdminError(err, "Échec de l'enregistrement. Vos modifications n'ont pas été sauvegardées.");
     } finally { setSaving(null); }
   }
 
@@ -574,6 +583,8 @@ function CategoriesSection() {
       await saveInsightsCategories(cats);
       setSaved(true);
       setTimeout(() => setSaved(false), 2500);
+    } catch (err) {
+      alertAdminError(err, "Échec de l'enregistrement. Vos modifications n'ont pas été sauvegardées.");
     } finally { setSaving(false); }
   }
 

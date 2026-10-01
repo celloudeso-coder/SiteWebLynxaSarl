@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { getUnrecordedSubmissions, resolveUnrecordedSubmission, deleteUnrecordedSubmission } from "../../../lib/cms";
 import { AlertTriangle, CheckCircle2, Mail, MailX, Trash2, ChevronDown, ChevronUp, RefreshCw, Inbox } from "lucide-react";
+import { alertAdminError } from "../../../lib/errorMessages";
 
 const FORM_LABELS = {
   join_us: "Candidature (Rejoindre)",
@@ -25,6 +26,8 @@ function Row({ item, onResolve, onDelete }) {
     setSaving(true);
     try {
       await onResolve(item.id, !item.resolved, notes);
+    } catch (err) {
+      alertAdminError(err, "Échec de la mise à jour du statut. Rien n'a été enregistré.");
     } finally {
       setSaving(false);
     }
@@ -34,6 +37,8 @@ function Row({ item, onResolve, onDelete }) {
     setSaving(true);
     try {
       await onResolve(item.id, item.resolved, notes);
+    } catch (err) {
+      alertAdminError(err, "Échec de l'enregistrement des notes. Rien n'a été enregistré.");
     } finally {
       setSaving(false);
     }

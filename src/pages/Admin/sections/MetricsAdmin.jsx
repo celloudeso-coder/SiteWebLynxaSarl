@@ -3,6 +3,7 @@ import { getMetrics, saveMetric, deleteMetric } from "../../../lib/cms";
 import { FormField, TextInput, Toggle } from "../components/FormField";
 import SaveButton from "../components/SaveButton";
 import { Plus, Trash2 } from "lucide-react";
+import { alertAdminError } from "../../../lib/errorMessages";
 
 const emptyMetric = {
   sort_order: 0, active: true, label: "", value: 0, suffix: "+", description: "", page: "home",
@@ -32,6 +33,8 @@ export default function MetricsAdmin() {
       setMetrics((prev) => prev.map((m) => m.id === metric.id ? updated : m));
       setSaved(metric.id);
       setTimeout(() => setSaved(null), 2500);
+    } catch (err) {
+      alertAdminError(err, "Échec de l'enregistrement. Vos modifications n'ont pas été sauvegardées.");
     } finally {
       setSaving(null);
     }

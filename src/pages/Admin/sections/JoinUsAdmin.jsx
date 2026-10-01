@@ -6,7 +6,7 @@ import {
 } from "../../../lib/cms";
 import { FormField, TextInput, TextArea, Toggle } from "../components/FormField";
 import SaveButton from "../components/SaveButton";
-import { adminErrorMessage } from "../../../lib/errorMessages";
+import { adminErrorMessage, alertAdminError } from "../../../lib/errorMessages";
 import {
   Users, Briefcase, Download, RefreshCw, Trash2,
   ExternalLink, ChevronDown, ChevronUp, Plus,
@@ -86,6 +86,8 @@ function ApplicationsTab() {
     try {
       const updated = await updateApplicationStatus(id, status, notes);
       setItems((prev) => prev.map((i) => (i.id === id ? updated : i)));
+    } catch (err) {
+      alertAdminError(err, "Échec de la mise à jour du statut. Rien n'a été enregistré.");
     } finally { setSaving(null); }
   }
 
@@ -96,6 +98,8 @@ function ApplicationsTab() {
     try {
       const updated = await updateApplicationStatus(id, item.status, notes);
       setItems((prev) => prev.map((i) => (i.id === id ? updated : i)));
+    } catch (err) {
+      alertAdminError(err, "Échec de l'enregistrement des notes. Rien n'a été enregistré.");
     } finally { setSaving(null); }
   }
 
@@ -354,6 +358,8 @@ function OpeningsTab() {
       setItems((prev) => prev.map((p) => (p.id === item.id ? updated : p)));
       setSaved(item.id);
       setTimeout(() => setSaved(null), 2500);
+    } catch (err) {
+      alertAdminError(err, "Échec de l'enregistrement. Vos modifications n'ont pas été sauvegardées.");
     } finally { setSaving(null); }
   }
 

@@ -23,3 +23,9 @@ export function adminErrorMessage(err, fallback) {
   const known = KNOWN.find(([pattern]) => pattern.test(text));
   return known ? known[1] : fallback;
 }
+
+// Échec d'une écriture dans l'admin : jamais avalé silencieusement. Le
+// message français est affiché, le détail technique part dans la console.
+export function alertAdminError(err, fallback) {
+  window.alert(adminErrorMessage(err, fallback));
+}

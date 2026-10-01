@@ -4,6 +4,7 @@ import { FormField, TextInput, Toggle, JsonArrayEditor } from "../components/For
 import SaveButton from "../components/SaveButton";
 import { Plus, Trash2, ChevronDown, ChevronUp, Star } from "lucide-react";
 import { formatDualPrice, roundGnfToCommercialTier } from "../../../data/pricing";
+import { alertAdminError } from "../../../lib/errorMessages";
 
 const emptyPlan = {
   sort_order: 0, active: true, name: "", price: "", price_gnf: null, price_note: "",
@@ -50,6 +51,8 @@ export default function PricingAdmin() {
       setPlans((prev) => prev.map((p) => p.id === plan.id ? updated : p));
       setSaved(plan.id);
       setTimeout(() => setSaved(null), 2500);
+    } catch (err) {
+      alertAdminError(err, "Échec de l'enregistrement. Vos modifications n'ont pas été sauvegardées.");
     } finally {
       setSaving(null);
     }

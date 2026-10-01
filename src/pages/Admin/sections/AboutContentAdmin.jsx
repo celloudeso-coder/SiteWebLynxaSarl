@@ -11,6 +11,7 @@ import {
 import { FormField, TextInput, TextArea, Toggle } from "../components/FormField";
 import SaveButton from "../components/SaveButton";
 import { Plus, Trash2, User, Heart, MapPin, Rocket } from "lucide-react";
+import { alertAdminError } from "../../../lib/errorMessages";
 
 const ICON_OPTIONS = [
   "Flag","Zap","Globe","ShieldCheck","Star","Award","MapPin","Users","Clock",
@@ -85,6 +86,8 @@ function FounderSection() {
       await saveAboutFounder(data);
       setSaved(true);
       setTimeout(() => setSaved(false), 2500);
+    } catch (err) {
+      alertAdminError(err, "Échec de l'enregistrement. Vos modifications n'ont pas été sauvegardées.");
     } finally {
       setSaving(false);
     }
@@ -181,6 +184,8 @@ function ValuesSection() {
       setItems((prev) => prev.map((m) => m.id === item.id ? updated : m));
       setSaved(item.id);
       setTimeout(() => setSaved(null), 2500);
+    } catch (err) {
+      alertAdminError(err, "Échec de l'enregistrement. Vos modifications n'ont pas été sauvegardées.");
     } finally {
       setSaving(null);
     }
@@ -289,6 +294,8 @@ function WhyGuineaSection() {
       setAdvantages((prev) => prev.map((m) => m.id === item.id ? updated : m));
       setSavedAdv(item.id);
       setTimeout(() => setSavedAdv(null), 2500);
+    } catch (err) {
+      alertAdminError(err, "Échec de l'enregistrement. Vos modifications n'ont pas été sauvegardées.");
     } finally {
       setSavingAdv(null);
     }
@@ -319,6 +326,8 @@ function WhyGuineaSection() {
       await saveAboutEcosystemStats(ecoStats);
       setSavedEco(true);
       setTimeout(() => setSavedEco(false), 2500);
+    } catch (err) {
+      alertAdminError(err, "Échec de l'enregistrement. Vos modifications n'ont pas été sauvegardées.");
     } finally {
       setSavingEco(false);
     }
@@ -462,6 +471,8 @@ function VisionSection() {
       setPhases((prev) => prev.map((m) => m.id === item.id ? updated : m));
       setSavedP(item.id);
       setTimeout(() => setSavedP(null), 2500);
+    } catch (err) {
+      alertAdminError(err, "Échec de l'enregistrement. Vos modifications n'ont pas été sauvegardées.");
     } finally {
       setSavingP(null);
     }
@@ -497,6 +508,8 @@ function VisionSection() {
       setPillars((prev) => prev.map((m) => m.id === item.id ? updated : m));
       setSavedPi(item.id);
       setTimeout(() => setSavedPi(null), 2500);
+    } catch (err) {
+      alertAdminError(err, "Échec de l'enregistrement. Vos modifications n'ont pas été sauvegardées.");
     } finally {
       setSavingPi(null);
     }
@@ -528,6 +541,8 @@ function VisionSection() {
       await saveAboutImpactMetrics(metrics);
       setSavedM(true);
       setTimeout(() => setSavedM(false), 2500);
+    } catch (err) {
+      alertAdminError(err, "Échec de l'enregistrement. Vos modifications n'ont pas été sauvegardées.");
     } finally {
       setSavingM(false);
     }

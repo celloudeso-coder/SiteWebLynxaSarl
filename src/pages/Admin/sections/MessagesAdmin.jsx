@@ -6,6 +6,7 @@ import {
   DollarSign, MessageSquare, Tag, Search, RefreshCw,
 } from "lucide-react";
 import { BUDGET_BRACKETS } from "../../../data/pricing";
+import { alertAdminError } from "../../../lib/errorMessages";
 
 // ── Status config ─────────────────────────────────────────────────────────────
 const STATUS_CONFIG = {
@@ -80,6 +81,8 @@ function MessageRow({ msg, onStatusChange, onDelete }) {
     setSaving(true);
     try {
       await onStatusChange(msg.id, newStatus, notes);
+    } catch (err) {
+      alertAdminError(err, "Échec de la mise à jour du statut. Rien n'a été enregistré.");
     } finally {
       setSaving(false);
     }
@@ -89,6 +92,8 @@ function MessageRow({ msg, onStatusChange, onDelete }) {
     setSaving(true);
     try {
       await onStatusChange(msg.id, msg.status, notes);
+    } catch (err) {
+      alertAdminError(err, "Échec de l'enregistrement des notes. Rien n'a été enregistré.");
     } finally {
       setSaving(false);
     }

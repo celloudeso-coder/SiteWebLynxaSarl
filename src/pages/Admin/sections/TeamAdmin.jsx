@@ -3,6 +3,7 @@ import { getTeamMembers, saveTeamMember, saveTeamMemberOrder, deleteTeamMember }
 import { FormField, TextInput, TextArea, Toggle, JsonArrayEditor, ImageUpload, FocalPointPicker } from "../components/FormField";
 import SaveButton from "../components/SaveButton";
 import { Plus, Trash2, ChevronDown, ChevronUp, ArrowUp, ArrowDown } from "lucide-react";
+import { alertAdminError } from "../../../lib/errorMessages";
 
 const emptyMember = {
   sort_order: 0, active: true, name: "", role: "", image_url: "",
@@ -56,6 +57,8 @@ export default function TeamAdmin() {
       setMembers((prev) => prev.map((m) => m.id === member.id ? updated : m));
       setSaved(member.id);
       setTimeout(() => setSaved(null), 2500);
+    } catch (err) {
+      alertAdminError(err, "Échec de l'enregistrement. Vos modifications n'ont pas été sauvegardées.");
     } finally {
       setSaving(null);
     }

@@ -7,6 +7,7 @@ import { FormField, TextInput, TextArea, Toggle } from "../components/FormField"
 import SaveButton from "../components/SaveButton";
 import { Plus, Trash2, FlaskConical, Filter } from "lucide-react";
 import { DEFAULT_SERVICE_CATEGORIES, normalizeCategories } from "../../../lib/portfolioCategories";
+import { alertAdminError } from "../../../lib/errorMessages";
 
 const ICON_OPTIONS = [
   "Cpu","Lock","Leaf","Rocket","Star","Zap","Globe","Shield","Award","Lightbulb",
@@ -66,6 +67,8 @@ function InnovationLabSection() {
       setItems((prev) => prev.map((m) => m.id === item.id ? updated : m));
       setSaved(item.id);
       setTimeout(() => setSaved(null), 2500);
+    } catch (err) {
+      alertAdminError(err, "Échec de l'enregistrement. Vos modifications n'ont pas été sauvegardées.");
     } finally {
       setSaving(null);
     }
@@ -260,6 +263,8 @@ function FilterOptionsSection() {
       setServices(cleaned);
       setSaved(true);
       setTimeout(() => setSaved(false), 2500);
+    } catch (err) {
+      alertAdminError(err, "Échec de l'enregistrement. Vos modifications n'ont pas été sauvegardées.");
     } finally {
       setSaving(false);
     }
