@@ -46,8 +46,9 @@
   },
   "scripts": {
     "start": "vite",
-    "build": "node scripts/generate-image-variants.mjs && vite build --sourcemap && node scripts/prerender.mjs && node scripts/write-build-info.mjs",
+    "build": "node scripts/check-active-filters.mjs && node scripts/generate-image-variants.mjs && vite build --sourcemap && node scripts/prerender.mjs && node scripts/write-build-info.mjs",
     "prerender": "node scripts/prerender.mjs",
+    "test": "node scripts/check-active-filters.mjs",
     "generate-images": "node scripts/generate-image-variants.mjs",
     "serve": "vite preview"
   },
