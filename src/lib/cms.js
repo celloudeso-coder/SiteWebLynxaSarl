@@ -3,6 +3,13 @@ import { compressImageForUpload } from "./imageCompression";
 
 // ─── Generic helpers ────────────────────────────────────────────────────────
 
+// Lectures publiques d'une table qui a une colonne `active` : filtrer
+// explicitement `active = true` (paramètre activeOnly, true par défaut ; les
+// écrans d'admin passent false). La RLS ne suffit pas comme filtre
+// d'affichage : quand un admin est connecté dans le navigateur, la policy
+// cms_authenticated_read lui renvoie aussi les lignes inactives, sur le site
+// public comme dans l'admin.
+
 async function fetchTable(table, options = {}) {
   const { orderBy = "sort_order", filters = {} } = options;
   let query = supabase.from(table).select("*").order(orderBy);
@@ -507,8 +514,11 @@ export async function deleteUnrecordedSubmission(id) {
 
 // ─── Home Engagements (Bande Engagements) ────────────────────────────────────
 
-export async function getHomeEngagements() {
-  return fetchTable("home_engagements", { orderBy: "sort_order" });
+export async function getHomeEngagements(activeOnly = true) {
+  return fetchTable("home_engagements", {
+    orderBy: "sort_order",
+    filters: activeOnly ? { active: true } : {},
+  });
 }
 
 export async function saveHomeEngagement(item) {
@@ -521,8 +531,11 @@ export async function deleteHomeEngagement(id) {
 
 // ─── Home Why Items (Pourquoi Lynxa ?) ───────────────────────────────────────
 
-export async function getHomeWhyItems() {
-  return fetchTable("home_why_items", { orderBy: "sort_order" });
+export async function getHomeWhyItems(activeOnly = true) {
+  return fetchTable("home_why_items", {
+    orderBy: "sort_order",
+    filters: activeOnly ? { active: true } : {},
+  });
 }
 
 export async function saveHomeWhyItem(item) {
@@ -555,8 +568,11 @@ export async function saveOfficeDetails(data) {
 
 // ─── Partnership — Process Steps ─────────────────────────────────────────────
 
-export async function getPartnershipProcessSteps() {
-  return fetchTable("partnership_process_steps", { orderBy: "sort_order" });
+export async function getPartnershipProcessSteps(activeOnly = true) {
+  return fetchTable("partnership_process_steps", {
+    orderBy: "sort_order",
+    filters: activeOnly ? { active: true } : {},
+  });
 }
 
 export async function savePartnershipProcessStep(item) {
@@ -569,8 +585,11 @@ export async function deletePartnershipProcessStep(id) {
 
 // ─── Partnership — Trust Signals ─────────────────────────────────────────────
 
-export async function getTrustSecurityItems() {
-  return fetchTable("trust_security_items", { orderBy: "sort_order" });
+export async function getTrustSecurityItems(activeOnly = true) {
+  return fetchTable("trust_security_items", {
+    orderBy: "sort_order",
+    filters: activeOnly ? { active: true } : {},
+  });
 }
 
 export async function saveTrustSecurityItem(item) {
@@ -581,8 +600,11 @@ export async function deleteTrustSecurityItem(id) {
   return deleteRow("trust_security_items", id);
 }
 
-export async function getTrustCommitmentItems() {
-  return fetchTable("trust_commitment_items", { orderBy: "sort_order" });
+export async function getTrustCommitmentItems(activeOnly = true) {
+  return fetchTable("trust_commitment_items", {
+    orderBy: "sort_order",
+    filters: activeOnly ? { active: true } : {},
+  });
 }
 
 export async function saveTrustCommitmentItem(item) {
@@ -595,8 +617,11 @@ export async function deleteTrustCommitmentItem(id) {
 
 // ─── Portfolio — Innovation Lab ───────────────────────────────────────────────
 
-export async function getPortfolioInnovations() {
-  return fetchTable("portfolio_innovations", { orderBy: "sort_order" });
+export async function getPortfolioInnovations(activeOnly = true) {
+  return fetchTable("portfolio_innovations", {
+    orderBy: "sort_order",
+    filters: activeOnly ? { active: true } : {},
+  });
 }
 
 export async function savePortfolioInnovation(item) {
@@ -609,8 +634,11 @@ export async function deletePortfolioInnovation(id) {
 
 // ─── Service — Process Steps ──────────────────────────────────────────────────
 
-export async function getServiceProcessSteps() {
-  return fetchTable("service_process_steps", { orderBy: "sort_order" });
+export async function getServiceProcessSteps(activeOnly = true) {
+  return fetchTable("service_process_steps", {
+    orderBy: "sort_order",
+    filters: activeOnly ? { active: true } : {},
+  });
 }
 
 export async function saveServiceProcessStep(item) {
@@ -653,8 +681,11 @@ export async function saveServiceTechCategories(data) {
 
 // ─── About — Core Values ─────────────────────────────────────────────────────
 
-export async function getAboutCoreValues() {
-  return fetchTable("about_core_values", { orderBy: "sort_order" });
+export async function getAboutCoreValues(activeOnly = true) {
+  return fetchTable("about_core_values", {
+    orderBy: "sort_order",
+    filters: activeOnly ? { active: true } : {},
+  });
 }
 
 export async function saveAboutCoreValue(item) {
@@ -667,8 +698,11 @@ export async function deleteAboutCoreValue(id) {
 
 // ─── About — Advantages (Pourquoi Guinée ?) ──────────────────────────────────
 
-export async function getAboutAdvantages() {
-  return fetchTable("about_advantages", { orderBy: "sort_order" });
+export async function getAboutAdvantages(activeOnly = true) {
+  return fetchTable("about_advantages", {
+    orderBy: "sort_order",
+    filters: activeOnly ? { active: true } : {},
+  });
 }
 
 export async function saveAboutAdvantage(item) {
@@ -681,8 +715,11 @@ export async function deleteAboutAdvantage(id) {
 
 // ─── About — Vision Pillars ───────────────────────────────────────────────────
 
-export async function getAboutVisionPillars() {
-  return fetchTable("about_vision_pillars", { orderBy: "sort_order" });
+export async function getAboutVisionPillars(activeOnly = true) {
+  return fetchTable("about_vision_pillars", {
+    orderBy: "sort_order",
+    filters: activeOnly ? { active: true } : {},
+  });
 }
 
 export async function saveAboutVisionPillar(item) {
@@ -695,8 +732,11 @@ export async function deleteAboutVisionPillar(id) {
 
 // ─── About — Roadmap Phases ───────────────────────────────────────────────────
 
-export async function getAboutRoadmapPhases() {
-  return fetchTable("about_roadmap_phases", { orderBy: "sort_order" });
+export async function getAboutRoadmapPhases(activeOnly = true) {
+  return fetchTable("about_roadmap_phases", {
+    orderBy: "sort_order",
+    filters: activeOnly ? { active: true } : {},
+  });
 }
 
 export async function saveAboutRoadmapPhase(item) {
@@ -771,8 +811,11 @@ export async function savePortfolioFilterOptions(data) {
 
 // ─── Join-Us — Process Steps ──────────────────────────────────────────────────
 
-export async function getJoinUsProcessSteps() {
-  return fetchTable("join_us_process_steps", { orderBy: "sort_order" });
+export async function getJoinUsProcessSteps(activeOnly = true) {
+  return fetchTable("join_us_process_steps", {
+    orderBy: "sort_order",
+    filters: activeOnly ? { active: true } : {},
+  });
 }
 
 export async function saveJoinUsProcessStep(item) {

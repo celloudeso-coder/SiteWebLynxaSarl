@@ -38,7 +38,7 @@ function ProcessusTab() {
   const [saved, setSaved]   = useState(null);
 
   useEffect(() => {
-    getPartnershipProcessSteps().then((d) => setItems(d || [])).catch(() => {});
+    getPartnershipProcessSteps(false).then((d) => setItems(d || [])).catch(() => {});
   }, []);
 
   function update(id, field, value) {
@@ -243,8 +243,8 @@ function SignauxConfianceTab() {
   const [saved,  setSaved]            = useState(null);
 
   useEffect(() => {
-    getTrustSecurityItems().then((d) => setSecurity(d || [])).catch(() => {});
-    getTrustCommitmentItems().then((d) => setCommitments(d || [])).catch(() => {});
+    getTrustSecurityItems(false).then((d) => setSecurity(d || [])).catch(() => {});
+    getTrustCommitmentItems(false).then((d) => setCommitments(d || [])).catch(() => {});
   }, []);
 
   function updateSec(id, field, val) {

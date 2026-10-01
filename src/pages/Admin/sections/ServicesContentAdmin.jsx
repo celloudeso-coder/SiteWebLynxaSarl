@@ -39,7 +39,7 @@ function ProcessSection() {
   const [saved, setSaved]   = useState(null);
 
   useEffect(() => {
-    getServiceProcessSteps().then((d) => setItems(d || [])).catch(() => {});
+    getServiceProcessSteps(false).then((d) => setItems(d || [])).catch(() => {});
   }, []);
 
   function update(id, field, value) {

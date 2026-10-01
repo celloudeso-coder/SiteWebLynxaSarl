@@ -44,7 +44,7 @@ function InnovationLabSection() {
   const [saved, setSaved]   = useState(null);
 
   useEffect(() => {
-    getPortfolioInnovations().then((d) => setItems(d || [])).catch(() => {});
+    getPortfolioInnovations(false).then((d) => setItems(d || [])).catch(() => {});
   }, []);
 
   function update(id, field, value) {

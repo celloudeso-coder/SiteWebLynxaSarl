@@ -53,7 +53,7 @@ export default function JoinUsContentAdmin() {
   const [saved, setSaved]   = useState(null);
 
   useEffect(() => {
-    getJoinUsProcessSteps().then((d) => setItems(d || [])).catch(() => {});
+    getJoinUsProcessSteps(false).then((d) => setItems(d || [])).catch(() => {});
   }, []);
 
   function update(id, field, value) {

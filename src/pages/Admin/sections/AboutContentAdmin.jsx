@@ -166,7 +166,7 @@ function ValuesSection() {
   const [saved, setSaved]   = useState(null);
 
   useEffect(() => {
-    getAboutCoreValues().then((d) => setItems(d || [])).catch(() => {});
+    getAboutCoreValues(false).then((d) => setItems(d || [])).catch(() => {});
   }, []);
 
   function update(id, field, value) {
@@ -273,7 +273,7 @@ function WhyGuineaSection() {
   const [savedEco, setSavedEco]             = useState(false);
 
   useEffect(() => {
-    getAboutAdvantages().then((d) => setAdvantages(d || [])).catch(() => {});
+    getAboutAdvantages(false).then((d) => setAdvantages(d || [])).catch(() => {});
     getAboutEcosystemStats().then((d) => setEcoStats(d || [])).catch(() => {});
   }, []);
 
@@ -434,8 +434,8 @@ function VisionSection() {
   const [savedM, setSavedM]           = useState(false);
 
   useEffect(() => {
-    getAboutRoadmapPhases().then((d) => setPhases(d || [])).catch(() => {});
-    getAboutVisionPillars().then((d) => setPillars(d || [])).catch(() => {});
+    getAboutRoadmapPhases(false).then((d) => setPhases(d || [])).catch(() => {});
+    getAboutVisionPillars(false).then((d) => setPillars(d || [])).catch(() => {});
     getAboutImpactMetrics().then((d) => setMetrics(d || [])).catch(() => {});
   }, []);
 

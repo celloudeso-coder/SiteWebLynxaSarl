@@ -41,7 +41,7 @@ function EngagementsSection() {
   useEffect(() => { load(); }, []);
 
   async function load() {
-    const data = await getHomeEngagements();
+    const data = await getHomeEngagements(false);
     setItems(data || []);
   }
 
@@ -148,7 +148,7 @@ function WhySection() {
   useEffect(() => { load(); }, []);
 
   async function load() {
-    const data = await getHomeWhyItems();
+    const data = await getHomeWhyItems(false);
     setItems(data || []);
   }
 
