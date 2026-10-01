@@ -17,7 +17,7 @@ export default function MetricsAdmin() {
   useEffect(() => { load(); }, []);
 
   async function load() {
-    const data = await getMetrics("home");
+    const data = await getMetrics("home", false);
     setMetrics(data || []);
   }
 

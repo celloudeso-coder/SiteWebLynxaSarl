@@ -176,7 +176,7 @@ function TechStackSection() {
     getServiceTechCategories()
       .then((d) => { if (d?.length) setCategories(d); })
       .catch(() => {});
-    getServiceTechItems()
+    getServiceTechItems(false)
       .then((d) => setAllItems(d || []))
       .catch(() => {});
   }, []);

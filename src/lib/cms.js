@@ -270,8 +270,10 @@ export async function deleteTimelineEvent(id) {
 
 // ─── Metrics ─────────────────────────────────────────────────────────────────
 
-export async function getMetrics(page = "home") {
-  return fetchTable("metrics", { filters: { active: true, page } });
+export async function getMetrics(page = "home", activeOnly = true) {
+  return fetchTable("metrics", {
+    filters: activeOnly ? { active: true, page } : { page },
+  });
 }
 
 export async function saveMetric(metric) {
@@ -651,13 +653,10 @@ export async function deleteServiceProcessStep(id) {
 
 // ─── Service — Tech Items ──────────────────────────────────────────────────────
 
-export async function getServiceTechItems() {
-  const { data, error } = await supabase
-    .from("service_tech_items")
-    .select("*")
-    .eq("active", true)
-    .order("category_key")
-    .order("sort_order");
+export async function getServiceTechItems(activeOnly = true) {
+  let query = supabase.from("service_tech_items").select("*");
+  if (activeOnly) query = query.eq("active", true);
+  const { data, error } = await query.order("category_key").order("sort_order");
   if (error) throw error;
   return data;
 }
