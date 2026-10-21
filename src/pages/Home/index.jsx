@@ -6,6 +6,7 @@ import Seo from "../../components/Seo";
 import HeroSection from "./components/HeroSection";
 import DeliveredSection from "./components/DeliveredSection";
 import ServiceGalaxies from "./components/ServiceGalaxies";
+import ProductsSection from "./components/ProductsSection";
 import TestimonialCarousel from "./components/TestimonialCarousel";
 import Icon from "../../components/AppIcon";
 import { getHomeEngagements, getHomeWhyItems } from "../../lib/cms";
@@ -87,6 +88,9 @@ const Homepage = () => {
 
           {/* ── Services ── */}
           <ServiceGalaxies />
+
+          {/* ── Nos produits ── */}
+          <ProductsSection />
 
           {/* ── Pourquoi Lynxa ? ── */}
           <section className="py-20 bg-gray-50">
