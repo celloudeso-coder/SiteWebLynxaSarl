@@ -3,7 +3,6 @@ import { motion } from "framer-motion";
 import Icon from "../../../components/AppIcon";
 import Image from "../../../components/AppImage";
 import { getAboutCoreValues } from "../../../lib/cms";
-import { formatDualPrice, MAINTENANCE_MONTHLY } from "../../../data/pricing";
 
 const STATIC_CORE_VALUES = [
   { icon: "Lightbulb", title: "Innovation", description: "Repousser constamment les limites et explorer de nouvelles possibilités" },
@@ -29,10 +28,7 @@ const HIGHLIGHT_VALUE = {
       title: "Collaboration Remote-First",
       description: "Livraison de projets fluide, peu importe la localisation",
       image: "/remotecolab.png",
-      // "99,5 % de disponibilité" retiré : aucune formule de maintenance
-      // (voir ADDITIONAL_SERVICES "Maintenance Continue" dans
-      // src/data/pricing.js) ne promet un SLA chiffré.
-      metrics: `Maintenance dès ${formatDualPrice(MAINTENANCE_MONTHLY.minGnf).primary} (${formatDualPrice(MAINTENANCE_MONTHLY.minGnf).secondary}) /mois`,
+      // Pas de tarif ici : les prix n'existent que sur la page Services.
     },
   ],
   color: "bg-primary",
@@ -92,7 +88,7 @@ const CompanyValues = () => {
                   <div>
                     <h4 className="font-semibold text-secondary text-sm mb-0.5">{example.title}</h4>
                     <p className="text-xs text-gray-500 mb-1">{example.description}</p>
-                    <span className="text-xs bg-primary/10 text-primary px-2.5 py-0.5 rounded-full font-medium">{example.metrics}</span>
+                    {example.metrics && <span className="text-xs bg-primary/10 text-primary px-2.5 py-0.5 rounded-full font-medium">{example.metrics}</span>}
                   </div>
                 </div>
               ))}
@@ -118,7 +114,7 @@ const CompanyValues = () => {
                 <div className="absolute inset-0 bg-gradient-to-t from-secondary/80 to-transparent flex items-end">
                   <div className="p-4 text-white">
                     <h4 className="font-semibold text-sm mb-0.5">{example.title}</h4>
-                    <p className="text-xs text-white/80">{example.metrics}</p>
+                    {example.metrics && <p className="text-xs text-white/80">{example.metrics}</p>}
                   </div>
                 </div>
               </motion.div>

@@ -131,7 +131,7 @@ const PricingFramework = () => {
           </h3>
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {additionalServices?.map((service, index) => {
-              const dual = formatDualRange(service.priceMinGnf, service.priceMaxGnf);
+              const dual = service.priceMinGnf == null ? null : formatDualRange(service.priceMinGnf, service.priceMaxGnf);
               return (
               <div
                 key={index}
@@ -144,10 +144,14 @@ const PricingFramework = () => {
                   <h4 className="font-semibold text-secondary">
                     {service?.name}
                   </h4>
-                  <p className="text-sm text-gray-600">
-                    {dual.primary}{service.priceNote ? ` ${service.priceNote}` : ""}
-                  </p>
-                  <p className="text-xs text-gray-400">{dual.secondary}</p>
+                  {dual && (
+                    <>
+                      <p className="text-sm text-gray-600">
+                        {dual.primary}{service.priceNote ? ` ${service.priceNote}` : ""}
+                      </p>
+                      <p className="text-xs text-gray-400">{dual.secondary}</p>
+                    </>
+                  )}
                   {service?.el?.filter(Boolean).length > 0 && (
                     <ul className="list-disc list-inside mt-2 text-xs text-gray-500">
                       {service.el.filter(Boolean).map((item, i) => (
