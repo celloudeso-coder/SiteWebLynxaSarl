@@ -1,3 +1,4 @@
+-- NON APPLIQUÉ. Remplacé par content-corrections-2026-10-21.sql.
 -- =====================================================================
 -- Corrections de contenu 2026-09-24 — OPTIONNEL, à lancer APRÈS
 -- supabase/migrations/20260924120000_session_schema.sql

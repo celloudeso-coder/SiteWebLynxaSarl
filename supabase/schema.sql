@@ -260,14 +260,9 @@ CREATE TABLE IF NOT EXISTS metrics (
   updated_at timestamptz DEFAULT now()
 );
 
--- Valeurs réelles et crédibles (le "+" est retiré : ce sont des comptes
--- exacts, pas des estimations arrondies ; "0+" en particulier n'a pas de sens).
-INSERT INTO metrics (sort_order, label, value, suffix, description, page) VALUES
-  (1, 'Plateformes Livrées', 4, '', 'Applications web et mobile déployées en production', 'home'),
-  (2, 'Secteurs Couverts', 3, '', 'Secteurs d''activité accompagnés en Guinée', 'home'),
-  (3, 'SaaS en Phase Pilote', 1, '', 'Solution SaaS actuellement testée avec un client pilote', 'home'),
-  (4, 'Réponse', 24, 'h', 'Délai de réponse maximal à toute demande', 'home')
-ON CONFLICT DO NOTHING;
+-- Aucun seed : la table n'est plus affichée sur le site (le tableau de bord
+-- d'impact a été retiré), et un seed vide garantit qu'un redéploiement à
+-- neuf ne réintroduit aucun compteur.
 
 -- -------------------------------------------------------
 -- 9. TESTIMONIALS
@@ -829,17 +824,10 @@ CREATE TABLE IF NOT EXISTS portfolio_innovations (
   impact text DEFAULT '',
   updated_at timestamptz DEFAULT now()
 );
-INSERT INTO portfolio_innovations (sort_order, icon, title, description, status, status_color, impact) VALUES
-  (1, 'Cpu',  'Optimisation Réseau par IA',
-   'Algorithmes d''apprentissage automatique pour optimiser automatiquement les performances réseau et prévenir les pannes.',
-   'En Développement', 'text-amber-600 bg-amber-50', 'Réduction de 40% des interruptions réseau'),
-  (2, 'Lock', 'Identité Blockchain',
-   'Système d''identité décentralisé pour une authentification sécurisée et respectueuse de la vie privée.',
-   'Phase de Recherche', 'text-blue-600 bg-blue-50', 'Sécurité pour +100 000 utilisateurs'),
-  (3, 'Leaf', 'Agriculture IoT',
-   'Capteurs IoT pour surveiller conditions du sol, météo et santé des cultures pour les agriculteurs guinéens.',
-   'Test Pilote', 'text-emerald-600 bg-emerald-50', '+20% de rendements agricoles')
-ON CONFLICT DO NOTHING;
+-- Aucun seed : les trois projets d'exemple (« Optimisation Réseau par IA »,
+-- « Identité Blockchain », « Agriculture IoT ») n'existaient pas et portaient
+-- des chiffres inventés, actifs par défaut. La section « Nos produits » ne
+-- présente que les logiciels réels de Lynxa Tech, saisis dans l'admin.
 ALTER TABLE portfolio_innovations ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "public_read" ON portfolio_innovations FOR SELECT USING (active = true);
 CREATE POLICY "admin_all"   ON portfolio_innovations FOR ALL TO authenticated USING (true) WITH CHECK (true);
