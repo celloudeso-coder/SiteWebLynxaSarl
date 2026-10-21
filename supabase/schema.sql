@@ -221,7 +221,7 @@ INSERT INTO pricing_plans (sort_order, name, price, price_gnf, price_note, is_po
    '["Application web complète", "Intégration base de données", "Panneau d''administration", "API REST", "Authentification utilisateurs", "Tests et déploiement", "3 mois de support", "Formation équipe"]',
    'Choisir ce plan'),
   (3, 'Solution Entreprise', 'Sur devis', NULL, '', false,
-   '["Architecture système sur mesure", "Intégrations tierces illimitées", "Infrastructure dédiée", "SLA négocié au contrat", "Support 24/7", "Chef de projet dédié", "Formation complète", "Maintenance évolutive"]',
+   '["Architecture système sur mesure", "Intégrations tierces illimitées", "Infrastructure dédiée", "Disponibilité et délais d''intervention définis au contrat", "Support aux heures ouvrées, du lundi au vendredi et le samedi matin", "Astreinte en dehors des heures ouvrées sur demande, facturée en supplément", "Chef de projet dédié", "Formation complète", "Maintenance évolutive"]',
    'Nous contacter')
 ON CONFLICT DO NOTHING;
 
@@ -433,7 +433,7 @@ INSERT INTO partnership_pathways (sort_order, title, description, icon, features
   (2, 'Solutions Entreprises',
    'Partenariats technologiques complets pour les grandes organisations avec des besoins complexes.',
    'Building2',
-   '["Systèmes entreprises personnalisés", "Support prioritaire 24/7", "Chef de projet dédié", "SLA défini au contrat"]',
+   '["Systèmes entreprises personnalisés", "Support prioritaire aux heures ouvrées", "Chef de projet dédié", "SLA défini au contrat"]',
    'Grandes Entreprises, Gouvernement, ONG', '3-12 mois', NULL, 31500000, 90000000, 'accent'),
   (3, 'Collaboration Internationale',
    'Partenariats transfrontaliers avec des organisations mondiales s''étendant sur les marchés africains.',

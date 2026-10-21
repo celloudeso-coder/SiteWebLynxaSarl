@@ -140,7 +140,7 @@ export default function TestimonialsAdmin() {
                   <FormField label="Type de projet" hint="Ex : Développement Mobile, Infrastructure Réseau…">
                     <TextInput value={item.project_ref} onChange={(v) => update(item.id, "project_ref", v)} placeholder="Infrastructure Réseau" />
                   </FormField>
-                  <FormField label="Résultat clé" hint="Ex : +300% d'engagement, 99.9% de disponibilité…">
+                  <FormField label="Résultat clé" hint="Ex : +300% d'engagement…">
                     <TextInput value={item.result} onChange={(v) => update(item.id, "result", v)} placeholder="+300% d'engagement client" />
                   </FormField>
                 </div>

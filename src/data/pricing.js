@@ -95,7 +95,7 @@ export const PRICING_PLANS = [
     priceGnf: null, // "Sur devis" — pas de montant fixe
     period: "Sur mesure",
     description: "Sur mesure pour les grandes organisations.",
-    features: ["Architecture sur mesure", "Intégrations illimitées", "SLA négocié au contrat", "Support 24/7", "Chef de projet dédié"],
+    features: ["Architecture sur mesure", "Intégrations illimitées", "Disponibilité et délais d'intervention définis au contrat", "Support aux heures ouvrées, du lundi au vendredi et le samedi matin", "Astreinte en dehors des heures ouvrées sur demande, facturée en supplément", "Chef de projet dédié"],
     popular: false,
     color: "accent",
   },
