@@ -53,10 +53,6 @@ export function useTimelineEvents() {
   return useAsync(() => cms.getTimelineEvents(true), []);
 }
 
-export function useMetrics(page = "home") {
-  return useAsync(() => cms.getMetrics(page), [], [page]);
-}
-
 export function useTestimonials() {
   return useAsync(() => cms.getTestimonials(true), []);
 }

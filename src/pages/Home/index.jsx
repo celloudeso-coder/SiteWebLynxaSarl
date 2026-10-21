@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import Header from "../../components/ui/Header";
 import Seo from "../../components/Seo";
 import HeroSection from "./components/HeroSection";
-import MetricsDashboard from "./components/MetricsDashboard";
+import DeliveredSection from "./components/DeliveredSection";
 import ServiceGalaxies from "./components/ServiceGalaxies";
 import TestimonialCarousel from "./components/TestimonialCarousel";
 import Icon from "../../components/AppIcon";
@@ -82,8 +82,8 @@ const Homepage = () => {
             </div>
           </section>
 
-          {/* ── Métriques ── */}
-          <MetricsDashboard />
+          {/* ── Ce que nous avons livré ── */}
+          <DeliveredSection />
 
           {/* ── Services ── */}
           <ServiceGalaxies />

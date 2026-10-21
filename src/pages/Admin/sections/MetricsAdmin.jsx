@@ -71,7 +71,7 @@ export default function MetricsAdmin() {
           <div key={metric.id} className="bg-white rounded-xl border border-gray-200 p-5">
             <div className="grid sm:grid-cols-4 gap-4 items-end">
               <FormField label="Libellé">
-                <TextInput value={metric.label} onChange={(v) => update(metric.id, "label", v)} placeholder="Applications Mobiles" />
+                <TextInput value={metric.label} onChange={(v) => update(metric.id, "label", v)} placeholder="Plateformes livrées" />
               </FormField>
               <FormField label="Valeur">
                 <input
