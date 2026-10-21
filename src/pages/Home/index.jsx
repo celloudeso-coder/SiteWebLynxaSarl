@@ -16,16 +16,16 @@ const STATIC_COMMITMENTS = [
   { icon: "Flag",        label: "100 % Guinéen",       sub_label: "Ancré localement"       },
   { icon: "Zap",         label: "Réponse en 24h",       sub_label: "Support ultra-réactif"  },
   { icon: "Globe",       label: "Standards mondiaux",   sub_label: "Qualité internationale" },
-  { icon: "ShieldCheck", label: "Sécurité by design" },
+  { icon: "ShieldCheck", label: "Sécurité dès la conception", sub_label: "Des engagements écrits au contrat" },
 ];
 
 const STATIC_WHY = [
   { icon: "MapPin",    title: "Expertise locale",              description: "Nous comprenons les défis uniques des marchés africains et concevons des solutions parfaitement adaptées." },
   { icon: "Award",     title: "Qualité internationale",        description: "Nos solutions respectent les standards mondiaux tout en étant calibrées pour les réalités locales." },
-  { icon: "Users",     title: "Équipe pluridisciplinaire",     description: "Mobile, réseau, cybersécurité, web — toutes les compétences réunies sous un même toit." },
-  { icon: "Clock",     title: "Réactivité garantie",           description: "Consultation gratuite, réponse sous 24h et suivi continu tout au long de votre projet." },
+  { icon: "Users",     title: "Équipe pluridisciplinaire",     description: "Mobile, réseau, cybersécurité, web : toutes les compétences réunies sous un même toit." },
+  { icon: "Clock",     title: "Des délais d'intervention écrits au contrat", description: "Consultation gratuite, réponse sous 24h et suivi continu tout au long de votre projet." },
   { icon: "Handshake", title: "Partenariat sur le long terme", description: "Nous construisons des relations durables, pas des contrats. Votre succès est notre succès." },
-  { icon: "Lock",      title: "Sécurité by design",            description: "La sécurité n'est pas une option : elle est intégrée dès la conception de chaque solution." },
+  { icon: "Lock",      title: "La sécurité prise en compte dès la conception", description: "La sécurité n'est pas une option : elle est intégrée dès la conception de chaque solution." },
 ];
 
 const Homepage = () => {

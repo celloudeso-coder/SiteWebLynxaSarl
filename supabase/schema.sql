@@ -571,7 +571,7 @@ INSERT INTO home_engagements (sort_order, icon, label, sub_label) VALUES
   (1, 'Flag',        '100 % Guinéen',     'Ancré localement'),
   (2, 'Zap',         'Réponse en 24h',     'Support ultra-réactif'),
   (3, 'Globe',       'Standards mondiaux', 'Qualité internationale'),
-  (4, 'ShieldCheck', 'Sécurité by design', 'Confiance garantie')
+  (4, 'ShieldCheck', 'Sécurité dès la conception', 'Des engagements écrits au contrat')
 ON CONFLICT DO NOTHING;
 ALTER TABLE home_engagements ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "public_read" ON home_engagements FOR SELECT USING (active = true);
@@ -594,10 +594,10 @@ CREATE TABLE IF NOT EXISTS home_why_items (
 INSERT INTO home_why_items (sort_order, icon, title, description) VALUES
   (1, 'MapPin',    'Expertise locale',              'Nous comprenons les défis uniques des marchés africains et concevons des solutions parfaitement adaptées.'),
   (2, 'Award',     'Qualité internationale',        'Nos solutions respectent les standards mondiaux tout en étant calibrées pour les réalités locales.'),
-  (3, 'Users',     'Équipe pluridisciplinaire',     'Mobile, réseau, cybersécurité, web — toutes les compétences réunies sous un même toit.'),
-  (4, 'Clock',     'Réactivité garantie',           'Consultation gratuite, réponse sous 24h et suivi continu tout au long de votre projet.'),
+  (3, 'Users',     'Équipe pluridisciplinaire',     'Mobile, réseau, cybersécurité, web : toutes les compétences réunies sous un même toit.'),
+  (4, 'Clock',     'Des délais d''intervention écrits au contrat', 'Consultation gratuite, réponse sous 24h et suivi continu tout au long de votre projet.'),
   (5, 'Handshake', 'Partenariat sur le long terme', 'Nous construisons des relations durables, pas des contrats. Votre succès est notre succès.'),
-  (6, 'Lock',      'Sécurité by design',            'La sécurité n''est pas une option : elle est intégrée dès la conception de chaque solution.')
+  (6, 'Lock',      'La sécurité prise en compte dès la conception', 'La sécurité n''est pas une option : elle est intégrée dès la conception de chaque solution.')
 ON CONFLICT DO NOTHING;
 ALTER TABLE home_why_items ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "public_read" ON home_why_items FOR SELECT USING (active = true);
