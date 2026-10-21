@@ -21,7 +21,7 @@ const STATIC_PATHWAYS = [
     // "Garanties SLA" → "SLA défini au contrat" : palier "sur mesure", le
     // niveau de service se négocie au contrat plutôt que d'être affiché
     // comme d'ores et déjà acquis.
-    features: ["Systèmes entreprises personnalisés", "Support prioritaire 24/7", "Chef de projet dédié", "SLA défini au contrat"],
+    features: ["Systèmes entreprises personnalisés", "Support prioritaire aux heures ouvrées", "Chef de projet dédié", "SLA défini au contrat"],
     ideal_for: "Grandes Entreprises, Gouvernement, ONG",
     timeline: "3-12 mois", budgetMinGnf: 31_500_000, budgetMaxGnf: 90_000_000, color: "accent",
   },

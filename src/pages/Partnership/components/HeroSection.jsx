@@ -9,9 +9,9 @@ import { useHeroSection } from "../../../hooks/useContent";
 // de réussite" à 98%, cette mesure n'est pas mesurable en l'état.
 const STATS = [
   { icon: "Rocket",   label: "Plateformes livrées",  value: "4"    },
-  { icon: "Building2", label: "Secteurs couverts",    value: "3"    },
-  { icon: "Sparkles", label: "SaaS en phase pilote",  value: "1"    },
-  { icon: "Clock",    label: "Réponse",               value: "<24h" },
+  { icon: "Building2", label: "Secteurs couverts",    value: "4"    },
+  { icon: "Sparkles", label: "Produit en production", value: "1"    },
+  { icon: "Clock",    label: "Réponse",               value: "48h ouvrables" },
 ];
 
 const HeroSection = () => {

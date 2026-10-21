@@ -150,7 +150,7 @@ const ContactForm = () => {
                 <Icon name="CheckCircle" size={20} className="mt-0.5 flex-shrink-0 text-green-600" />
                 <div>
                   <p className="font-semibold mb-0.5">Message envoyé !</p>
-                  <p className="text-sm">Nous vous répondrons sous 24h. Merci de votre confiance.</p>
+                  <p className="text-sm">Nous vous répondons sous 48h ouvrables. Merci de votre confiance.</p>
                 </div>
               </motion.div>
             )}
@@ -374,7 +374,7 @@ const ContactForm = () => {
           transition={{ duration: 0.5, delay: 0.2 }}
         >
           {[
-            { icon: "Clock",    title: "Réponse rapide",        desc: "Nous répondons à toutes les demandes dans un délai de 24h."    },
+            { icon: "Clock",    title: "Réponse rapide",        desc: "Nous répondons à toutes les demandes dans un délai de 48h ouvrables." },
             { icon: "Users",    title: "Consultation gratuite",  desc: "Échangez 30 min avec nos experts techniques sans engagement."  },
             { icon: "FileText", title: "Proposition détaillée",  desc: "Devis complet avec calendrier et tarification claire."         },
           ].map((item) => (

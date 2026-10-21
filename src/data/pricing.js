@@ -95,24 +95,22 @@ export const PRICING_PLANS = [
     priceGnf: null, // "Sur devis" — pas de montant fixe
     period: "Sur mesure",
     description: "Sur mesure pour les grandes organisations.",
-    features: ["Architecture sur mesure", "Intégrations illimitées", "SLA négocié au contrat", "Support 24/7", "Chef de projet dédié"],
+    // Identique à la ligne pricing_plans en base (repli = base, mot pour mot).
+    features: [
+      "Architecture système sur mesure",
+      "Intégrations tierces illimitées",
+      "Infrastructure dédiée",
+      "Disponibilité et délais d'intervention définis au contrat",
+      "Support aux heures ouvrées, du lundi au vendredi et le samedi matin",
+      "Astreinte en dehors des heures ouvrées sur demande, facturée en supplément",
+      "Chef de projet dédié",
+      "Formation complète",
+      "Maintenance évolutive",
+    ],
     popular: false,
     color: "accent",
   },
 ];
-
-// ─── Maintenance mensuelle ─────────────────────────────────────────────────
-// Référencée aussi par l'Accueil (MetricsDashboard) et À propos
-// (CompanyValues) : ne jamais recopier ces montants ailleurs.
-export const MAINTENANCE_TIERS_GNF = {
-  basic: 900_000,      // support email + mises à jour de base
-  standard: 2_700_000, // supervision + intervention à distance
-  full: 4_500_000,     // support complet + intervention sur site
-};
-export const MAINTENANCE_MONTHLY = {
-  minGnf: MAINTENANCE_TIERS_GNF.basic,
-  maxGnf: MAINTENANCE_TIERS_GNF.full,
-};
 
 // ─── Services additionnels (Services) ──────────────────────────────────────
 // Aucune table CMS dédiée n'existe pour ce bloc (contrairement aux plans
@@ -142,7 +140,7 @@ export const ADDITIONAL_SERVICES = [
     name: "Migration de Système",
     priceMinGnf: 11_500_000,
     priceMaxGnf: 36_000_000,
-    el: ["Zéro perte de données.", "Transition rapide et planifiée.", "Formation pour faciliter l'adoption par vos équipes."],
+    el: ["Sauvegarde complète avant migration et plan de retour arrière documenté.", "Transition rapide et planifiée.", "Formation pour faciliter l'adoption par vos équipes."],
     icon: "ArrowRightLeft",
   },
   {
@@ -159,17 +157,35 @@ export const ADDITIONAL_SERVICES = [
     el: ["Sessions adaptées à votre secteur.", "Modules pratiques et interactifs.", "Certificats de participation valorisants."],
     icon: "GraduationCap",
   },
+  // Maintenance : trois offres distinctes. Les deux offres sans montant
+  // unique (priceMinGnf null) portent leurs prix dans le texte : la carte
+  // n'affiche alors pas de ligne de prix calculée.
   {
-    name: "Maintenance Continue",
-    priceMinGnf: MAINTENANCE_MONTHLY.minGnf,
-    priceMaxGnf: MAINTENANCE_MONTHLY.maxGnf,
-    priceNote: "/mois",
+    name: "Maintenance d'installation (caisse, réseau local, vidéosurveillance)",
+    priceMinGnf: null,
     el: [
-      `${formatGNF(MAINTENANCE_TIERS_GNF.basic)} / mois (≈ ${formatUSD(MAINTENANCE_TIERS_GNF.basic)}) — support email + mises à jour de base`,
-      `${formatGNF(MAINTENANCE_TIERS_GNF.standard)} / mois (≈ ${formatUSD(MAINTENANCE_TIERS_GNF.standard)}) — supervision + intervention à distance`,
-      `${formatGNF(MAINTENANCE_TIERS_GNF.full)} / mois (≈ ${formatUSD(MAINTENANCE_TIERS_GNF.full)}) — support complet + intervention sur site`,
+      `À l'intervention : ${formatGNF(250_000)} par déplacement, première heure incluse.`,
+      `Formule mensuelle : ${formatGNF(500_000)} par mois, 2 interventions sur site incluses, délai d'intervention de 24 h ouvrées.`,
+      `Formule annuelle : ${formatGNF(5_000_000)} par an, 3 interventions sur site par mois, délai d'intervention de 12 h ouvrées, urgences soir et week end incluses.`,
     ],
     icon: "Settings",
+  },
+  {
+    name: "Hébergement et maintenance de site web",
+    priceMinGnf: 800_000,
+    priceMaxGnf: null,
+    priceNote: "par an",
+    el: [
+      "Comprend l'hébergement, la sécurité, les sauvegardes, les mises à jour et l'assistance.",
+      "Le nom de domaine est facturé à part, au prix du registrar.",
+    ],
+    icon: "Server",
+  },
+  {
+    name: "Maintenance de parc informatique et supervision",
+    priceMinGnf: null,
+    el: ["Sur devis, selon le nombre d'équipements et le niveau de service retenu."],
+    icon: "Monitor",
   },
   // Pôle Cybersécurité et Conformité — mêmes prestations que le domaine
   // d'expertise "cybersecurity" de la table services, déclinées en offres.

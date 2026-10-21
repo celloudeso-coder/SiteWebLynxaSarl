@@ -43,7 +43,7 @@ INSERT INTO hero_sections (page, title, subtitle, description, cta_primary_text,
   ('services', 'Nos Services', 'Solutions Technologiques de Pointe', 'Développement mobile, infrastructure réseau, web — des solutions pensées pour l''Afrique, compétitives à l''échelle mondiale.', 'Demander un devis', '/contact', 'Voir le portfolio', '/portfolio'),
   ('portfolio', 'Nos Réalisations', 'Histoires de Succès Inspirantes', 'Des projets qui transforment des vies et propulsent des organisations.', 'Démarrer un projet', '/contact', 'Partenariats', '/partnership'),
   ('partnership', 'Partenariat', 'Collaborons Ensemble', 'Rejoignez notre réseau de partenaires et construisons l''avenir technologique de l''Afrique.', 'Soumettre un projet', '#', 'Nous contacter', '/contact'),
-  ('contact', 'Contactez-nous', 'Toujours à Votre Écoute', 'Discutons de votre projet. Nous répondons sous 24h.', 'WhatsApp', '#', 'Email', 'mailto:contact@lynxatech.com'),
+  ('contact', 'Contactez-nous', 'Toujours à Votre Écoute', 'Discutons de votre projet. Nous répondons sous 48h ouvrables.', 'WhatsApp', '#', 'Email', 'mailto:contact@lynxatech.com'),
   ('insights', 'Perspectives & Leadership de Savoir', 'Pionnier de l''innovation technologique africaine grâce à l''analyse experte et au leadership éclairé', 'Restez à la pointe avec les analyses complètes de Lynxa Tech sur les tendances de cybersécurité en Afrique de l''Ouest, les meilleures pratiques de développement mobile pour les marchés émergents et les innovations en infrastructure réseau à travers la Guinée et au-delà.', 'Explorez les articles', '#blog-section', 'Souscrire aux mises à jour', '#newsletter')
 ON CONFLICT (page) DO NOTHING;
 
@@ -221,7 +221,7 @@ INSERT INTO pricing_plans (sort_order, name, price, price_gnf, price_note, is_po
    '["Application web complète", "Intégration base de données", "Panneau d''administration", "API REST", "Authentification utilisateurs", "Tests et déploiement", "3 mois de support", "Formation équipe"]',
    'Choisir ce plan'),
   (3, 'Solution Entreprise', 'Sur devis', NULL, '', false,
-   '["Architecture système sur mesure", "Intégrations tierces illimitées", "Infrastructure dédiée", "SLA négocié au contrat", "Support 24/7", "Chef de projet dédié", "Formation complète", "Maintenance évolutive"]',
+   '["Architecture système sur mesure", "Intégrations tierces illimitées", "Infrastructure dédiée", "Disponibilité et délais d''intervention définis au contrat", "Support aux heures ouvrées, du lundi au vendredi et le samedi matin", "Astreinte en dehors des heures ouvrées sur demande, facturée en supplément", "Chef de projet dédié", "Formation complète", "Maintenance évolutive"]',
    'Nous contacter')
 ON CONFLICT DO NOTHING;
 
@@ -260,14 +260,9 @@ CREATE TABLE IF NOT EXISTS metrics (
   updated_at timestamptz DEFAULT now()
 );
 
--- Valeurs réelles et crédibles (le "+" est retiré : ce sont des comptes
--- exacts, pas des estimations arrondies ; "0+" en particulier n'a pas de sens).
-INSERT INTO metrics (sort_order, label, value, suffix, description, page) VALUES
-  (1, 'Plateformes Livrées', 4, '', 'Applications web et mobile déployées en production', 'home'),
-  (2, 'Secteurs Couverts', 3, '', 'Secteurs d''activité accompagnés en Guinée', 'home'),
-  (3, 'SaaS en Phase Pilote', 1, '', 'Solution SaaS actuellement testée avec un client pilote', 'home'),
-  (4, 'Réponse', 24, 'h', 'Délai de réponse maximal à toute demande', 'home')
-ON CONFLICT DO NOTHING;
+-- Aucun seed : la table n'est plus affichée sur le site (le tableau de bord
+-- d'impact a été retiré), et un seed vide garantit qu'un redéploiement à
+-- neuf ne réintroduit aucun compteur.
 
 -- -------------------------------------------------------
 -- 9. TESTIMONIALS
@@ -433,7 +428,7 @@ INSERT INTO partnership_pathways (sort_order, title, description, icon, features
   (2, 'Solutions Entreprises',
    'Partenariats technologiques complets pour les grandes organisations avec des besoins complexes.',
    'Building2',
-   '["Systèmes entreprises personnalisés", "Support prioritaire 24/7", "Chef de projet dédié", "SLA défini au contrat"]',
+   '["Systèmes entreprises personnalisés", "Support prioritaire aux heures ouvrées", "Chef de projet dédié", "SLA défini au contrat"]',
    'Grandes Entreprises, Gouvernement, ONG', '3-12 mois', NULL, 31500000, 90000000, 'accent'),
   (3, 'Collaboration Internationale',
    'Partenariats transfrontaliers avec des organisations mondiales s''étendant sur les marchés africains.',
@@ -569,9 +564,9 @@ CREATE TABLE IF NOT EXISTS home_engagements (
 );
 INSERT INTO home_engagements (sort_order, icon, label, sub_label) VALUES
   (1, 'Flag',        '100 % Guinéen',     'Ancré localement'),
-  (2, 'Zap',         'Réponse en 24h',     'Support ultra-réactif'),
+  (2, 'Zap',         'Réponse sous 48h ouvrables', 'Support ultra-réactif'),
   (3, 'Globe',       'Standards mondiaux', 'Qualité internationale'),
-  (4, 'ShieldCheck', 'Sécurité by design', 'Confiance garantie')
+  (4, 'ShieldCheck', 'Sécurité dès la conception', 'Des engagements écrits au contrat')
 ON CONFLICT DO NOTHING;
 ALTER TABLE home_engagements ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "public_read" ON home_engagements FOR SELECT USING (active = true);
@@ -594,10 +589,10 @@ CREATE TABLE IF NOT EXISTS home_why_items (
 INSERT INTO home_why_items (sort_order, icon, title, description) VALUES
   (1, 'MapPin',    'Expertise locale',              'Nous comprenons les défis uniques des marchés africains et concevons des solutions parfaitement adaptées.'),
   (2, 'Award',     'Qualité internationale',        'Nos solutions respectent les standards mondiaux tout en étant calibrées pour les réalités locales.'),
-  (3, 'Users',     'Équipe pluridisciplinaire',     'Mobile, réseau, cybersécurité, web — toutes les compétences réunies sous un même toit.'),
-  (4, 'Clock',     'Réactivité garantie',           'Consultation gratuite, réponse sous 24h et suivi continu tout au long de votre projet.'),
+  (3, 'Users',     'Équipe pluridisciplinaire',     'Mobile, réseau, cybersécurité, web : toutes les compétences réunies sous un même toit.'),
+  (4, 'Clock',     'Des délais d''intervention écrits au contrat', 'Consultation gratuite, réponse sous 48h ouvrables et suivi continu tout au long de votre projet.'),
   (5, 'Handshake', 'Partenariat sur le long terme', 'Nous construisons des relations durables, pas des contrats. Votre succès est notre succès.'),
-  (6, 'Lock',      'Sécurité by design',            'La sécurité n''est pas une option : elle est intégrée dès la conception de chaque solution.')
+  (6, 'Lock',      'La sécurité prise en compte dès la conception', 'La sécurité n''est pas une option : elle est intégrée dès la conception de chaque solution.')
 ON CONFLICT DO NOTHING;
 ALTER TABLE home_why_items ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "public_read" ON home_why_items FOR SELECT USING (active = true);
@@ -829,17 +824,10 @@ CREATE TABLE IF NOT EXISTS portfolio_innovations (
   impact text DEFAULT '',
   updated_at timestamptz DEFAULT now()
 );
-INSERT INTO portfolio_innovations (sort_order, icon, title, description, status, status_color, impact) VALUES
-  (1, 'Cpu',  'Optimisation Réseau par IA',
-   'Algorithmes d''apprentissage automatique pour optimiser automatiquement les performances réseau et prévenir les pannes.',
-   'En Développement', 'text-amber-600 bg-amber-50', 'Réduction de 40% des interruptions réseau'),
-  (2, 'Lock', 'Identité Blockchain',
-   'Système d''identité décentralisé pour une authentification sécurisée et respectueuse de la vie privée.',
-   'Phase de Recherche', 'text-blue-600 bg-blue-50', 'Sécurité pour +100 000 utilisateurs'),
-  (3, 'Leaf', 'Agriculture IoT',
-   'Capteurs IoT pour surveiller conditions du sol, météo et santé des cultures pour les agriculteurs guinéens.',
-   'Test Pilote', 'text-emerald-600 bg-emerald-50', '+20% de rendements agricoles')
-ON CONFLICT DO NOTHING;
+-- Aucun seed : les trois projets d'exemple (« Optimisation Réseau par IA »,
+-- « Identité Blockchain », « Agriculture IoT ») n'existaient pas et portaient
+-- des chiffres inventés, actifs par défaut. La section « Nos produits » ne
+-- présente que les logiciels réels de Lynxa Tech, saisis dans l'admin.
 ALTER TABLE portfolio_innovations ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "public_read" ON portfolio_innovations FOR SELECT USING (active = true);
 CREATE POLICY "admin_all"   ON portfolio_innovations FOR ALL TO authenticated USING (true) WITH CHECK (true);

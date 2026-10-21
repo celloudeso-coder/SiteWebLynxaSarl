@@ -163,11 +163,11 @@ const ProjectRequestForm = () => {
             </h2>
             <p className="text-xl text-muted-foreground mb-8">
               Merci pour votre intérêt. Nous examinerons vos besoins et vous recontacterons
-              sous 24 heures.
+              sous 48h ouvrables.
             </p>
             <div className="bg-surface rounded-2xl p-6 max-w-sm mx-auto text-left space-y-3 mb-8">
               {[
-                { icon: "Clock",    text: "Revue initiale sous 24h" },
+                { icon: "Clock",    text: "Revue initiale sous 48h ouvrables" },
                 { icon: "Phone",    text: "Appel de suivi pour les détails" },
                 { icon: "FileText", text: "Proposition détaillée sous 3-5 jours" },
               ].map((item) => (
@@ -428,7 +428,7 @@ const ProjectRequestForm = () => {
               )}
             </motion.button>
             <p className="text-xs text-muted-foreground mt-3">
-              En soumettant, vous acceptez notre politique de confidentialité. Réponse sous 24h.
+              En soumettant, vous acceptez notre politique de confidentialité. Réponse sous 48h ouvrables.
             </p>
           </div>
         </motion.form>

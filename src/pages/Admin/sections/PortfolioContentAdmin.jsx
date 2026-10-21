@@ -77,7 +77,7 @@ function InnovationLabSection() {
   async function addNew() {
     const created = await savePortfolioInnovation({
       sort_order: items.length + 1, active: true,
-      icon: "Rocket", title: "Nouveau projet R&D",
+      icon: "Rocket", title: "Nouveau produit",
       description: "Description de l'initiative...",
       status: "Phase de Recherche", status_color: "text-blue-600 bg-blue-50",
       impact: "Impact attendu...",
@@ -86,7 +86,7 @@ function InnovationLabSection() {
   }
 
   async function remove(id) {
-    if (!confirm("Supprimer ce projet R&D ?")) return;
+    if (!confirm("Supprimer ce produit ?")) return;
     await deletePortfolioInnovation(id);
     setItems((prev) => prev.filter((m) => m.id !== id));
   }
@@ -99,7 +99,7 @@ function InnovationLabSection() {
             <FlaskConical size={14} color="white" />
           </div>
           <div>
-            <h2 className="text-base font-bold text-gray-900">Initiatives R&D</h2>
+            <h2 className="text-base font-bold text-gray-900">Nos produits</h2>
             <p className="text-xs text-gray-500">3 projets affichés en grille sur la page Portfolio</p>
           </div>
         </div>
@@ -119,7 +119,7 @@ function InnovationLabSection() {
                 <IconPicker value={item.icon} onChange={(v) => update(item.id, "icon", v)} />
               </FormField>
               <FormField label="Titre">
-                <TextInput value={item.title} onChange={(v) => update(item.id, "title", v)} placeholder="Optimisation Réseau par IA" />
+                <TextInput value={item.title} onChange={(v) => update(item.id, "title", v)} placeholder="Nom du produit" />
               </FormField>
               <FormField label="Ordre">
                 <input
@@ -132,12 +132,12 @@ function InnovationLabSection() {
             </div>
 
             <FormField label="Description">
-              <TextArea value={item.description} onChange={(v) => update(item.id, "description", v)} rows={2} placeholder="Description du projet R&D..." />
+              <TextArea value={item.description} onChange={(v) => update(item.id, "description", v)} rows={2} placeholder="Description du produit..." />
             </FormField>
 
             <div className="grid sm:grid-cols-2 gap-3 mt-3">
               <FormField label="Impact (résultat attendu)">
-                <TextInput value={item.impact || ""} onChange={(v) => update(item.id, "impact", v)} placeholder="Réduction de 40% des interruptions réseau" />
+                <TextInput value={item.impact || ""} onChange={(v) => update(item.id, "impact", v)} placeholder="Fait vérifiable, sans chiffre non sourcé" />
               </FormField>
               <FormField label="Statut">
                 <div className="flex gap-2 flex-wrap">
@@ -171,7 +171,7 @@ function InnovationLabSection() {
         ))}
         {items.length === 0 && (
           <div className="text-center py-12 text-gray-400 text-sm bg-white rounded-xl border border-dashed border-gray-200">
-            Aucun projet R&D. Cliquez sur "Ajouter" pour commencer.
+            Aucun produit. Cliquez sur "Ajouter" pour commencer.
           </div>
         )}
       </div>
@@ -299,7 +299,7 @@ function FilterOptionsSection() {
 
 // ── Main ──────────────────────────────────────────────────────────────────────
 const TABS = [
-  { id: "lab",     label: "Laboratoire d'innovation" },
+  { id: "lab",     label: "Nos produits" },
   { id: "filters", label: "Filtres"        },
 ];
 
