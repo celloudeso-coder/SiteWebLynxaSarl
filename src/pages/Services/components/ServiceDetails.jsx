@@ -171,7 +171,7 @@ const ServiceDetails = ({ service }) => {
               Démarrer votre projet {service.title?.toLowerCase()} ?
             </h3>
             <p className="text-sm text-muted-foreground">
-              Consultation gratuite — réponse sous 24h.
+              Consultation gratuite, réponse sous 48h ouvrables.
             </p>
           </div>
           <div className="flex gap-3 flex-shrink-0">

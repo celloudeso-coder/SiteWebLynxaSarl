@@ -128,7 +128,7 @@ const PlanInquiryModal = ({ plan, onClose }) => {
 
         {status === "success" && (
           <p className="text-green-600 text-center mt-4">
-            ✅ Demande reçue ! Nous vous recontactons sous 24 h.
+            ✅ Demande reçue ! Nous vous recontactons sous 48h ouvrables.
           </p>
         )}
         {status === "error" && (

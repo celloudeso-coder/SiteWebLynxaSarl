@@ -272,7 +272,7 @@ const ServicesPage = () => {
               </div>
               <div className="flex items-center gap-2">
                 <Icon name="Clock" size={16} color="#FFA500" />
-                <span>Réponse sous 24h</span>
+                <span>Réponse sous 48h ouvrables</span>
               </div>
               <div className="flex items-center gap-2">
                 <Icon name="Shield" size={16} color="#3B82F6" />

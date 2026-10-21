@@ -17,7 +17,7 @@ const ContactHero = () => {
   const contact = { ...FALLBACK, ...(settings?.contact || {}) };
   const title   = cmsHero?.title    ?? "Parlons de votre projet";
   const subtitle = cmsHero?.subtitle ?? "Toujours à votre écoute";
-  const desc    = cmsHero?.description ?? "Discutons de vos besoins technologiques. Notre équipe vous répond sous 24h, en français ou en anglais.";
+  const desc    = cmsHero?.description ?? "Discutons de vos besoins technologiques. Notre équipe vous répond sous 48h ouvrables, en français ou en anglais.";
 
   const infoItems = [
     { icon: "Phone",   label: "Téléphone",  value: contact.phone,   href: `tel:${contact.phone.replace(/\s/g, "")}` },
@@ -62,7 +62,7 @@ const ContactHero = () => {
 
             <div className="flex flex-wrap gap-6 text-sm text-white/70">
               {[
-                { icon: "Clock", text: "Réponse sous 24h" },
+                { icon: "Clock", text: "Réponse sous 48h ouvrables" },
                 { icon: "Globe", text: "FR · EN · Langues locales" },
                 { icon: "Shield", text: "Confidentiel & sécurisé" },
               ].map((item) => (

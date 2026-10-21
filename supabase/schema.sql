@@ -43,7 +43,7 @@ INSERT INTO hero_sections (page, title, subtitle, description, cta_primary_text,
   ('services', 'Nos Services', 'Solutions Technologiques de Pointe', 'Développement mobile, infrastructure réseau, web — des solutions pensées pour l''Afrique, compétitives à l''échelle mondiale.', 'Demander un devis', '/contact', 'Voir le portfolio', '/portfolio'),
   ('portfolio', 'Nos Réalisations', 'Histoires de Succès Inspirantes', 'Des projets qui transforment des vies et propulsent des organisations.', 'Démarrer un projet', '/contact', 'Partenariats', '/partnership'),
   ('partnership', 'Partenariat', 'Collaborons Ensemble', 'Rejoignez notre réseau de partenaires et construisons l''avenir technologique de l''Afrique.', 'Soumettre un projet', '#', 'Nous contacter', '/contact'),
-  ('contact', 'Contactez-nous', 'Toujours à Votre Écoute', 'Discutons de votre projet. Nous répondons sous 24h.', 'WhatsApp', '#', 'Email', 'mailto:contact@lynxatech.com'),
+  ('contact', 'Contactez-nous', 'Toujours à Votre Écoute', 'Discutons de votre projet. Nous répondons sous 48h ouvrables.', 'WhatsApp', '#', 'Email', 'mailto:contact@lynxatech.com'),
   ('insights', 'Perspectives & Leadership de Savoir', 'Pionnier de l''innovation technologique africaine grâce à l''analyse experte et au leadership éclairé', 'Restez à la pointe avec les analyses complètes de Lynxa Tech sur les tendances de cybersécurité en Afrique de l''Ouest, les meilleures pratiques de développement mobile pour les marchés émergents et les innovations en infrastructure réseau à travers la Guinée et au-delà.', 'Explorez les articles', '#blog-section', 'Souscrire aux mises à jour', '#newsletter')
 ON CONFLICT (page) DO NOTHING;
 
@@ -569,7 +569,7 @@ CREATE TABLE IF NOT EXISTS home_engagements (
 );
 INSERT INTO home_engagements (sort_order, icon, label, sub_label) VALUES
   (1, 'Flag',        '100 % Guinéen',     'Ancré localement'),
-  (2, 'Zap',         'Réponse en 24h',     'Support ultra-réactif'),
+  (2, 'Zap',         'Réponse sous 48h ouvrables', 'Support ultra-réactif'),
   (3, 'Globe',       'Standards mondiaux', 'Qualité internationale'),
   (4, 'ShieldCheck', 'Sécurité dès la conception', 'Des engagements écrits au contrat')
 ON CONFLICT DO NOTHING;
@@ -595,7 +595,7 @@ INSERT INTO home_why_items (sort_order, icon, title, description) VALUES
   (1, 'MapPin',    'Expertise locale',              'Nous comprenons les défis uniques des marchés africains et concevons des solutions parfaitement adaptées.'),
   (2, 'Award',     'Qualité internationale',        'Nos solutions respectent les standards mondiaux tout en étant calibrées pour les réalités locales.'),
   (3, 'Users',     'Équipe pluridisciplinaire',     'Mobile, réseau, cybersécurité, web : toutes les compétences réunies sous un même toit.'),
-  (4, 'Clock',     'Des délais d''intervention écrits au contrat', 'Consultation gratuite, réponse sous 24h et suivi continu tout au long de votre projet.'),
+  (4, 'Clock',     'Des délais d''intervention écrits au contrat', 'Consultation gratuite, réponse sous 48h ouvrables et suivi continu tout au long de votre projet.'),
   (5, 'Handshake', 'Partenariat sur le long terme', 'Nous construisons des relations durables, pas des contrats. Votre succès est notre succès.'),
   (6, 'Lock',      'La sécurité prise en compte dès la conception', 'La sécurité n''est pas une option : elle est intégrée dès la conception de chaque solution.')
 ON CONFLICT DO NOTHING;

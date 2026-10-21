@@ -14,7 +14,7 @@ import { useSiteSettings } from "../../hooks/useContent";
 
 const STATIC_COMMITMENTS = [
   { icon: "Flag",        label: "100 % Guinéen",       sub_label: "Ancré localement"       },
-  { icon: "Zap",         label: "Réponse en 24h",       sub_label: "Support ultra-réactif"  },
+  { icon: "Zap",         label: "Réponse sous 48h ouvrables", sub_label: "Support ultra-réactif" },
   { icon: "Globe",       label: "Standards mondiaux",   sub_label: "Qualité internationale" },
   { icon: "ShieldCheck", label: "Sécurité dès la conception", sub_label: "Des engagements écrits au contrat" },
 ];
@@ -23,7 +23,7 @@ const STATIC_WHY = [
   { icon: "MapPin",    title: "Expertise locale",              description: "Nous comprenons les défis uniques des marchés africains et concevons des solutions parfaitement adaptées." },
   { icon: "Award",     title: "Qualité internationale",        description: "Nos solutions respectent les standards mondiaux tout en étant calibrées pour les réalités locales." },
   { icon: "Users",     title: "Équipe pluridisciplinaire",     description: "Mobile, réseau, cybersécurité, web : toutes les compétences réunies sous un même toit." },
-  { icon: "Clock",     title: "Des délais d'intervention écrits au contrat", description: "Consultation gratuite, réponse sous 24h et suivi continu tout au long de votre projet." },
+  { icon: "Clock",     title: "Des délais d'intervention écrits au contrat", description: "Consultation gratuite, réponse sous 48h ouvrables et suivi continu tout au long de votre projet." },
   { icon: "Handshake", title: "Partenariat sur le long terme", description: "Nous construisons des relations durables, pas des contrats. Votre succès est notre succès." },
   { icon: "Lock",      title: "La sécurité prise en compte dès la conception", description: "La sécurité n'est pas une option : elle est intégrée dès la conception de chaque solution." },
 ];
@@ -184,7 +184,7 @@ const Homepage = () => {
                   Prêt à transformer <span className="text-gradient-orange">votre entreprise ?</span>
                 </h2>
                 <p className="text-xl text-gray-300 mb-10 max-w-2xl mx-auto leading-relaxed">
-                  Discutons de votre projet. Notre équipe est disponible pour une consultation gratuite sous 24h.
+                  Discutons de votre projet. Notre équipe est disponible pour une consultation gratuite, réponse sous 48h ouvrables.
                 </p>
                 <div className="flex flex-col sm:flex-row gap-4 justify-center">
                   <Link to="/contact">
