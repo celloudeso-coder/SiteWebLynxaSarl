@@ -66,7 +66,7 @@ const PAGE_CONFIGS = {
     sections: [
       { label: "En-tête",   desc: "Titre et description de la page Portfolio",        icon: Globe,      link: "/admin/hero",              cms: true  },
       { label: "Projets",        desc: "Liste des projets et études de cas",               icon: FolderOpen, link: "/admin/portfolio",         cms: true  },
-      { label: "Laboratoire d'innovation", desc: "Section R&D — éditable via CMS",                  icon: Sparkles,   link: "/admin/portfolio-content", cms: true  },
+      { label: "Nos produits", desc: "Section produits, éditable via CMS",                  icon: Sparkles,   link: "/admin/portfolio-content", cms: true  },
       { label: "Filtres",        desc: "Services & industries filtrables — éditable via CMS", icon: Briefcase, link: "/admin/portfolio-content", cms: true },
     ],
   },

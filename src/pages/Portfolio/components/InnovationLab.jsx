@@ -10,7 +10,7 @@ const InnovationLab = () => {
   // échec → message honnête.
   const { data: innovations, loading, error } = usePortfolioInnovations();
 
-  if (error) return <SectionLoadError title="Laboratoire d'Innovation" />;
+  if (error) return <SectionLoadError title="Nos produits" />;
   if (loading || innovations.length === 0) return null;
 
   return (
@@ -24,14 +24,14 @@ const InnovationLab = () => {
           transition={{ duration: 0.5 }}
         >
           <div className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-2 rounded-full text-sm font-medium mb-4">
-            <Icon name="FlaskConical" size={16} />
-            <span>Laboratoire d'Innovation</span>
+            <Icon name="Package" size={16} />
+            <span>Nos produits</span>
           </div>
           <h2 className="text-3xl md:text-4xl font-heading font-bold text-secondary mb-3">
-            Pionniers des Solutions de Demain
+            Nos produits
           </h2>
           <p className="text-muted-foreground max-w-2xl mx-auto">
-            Nos initiatives R&D repoussent les limites de la technologie africaine.
+            Les logiciels que nous développons et dont nous détenons les droits.
           </p>
         </motion.div>
 
@@ -80,18 +80,18 @@ const InnovationLab = () => {
               <Icon name="Lightbulb" size={26} className="text-primary" />
             </div>
             <h3 className="text-2xl font-heading font-bold text-secondary mb-3">
-              Une Idée Innovante ?
+              Un logiciel à concevoir ?
             </h3>
             <p className="text-muted-foreground mb-6 leading-relaxed">
-              Nous explorons toujours de nouvelles frontières technologiques. Si vous avez un projet
-              ambitieux ou un concept innovant, collaborons pour le concrétiser.
+              Vous avez besoin d'un logiciel conçu pour votre activité ? Décrivez-nous votre besoin
+              depuis la page Contact : nous l'étudions avec vous.
             </p>
             <Link
               to="/contact"
               className="inline-flex items-center gap-2 bg-primary hover:bg-primary/90 text-primary-foreground font-semibold px-6 py-3 rounded-xl transition-all duration-200 glow-orange"
             >
               <Icon name="MessageCircle" size={18} />
-              Discuter de Votre Idée
+              Nous contacter
             </Link>
           </div>
         </motion.div>
