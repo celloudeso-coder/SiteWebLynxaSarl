@@ -129,7 +129,7 @@ export const ADDITIONAL_SERVICES = [
     name: "Migration de Système",
     priceMinGnf: 11_500_000,
     priceMaxGnf: 36_000_000,
-    el: ["Zéro perte de données.", "Transition rapide et planifiée.", "Formation pour faciliter l'adoption par vos équipes."],
+    el: ["Sauvegarde complète avant migration et plan de retour arrière documenté.", "Transition rapide et planifiée.", "Formation pour faciliter l'adoption par vos équipes."],
     icon: "ArrowRightLeft",
   },
   {
