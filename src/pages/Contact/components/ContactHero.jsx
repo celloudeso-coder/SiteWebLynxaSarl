@@ -15,9 +15,9 @@ const ContactHero = () => {
   const { data: cmsHero } = useHeroSection("contact");
 
   const contact = { ...FALLBACK, ...(settings?.contact || {}) };
-  const title   = cmsHero?.title    ?? "Parlons de votre projet";
-  const subtitle = cmsHero?.subtitle ?? "Toujours à votre écoute";
-  const desc    = cmsHero?.description ?? "Discutons de vos besoins technologiques. Notre équipe vous répond sous 48h ouvrables, en français ou en anglais.";
+  const title   = cmsHero?.title    ?? "Contactez-nous";
+  const subtitle = cmsHero?.subtitle ?? "Toujours à Votre Écoute";
+  const desc    = cmsHero?.description ?? "Discutons de votre projet. Nous répondons sous 48h ouvrables.";
 
   const infoItems = [
     { icon: "Phone",   label: "Téléphone",  value: contact.phone,   href: `tel:${contact.phone.replace(/\s/g, "")}` },
