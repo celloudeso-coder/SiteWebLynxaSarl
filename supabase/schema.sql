@@ -1835,13 +1835,42 @@ DROP POLICY IF EXISTS "Modification admin" ON storage.objects;
 DROP POLICY IF EXISTS "Suppression admin" ON storage.objects;
 DROP POLICY IF EXISTS "joinus_admin_delete" ON storage.objects;
 
+-- Médias du CMS : la ressource est déduite du premier segment du chemin, pour
+-- qu'un droit accordé sur une section ne donne pas accès aux médias d'une
+-- autre. Même modèle que settings_admin_resource(key) ci-dessus.
+-- Correspondance établie depuis le code : team-members/ -> team
+-- (TeamAdmin.jsx:169), projects/ -> portfolio (PortfolioAdmin.jsx:296),
+-- whitepapers/ et reports/ -> insights (InsightsAdmin.jsx:272 et 505).
+-- Un dossier non cartographié est refusé à tous sauf au propriétaire.
+-- Voir migrations/20261127120000_media_permissions_par_section.sql.
+CREATE OR REPLACE FUNCTION public.media_admin_resource(object_name text)
+RETURNS text
+LANGUAGE sql
+IMMUTABLE
+SET search_path = ''
+AS $$
+  SELECT CASE split_part(coalesce(object_name, ''), '/', 1)
+    WHEN 'team-members' THEN 'team'
+    WHEN 'projects'     THEN 'portfolio'
+    WHEN 'whitepapers'  THEN 'insights'
+    WHEN 'reports'      THEN 'insights'
+    ELSE NULL
+  END
+$$;
+REVOKE ALL ON FUNCTION public.media_admin_resource(text) FROM PUBLIC, anon;
+GRANT EXECUTE ON FUNCTION public.media_admin_resource(text) TO authenticated;
+
 CREATE POLICY "Upload admin" ON storage.objects FOR INSERT TO authenticated
-  WITH CHECK (bucket_id = 'cms-media' AND (SELECT public.has_any_admin_permission('create')));
+  WITH CHECK (bucket_id = 'cms-media'
+    AND (SELECT public.has_admin_permission(public.media_admin_resource(name), 'create')));
 CREATE POLICY "Modification admin" ON storage.objects FOR UPDATE TO authenticated
-  USING (bucket_id = 'cms-media' AND (SELECT public.has_any_admin_permission('update')))
-  WITH CHECK (bucket_id = 'cms-media' AND (SELECT public.has_any_admin_permission('update')));
+  USING (bucket_id = 'cms-media'
+    AND (SELECT public.has_admin_permission(public.media_admin_resource(name), 'update')))
+  WITH CHECK (bucket_id = 'cms-media'
+    AND (SELECT public.has_admin_permission(public.media_admin_resource(name), 'update')));
 CREATE POLICY "Suppression admin" ON storage.objects FOR DELETE TO authenticated
-  USING (bucket_id = 'cms-media' AND (SELECT public.has_any_admin_permission('delete')));
+  USING (bucket_id = 'cms-media'
+    AND (SELECT public.has_admin_permission(public.media_admin_resource(name), 'delete')));
 CREATE POLICY "joinus_admin_delete" ON storage.objects FOR DELETE TO authenticated
   USING (bucket_id = 'Cv_lettredemotivation_joinus' AND (SELECT public.has_admin_permission('recruitment', 'delete')));
 
