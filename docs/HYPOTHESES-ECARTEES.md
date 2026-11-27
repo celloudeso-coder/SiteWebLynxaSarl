@@ -71,3 +71,45 @@ n'est dans ce cas.
   d'entreprise sans passer par le CMS, ce que le commit `86fd62c` a interdit
   pour les autres sections. À vérifier ligne à ligne contre la base avant de
   les toucher, règle du repli égal à la base.
+
+## Revue du 2026-11-27 : droits sur les médias, et replis STATIC_*
+
+Trois des quatre pistes ci-dessous viennent d'un compte rendu d'agent du
+2026-11-27 qui les avançait **sans les avoir vérifiées jusqu'au bout**. Elles
+sont consignées ici avec leur réfutation, pour qu'elles ne soient pas reprises
+telles quelles.
+
+| Piste avancée | Écartée ou retenue | Preuve |
+| --- | --- | --- |
+| « Les politiques d'écriture de `cms-media` ne reposent que sur le rôle `editor`, donc un éditeur à qui l'on n'a donné qu'une section peut supprimer n'importe quel média. » | **écartée, telle quelle** | Le bloc `can_admin('editor')` de `supabase/schema.sql:1494-1503` est remplacé 340 lignes plus bas par un bloc qui utilise `has_any_admin_permission(action)` (lignes 1838-1844 avant correction). Or `has_any_admin_permission('delete')` exige `role = 'admin'` (`schema.sql:1631`) : un `editor` ne pouvait supprimer aucun média. Assertion A9 du test de la branche `fix/droits-medias`, verte avant comme après le correctif. |
+| « Il n'y a donc aucun problème sur `cms-media`. » | **écartée aussi** | Le défaut existait, mais plus bas : `has_any_admin_permission` signifie « détenir cette action sur au moins UNE section ». Prouvé sur base jetable (PostgreSQL 17.12) : un `admin` dont la seule section est `insights` supprimait une photo sous `team-members/` ; un `editor` dont la seule section est `team` écrivait dans `projects/`, dans `whitepapers/` et dans tout dossier inexistant. Assertions A1, A2, A3, A7, rouges avant le correctif. Corrigé par `20261127120000_media_permissions_par_section.sql`. |
+| « Le seed de `schema.sql` déclare le bucket des CV `public = true` : une réinstallation à neuf le rouvrirait. » | **écartée** | Le même fichier le repasse à `false` avant la fin (`UPDATE storage.buckets`, ligne 1881) : l'état final d'une installation neuve était déjà privé. Et la production l'est depuis la migration du 28/09 : le dump `~/Sauvegardes-Lynxa/lynxa-data-20261021-220415Z.sql` montre `Cv_lettredemotivation_joinus … false`. Ne reste qu'une incohérence interne au fichier, corrigée pour qu'aucune instruction ne déclare ce bucket public. |
+| « Une fonction `admin-users` est peut-être déployée sans être versionnée. » | **écartée** | `supabase functions list` sur le projet, le 2026-11-27 : une seule fonction, `publish-site`, `ACTIVE`, version 2, 2026-10-01 01:45:02 UTC. `admin-users` n'est ni déployée, ni appelée par le code (`grep -rn "admin-users"` dans `src/` : aucun résultat), ni suivie par git. Le dossier `supabase/functions/admin-users/` est un reliquat vide du 14/07. |
+
+### Replis STATIC_* : comparaison ligne à ligne avec la base
+
+Referme le point laissé ouvert à la fin de la section précédente. Référence :
+dump de production `lynxa-data-20261021-220415Z.sql` (2026-10-21, 22h04 UTC).
+Aucune des corrections appliquées depuis (2026-10-21 22h51, 2026-11-27 01h25)
+ne touche ces deux tables. **Limite de cette preuve** : un dump du 21/10 ne
+prouve pas l'état du 27/11. Toute modification faite depuis dans le CMS
+échappe à cette comparaison.
+
+- `CompanyValues.jsx:7`, `STATIC_CORE_VALUES` : **identique à la base**, 6
+  lignes sur 6, mêmes icônes, mêmes titres, mêmes descriptions, même ordre
+  (`about_core_values`, `sort_order` 1 à 6, toutes `active`). Règle du repli
+  égal à la base respectée. Rien à faire.
+- `CompanyTimeline.jsx:17`, `STATIC_EVENTS` : **diverge de la base sur trois
+  faits**. Année de fondation : `2025` dans le repli, `2026` en base.
+  Effectif : « 4 informaticiens » et « Équipe initiale de 4 » dans le repli,
+  « sept passionnés » en base. Réalisations : « Plateformes numériques
+  réalisées » dans le repli, « Lancement de la première plateforme client » en
+  base. Le repli n'est visible qu'en cas de lecture vide ou en échec
+  (`cmsEvents && cmsEvents.length > 0 ? … : STATIC_EVENTS`) : la page `/about`
+  prérendue porte bien la version de la base. Non corrigé : l'année et
+  l'effectif sont des faits que seul le gérant peut trancher.
+- Hors repli, même page : `CompanyValues.jsx:16`, `HIGHLIGHT_VALUE` est codé
+  en dur, hors CMS, et affirme « Servir des clients sur plusieurs continents »
+  et « Plusieurs pays desservis » (présents dans `dist/about/index.html`).
+  La base dit `Pays : current = "1"` (`site_settings.about_impact_metrics`).
+  Les deux affirmations coexistent sur la même page.
