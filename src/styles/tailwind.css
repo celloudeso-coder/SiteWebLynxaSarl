@@ -12,7 +12,7 @@
     --color-foreground: #1A1A1A; /* gray-900 */
     --color-border: #E5E7EB; /* gray-200 */
     --color-input: #FFFFFF; /* white */
-    --color-ring: #FF8C00; /* orange-500 */
+    --color-ring: #F28E24; /* orange LYNXA */
     
     /* Card Colors */
     --color-card: #FFFFFF; /* white */
@@ -25,16 +25,16 @@
     --color-muted-foreground: #6B7280; /* gray-500 */
     
     /* Primary Colors */
-    --color-primary: #FF8C00; /* orange-500 */
+    --color-primary: #F28E24; /* orange LYNXA */
     /* Texte/icônes sur fond primary plein (boutons, badges) : le blanc n'y
-       passe qu'à 2.33:1 (échec AA). #111111 y passe à ~8:1 (AAA) sans
+       passe qu'à 2.42:1 (échec AA). #111111 y passe à ~8:1 (AAA) sans
        assombrir la couleur de marque elle-même. Ce token est LE point
        central : tout ce qui utilise text-primary-foreground (Button.jsx,
        Checkbox.jsx, Select.jsx, et les boutons/badges pleins du site)
        suit automatiquement ce choix. */
     --color-primary-foreground: #111111;
     /* Même teinte, assombrie pour rester lisible (AA, 5.4:1) quand utilisée
-       comme texte sur fond clair — #FF8C00 en texte ne passe qu'à 2.33:1. */
+       comme texte sur fond clair — #F28E24 en texte ne passe qu'à 2.42:1. */
     --color-primary-strong: #A65400;
     
     /* Secondary Colors */
@@ -101,14 +101,14 @@
   }
   
   .text-gradient-orange {
-    background: linear-gradient(135deg, #FF8C00 0%, #FFA500 100%);
+    background: linear-gradient(135deg, #F28E24 0%, #FFA500 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
   }
   
   .bg-gradient-sunset {
-    background: linear-gradient(135deg, #0A0A0A 0%, #1a1a1a 50%, #FF8C00 100%);
+    background: linear-gradient(135deg, #0A0A0A 0%, #1a1a1a 50%, #F28E24 100%);
     background-size: 200% 200%;
     animation: gradient-shift 8s ease infinite;
   }

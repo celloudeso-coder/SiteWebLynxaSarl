@@ -138,7 +138,7 @@ const PricingFramework = () => {
                 className="flex items-center space-x-4 p-4 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors duration-200"
               >
                 <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
-                  <Icon name={service?.icon} size={24} color="#FF8C00" />
+                  <Icon name={service?.icon} size={24} color="#F28E24" />
                 </div>
                 <div>
                   <h4 className="font-semibold text-secondary">
@@ -174,7 +174,7 @@ const PricingFramework = () => {
             </h3>
             <div className="grid md:grid-cols-3 gap-6 max-w-4xl mx-auto">
               <div className="flex items-center space-x-3">
-                <Icon name="CreditCard" size={24} color="#FF8C00" />
+                <Icon name="CreditCard" size={24} color="#F28E24" />
                 <div>
                   <h4 className="font-semibold text-secondary">
                     50% d'Acompte
@@ -183,7 +183,7 @@ const PricingFramework = () => {
                 </div>
               </div>
               <div className="flex items-center space-x-3">
-                <Icon name="Calendar" size={24} color="#FF8C00" />
+                <Icon name="Calendar" size={24} color="#F28E24" />
                 <div>
                   <h4 className="font-semibold text-secondary">
                     Paiements par Étapes
@@ -194,7 +194,7 @@ const PricingFramework = () => {
                 </div>
               </div>
               <div className="flex items-center space-x-3">
-                <Icon name="CheckCircle" size={24} color="#FF8C00" />
+                <Icon name="CheckCircle" size={24} color="#F28E24" />
                 <div>
                   <h4 className="font-semibold text-secondary">
                     Paiement Final

@@ -32,7 +32,7 @@ const HeroSection = () => {
       <div className="absolute bottom-0 right-0 w-72 h-72 bg-accent/10 rounded-full blur-3xl translate-x-1/3 translate-y-1/3" />
       {/* Grid décoratif */}
       <div className="absolute inset-0 opacity-5 pointer-events-none"
-        style={{ backgroundImage: "radial-gradient(circle, #FF8C00 1px, transparent 1px)", backgroundSize: "48px 48px" }}
+        style={{ backgroundImage: "radial-gradient(circle, #F28E24 1px, transparent 1px)", backgroundSize: "48px 48px" }}
       />
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 lg:py-32">
@@ -108,7 +108,7 @@ const HeroSection = () => {
                     whileHover={{ scale: 1.04 }}
                   >
                     <div className="w-12 h-12 bg-primary/30 rounded-lg flex items-center justify-center">
-                      <Icon name={s.icon} size={22} color="#FF8C00" />
+                      <Icon name={s.icon} size={22} color="#F28E24" />
                     </div>
                     <span className="text-2xl font-bold text-white">{s.value}</span>
                     <span className="text-xs text-white/60">{s.label}</span>

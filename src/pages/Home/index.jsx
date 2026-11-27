@@ -14,14 +14,14 @@ import { useSiteSettings } from "../../hooks/useContent";
 
 const STATIC_COMMITMENTS = [
   { icon: "Flag",        label: "100 % Guinéen",       sub_label: "Ancré localement"       },
-  { icon: "Zap",         label: "Réponse sous 48h ouvrables", sub_label: "Support ultra-réactif" },
-  { icon: "Globe",       label: "Standards mondiaux",   sub_label: "Qualité internationale" },
+  { icon: "Zap",         label: "Réponse sous 48h ouvrables", sub_label: "Engagement écrit au contrat" },
+  { icon: "Globe",       label: "Documentation remise", sub_label: "À chaque livraison" },
   { icon: "ShieldCheck", label: "Sécurité dès la conception", sub_label: "Des engagements écrits au contrat" },
 ];
 
 const STATIC_WHY = [
   { icon: "MapPin",    title: "Expertise locale",              description: "Nous comprenons les défis uniques des marchés africains et concevons des solutions parfaitement adaptées." },
-  { icon: "Award",     title: "Qualité internationale",        description: "Nos solutions respectent les standards mondiaux tout en étant calibrées pour les réalités locales." },
+  { icon: "Award",     title: "Bonnes pratiques du métier",     description: "Nous appliquons les bonnes pratiques reconnues en sécurité et en documentation, adaptées aux réalités locales." },
   { icon: "Users",     title: "Équipe pluridisciplinaire",     description: "Mobile, réseau, cybersécurité, web : toutes les compétences réunies sous un même toit." },
   { icon: "Clock",     title: "Des délais d'intervention écrits au contrat", description: "Consultation gratuite, réponse sous 48h ouvrables et suivi continu tout au long de votre projet." },
   { icon: "Handshake", title: "Partenariat sur le long terme", description: "Nous construisons des relations durables, pas des contrats. Votre succès est notre succès." },
@@ -73,7 +73,7 @@ const Homepage = () => {
                     transition={{ duration: 0.4, delay: i * 0.1 }}
                   >
                     <div className="w-10 h-10 bg-primary/20 rounded-xl flex items-center justify-center mb-1">
-                      <Icon name={c.icon} size={20} color="#FF8C00" />
+                      <Icon name={c.icon} size={20} color="#F28E24" />
                     </div>
                     <p className="text-white font-semibold text-sm">{c.label}</p>
                     {c.sub_label && <p className="text-gray-400 text-xs">{c.sub_label}</p>}

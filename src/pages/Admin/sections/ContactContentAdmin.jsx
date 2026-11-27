@@ -28,10 +28,10 @@ const STATIC_FORM_CONFIG = {
 };
 
 const STATIC_OFFICE = {
-  address: "Quartier Almamya, Rue KA-028\nConakry, Guinée",
+  address: "Lambanyi, secteur Nérébouyi\nConakry, Guinée",
   coordinates: "9.5370,-13.6785",
-  phone: "+224 622 123 456",
-  email: "hello@lynxatech.gn",
+  phone: "+224 614 666 680",
+  email: "contact@lynxatech.com",
   timezone: "GMT+0 (Heure de Guinée)",
   hours: {
     weekdays: "Lundi - Vendredi: 8:00 - 18:00",
@@ -258,7 +258,7 @@ function LocalisationTab() {
             <TextInput value={office.coordinates || ""} onChange={(v) => set("coordinates", v)} placeholder="9.5370,-13.6785" />
           </FormField>
           <FormField label="Téléphone">
-            <TextInput value={office.phone || ""} onChange={(v) => set("phone", v)} placeholder="+224 622 123 456" />
+            <TextInput value={office.phone || ""} onChange={(v) => set("phone", v)} placeholder="+224 614 666 680" />
           </FormField>
           <FormField label="Email">
             <TextInput value={office.email || ""} onChange={(v) => set("email", v)} placeholder="hello@lynxatech.gn" />

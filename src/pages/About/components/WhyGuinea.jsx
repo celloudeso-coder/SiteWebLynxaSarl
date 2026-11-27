@@ -53,7 +53,7 @@ const WhyGuinea = () => {
           <div className="absolute inset-0 bg-gradient-to-r from-secondary/80 to-primary/60 flex items-center justify-center">
             <div className="text-center text-white px-4">
               <h3 className="text-2xl md:text-3xl font-heading font-bold mb-2">Pôle d'innovation de l'Afrique de l'Ouest</h3>
-              <p className="text-lg text-white/90">Conakry, Guinée – Où les standards mondiaux rencontrent l'innovation locale</p>
+              <p className="text-lg text-white/90">Conakry, Guinée : des solutions pensées pour les réalités locales</p>
             </div>
           </div>
         </motion.div>

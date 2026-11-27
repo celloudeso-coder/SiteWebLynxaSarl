@@ -93,7 +93,7 @@ const ContactHero = () => {
                   transition={{ delay: 0.3 + i * 0.1 }}
                 >
                   <div className="w-10 h-10 bg-primary/20 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5">
-                    <Icon name={item.icon} size={18} color="#FF8C00" />
+                    <Icon name={item.icon} size={18} color="#F28E24" />
                   </div>
                   <div>
                     <p className="text-xs text-white/50 mb-0.5">{item.label}</p>
