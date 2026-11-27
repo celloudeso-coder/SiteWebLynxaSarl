@@ -27,7 +27,7 @@ const JoinUsHero = () => {
       <div className="absolute bottom-0 right-0 w-72 h-72 bg-accent/10 rounded-full blur-3xl translate-x-1/3 translate-y-1/3" />
       <div
         className="absolute inset-0 opacity-5 pointer-events-none"
-        style={{ backgroundImage: "radial-gradient(circle, #FF8C00 1px, transparent 1px)", backgroundSize: "48px 48px" }}
+        style={{ backgroundImage: "radial-gradient(circle, #F28E24 1px, transparent 1px)", backgroundSize: "48px 48px" }}
       />
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 lg:py-32">
@@ -101,7 +101,7 @@ const JoinUsHero = () => {
                     whileHover={{ scale: 1.04 }}
                   >
                     <div className="w-10 h-10 bg-primary/30 rounded-lg flex items-center justify-center">
-                      <Icon name={p.icon} size={20} color="#FF8C00" />
+                      <Icon name={p.icon} size={20} color="#F28E24" />
                     </div>
                     <p className="text-white font-semibold text-sm">{p.label}</p>
                     <p className="text-white/55 text-xs leading-snug">{p.sub}</p>

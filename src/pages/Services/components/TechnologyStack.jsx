@@ -111,7 +111,7 @@ const TechnologyStack = () => {
             >
               <div className="flex items-center space-x-4 mb-4">
                 <div className="w-12 h-12 bg-white rounded-lg flex items-center justify-center shadow-sm group-hover:shadow-md transition-shadow duration-300">
-                  <Icon name={tech.icon} size={24} color="#FF8C00" />
+                  <Icon name={tech.icon} size={24} color="#F28E24" />
                 </div>
                 <div>
                   <h3 className="text-lg font-heading font-bold text-secondary">{tech.name}</h3>

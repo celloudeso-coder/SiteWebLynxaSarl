@@ -73,7 +73,7 @@ const Homepage = () => {
                     transition={{ duration: 0.4, delay: i * 0.1 }}
                   >
                     <div className="w-10 h-10 bg-primary/20 rounded-xl flex items-center justify-center mb-1">
-                      <Icon name={c.icon} size={20} color="#FF8C00" />
+                      <Icon name={c.icon} size={20} color="#F28E24" />
                     </div>
                     <p className="text-white font-semibold text-sm">{c.label}</p>
                     {c.sub_label && <p className="text-gray-400 text-xs">{c.sub_label}</p>}
