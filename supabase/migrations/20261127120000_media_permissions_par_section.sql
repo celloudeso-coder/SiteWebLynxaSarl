@@ -1,3 +1,12 @@
+-- APPLIQUÉ EN PRODUCTION le 2026-11-27
+-- Par Mamadou Cellou Kanté, éditeur SQL Supabase. Heure non relevée.
+-- Migration de politiques (DDL) : il n'y a pas de nombre de lignes à
+-- constater. Son effet ne se vérifie pas de l'extérieur du projet ; le
+-- contrôle réel est le point 6 du contrôle de non-régression (le CV s'ouvre
+-- depuis la fiche admin), qui traverse les droits du stockage.
+-- Un rejeu est sans danger : les DROP sont en IF EXISTS et les CREATE
+-- recréent les mêmes politiques.
+--
 -- Médias du CMS : les droits d'écriture suivent la section, comme pour les tables.
 --
 -- AVANT. Les trois politiques d'écriture de cms-media reposaient sur
@@ -41,8 +50,7 @@
 -- has_any_admin_permission(text) n'est plus appelée par aucune politique. Elle
 -- est conservée, pas supprimée.
 --
--- À exécuter une fois dans l'éditeur SQL Supabase. Idempotent.
--- NON APPLIQUÉ : Cellou le lance lui-même après accord.
+-- Exécutée une fois dans l'éditeur SQL Supabase. Idempotent.
 
 CREATE OR REPLACE FUNCTION public.media_admin_resource(object_name text)
 RETURNS text

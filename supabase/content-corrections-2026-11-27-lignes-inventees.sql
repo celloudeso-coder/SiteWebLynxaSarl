@@ -1,9 +1,21 @@
+-- APPLIQUÉ EN PRODUCTION le 2026-11-27
+-- Par Mamadou Cellou Kanté, éditeur SQL Supabase. Heure non relevée.
+-- Résultat : 1 ligne supprimée par le script. Une ligne restante a ensuite
+-- été supprimée à la main par Cellou, la double garde l'ayant refusée. La
+-- raison du refus n'a pas été relevée : soit la ligne était encore active,
+-- soit son texte avait été retouché depuis le seed d'origine. Dans les deux
+-- cas, le refus est le comportement voulu, pas une défaillance.
+-- Vérifié en ligne le 2026-11-27 sur https://www.lynxatech.com/portfolio :
+-- « Identité Blockchain », « Optimisation Réseau par IA », « Agriculture
+-- IoT » et leurs trois chiffres inventés, 0 occurrence chacun.
+-- NE PAS RELANCER : les gardes refuseraient (0 ligne) et n'écriraient rien.
+--
 -- =====================================================================
 -- Corrections de contenu 2026-11-27 : lignes d'exemple à chiffres inventés
 -- =====================================================================
 --
--- NON APPLIQUÉ. À exécuter par Cellou dans l'éditeur SQL Supabase, après
--- la sauvegarde (PROTOCOLE-TRAVAIL-LYNXA, règle 9). L'agent ne le lance pas.
+-- Exécuté par Cellou dans l'éditeur SQL Supabase, après la sauvegarde
+-- (PROTOCOLE-TRAVAIL-LYNXA, règle 9). L'agent ne l'a pas lancé.
 --
 -- Nom de fichier : le nom demandé, content-corrections-2026-11-27.sql, est
 -- déjà pris par le lot A, dont trois corrections ont été appliquées en
