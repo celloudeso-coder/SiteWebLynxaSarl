@@ -13,17 +13,22 @@ const TIMELINE_TEXT_COLORS = {
 };
 const TIMELINE_ICONS = ["Rocket", "Smartphone", "Trophy", "Users", "Globe", "Lightbulb"];
 
+// Repli affiché uniquement si la lecture de timeline_events renvoie zéro ligne
+// ou échoue. Il doit porter mot pour mot le contenu de la base : sans cela, une
+// panne ferait afficher une autre date de fondation et un autre effectif que le
+// site lui-même. Référence : timeline_events en production, et les décisions du
+// gérant du 2026-11-27 (fondation en 2026, sept personnes).
 const STATIC_EVENTS = [
   {
-    year: "2025",
+    year: "2026",
     title: "Fondation & Premiers Pas",
     description:
-      "Lynxa Tech a été fondée à Conakry avec pour vision de relier l'innovation africaine aux opportunités mondiales. Commencé avec 4 informaticiens passionnés.",
+      "Lynxa Tech a été officiellement fondée par sept passionnés guinéens, unis par la vision commune de transformer le paysage technologique de la Guinée",
     icon: "Rocket",
     achievements: [
-      "Enregistrement de l'entreprise",
-      "Plateformes numériques réalisées",
-      "Équipe initiale de 4",
+      "Enregistrement officiel de la société",
+      "Lancement de la première plateforme client",
+      "Constitution de l'équipe fondatrice",
     ],
     color: "bg-primary",
   },
