@@ -240,9 +240,9 @@ CREATE TABLE IF NOT EXISTS timeline_events (
 );
 
 INSERT INTO timeline_events (sort_order, year, title, description, achievements) VALUES
-  (1, '2025', 'Fondation & Premiers Pas',
-   'Lynxa Tech est officiellement fondée par quatre ingénieurs guinéens partageant la vision de transformer le paysage technologique de la Guinée.',
-   '["Enregistrement officiel de la société", "Lancement de la première plateforme client", "Constitution de l''équipe fondatrice de 4 ingénieurs"]')
+  (1, '2026', 'Fondation & Premiers Pas',
+   'Lynxa Tech a été officiellement fondée par sept passionnés guinéens, unis par la vision commune de transformer le paysage technologique de la Guinée',
+   '["Enregistrement officiel de la société", "Lancement de la première plateforme client", "Constitution de l''équipe fondatrice"]')
 ON CONFLICT DO NOTHING;
 
 -- -------------------------------------------------------
