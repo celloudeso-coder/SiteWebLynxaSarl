@@ -131,10 +131,9 @@ const InsightsKnowledgeLeadership = () => {
                   </div>
                 </div>
                 <p className="text-gray-300 mb-6 leading-relaxed">
-                  Construire l'avenir de la technologie de la Guinée vers le
-                  monde. Nous fournissons des solutions de classe mondiale avec
-                  une compréhension locale approfondie, démontrant que
-                  l'innovation ne connaît pas de frontières.
+                  Entreprise technologique guinéenne basée à Conakry. Des
+                  solutions numériques fiables, pensées pour les réalités
+                  locales.
                 </p>
                 <div className="flex items-center space-x-2 text-sm text-gray-400">
                   <span>🇬🇳</span>

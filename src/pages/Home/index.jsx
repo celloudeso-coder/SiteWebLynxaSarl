@@ -45,8 +45,8 @@ const Homepage = () => {
   return (
     <>
       <Seo
-        title="Lynxa Tech Guinée - Innovation Sans Frontières | Hub Technologique Africain"
-        description="Solutions technologiques leader de la Guinée au monde. Développement mobile, cybersécurité, infrastructure réseau et solutions web avec une qualité mondiale et une compréhension locale."
+        title="Lynxa Tech Guinée - Innovation Sans Frontières | Solutions numériques à Conakry"
+        description="Entreprise technologique guinéenne basée à Conakry : développement web, infrastructure réseau, cybersécurité, maintenance et formation."
         keywords="technologie Guinée, innovation technologique africaine, développement mobile, cybersécurité, solutions réseau, développement web, Lynxa Tech Guinée"
         path="/"
         ogTitle="Lynxa Tech Guinée - Innovation Sans Frontières"
@@ -228,7 +228,7 @@ const Homepage = () => {
                   </div>
                 </div>
                 <p className="text-gray-300 mb-5 leading-relaxed text-sm">
-                  {company.description || "Construire l'avenir technologique de la Guinée vers le monde. Solutions de classe mondiale avec une compréhension locale approfondie."}
+                  {company.description || "Entreprise technologique guinéenne basée à Conakry. Des solutions numériques fiables, pensées pour les réalités locales."}
                 </p>
                 <div className="flex items-center gap-2 text-sm text-gray-400 mb-5">
                   <span>🇬🇳</span>

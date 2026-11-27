@@ -138,7 +138,7 @@ const TeamSpotlight = () => {
             Rencontrez notre équipe d'experts
           </h2>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Des professionnels talentueux de Guinée capables d'offrir des solutions de classe mondiale
+            Des professionnels guinéens en développement, réseaux, cybersécurité, communication et finances, réunis dans une même équipe
           </p>
         </motion.div>
 

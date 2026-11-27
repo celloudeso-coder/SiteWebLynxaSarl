@@ -32,7 +32,7 @@ const WhyGuinea = () => {
             Pourquoi la Guinée ? Pourquoi maintenant ?
           </h2>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Les avantages uniques qui font de la Guinée la base idéale pour créer des solutions technologiques de classe mondiale
+            Pourquoi nous avons choisi de construire LYNXA depuis Conakry
           </p>
         </motion.div>
 
