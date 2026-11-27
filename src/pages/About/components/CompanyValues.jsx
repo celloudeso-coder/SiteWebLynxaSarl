@@ -16,10 +16,10 @@ const STATIC_CORE_VALUES = [
 const HIGHLIGHT_VALUE = {
   title: "Vision au-delà de la technologie",
   icon: "Globe",
-  description: "Nous croyons que de grandes idées peuvent venir de partout et atteindre partout. Nos solutions transcendent les frontières géographiques.",
+  description: "Nous concevons à Conakry des solutions pensées pour les réalités locales.",
   examples: [
     {
-      title: "Portefeuille Client Global",
+      title: "Nos clients",
       description: "Basés à Conakry, au service des organisations guinéennes",
       image: "/portefeuilcli.png",
       // Pas de pastille ici : chaque exemple est rendu deux fois (bloc de
