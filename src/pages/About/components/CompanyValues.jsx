@@ -20,9 +20,11 @@ const HIGHLIGHT_VALUE = {
   examples: [
     {
       title: "Portefeuille Client Global",
-      description: "Servir des clients sur plusieurs continents avec une qualité constante",
+      description: "Basés à Conakry, au service des organisations guinéennes",
       image: "/portefeuilcli.png",
-      metrics: "Plusieurs pays desservis",
+      // Pas de pastille ici : chaque exemple est rendu deux fois (bloc de
+      // texte et superposition de l'image), la même phrase s'afficherait
+      // donc trois fois sur la même carte.
     },
     {
       title: "Collaboration Remote-First",
