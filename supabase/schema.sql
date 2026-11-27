@@ -473,9 +473,13 @@ CREATE POLICY "Lecture publique médias" ON storage.objects FOR SELECT USING (bu
 CREATE POLICY "Upload admin" ON storage.objects FOR INSERT WITH CHECK (bucket_id = 'cms-media' AND auth.role() = 'authenticated');
 CREATE POLICY "Suppression admin" ON storage.objects FOR DELETE USING (bucket_id = 'cms-media' AND auth.role() = 'authenticated');
 
--- Bucket pour les CV / lettres de motivation (candidatures « Rejoindre ») — PDF ≤ 10 Mo, upload public autorisé
+-- Bucket pour les CV / lettres de motivation (candidatures « Rejoindre ») :
+-- PDF de 10 Mo au plus, dépôt anonyme autorisé, bucket PRIVÉ.
+-- Le bucket est créé privé dès l'insertion, et non rendu privé plus loin :
+-- aucune instruction de ce fichier ne le déclare public, à aucun moment.
+-- Aligné sur migrations/20260928120000_private_joinus_bucket.sql.
 INSERT INTO storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
-VALUES ('Cv_lettredemotivation_joinus', 'Cv_lettredemotivation_joinus', true, 10485760, ARRAY['application/pdf'])
+VALUES ('Cv_lettredemotivation_joinus', 'Cv_lettredemotivation_joinus', false, 10485760, ARRAY['application/pdf'])
 ON CONFLICT (id) DO NOTHING;
 
 CREATE POLICY "joinus_public_upload" ON storage.objects FOR INSERT WITH CHECK (bucket_id = 'Cv_lettredemotivation_joinus');
