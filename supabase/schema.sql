@@ -169,7 +169,7 @@ CREATE TABLE IF NOT EXISTS team_members (
 );
 
 INSERT INTO team_members (sort_order, name, role, image_url, expertise, description, achievements, social_links) VALUES
-  (1, 'Thierno Sadou Barry', 'Mobile Development Lead', '/CellouK.png',
+  (1, 'Elhadj Sadou Barry', 'Mobile Development Lead', '/CellouK.png',
    '["React Native", "Flutter", "iOS", "Android", "Firebase"]',
    'Expert en développement mobile avec une vision centrée sur l''utilisateur et une passion pour les solutions innovantes.',
    '["Lead technique sur 3 applications mobiles déployées", "Formateur React Native pour l''équipe", "Contributeur open source"]',
@@ -564,8 +564,8 @@ CREATE TABLE IF NOT EXISTS home_engagements (
 );
 INSERT INTO home_engagements (sort_order, icon, label, sub_label) VALUES
   (1, 'Flag',        '100 % Guinéen',     'Ancré localement'),
-  (2, 'Zap',         'Réponse sous 48h ouvrables', 'Support ultra-réactif'),
-  (3, 'Globe',       'Standards mondiaux', 'Qualité internationale'),
+  (2, 'Zap',         'Réponse sous 48h ouvrables', 'Engagement écrit au contrat'),
+  (3, 'Globe',       'Documentation remise', 'À chaque livraison'),
   (4, 'ShieldCheck', 'Sécurité dès la conception', 'Des engagements écrits au contrat')
 ON CONFLICT DO NOTHING;
 ALTER TABLE home_engagements ENABLE ROW LEVEL SECURITY;
@@ -588,7 +588,7 @@ CREATE TABLE IF NOT EXISTS home_why_items (
 );
 INSERT INTO home_why_items (sort_order, icon, title, description) VALUES
   (1, 'MapPin',    'Expertise locale',              'Nous comprenons les défis uniques des marchés africains et concevons des solutions parfaitement adaptées.'),
-  (2, 'Award',     'Qualité internationale',        'Nos solutions respectent les standards mondiaux tout en étant calibrées pour les réalités locales.'),
+  (2, 'Award',     'Bonnes pratiques du métier',     'Nous appliquons les bonnes pratiques reconnues en sécurité et en documentation, adaptées aux réalités locales.'),
   (3, 'Users',     'Équipe pluridisciplinaire',     'Mobile, réseau, cybersécurité, web : toutes les compétences réunies sous un même toit.'),
   (4, 'Clock',     'Des délais d''intervention écrits au contrat', 'Consultation gratuite, réponse sous 48h ouvrables et suivi continu tout au long de votre projet.'),
   (5, 'Handshake', 'Partenariat sur le long terme', 'Nous construisons des relations durables, pas des contrats. Votre succès est notre succès.'),

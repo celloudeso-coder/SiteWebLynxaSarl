@@ -18,11 +18,11 @@ const ContactMultiChannelConnection = () => {
     <>
       <Seo
         title="Contactez-Nous - Connexion Multi-Canal | Lynxa Tech Guinée"
-        description="Connectez-vous avec Lynxa Tech Guinée via plusieurs canaux. WhatsApp, téléphone, email, ou visitez notre bureau de Conakry. Réponse rapide garantie pour toutes vos demandes de projets technologiques."
+        description="Connectez-vous avec Lynxa Tech Guinée via plusieurs canaux. WhatsApp, téléphone, email, ou visitez notre bureau de Conakry. Réponse sous 48 heures ouvrables pour vos demandes de projets technologiques."
         keywords="contacter lynxa tech guinée, bureau conakry, whatsapp business, consultation technique, demande de projet, technologie guinée"
         path="/contact"
         ogTitle="Contactez Lynxa Tech Guinée - Votre Portail vers l'Innovation"
-        ogDescription="Multiples façons de vous connecter avec le principal centre d'innovation technologique de Guinée. Contactez-nous pour votre prochain projet."
+        ogDescription="Téléphone, WhatsApp, email ou visite à notre bureau de Conakry : contactez-nous pour votre prochain projet."
       />
       <div className="min-h-screen bg-background">
         <Header />
@@ -94,7 +94,7 @@ const ContactMultiChannelConnection = () => {
                       <div>Samedi: 9h-14h</div>
                     </>
                   )}
-                  <div>Dimanche: Urgences uniquement</div>
+                  <div>Dimanche: Fermé</div>
                   <div className="text-primary">GMT+0 (Heure de Guinée)</div>
                 </div>
               </div>

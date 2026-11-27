@@ -60,9 +60,10 @@ WITH u AS (
   RETURNING 1
 ) INSERT INTO _corrections SELECT 'trust_security_items : surveillance', count(*) FROM u;
 
--- 4. Équipe : nom corrigé.
+-- 4. Équipe : nom corrigé. Décision du gérant du 24/11/2026 : le nom est Elhadj Sadou Barry
+--    (et non Thierno). Requête inversée le 27/11/2026 pour qu'un rejeu ne réintroduise pas l'erreur.
 WITH u AS (
-  UPDATE team_members SET name = 'Thierno Sadou Barry' WHERE name = 'Elhadj Sadou Barry' RETURNING 1
+  UPDATE team_members SET name = 'Elhadj Sadou Barry' WHERE name = 'Thierno Sadou Barry' RETURNING 1
 ) INSERT INTO _corrections SELECT 'team_members : nom', count(*) FROM u;
 
 -- 5. Compteurs de l'accueil : valeurs réelles à la place de "0+".
