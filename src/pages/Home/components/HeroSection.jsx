@@ -24,7 +24,7 @@ const HeroSection = () => {
 
   const title       = cmsHero?.title            ?? "Innovation Sans Frontières";
   const subtitle    = cmsHero?.subtitle          ?? "Construire l'Avenir depuis la Guinée";
-  const description = cmsHero?.description       ?? "Donner aux entreprises de Guinée et d'Afrique de l'Ouest les moyens de réussir grâce à des solutions technologiques de pointe. Des applications mobiles aux services réseaux, nous offrons une innovation de classe mondiale avec une compréhension locale approfondie.";
+  const description = cmsHero?.description       ?? "Nous accompagnons les entreprises et les institutions de Guinée avec des applications web, des réseaux fiables et la cybersécurité, conçus pour les réalités locales.";
   const ctaPrimaryText    = cmsHero?.cta_primary_text    ?? "Lancez votre projet";
   const ctaPrimaryLink    = cmsHero?.cta_primary_link    ?? "/contact";
   const ctaSecondaryText  = cmsHero?.cta_secondary_text  ?? "Découvrez notre impact";

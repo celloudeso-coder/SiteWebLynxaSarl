@@ -38,7 +38,7 @@ CREATE TABLE IF NOT EXISTS hero_sections (
 );
 
 INSERT INTO hero_sections (page, title, subtitle, description, cta_primary_text, cta_primary_link, cta_secondary_text, cta_secondary_link) VALUES
-  ('home', 'Innovation Sans Frontières', 'Construire l''Avenir depuis la Guinée', 'Des solutions technologiques de classe mondiale conçues en Guinée pour transformer les entreprises à travers l''Afrique de l''Ouest et au-delà.', 'Découvrir nos services', '/service', 'Notre portfolio', '/portfolio'),
+  ('home', 'Innovation Sans Frontières', 'Construire l''Avenir depuis la Guinée', 'Nous accompagnons les entreprises et les institutions de Guinée avec des applications web, des réseaux fiables et la cybersécurité, conçus pour les réalités locales.', 'Découvrir nos services', '/service', 'Notre portfolio', '/portfolio'),
   ('about', 'Notre Histoire', 'Innovation, Vision & Impact', 'Découvrez le parcours de Lynxa Tech, de la Guinée au reste du monde.', 'Profil de l''entreprise', '#', 'Rejoindre l''équipe', '/join-us'),
   ('services', 'Nos Services', 'Solutions Technologiques de Pointe', 'Développement mobile, infrastructure réseau, web — des solutions pensées pour l''Afrique, compétitives à l''échelle mondiale.', 'Demander un devis', '/contact', 'Voir le portfolio', '/portfolio'),
   ('portfolio', 'Nos Réalisations', 'Histoires de Succès Inspirantes', 'Des projets qui transforment des vies et propulsent des organisations.', 'Démarrer un projet', '/contact', 'Partenariats', '/partnership'),

@@ -62,7 +62,7 @@ const ServiceGalaxies = () => {
             <span className="text-gradient-orange">Services</span>
           </h2>
           <p className="text-xl text-gray-500 max-w-3xl mx-auto">
-            Des solutions technologiques de classe mondiale alliant innovation et compréhension approfondie des besoins du marché africain.
+            Des solutions technologiques concrètes, pensées pour les besoins des organisations guinéennes.
           </p>
         </motion.div>
 
