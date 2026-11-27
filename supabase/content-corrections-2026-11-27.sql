@@ -1,3 +1,12 @@
+-- APPLIQUÉ EN PRODUCTION le 2026-11-27
+-- Par Mamadou Cellou Kanté, éditeur SQL Supabase. Les trois premières
+-- corrections vers 01h25 (lot A), la quatrième plus tard dans la journée,
+-- heure non relevée : 1 ligne corrigée, l'accroche de l'accueil
+-- (hero_sections, page « home »).
+-- Vérifié en ligne le 2026-11-27 sur https://www.lynxatech.com/ :
+-- « classe mondiale » 0 occurrence, le nouveau texte 1 occurrence.
+-- NE PAS RELANCER : les gardes refuseraient (0 ligne) et n'écriraient rien.
+--
 -- =====================================================================
 -- Corrections de contenu 2026-11-27 (lots A et A bis) : promesses sans preuve
 -- =====================================================================
@@ -15,7 +24,8 @@
 -- le texte d'origine. Tout contenu déjà retouché dans l'admin est laissé
 -- intact. Relançable sans effet (0 ligne modifiée la 2e fois).
 -- Historique : les trois premières corrections ont été appliquées le
--- 27/11/2026 vers 01h25 (lot A). La quatrième vient du lot A bis.
+-- 27/11/2026 vers 01h25 (lot A), la quatrième le même jour (lot A bis).
+-- Les quatre sont donc appliquées.
 -- Après exécution : bouton « Publier les modifications » dans l'admin.
 -- =====================================================================
 

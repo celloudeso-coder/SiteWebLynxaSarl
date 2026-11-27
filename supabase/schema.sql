@@ -704,16 +704,21 @@ CREATE TABLE IF NOT EXISTS about_roadmap_phases (
   color text DEFAULT 'bg-primary',
   updated_at timestamptz DEFAULT now()
 );
+-- Horizons alignés sur la base de production (règle du seed égal à la base) :
+-- la base porte 2026-2028, 2028-2029, 2029-2030, le seed disait un an plus tôt.
+-- Vérifié champ par champ contre le dump du 2026-10-21 : seules les trois
+-- dates divergeaient, titres, statuts, descriptions, objectifs et marchés
+-- étaient déjà identiques.
 INSERT INTO about_roadmap_phases (sort_order, phase, timeline, title, status, status_color, description, goals, markets, icon, color) VALUES
-  (1, 'Phase 1', '2025 – 2027', 'Expansion en Afrique de l''Ouest', 'En cours',  'bg-primary/10 text-primary',
+  (1, 'Phase 1', '2026 – 2028', 'Expansion en Afrique de l''Ouest', 'En cours',  'bg-primary/10 text-primary',
    'Établir des partenariats stratégiques dans les principaux marchés d''Afrique de l''Ouest.',
    '["Ouvrir des bureaux au Sénégal et en Côte d''Ivoire","S''associer à 10+ entreprises technologiques locales","Lancer des services en français et en anglais","Atteindre 100–500 clients régionaux et internationaux"]',
    '["Sénégal","Côte d''Ivoire","Mali"]', 'MapPin', 'bg-primary'),
-  (2, 'Phase 2', '2027 – 2028', 'Présence Continentale',            'Planifiée', 'bg-yellow-50 text-yellow-600',
+  (2, 'Phase 2', '2028 – 2029', 'Présence Continentale',            'Planifiée', 'bg-yellow-50 text-yellow-600',
    'S''étendre à travers l''Afrique, établissant Lynxa Tech comme un leader technologique panafricain.',
    '["Entrer sur 5 nouveaux marchés africains","Lancer une plateforme d''intégration de mobile money","Établir des laboratoires d''innovation dans 3 pays","Atteindre 500+ clients continentaux"]',
    '["Kenya","Nigeria","Ghana","Afrique du Sud","Maroc"]', 'Globe', 'bg-accent'),
-  (3, 'Phase 3', '2028 – 2030', 'Reconnaissance Globale',           'Vision',    'bg-gray-100 text-gray-500',
+  (3, 'Phase 3', '2029 – 2030', 'Reconnaissance Globale',           'Vision',    'bg-gray-100 text-gray-500',
    'Obtenir une reconnaissance internationale en tant qu''entreprise technologique leader d''Afrique.',
    '["IPO ou opportunité d''acquisition majeure","Clients Fortune 500 à l''international","Prix internationaux d''innovation","1000+ employés à travers les continents"]',
    '["Europe","Amérique du Nord","Asie","Moyen-Orient"]', 'Trophy', 'bg-success')
